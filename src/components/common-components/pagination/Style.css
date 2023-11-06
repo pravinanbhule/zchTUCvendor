@@ -1,0 +1,42 @@
+.site-pagination-table .pagination .page-link{
+    text-decoration: none!important;
+}
+.site-pagination-table.container-fluid .pagination-top-container{
+    justify-content: flex-end;
+}
+
+.site-pagination-table .pagination-bottom-container{
+    margin-top: 10px;
+}
+.site-pagination-table .pagination-top-container{width: auto;}
+.site-pagination-table .pagination{margin-right: 0;}
+.site-pagination-table .Dropdown-control{
+    height: 22px;
+    padding: 2px 5px 8px 10px;
+}
+.site-pagination-table .Dropdown-arrow{top: 5px;}
+
+.btn-container .exportxlsbtn {
+    min-width: 95px;
+    height: 32px;
+    background-color: rgba(33, 103, 173, 1);
+    text-align: center;
+    line-height: 31px;
+    color: #fff;
+    border-radius: 15px;
+    padding: 0 15px;
+    padding-left: 25px;
+    cursor: pointer;
+    border: none;
+    background-image: url("../../../assets/Export_to_Excel.png");
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+
+.btn-container .exportxlsbtn:hover {
+    background-color: rgba(33, 103, 173, 0.7);
+}
+
+.exportxlsbtn a {
+    color: #fff;
+}

@@ -1,0 +1,99 @@
+
+.frm-field-bggray .frm-field .RichTextEditor__root___2QXK- {
+  background-color: #edeef0;
+}
+.frm-field .RichTextEditor__root___2QXK- {
+  border: 1px solid #add8ef;
+  border-radius: 15px;
+  background-color: #fff;
+  color: #2167ad;
+  font-family: "ZurichSans", sans-serif, "Segoe UI";
+  font-size: 14px;
+}
+.frm-field.disabled .RichTextEditor__root___2QXK- {
+  color: #00000060;
+}
+.frm-field .RichTextEditor__editor___1QqIU {
+  font-family: "ZurichSans", sans-serif, "Segoe UI";
+  font-size: 14px;
+  max-height: 270px;
+  overflow-y: auto;
+}
+.frm-field .EditorToolbar__root___3_Aqz {
+  font-family: "ZurichSans", sans-serif, "Segoe UI";
+  color: #2167ad;
+  border-bottom: 1px solid #add8ef;
+  margin: 0;
+  padding: 0;
+}
+.frm-field .RichTextEditor__editor___1QqIU .public-DraftEditor-content {
+  min-height: 100px;
+}
+.frm-field .Button__root___1gz0c {
+  border: 0;
+}
+.frm-field .ButtonGroup__root___3lEAn:first-child {
+  margin-left: 10px;
+}
+.frm-field .ButtonGroup__root___3lEAn {
+  margin: 0;
+  border-right: 1px solid #add8ef;
+}
+.frm-field .Dropdown__root___3ALmx .Dropdown__value___34Py9 {
+  border: none !important;
+}
+.frm-field .Dropdown__root___3ALmx .Dropdown__value___34Py9:after {
+  padding: 2px;
+  top: 10px;
+  border: solid #1f66ab;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.frm-field .Dropdown__root___3ALmx .Dropdown__value___34Py9:before {
+  display: none;
+  padding: 2px;
+  top: 18px;
+  border: solid #1f66ab;
+  border-width: 0 2px 2px 0;
+  transform: rotate(225deg);
+  -webkit-transform: rotate(225deg);
+}
+.frm-field .ButtonGroup__root___3lEAn > div > button {
+  background: transparent;
+}
+.frm-field .ButtonWrap__root___1EO_R{
+  z-index: 2!important;
+}
+.rich-text-data{padding-right: 10px;}
+.rich-text-data table{max-width: 100%;}
+/* new ckeditor 5 style overrides */
+.ck-reset_all :not(.ck-reset_all-excluded *),
+.ck.ck-reset_all{
+  color:#2167ad!important;
+}
+.ck.ck-toolbar{
+  border:1px solid #add8ef!important;
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+}
+.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused){
+  border: 1px solid #add8ef !important;
+  border-top:0;
+  border-bottom-left-radius: 15px !important;
+  border-bottom-right-radius: 15px !important;
+  min-height: 100px;
+  max-height: 270px;
+}
+.ck-editor__editable_inline {
+  min-height: 100px;
+    max-height: 270px;
+}
+.ck.ck-tooltip .ck-tooltip__text{
+  background: #edeef0!important;
+}
+.ck.ck-tooltip.ck-tooltip_s .ck-tooltip__text:after,
+.ck.ck-tooltip.ck-tooltip_se .ck-tooltip__text:after,
+.ck.ck-tooltip.ck-tooltip_sw .ck-tooltip__text:after{
+  border-color: transparent transparent #2167ad transparent!important;
+}

@@ -1,0 +1,8 @@
+.logs-form .multi-selected-opts-container,.filter-container .multi-selected-opts-container{
+    max-height: 53px;
+    overflow-y: auto;
+}
+.exemptionlog .frm-field .radiobtn-container{
+    margin-top:5px;
+    width:80px;
+}

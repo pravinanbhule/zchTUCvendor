@@ -1,0 +1,45 @@
+.export-container {
+    position: relative;
+}
+
+.export-container-list {
+    position: absolute;
+    width: var(--exportlist-width);
+    min-height: 100px;
+    border: 1px solid #add8ef;
+    border-radius: 15px;
+    left: -140%;
+    top: -145px;
+    background: var(--exportlist-background-color);
+    z-index: 3;
+}
+.export-container-list::before {
+    content: " ";
+    left: 47%;
+    bottom:-17px;
+    border: solid transparent;
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-width: var(--exportlist-arrow-size);
+    margin-left: calc(var(--exportlist-arrow-size) * -1);
+    border-top: 10px solid #add8ef;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+}
+.export-list {
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.export-list ul {
+    margin: 0;
+    margin-left: -20px;
+}
+
+:root {
+    --exportlist-background-color: #edeef0;
+    --exportlist-width: 350px;
+    --exportlist-arrow-size: 6px;
+}

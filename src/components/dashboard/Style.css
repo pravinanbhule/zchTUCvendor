@@ -1,0 +1,49 @@
+.page-title-container{
+    border-bottom: 1px solid #21356e;
+}
+.logs-details-container{
+    padding: 0 20px;
+}
+.logs-details{
+    border-bottom: 1px solid #ADD8EF;
+    padding: 20px;
+    box-shadow: 0px 3px 3px -1px #00000029;
+    /*margin-bottom: 20px;*/
+}
+.log-title-container{
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+.log-count{ margin: 0 5px; font-weight: bold;}
+.log-status{margin-left:5px;}
+
+
+/*.log-count-details table{width: 100%;table-layout: fixed;}
+.log-count-details table td{border: 1px solid #2167ad; padding: 10px;}
+.log-count-details table td:hover{
+    cursor: pointer;
+    background-color: #dae2f4;
+}*/
+.log-count-details {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    justify-content: space-between;
+    gap: 10px;
+}
+.log-status-details-container{
+    flex: 1;
+    border: 1px solid #ADD8EF;
+    border-radius: 20px;
+}
+.log-status-details-container:hover {
+    cursor: pointer;
+    background-color: #dae2f4;
+}
+.log-status-details{font-size: 15px;display: flex;align-items: center;padding: 10px; height: 100%;}
+
+.logs-details .logo{
+    margin-right: 10px;
+}

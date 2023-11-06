@@ -1,0 +1,92 @@
+.popup-box.versionhistory {
+    top: 20px;
+    width: 650px;
+    left: 350px;
+    /*height: 610px;*/
+    min-height: 300px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.versionhistory-container th div:first-child {
+    position: relative;
+}
+.versionhistory-container th div:first-child::before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    right: -13px;
+    width: 0;
+    height: 0;
+    border: 4px solid transparent;
+    background: transparent;
+    border-bottom: 7px solid #ccc !important;
+    border-top-width: 0;
+    margin-top: 1px;
+    cursor: pointer;
+}
+.versionhistory-container .sort.up-arrow::after {
+    content: "";
+    position: relative;
+    top:-15px;
+    left: 5px;
+    width: 0;
+    height: 0;
+    border: solid 4px transparent;
+    background: transparent;
+    border-bottom: solid 7px #2167ad;
+    border-top-width: 0;
+    cursor: pointer;
+}
+
+.versionhistory-container th div:first-child:after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: -13px;
+    width: 0;
+    height: 0;
+    border: 4px solid transparent;
+    background: transparent;
+    border-top: 7px solid #ccc !important;
+    border-bottom-width: 0;
+    margin-top: 1px;
+    cursor: pointer;
+}
+.versionhistory-container .sort.down-arrow::after {
+    content: "";
+    position: relative;
+    top: 16px;
+    left: 5px;
+    width: 0;
+    height: 0;
+    border: solid 4px transparent;
+    background: transparent;
+    border-top: solid 7px #2167ad;
+    border-bottom-width: 0;
+    margin-top: 1px;
+    cursor: pointer;
+}
+.versionhistory-data-container{margin-top:15px;padding: 5px 15px;height: 460px;overflow-y: auto;}
+.versionhistory-data-container table{
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 550px;
+}
+
+.versionhistory-data-container table th{
+    position: relative;
+    text-align: left;
+}
+.versionhistory-data-container table th div{
+    display: inline-block;
+}
+.versionhistory-data-container table th, .versionhistory-data-container table td{
+    vertical-align: top;
+    padding: 3px;
+}
+.versionhistory-data-container table tbody{
+    border-top: 20px solid #edeef0;
+}
+.versionhistory-data-container table tbody tr:last-child {
+    /*border-bottom: 1px solid #2167ad;*/
+}
