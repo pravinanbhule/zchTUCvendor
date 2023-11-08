@@ -10,6 +10,7 @@ export const INCOUNTRTY_IDS = {
   SPAINFOS: "COU44EB78A8F27749A2B4BA5FDF78F80035",
   MALAYSIA: "COU000020",
   SINGAPORE: "COU000028",
+  ITALY: "COU000017"
 };
 export const BREACH_LOG_STATUS = {
   Pending: "ECA8E493-1750-4546-9BC1-A1E8DA8A1B58",
@@ -60,6 +61,7 @@ export const INCOUNTRY_FLAG = {
   UK: "UK001",
   LATAM: "LM001",
   SINGAPORE: "SG001",
+  ITALY:"IT001"
 };
 export const INCOUNTRY_FLAG_OPTS = {
   Indonesia: {
@@ -82,6 +84,11 @@ export const INCOUNTRY_FLAG_OPTS = {
     label: "Singapore",
     value: INCOUNTRY_FLAG.SINGAPORE,
     id: INCOUNTRTY_IDS.SINGAPORE,
+  },
+  ITALY: {
+    label: "Italy",
+    value: INCOUNTRY_FLAG.ITALY,
+    id: INCOUNTRTY_IDS.ITALY,
   },
 };
 export const SHAREPOINT_LINKS = {
