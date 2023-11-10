@@ -1295,6 +1295,7 @@ function AddEditForm(props) {
     ) {
       let isUKcountry = true;
       let isSingaporecountry = true;
+      let isItalycountry = true;
       let isIndonesiacountry = true;
       let isLatamregion = true;
       let isIncountryselected = true;
@@ -1320,6 +1321,11 @@ function AddEditForm(props) {
           isSingaporecountry = isSingaporecountry ? true : false;
         } else {
           isSingaporecountry = false;
+        }
+        if (item.value === IncountryIds.ITALY) {
+          isItalycountry = isItalycountry ? true : false;
+        } else {
+          isItalycountry = false;
         }
         if (item.value === IncountryIds.INDONESIA) {
           isIndonesiacountry = isIndonesiacountry ? true : false;
@@ -1384,6 +1390,20 @@ function AddEditForm(props) {
         });
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       } else if (
+        isItalycountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.ITALY);
+      }
+      else if (
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
@@ -1479,7 +1499,7 @@ function AddEditForm(props) {
             !userroles.isapprover &&
             !userroles.issuperadmin &&
             formfield.RequestForEmpowermentStatus ===
-              rfelog_status.More_information_needed
+            rfelog_status.More_information_needed
           ) {
             formfield.RequestForEmpowermentStatus = rfelog_status.Pending;
           }
@@ -1734,6 +1754,7 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
+                  IncountryFlag === IncountryFlagConst.ITALY ||
                   isorgalignmentdisabled
                 }
               />
