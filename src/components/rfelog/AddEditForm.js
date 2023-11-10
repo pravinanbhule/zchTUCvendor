@@ -241,15 +241,6 @@ function AddEditForm(props) {
   const fnOnInit = async () => {
     let tempopts = [];
     let tempcountryItems = [];
-    /*if (
-      userroles.isapprover ||
-      userroles.iscc ||
-      (formIntialState.isSubmit && userroles.isunderwriter)
-    ) {
-      tempcountryItems = await getAllCountry();
-    } else {
-      tempcountryItems = await getAllCountry({ IsLog: true });
-    }*/
     getAllSegment({ logType: "rfelogs" });
     getAllCurrency();
     getAllBranch();
@@ -401,12 +392,6 @@ function AddEditForm(props) {
 
     setDurationOpts([selectInitiVal, ...tempoptsDoA]);
 
-    //let temporgnizationalalignment = await getLookupByType({LookupType: "RFEOrganizationalAlignment"});
-    //let temprfechz = await getLookupByType({ LookupType: "RFECHZ"    });
-    //let temprfeempourment = await getLookupByType({LookupType: "RFEEmpowermentReasonRequest"});
-    //let tempstatus = await getLookupByType({LookupType: "RFEEmpowermentStatusRequest"});
-    //let temNewRenewal = await getLookupByType({LookupType: "RFELogNewRenewal"});
-    //let tempToolTips = await getToolTip({ type: "RFELogs" });
     let temporgnizationalalignment = dbvalues[4];
     let temprfechz = dbvalues[5];
     let temprfeempourment = dbvalues[6];
@@ -580,24 +565,6 @@ function AddEditForm(props) {
           ) {
             isshow = true;
           }
-          /*if (
-              (formIntialState.RequestForEmpowermentStatus ===
-                rfelog_status.Pending ||
-                formIntialState.RequestForEmpowermentStatus ===
-                  rfelog_status.More_information_needed) &&
-              item.lookupID === rfelog_status.Withdrawn
-            ) {
-              isshow = true;
-            }
-          if (
-            (formIntialState.RequestForEmpowermentStatus ===
-              rfelog_status.Pending ||
-              formIntialState.RequestForEmpowermentStatus ===
-                rfelog_status.More_information_needed) &&
-            item.lookupID === rfelog_status
-          ) {
-            isshow = true;
-          }*/
         }
       } else {
         if (item.lookupID === rfelog_status.Pending) {
@@ -662,6 +629,12 @@ function AddEditForm(props) {
     }
     setIncountryFlag(formIntialState.IncountryFlag);
     setformfield(formIntialState);
+    if (formIntialState.PolicyTermId) {
+      const tempIds = await getPolicyTermId({
+        policyId: formIntialState.PolicyTermId,
+      });
+      setpolicyTermIds([...tempIds]);
+    }
     setloading(false);
   };
   useEffect(() => {
@@ -793,20 +766,6 @@ function AddEditForm(props) {
       setformdomfields(tempfields);
     }
   };
-  /*useEffect(() => {
-    let tempopts = [];
-    lobState.lobItems.forEach((item) => {
-      if (isEditMode || isReadMode) {
-        if (item.isActive || item.lobid === formIntialState.lobid) {
-          tempopts.push({ ...item, label: item.lobName, value: item.lobid });
-        }
-      } else if (item.isActive) {
-        tempopts.push({ ...item, label: item.lobName, value: item.lobid });
-      }
-    });
-    tempopts.sort(dynamicSort("label"));
-    setfrmLoB([selectInitiVal, ...tempopts]);
-  }, [lobState.lobItems]);*/
 
   useEffect(() => {
     let tempopts = [];
@@ -970,29 +929,37 @@ function AddEditForm(props) {
   useEffect(() => {
     const getIds = async () => {
       if (
-        formfield &&
         formfield.AccountName &&
         formfield.countryCode &&
-        formfield.mappedLOBs
+        formfield.mappedLOBs &&
+        !loading
       ) {
         const tempIds = await getPolicyTermId({
           producing_country: formfield?.countryCode,
           customer_name_input: formfield?.AccountName,
           line_of_business: formfield?.mappedLOBs,
         });
-        setpolicyTermIds([...tempIds]);
+
         let policytermids = [];
         if (tempIds.length) {
+          setpolicyTermIds([...tempIds]);
           policytermids = tempIds.map((item) => item.policy_term_id);
+        } else {
+          setpolicyTermIds([]);
+          setformfield((prevstate) => ({ ...prevstate, PolicyTermId: "" }));
         }
-        //setformfield((prevstate) => ({          ...prevstate,          PolicyTermId: policytermids.join(","),        }));
+        setformfield((prevstate) => ({
+          ...prevstate,
+          PolicyTermId: policytermids.join(","),
+        }));
       } else {
         setpolicyTermIds([]);
-        //setformfield((prevstate) => ({ ...prevstate, PolicyTermId: "" }));
+        setformfield((prevstate) => ({ ...prevstate, PolicyTermId: "" }));
       }
     };
     getIds();
-  }, [formfield?.AccountName, formfield?.countryCode, formfield?.mappedLOBs]);
+  }, [formfield.AccountName, formfield.countryCode, formfield.mappedLOBs]);
+
   const [locallinks, setlocallinks] = useState([]);
   useEffect(async () => {
     let templinks = [];
@@ -1134,7 +1101,9 @@ function AddEditForm(props) {
               selectedregions.push(item.regionId);
               selregionObj[item.regionId] = item.regionId;
             }
-            countrycode.push(item.countryCode);
+            if (item.countryCode) {
+              countrycode.push(item.countryCode);
+            }
           }
         });
       });

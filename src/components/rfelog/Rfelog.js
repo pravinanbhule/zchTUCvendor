@@ -88,7 +88,6 @@ function Rfelog({ ...props }) {
     loadedAll: false,
     isDataImported: false,
   });
-
   const rfelog_status = {
     Pending: RFE_LOG_STATUS.Pending,
     More_information_needed: RFE_LOG_STATUS.More_information_needed,
@@ -366,6 +365,7 @@ function Rfelog({ ...props }) {
   const [selectedview, setselectedview] = useState("gn");
   const onViewFilterSelect = (name, value) => {
     setselectedview(value);
+    setsellogTabType(logTypes[0].value);
   };
   useEffect(() => {
     const fnloadcountryview = async () => {
@@ -380,6 +380,8 @@ function Rfelog({ ...props }) {
     };
     if (!isLogInitcall) {
       fnloadcountryview();
+      getallDraftItems();
+      getallDeletedItems();
     }
   }, [selectedview]);
 
@@ -648,380 +650,6 @@ function Rfelog({ ...props }) {
       });
     }
     return columns;
-    /*return !headers.length
-        ? []
-        : [
-            sellogTabType !== "delete"
-              ? {
-                  dataField: "editaction",
-                  text: "Edit",
-                  formatter: (cell, row, rowIndex, formatExtraData) => {
-                    let isedit = fnIsEditAccess(row);
-
-                    return isedit ? (
-                      <div
-                        className={`edit-icon`}
-                        onClick={handleEdit}
-                        rowid={row.RFELogId}
-                        mode={"edit"}
-                      ></div>
-                    ) : (
-                      ""
-                    );
-                  },
-                  sort: false,
-                  headerStyle: (colum, colIndex) => {
-                    return {
-                      width: "70px",
-                      textAlign: "center",
-                    };
-                  },
-                }
-              : {
-                  dataField: "editaction",
-                  text: "Restore",
-                  formatter: (cell, row, rowIndex, formatExtraData) => {
-                    return (
-                      <div
-                        className="restore-icon"
-                        onClick={() =>
-                          handleRestoreItem(row.RFELogId, row.IsSubmit)
-                        }
-                        rowid={row.RFELogId}
-                      ></div>
-                    );
-                  },
-                  sort: false,
-                  headerStyle: (colum, colIndex) => {
-                    return {
-                      width: "90px",
-                      textAlign: "center",
-                    };
-                  },
-                },
-            {
-              dataField: "viewaction",
-              text: "View",
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return (
-                  <div
-                    className="view-icon"
-                    onClick={handleEdit}
-                    rowid={row.RFELogId}
-                    mode={"view"}
-                  ></div>
-                );
-              },
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return {
-                  width: "70px",
-                  textAlign: "center",
-                };
-              },
-            },
-            {
-              dataField: "DataVersion",
-              text: "Data Version",
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return (
-                  <div
-                    className="versionhistory-icon"
-                    onClick={() =>
-                      handleDataVersion(row.RFELogId, row.IsSubmit)
-                    }
-                    mode={"view"}
-                  ></div>
-                );
-              },
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return {
-                  width: "100px",
-                  textAlign: "center",
-                };
-              },
-            },
-            sellogTabType !== "delete"
-              ? {
-                  dataField: "MoreActions",
-                  text: "More Actions",
-                  formatter: (cell, row, rowIndex, formatExtraData) => {
-                    return (
-                      <>
-                        <MoreActions
-                          rowid={row.RFELogId}
-                          isSubmit={row.IsSubmit}
-                          handleCopyItem={handleCopyItem}
-                          handleShareItem={openShareItem}
-                          handleDeleteItem={openDeleteItem}
-                          userProfile={userProfile}
-                          isDelete={fnIsEditAccess(row) ? true : false}
-                        ></MoreActions>
-                      </>
-                    );
-                  },
-                  sort: false,
-                  headerStyle: (colum, colIndex) => {
-                    return {
-                      width: "100px",
-                      textAlign: "center",
-                    };
-                  },
-                }
-              : {},
-            {
-              dataField: "EntryNumber",
-              text: "Entry Number",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "150px" };
-              },
-            },
-            {
-              dataField: "AccountName",
-              text: "Account Name",
-              sort: true,
-              onSort: (field, order) => {
-                if (
-                  field &&
-                  (selSortFiled.name !== field || selSortFiled.order !== order)
-                ) {
-                  onPaginationSort(field, order);
-                }
-              },
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return (
-                  <>
-                    <CustomToolTip
-                      content={
-                        <>
-                          <table>
-                            <tr>
-                              <td>
-                                <div className="tooltip-content">
-                                  <b>Details</b>
-                                  <br></br>
-                                  {row.RFELogDetails
-                                    ? parse(row.RFELogDetails)
-                                    : ""}
-                                </div>
-                              </td>
-                              <td>
-                                <div className="tooltip-content">
-                                  <b>Comments</b>
-                                  <br></br>
-                                  {row.UnderwriterGrantingEmpowermentComments
-                                    ? parse(
-                                        row.UnderwriterGrantingEmpowermentComments
-                                      )
-                                    : ""}
-                                </div>
-                              </td>
-                            </tr>
-                          </table>
-                        </>
-                      }
-                      direction="right"
-                    >
-                      <div className="breach-title" rowid={row.RFELogId}>
-                        {row.AccountName}
-                      </div>
-                    </CustomToolTip>
-                  </>
-                );
-              },
-              headerStyle: (colum, colIndex) => {
-                return { width: "250px" };
-              },
-            },
-            {
-              dataField: "CountryName",
-              text: "Country",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "150px" };
-              },
-              onSort: (field, order) => {
-                if (
-                  field &&
-                  (selSortFiled.name !== field || selSortFiled.order !== order)
-                ) {
-                  onPaginationSort(field, order);
-                }
-              },
-            },
-            {
-              dataField: "RegionName",
-              text: "Region",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "150px" };
-              },
-              onSort: (field, order) => {
-                if (
-                  field &&
-                  (selSortFiled.name !== field || selSortFiled.order !== order)
-                ) {
-                  onPaginationSort(field, order);
-                }
-              },
-            },
-            {
-              dataField: "OrganizationalAlignmentValue",
-              text: "Organizational Alignment",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-            {
-              dataField: "LOBName",
-              text: "LoB",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "160px" };
-              },
-            },
-            {
-              dataField: "durationofApprovalValue",
-              text: "Duration of Approval (in years)",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "160px" };
-              },
-            },
-            {
-              dataField: "UnderwriterName",
-              text: "Underwriter",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "150px" };
-              },
-            },
-
-            {
-              dataField: "RequestForEmpowermentReasonValue",
-              text: "Request for empowerment reason",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-            {
-              dataField: "UnderwriterGrantingEmpowermentName",
-              text: "Underwriter granting empowerment",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-
-             {
-              dataField: "CHZValue",
-              text: "CHZ Sustainability Desk / CHZ Gi Credit Risk",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-            {
-              dataField: "RequestForEmpowermentCCName",
-              text: "Request for empowerment CC",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "280px" };
-              },
-            },
-            {
-              dataField: "RequestForEmpowermentStatusValue",
-              text: "Request for empowerment status",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-            {
-              dataField: "ConditionApplicableToValue",
-              text: "Condition Applicable To",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-            {
-              dataField: "CreatorName",
-              text: "Created By",
-              sort: true,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-            },
-            {
-              dataField: "ReceptionInformationDate",
-              text: "Date of reception of information needed by approver",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return <span>{cell ? formatDate(cell) : ""}</span>;
-              },
-            },
-            {
-              dataField: "ResponseDate",
-              text: "Date of response",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return <span>{cell ? formatDate(cell) : ""}</span>;
-              },
-            },
-            {
-              dataField: "CreatedDate",
-              text: "Created Date",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "170px" };
-              },
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return <span>{cell ? formatDate(cell) : ""}</span>;
-              },
-            },
-            {
-              dataField: "ModifiedDate",
-              text: "Modified Date",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "200px" };
-              },
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return <span>{cell ? formatDate(cell) : ""}</span>;
-              },
-            },
-            {
-              dataField: "IsArchived",
-              text: "Link to SharePoint",
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return { width: "170px" };
-              },
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return row.isArchived ? (
-                  <span
-                    className="link"
-                    onClick={() => handleOpenSharePointLink(row.entryNumber)}
-                  >
-                    link
-                  </span>
-                ) : (
-                  ""
-                );
-              },
-            },
-          ];*/
   };
 
   const defaultSorted = [
@@ -1045,6 +673,8 @@ function Rfelog({ ...props }) {
       PageIndex: pageIndex,
       PageSize: pagesize,
       IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
     };
     setisLoadingStarted(true);
     if (sellogTabType === "draft") {
@@ -1166,11 +796,22 @@ function Rfelog({ ...props }) {
       RequesterUserId: userProfile.userId,
       isSubmit: false,
     });*/
-    let tempdraftItems = await getLogCount({
+    let tempdraftItems = await getallCount({
+      RequesterUserId: userProfile.userId,
+      isSubmit: false,
+      UserEmail: userProfile.emailAddress,
+      IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
+    });
+    /*let tempdraftItems = await getLogCount({
       LogType: "RfeLogs",
       LogCategory: "Draft",
       UserEmail: userProfile.emailAddress,
-    });
+      IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
+    });*/
 
     if (tempdraftItems) {
       setshowDraft(true);
@@ -1182,11 +823,23 @@ function Rfelog({ ...props }) {
     /*let tempItems = await getallDeletedLogs({
       RequesterUserId: userProfile.userId,
     });*/
-    let tempItems = await getLogCount({
+
+    let tempItems = await getallCount({
+      RequesterUserId: userProfile.userId,
+      IsDelete: true,
+      UserEmail: userProfile.emailAddress,
+      IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
+    });
+    /*let tempItems = await getLogCount({
       LogType: "RfeLogs",
       LogCategory: "Delete",
       UserEmail: userProfile.emailAddress,
-    });
+      IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
+    });*/
     if (tempItems) {
       setshowDeletedLogs(true);
     } else {
@@ -1807,6 +1460,9 @@ function Rfelog({ ...props }) {
     let versiondata = await getDataVersion({
       TempId: itemid,
       LogType: "rfelogs",
+      IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
     });
     setversionHistoryData(versiondata ? versiondata : []);
     if (isSubmit) {
@@ -1912,6 +1568,9 @@ function Rfelog({ ...props }) {
   const exportReportLogsHandler = async () => {
     let reqParam = {
       RequesterUserId: userProfile.userId,
+      IncountryFlag: selectedview === "gn" ? "" : selectedview,
+      UserRole:
+        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
     };
     if (sellogTabType === "draft") {
       reqParam = {
@@ -2091,7 +1750,7 @@ function Rfelog({ ...props }) {
           <div className="container">
             <div className="row">
               <div className="page-title col-md-9">RfE Log</div>
-              {/*userProfile.isAdminGroup && (
+              {userProfile.isAdminGroup && (
                 <div className="col-md-3" style={{ marginTop: "8px" }}>
                   <FrmSelect
                     title={"Change view"}
@@ -2102,7 +1761,7 @@ function Rfelog({ ...props }) {
                     inlinetitle={true}
                   />
                 </div>
-              )*/}
+              )}
             </div>
           </div>
           <div className="page-filter-outercontainer">
