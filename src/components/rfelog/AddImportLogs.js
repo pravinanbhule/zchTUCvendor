@@ -596,6 +596,7 @@ function AddImportLogs(props) {
   const checkisIncountryLog = (countryList, regionList) => {
     let isUKcountry = true;
     let isSingaporecountry = true;
+    let isItalycountry = true;
     let isIndonesiacountry = true;
     let isLatamregion = true;
     regionList.forEach((item) => {
@@ -620,6 +621,11 @@ function AddImportLogs(props) {
       } else {
         isSingaporecountry = false;
       }
+      if (item === INCOUNTRTY_IDS.ITALY) {
+        isItalycountry = isItalycountry ? true : false;
+      } else {
+        isItalycountry = false;
+      }
       if (item === INCOUNTRTY_IDS.INDONESIA) {
         isIndonesiacountry = isIndonesiacountry ? true : false;
       } else {
@@ -630,6 +636,7 @@ function AddImportLogs(props) {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
       isSingaporecountry: isSingaporecountry,
+      isItalycountry: isItalycountry,
       isIndonesiacountry: isIndonesiacountry,
     };
   };
@@ -806,11 +813,12 @@ function AddImportLogs(props) {
                   });
                 });
                 templogdata["regionId"] = regions.join(",");
-                debugger;
+                // debugger;
                 const {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isItalycountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 //added below codition to check if selected type is country but country is not set
@@ -843,6 +851,14 @@ function AddImportLogs(props) {
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
+                if (
+                  IncountryFlag === IncountryFlagCost.ITALY &&
+                  !isItalycountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
               }
               if (
                 isvalidval &&
@@ -855,6 +871,7 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isItalycountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 const approverRole = await getApproverRole(value);
@@ -863,6 +880,7 @@ function AddImportLogs(props) {
                   (isLatamregion ||
                     isUKcountry ||
                     isSingaporecountry ||
+                    isItalycountry ||
                     isIndonesiacountry) &&
                   !approverRole.isGlobalAdmin &&
                   !approverRole.isSuperAdmin
@@ -1112,7 +1130,9 @@ function AddImportLogs(props) {
       request: logType,
       IncountryFlag: IncountryFlag === "gn" ? "" : IncountryFlag,
     });
-    FileDownload(responsedata, templateName);
+    if (responsedata) {
+      FileDownload(responsedata, templateName);
+    }
   };
   const handleSubmit = async () => {
     // const response = await importExcelLogs({ type: logType, logdata: logData });
