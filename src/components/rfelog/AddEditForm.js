@@ -104,6 +104,8 @@ function AddEditForm(props) {
   const [frmrfechz, setfrmrfechz] = useState([]);
   const [frmrfeempourment, setfrmrfeempourment] = useState([]);
   const [frmrfeempourmentuk, setfrmrfeempourmentuk] = useState([]);
+  const [frmrfeempourmentbenelux, setfrmrfeempourmentbenelux] = useState([]);
+  // const [frmrfeempourmentnordic, setfrmrfeempourmentnordic] = useState([]);
   const [frmrfeempourmentglobal, setfrmrfeempourmentglobal] = useState([]);
   const [frmstatus, setfrmstatus] = useState([]);
   const [tooltip, settooltip] = useState({});
@@ -258,6 +260,8 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
       getToolTip({ type: "RFELogs" }),
       getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
+      getLookupByType({ LookupType: "RFEEmpowermentReasonRequestBenelux" }),
+      // getLookupByType({ LookupType: "RFEEmpowermentReasonRequestNordic" }),
     ]);
     //tempcountryItems = await getAllCountry();
     tempcountryItems = dbvalues[0];
@@ -297,7 +301,15 @@ function AddEditForm(props) {
           item.countryID === userProfile.profileCountry &&
           item.countryID !== IncountryIds.UK &&
           item.countryID !== IncountryIds.IRELANDFOS &&
-          item.countryID !== IncountryIds.SPAINFOS
+          item.countryID !== IncountryIds.SPAINFOS &&
+          item.countryID !== IncountryIds.BENELUX &&
+          item.countryID !== IncountryIds.BENELUXBELGIUM &&
+          item.countryID !== IncountryIds.BENELUXLUXEMBOURG &&
+          item.countryID !== IncountryIds.BENELUXNETHERLANDS
+          // item.countryID !== IncountryIds.NORDIC &&
+          // item.countryID !== IncountryIds.NORDICDENMARK &&
+          // item.countryID !== IncountryIds.NORDICFINALAND &&
+          // item.countryID !== IncountryIds.NORDICSWEDEN
         ) {
           formIntialState.countryCode = item.countryCode;
           formIntialState.CountryId = item.countryID;
@@ -658,7 +670,13 @@ function AddEditForm(props) {
       //condition to set RequestForEmpowermentReason for uk
       if (IncountryFlag === IncountryFlagConst.UK) {
         setfrmrfeempourment([...frmrfeempourmentuk]);
-      } else {
+      } else if (IncountryFlag === IncountryFlagConst.BENELUX) {
+        setfrmrfeempourment([...frmrfeempourmentbenelux]);
+      }
+      // else if (IncountryFlag === IncountryFlagConst.NORDIC) {
+      //   setfrmrfeempourment([...frmrfeempourmentnordic]);
+      // } 
+      else {
         setfrmrfeempourment([...frmrfeempourmentglobal]);
         if (formfield.RequestForEmpowermentReason) {
           const isPresent = frmrfeempourmentglobal.filter(
@@ -1295,7 +1313,9 @@ function AddEditForm(props) {
     ) {
       let isUKcountry = true;
       let isSingaporecountry = true;
-      let isItalycountry = true;
+      // let isItalycountry = true;
+      let isBeneluxcountry = true;
+      // let isNordiccountry = true;
       let isIndonesiacountry = true;
       let isLatamregion = true;
       let isIncountryselected = true;
@@ -1322,11 +1342,31 @@ function AddEditForm(props) {
         } else {
           isSingaporecountry = false;
         }
-        if (item.value === IncountryIds.ITALY) {
-          isItalycountry = isItalycountry ? true : false;
+        // if (item.value === IncountryIds.ITALY) {
+        //   isItalycountry = isItalycountry ? true : false;
+        // } else {
+        //   isItalycountry = false;
+        // }
+        if (
+          item.value === IncountryIds.BENELUX ||
+          item.value === IncountryIds.BENELUXBELGIUM ||
+          item.value === IncountryIds.BENELUXLUXEMBOURG ||
+          item.value === IncountryIds.BENELUXNETHERLANDS
+        ) {
+          isBeneluxcountry = isBeneluxcountry ? true : false;
         } else {
-          isItalycountry = false;
+          isBeneluxcountry = false;
         }
+        // if (
+        //   item.value === IncountryIds.NORDIC ||
+        //   item.value === IncountryIds.NORDICDENMARK ||
+        //   item.value === IncountryIds.NORDICFINALAND ||
+        //   item.value === IncountryIds.NORDICSWEDEN
+        // ) {
+        //   isNordiccountry = isNordiccountry ? true : false;
+        // } else {
+        //   isNordiccountry = false;
+        // }
         if (item.value === IncountryIds.INDONESIA) {
           isIndonesiacountry = isIndonesiacountry ? true : false;
         } else {
@@ -1389,8 +1429,23 @@ function AddEditForm(props) {
             : OrganizationalAlignment.country,
         });
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
-      } else if (
-        isItalycountry &&
+      }
+      // else if (
+      //   isItalycountry &&
+      //   (approverRole.isRegionAdmin ||
+      //     approverRole.isCountryAdmin ||
+      //     approverRole.isNormalUser)
+      // ) {
+      //   setformfield({
+      //     ...formfield,
+      //     OrganizationalAlignment: approverRole.isRegionAdmin
+      //       ? OrganizationalAlignment.region
+      //       : OrganizationalAlignment.country,
+      //   });
+      //   setIncountryFlag(IncountryFlagConst.ITALY);
+      // } 
+      else if (
+        isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
@@ -1401,8 +1456,22 @@ function AddEditForm(props) {
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
         });
-        setIncountryFlag(IncountryFlagConst.ITALY);
+        setIncountryFlag(IncountryFlagConst.BENELUX);
       }
+      // else if (
+      //   isNordiccountry &&
+      //   (approverRole.isRegionAdmin ||
+      //     approverRole.isCountryAdmin ||
+      //     approverRole.isNormalUser)
+      // ) {
+      //   setformfield({
+      //     ...formfield,
+      //     OrganizationalAlignment: approverRole.isRegionAdmin
+      //       ? OrganizationalAlignment.region
+      //       : OrganizationalAlignment.country,
+      //   });
+      //   setIncountryFlag(IncountryFlagConst.NORDIC);
+      // } 
       else if (
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
@@ -1754,7 +1823,9 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
-                  IncountryFlag === IncountryFlagConst.ITALY ||
+                  // IncountryFlag === IncountryFlagConst.ITALY ||
+                  IncountryFlag === IncountryFlagConst.BENELUX ||
+                  // IncountryFlag === IncountryFlagConst.NORDIC ||
                   isorgalignmentdisabled
                 }
               />

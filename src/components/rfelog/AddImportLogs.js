@@ -596,7 +596,9 @@ function AddImportLogs(props) {
   const checkisIncountryLog = (countryList, regionList) => {
     let isUKcountry = true;
     let isSingaporecountry = true;
-    let isItalycountry = true;
+    // let isItalycountry = true;
+    let isBeneluxcountry = true;
+    // let isNordiccountry = true;
     let isIndonesiacountry = true;
     let isLatamregion = true;
     regionList.forEach((item) => {
@@ -621,11 +623,31 @@ function AddImportLogs(props) {
       } else {
         isSingaporecountry = false;
       }
-      if (item === INCOUNTRTY_IDS.ITALY) {
-        isItalycountry = isItalycountry ? true : false;
+      // if (item === INCOUNTRTY_IDS.ITALY) {
+      //   isItalycountry = isItalycountry ? true : false;
+      // } else {
+      //   isItalycountry = false;
+      // }
+      if (
+        item === INCOUNTRTY_IDS.BENELUX ||
+        item === INCOUNTRTY_IDS.BENELUXNETHERLANDS ||
+        item === INCOUNTRTY_IDS.BENELUXBELGIUM ||
+        item === INCOUNTRTY_IDS.BENELUXLUXEMBOURG
+      ) {
+        isBeneluxcountry = isBeneluxcountry ? true : false;
       } else {
-        isItalycountry = false;
+        isBeneluxcountry = false;
       }
+      // if (
+      //   item === INCOUNTRTY_IDS.NORDIC ||
+      //   item === INCOUNTRTY_IDS.NORDICDENMARK ||
+      //   item === INCOUNTRTY_IDS.NORDICFINALAND ||
+      //   item === INCOUNTRTY_IDS.NORDICSWEDEN
+      // ) {
+      //   isNordiccountry = isNordiccountry ? true : false;
+      // } else {
+      //   isNordiccountry = false;
+      // }
       if (item === INCOUNTRTY_IDS.INDONESIA) {
         isIndonesiacountry = isIndonesiacountry ? true : false;
       } else {
@@ -636,7 +658,9 @@ function AddImportLogs(props) {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
       isSingaporecountry: isSingaporecountry,
-      isItalycountry: isItalycountry,
+      // isItalycountry: isItalycountry,
+      isBeneluxcountry: isBeneluxcountry,
+      // isNordiccountry: isNordiccountry,
       isIndonesiacountry: isIndonesiacountry,
     };
   };
@@ -719,10 +743,10 @@ function AddImportLogs(props) {
                     lookupObj
                       ? masterdata[lookupObj][val]
                       : isdate
-                      ? val //moment(val).format("YYYY-MM-DD")
-                      : val
-                      ? val.toString()
-                      : val
+                        ? val //moment(val).format("YYYY-MM-DD")
+                        : val
+                          ? val.toString()
+                          : val
                   );
                 });
                 value = tempval.join(",");
@@ -733,12 +757,12 @@ function AddImportLogs(props) {
                   value = lookupObj
                     ? masterdata[lookupObj][value]
                     : isdate
-                    ? value
-                      ? value //moment(value).format("YYYY-MM-DD")
-                      : null
-                    : value
-                    ? value.toString()
-                    : value;
+                      ? value
+                        ? value //moment(value).format("YYYY-MM-DD")
+                        : null
+                      : value
+                        ? value.toString()
+                        : value;
                 }
               }
 
@@ -773,17 +797,17 @@ function AddImportLogs(props) {
                   value !== rfelog_status.Pending &&
                   !userProfile.isSuperAdmin &&
                   templogdata["UnderwriterGrantingEmpowerment"] !==
-                    userProfile.emailAddress) ||
+                  userProfile.emailAddress) ||
                 (isvalidval &&
                   (fieldname === "ReceptionInformationDate" ||
                     fieldname === "UnderwriterGrantingEmpowermentComments" ||
                     fieldname === "ResponseDate") &&
                   templogdata["RequestForEmpowermentStatus"] ===
-                    rfelog_status.Pending) ||
+                  rfelog_status.Pending) ||
                 (isvalidval &&
                   fieldname === "ConditionApplicableTo" &&
                   templogdata["RequestForEmpowermentStatus"] !==
-                    rfelog_status.Empowerment_granted_with_conditions)
+                  rfelog_status.Empowerment_granted_with_conditions)
               ) {
                 //added below condition to check & validate values
                 isvalid = false;
@@ -818,7 +842,9 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
-                  isItalycountry,
+                  // isItalycountry,
+                  isBeneluxcountry,
+                  // isNordiccountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 //added below codition to check if selected type is country but country is not set
@@ -851,14 +877,30 @@ function AddImportLogs(props) {
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
+                // if (
+                //   IncountryFlag === IncountryFlagCost.ITALY &&
+                //   !isItalycountry
+                // ) {
+                //   isvalid = false;
+                //   reportdata["isvalid"] = false;
+                //   reportdata["invalidfields"].push(excelfieldname);
+                // }
                 if (
-                  IncountryFlag === IncountryFlagCost.ITALY &&
-                  !isItalycountry
+                  IncountryFlag === IncountryFlagCost.BENELUX &&
+                  !isBeneluxcountry
                 ) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
+                // if (
+                //   IncountryFlag === IncountryFlagCost.NORDIC &&
+                //   !isNordiccountry
+                // ) {
+                //   isvalid = false;
+                //   reportdata["isvalid"] = false;
+                //   reportdata["invalidfields"].push(excelfieldname);
+                // }
               }
               if (
                 isvalidval &&
@@ -871,7 +913,9 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
-                  isItalycountry,
+                  // isItalycountry,
+                  isBeneluxcountry,
+                  // isNordiccountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 const approverRole = await getApproverRole(value);
@@ -880,7 +924,9 @@ function AddImportLogs(props) {
                   (isLatamregion ||
                     isUKcountry ||
                     isSingaporecountry ||
-                    isItalycountry ||
+                    // isItalycountry ||
+                    isBeneluxcountry ||
+                    // isNordiccountry ||
                     isIndonesiacountry) &&
                   !approverRole.isGlobalAdmin &&
                   !approverRole.isSuperAdmin
@@ -1295,11 +1341,11 @@ function AddImportLogs(props) {
                         <td>
                           {item["invalidEmail"]
                             ? item["invalidEmailList"].map((item) => (
-                                <>
-                                  <span>{item}</span>
-                                  <br></br>
-                                </>
-                              ))
+                              <>
+                                <span>{item}</span>
+                                <br></br>
+                              </>
+                            ))
                             : "-"}
                         </td>
                         <td>
