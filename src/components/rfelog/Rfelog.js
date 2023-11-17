@@ -894,11 +894,16 @@ function Rfelog({ ...props }) {
               (userProfile.scopeCountryList && ispresent)
             )
               incountryopts.push(item);
-          } else if (
-            userProfile.isCountryAdmin &&
-            item.id.indexOf(userProfile.countryId) !== -1
-          ) {
-            incountryopts.push(item);
+          } else if (userProfile.isCountryAdmin) {
+            let ispresent = false;
+            item.id.split(",").forEach((countryid) => {
+              if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
+                ispresent = true;
+              }
+            });
+            if (userProfile.scopeCountryList && ispresent) {
+              incountryopts.push(item);
+            }
           }
         });
         incountryopts.sort(dynamicSort("label"));
