@@ -104,8 +104,6 @@ function AddEditForm(props) {
   const [frmrfechz, setfrmrfechz] = useState([]);
   const [frmrfeempourment, setfrmrfeempourment] = useState([]);
   const [frmrfeempourmentuk, setfrmrfeempourmentuk] = useState([]);
-  const [frmrfeempourmentbenelux, setfrmrfeempourmentbenelux] = useState([]);
-  // const [frmrfeempourmentnordic, setfrmrfeempourmentnordic] = useState([]);
   const [frmrfeempourmentglobal, setfrmrfeempourmentglobal] = useState([]);
   const [frmstatus, setfrmstatus] = useState([]);
   const [tooltip, settooltip] = useState({});
@@ -260,8 +258,6 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
       getToolTip({ type: "RFELogs" }),
       getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
-      getLookupByType({ LookupType: "RFEEmpowermentReasonRequestBenelux" }),
-      // getLookupByType({ LookupType: "RFEEmpowermentReasonRequestNordic" }),
     ]);
     //tempcountryItems = await getAllCountry();
     tempcountryItems = dbvalues[0];
@@ -670,13 +666,7 @@ function AddEditForm(props) {
       //condition to set RequestForEmpowermentReason for uk
       if (IncountryFlag === IncountryFlagConst.UK) {
         setfrmrfeempourment([...frmrfeempourmentuk]);
-      } else if (IncountryFlag === IncountryFlagConst.BENELUX) {
-        setfrmrfeempourment([...frmrfeempourmentbenelux]);
-      }
-      // else if (IncountryFlag === IncountryFlagConst.NORDIC) {
-      //   setfrmrfeempourment([...frmrfeempourmentnordic]);
-      // } 
-      else {
+      } else {
         setfrmrfeempourment([...frmrfeempourmentglobal]);
         if (formfield.RequestForEmpowermentReason) {
           const isPresent = frmrfeempourmentglobal.filter(
