@@ -305,7 +305,7 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     tooltipmsg: "tooltip.CHZ",
     colspan: 3,
-    startbgcls: "frm-container-bggray",
+    startbgcls: "frm-field-bggray",
   },
   RequestForEmpowermentCC: {
     componenttype: "FrmInput",
