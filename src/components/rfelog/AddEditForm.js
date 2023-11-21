@@ -257,7 +257,7 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
       getToolTip({ type: "RFELogs" }),
-      getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
+      //getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
     ]);
     //tempcountryItems = await getAllCountry();
     tempcountryItems = dbvalues[0];
@@ -407,7 +407,7 @@ function AddEditForm(props) {
     let tempstatus = dbvalues[7];
     let temNewRenewal = dbvalues[8];
     let tempToolTips = dbvalues[9];
-    let temprfeempourmentuk = dbvalues[10];
+    //let temprfeempourmentuk = dbvalues[10];
     let tooltipObj = {};
     tempToolTips.forEach((item) => {
       tooltipObj[item.toolTipField] = item.toolTipText;
@@ -482,7 +482,7 @@ function AddEditForm(props) {
     tempopts.sort(dynamicSort("label"));
     temprfeempourment = [...tempopts];
 
-    tempopts = [];
+    /*tempopts = [];
     temprfeempourmentuk.forEach((item) => {
       if (isEditMode || isReadMode) {
         if (
@@ -502,7 +502,7 @@ function AddEditForm(props) {
       }
     });
     tempopts.sort(dynamicSort("label"));
-    temprfeempourmentuk = [...tempopts];
+    temprfeempourmentuk = [...tempopts];*/
 
     tempopts = [];
     temNewRenewal.forEach((item) => {
@@ -592,7 +592,7 @@ function AddEditForm(props) {
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
-    setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
+    //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
 
     setinCountryOptsLATAM((prevstate) => ({
@@ -647,37 +647,66 @@ function AddEditForm(props) {
   };
   useEffect(() => {
     if (IncountryFlag !== undefined) {
-      if (IncountryFlag === IncountryFlagConst.LATAM) {
-        if (frmBranchOpts.length > 1) {
-          setmandatoryFields([
-            ...initialMandotoryFields,
-            ...LATAMMandatoryFields,
-            "Branch",
-          ]);
+      const fnonIncountryFlagChange = async () => {
+        if (IncountryFlag === IncountryFlagConst.LATAM) {
+          if (frmBranchOpts.length > 1) {
+            setmandatoryFields([
+              ...initialMandotoryFields,
+              ...LATAMMandatoryFields,
+              "Branch",
+            ]);
+          } else {
+            setmandatoryFields([
+              ...initialMandotoryFields,
+              ...LATAMMandatoryFields,
+            ]);
+          }
         } else {
-          setmandatoryFields([
-            ...initialMandotoryFields,
-            ...LATAMMandatoryFields,
-          ]);
+          setmandatoryFields([...initialMandotoryFields]);
         }
-      } else {
-        setmandatoryFields([...initialMandotoryFields]);
-      }
-      //condition to set RequestForEmpowermentReason for uk
-      if (IncountryFlag === IncountryFlagConst.UK) {
-        setfrmrfeempourment([...frmrfeempourmentuk]);
-      } else {
-        setfrmrfeempourment([...frmrfeempourmentglobal]);
-        if (formfield.RequestForEmpowermentReason) {
-          const isPresent = frmrfeempourmentglobal.filter(
-            (item) => item.value === formfield.RequestForEmpowermentReason
-          );
-          if (!isPresent?.length) {
-            setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+        //condition to set RequestForEmpowermentReason for uk
+        if (IncountryFlag) {
+          debugger;
+          let temprfeempourment = await getLookupByType({
+            LookupType: "RFEEmpowermentReasonRequest",
+            IncountryFlag: IncountryFlag,
+          });
+          let tempopts = [];
+          temprfeempourment.forEach((item) => {
+            if (isEditMode || isReadMode) {
+              if (
+                item.isActive ||
+                item.lookupID === formIntialState.RequestForEmpowermentReason
+              ) {
+                tempopts.push({
+                  label: item.lookUpValue,
+                  value: item.lookupID,
+                });
+              }
+            } else if (item.isActive) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          });
+          tempopts.sort(dynamicSort("label"));
+          temprfeempourment = [...tempopts];
+          setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
+        } else {
+          setfrmrfeempourment([...frmrfeempourmentglobal]);
+          if (formfield.RequestForEmpowermentReason) {
+            const isPresent = frmrfeempourmentglobal.filter(
+              (item) => item.value === formfield.RequestForEmpowermentReason
+            );
+            if (!isPresent?.length) {
+              setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+            }
           }
         }
-      }
-      fnloadcountryview();
+        fnloadcountryview();
+      };
+      fnonIncountryFlagChange();
     }
   }, [IncountryFlag]);
 
@@ -1433,7 +1462,7 @@ function AddEditForm(props) {
       //       : OrganizationalAlignment.country,
       //   });
       //   setIncountryFlag(IncountryFlagConst.ITALY);
-      // } 
+      // }
       else if (
         isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
@@ -1461,7 +1490,7 @@ function AddEditForm(props) {
       //       : OrganizationalAlignment.country,
       //   });
       //   setIncountryFlag(IncountryFlagConst.NORDIC);
-      // } 
+      // }
       else if (
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
@@ -1558,7 +1587,7 @@ function AddEditForm(props) {
             !userroles.isapprover &&
             !userroles.issuperadmin &&
             formfield.RequestForEmpowermentStatus ===
-            rfelog_status.More_information_needed
+              rfelog_status.More_information_needed
           ) {
             formfield.RequestForEmpowermentStatus = rfelog_status.Pending;
           }
