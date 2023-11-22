@@ -49,6 +49,7 @@ import MoreActions from "../common-components/moreactions/MoreActions";
 import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
+import { useHistory } from "react-router-dom";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -1207,8 +1208,10 @@ function Rfelog({ ...props }) {
   const [isshowAddPopup, setshowAddPopup] = useState(false);
   const [isshowImportLogsPopup, setshowImportLogsPopup] = useState(false);
   const [isDataImported, setisDataImported] = useState(false);
+const history = useHistory()
   const showAddPopup = () => {
-    setshowAddPopup(true);
+    history.push("/rfelogs/create-rfelog")
+    // setshowAddPopup(true);
   };
   const hideAddPopup = () => {
     setshowAddPopup(false);
@@ -1319,56 +1322,59 @@ function Rfelog({ ...props }) {
       itemid = e.target.getAttribute("rowid");
       mode = e.target.getAttribute("mode");
     }
-    let response = await getById({
-      rfeLogId: itemid,
-    });
-    if (response.FieldValues) {
-      response = response.FieldValues;
-      response.UnderwriterName = response.UnderwriterAD
-        ? response.UnderwriterAD.userName
-        : "";
+    localStorage.setItem("id", itemid);
+    localStorage.setItem("status", mode);
+    showAddPopup();
+    // let response = await getById({
+      //   rfeLogId: itemid,
+    // });
+    // if (response.FieldValues) {
+      //   response = response.FieldValues;
+      //   response.UnderwriterName = response.UnderwriterAD
+        //     ? response.UnderwriterAD.userName
+        //     : "";
 
-      if (
-        response.RequestForEmpowermentCCAD &&
-        response.RequestForEmpowermentCCAD.length
-      ) {
-        let users = "";
-        users = response.RequestForEmpowermentCCAD.map((item) => item.userName);
-        response.RequestForEmpowermentCCName = users.join(",");
-      }
-      if (
-        response.UnderwriterGrantingEmpowermentAD &&
-        response.UnderwriterGrantingEmpowermentAD.length
-      ) {
-        let users = "";
-        users = response.UnderwriterGrantingEmpowermentAD.map(
-          (item) => item.userName
-        );
-        response.UnderwriterGrantingEmpowermentName = users.join(",");
-      }
-      let countryList = response.CountryList;
-      countryList = countryList.map((country) => ({
-        label: country.countryName,
-        value: country.countryID,
-        regionId: country.regionID,
-      }));
-      response["CountryList"] = [...countryList];
-      if (mode === "edit" && response.IsSubmit) {
-        setisEditMode(true);
-      }
-      if (mode === "view") {
-        setisReadMode(true);
-      }
-      if (queryparam.status) {
-        //uncomment below line if status need to set according to query param
-        //response.requestForEmpowermentStatus = queryparam.status;
-      }
-      setformIntialState({
-        ...response,
-        isdirty: false,
-      });
-      showAddPopup();
-    }
+      //   if (
+        //     response.RequestForEmpowermentCCAD &&
+        //     response.RequestForEmpowermentCCAD.length
+      //   ) {
+        //     let users = "";
+        //     users = response.RequestForEmpowermentCCAD.map((item) => item.userName);
+        //     response.RequestForEmpowermentCCName = users.join(",");
+      //   }
+    //   if (
+        //     response.UnderwriterGrantingEmpowermentAD &&
+        //     response.UnderwriterGrantingEmpowermentAD.length
+      //   ) {
+        //     let users = "";
+        //     users = response.UnderwriterGrantingEmpowermentAD.map(
+          //       (item) => item.userName
+        //     );
+        //     response.UnderwriterGrantingEmpowermentName = users.join(",");
+      //   }
+    //   let countryList = response.CountryList;
+      //   countryList = countryList.map((country) => ({
+        //     label: country.countryName,
+        //     value: country.countryID,
+        //     regionId: country.regionID,
+      //   }));
+      //   response["CountryList"] = [...countryList];
+      //   if (mode === "edit" && response.IsSubmit) {
+        //     setisEditMode(true);
+      //   }
+    //   if (mode === "view") {
+        //     setisReadMode(true);
+      //   }
+    //   if (queryparam.status) {
+        //     //uncomment below line if status need to set according to query param
+        //     //response.requestForEmpowermentStatus = queryparam.status;
+      //   }
+    //   setformIntialState({
+        //     ...response,
+        //     isdirty: false,
+      //   });
+      //   showAddPopup();
+    // }
   };
 
   const putItemHandler = async (item) => {
@@ -1508,12 +1514,12 @@ function Rfelog({ ...props }) {
   const handleCopyItem = (itemid) => {
     setshareitemDetails({
       id: itemid,
-      link: `${window.location.href}?id=${itemid}`,
+      link: `${window.location.href}/create-rfelog?id=${itemid}`,
     });
     setshowCopyLog(true);
   };
   const openShareItem = (itemid, isSubmit) => {
-    const link = `${window.location.href}?id=${itemid}`;
+    const link = `${window.location.href}/create-rfelog?id=${itemid}`;
     setshareitemDetails({
       id: itemid,
       link: link,
@@ -1725,7 +1731,7 @@ function Rfelog({ ...props }) {
   };
   return (
     <>
-      {isshowAddPopup && (
+      {/* {isshowAddPopup && (
         <AddEditForm
           title={isReadMode ? "View RfE Log" : "Add/Edit RfE Log"}
           hideAddPopup={hideAddPopup}
@@ -1741,7 +1747,7 @@ function Rfelog({ ...props }) {
           queryparam={queryparam}
           handleDataVersion={handleDataVersion}
         ></AddEditForm>
-      )}
+      )} */}
       {isshowImportLogsPopup && (
         <AddImportLogs
           title={"Bulk import RFE"}

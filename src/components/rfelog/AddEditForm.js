@@ -1599,6 +1599,8 @@ function AddEditForm(props) {
     }
     if (isconfirmed) {
       if (queryparam.id) {
+        localStorage.removeItem("id");
+        localStorage.removeItem("status");
         window.location = "/rfelogs";
       } else {
         hideAddPopup();
