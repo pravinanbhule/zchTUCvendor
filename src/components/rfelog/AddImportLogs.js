@@ -1251,6 +1251,8 @@ function AddImportLogs(props) {
       setmandatoryFields([...commonMandatoryFields, ...LATAMMandatoryFields]);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
       setimportfieldscount(21);
+    } else if (IncountryFlag === IncountryFlagCost.ITALY) {
+      setimportfieldscount(21);
     } else {
       setimportfieldscount(20);
       setmandatoryFields([...commonMandatoryFields]);
