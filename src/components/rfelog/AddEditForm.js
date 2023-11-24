@@ -666,7 +666,6 @@ function AddEditForm(props) {
         }
         //condition to set RequestForEmpowermentReason for uk
         if (IncountryFlag) {
-          debugger;
           let temprfeempourment = await getLookupByType({
             LookupType: "RFEEmpowermentReasonRequest",
             IncountryFlag: IncountryFlag,
