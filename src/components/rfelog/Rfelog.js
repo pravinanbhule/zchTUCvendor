@@ -105,9 +105,7 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.UK,
     INCOUNTRY_FLAG_OPTS.LATAM,
     INCOUNTRY_FLAG_OPTS.SINGAPORE,
-    INCOUNTRY_FLAG_OPTS.ITALY,
     INCOUNTRY_FLAG_OPTS.BENELUX,
-    INCOUNTRY_FLAG_OPTS.NORDIC,
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);
   useSetNavMenu({ currentMenu: "Rfelog", isSubmenu: false }, props.menuClick);
@@ -879,38 +877,46 @@ function Rfelog({ ...props }) {
       getallDraftItems();
       let incountryopts = [];
       if (userProfile.isAdminGroup) {
-        InCountryViewOpts.forEach((item) => {
-          if (userProfile.isSuperAdmin || userProfile.isGlobalAdmin) {
-            incountryopts.push(item);
-          } else if (userProfile.isRegionAdmin) {
-            let ispresent = false;
-            item.id.split(",").forEach((countryid) => {
-              if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
-                ispresent = true;
-              }
-            });
-            if (
-              userProfile.regionId.indexOf(item.id) !== -1 ||
-              (userProfile.scopeCountryList && ispresent)
-            )
+        const UserRole = userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole
+        if(userProfile.isGlobalAdmin || UserRole === "GlobalUW"){
+          setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            views: [{ label: "All", value: "gn" }],
+          }));
+        } else {
+          InCountryViewOpts.forEach((item) => {
+            if (userProfile.isSuperAdmin || userProfile.isGlobalAdmin) {
               incountryopts.push(item);
-          } else if (userProfile.isCountryAdmin) {
-            let ispresent = false;
-            item.id.split(",").forEach((countryid) => {
-              if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
-                ispresent = true;
+            } else if (userProfile.isRegionAdmin) {
+              let ispresent = false;
+              item.id.split(",").forEach((countryid) => {
+                if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
+                  ispresent = true;
+                }
+              });
+              if (
+                userProfile.regionId.indexOf(item.id) !== -1 ||
+                (userProfile.scopeCountryList && ispresent)
+              )
+                incountryopts.push(item);
+            } else if (userProfile.isCountryAdmin) {
+              let ispresent = false;
+              item.id.split(",").forEach((countryid) => {
+                if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
+                  ispresent = true;
+                }
+              });
+              if (userProfile.scopeCountryList && ispresent) {
+                incountryopts.push(item);
               }
-            });
-            if (userProfile.scopeCountryList && ispresent) {
-              incountryopts.push(item);
             }
-          }
-        });
-        incountryopts.sort(dynamicSort("label"));
-        setcommonfilterOpts((prevstate) => ({
-          ...prevstate,
-          views: [{ label: "All", value: "gn" }, ...incountryopts],
-        }));
+          });
+          incountryopts.sort(dynamicSort("label"));
+            setcommonfilterOpts((prevstate) => ({
+              ...prevstate,
+              views: [{ label: "All", value: "gn" }, ...incountryopts],
+            }));
+        }
       }
       getallDeletedItems();
       let tempStatus = [{ label: "All", value: "all" }];
