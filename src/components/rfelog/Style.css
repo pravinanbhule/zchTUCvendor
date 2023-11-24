@@ -38,3 +38,18 @@
   font-weight: bold;
   border-bottom: 1px solid #add8ef;
 }
+.policyterms{width: 95%;}
+table.policyterms{
+border-collapse: collapse;
+margin-bottom: 10px;
+margin-left: 5px;
+border: 1px solid #add8ef;
+}
+table.policyterms th{
+  font-weight: bold;
+  padding: 7px 10px;
+}
+table.policyterms  td{
+  padding: 5px 10px;
+  vertical-align: top;
+}
