@@ -301,11 +301,11 @@ function AddEditForm(props) {
           item.countryID !== IncountryIds.BENELUX &&
           item.countryID !== IncountryIds.BENELUXBELGIUM &&
           item.countryID !== IncountryIds.BENELUXLUXEMBOURG &&
-          item.countryID !== IncountryIds.BENELUXNETHERLANDS
-          // item.countryID !== IncountryIds.NORDIC &&
-          // item.countryID !== IncountryIds.NORDICDENMARK &&
-          // item.countryID !== IncountryIds.NORDICFINALAND &&
-          // item.countryID !== IncountryIds.NORDICSWEDEN
+          item.countryID !== IncountryIds.BENELUXNETHERLANDS &&
+          item.countryID !== IncountryIds.NORDIC &&
+          item.countryID !== IncountryIds.NORDICDENMARK &&
+          item.countryID !== IncountryIds.NORDICFINALAND &&
+          item.countryID !== IncountryIds.NORDICSWEDEN
         ) {
           formIntialState.countryCode = item.countryCode;
           formIntialState.CountryId = item.countryID;
@@ -1331,9 +1331,9 @@ function AddEditForm(props) {
     ) {
       let isUKcountry = true;
       let isSingaporecountry = true;
-      // let isItalycountry = true;
+      let isItalycountry = true;
       let isBeneluxcountry = true;
-      // let isNordiccountry = true;
+      let isNordiccountry = true;
       let isIndonesiacountry = true;
       let isLatamregion = true;
       let isIncountryselected = true;
@@ -1360,11 +1360,11 @@ function AddEditForm(props) {
         } else {
           isSingaporecountry = false;
         }
-        // if (item.value === IncountryIds.ITALY) {
-        //   isItalycountry = isItalycountry ? true : false;
-        // } else {
-        //   isItalycountry = false;
-        // }
+        if (item.value === IncountryIds.ITALY) {
+          isItalycountry = isItalycountry ? true : false;
+        } else {
+          isItalycountry = false;
+        }
         if (
           item.value === IncountryIds.BENELUX ||
           item.value === IncountryIds.BENELUXBELGIUM ||
@@ -1375,16 +1375,16 @@ function AddEditForm(props) {
         } else {
           isBeneluxcountry = false;
         }
-        // if (
-        //   item.value === IncountryIds.NORDIC ||
-        //   item.value === IncountryIds.NORDICDENMARK ||
-        //   item.value === IncountryIds.NORDICFINALAND ||
-        //   item.value === IncountryIds.NORDICSWEDEN
-        // ) {
-        //   isNordiccountry = isNordiccountry ? true : false;
-        // } else {
-        //   isNordiccountry = false;
-        // }
+        if (
+          item.value === IncountryIds.NORDIC ||
+          item.value === IncountryIds.NORDICDENMARK ||
+          item.value === IncountryIds.NORDICFINALAND ||
+          item.value === IncountryIds.NORDICSWEDEN
+        ) {
+          isNordiccountry = isNordiccountry ? true : false;
+        } else {
+          isNordiccountry = false;
+        }
         if (item.value === IncountryIds.INDONESIA) {
           isIndonesiacountry = isIndonesiacountry ? true : false;
         } else {
@@ -1448,20 +1448,20 @@ function AddEditForm(props) {
         });
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       }
-      // else if (
-      //   isItalycountry &&
-      //   (approverRole.isRegionAdmin ||
-      //     approverRole.isCountryAdmin ||
-      //     approverRole.isNormalUser)
-      // ) {
-      //   setformfield({
-      //     ...formfield,
-      //     OrganizationalAlignment: approverRole.isRegionAdmin
-      //       ? OrganizationalAlignment.region
-      //       : OrganizationalAlignment.country,
-      //   });
-      //   setIncountryFlag(IncountryFlagConst.ITALY);
-      // }
+      else if (
+        isItalycountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.ITALY);
+      } 
       else if (
         isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
@@ -1476,20 +1476,20 @@ function AddEditForm(props) {
         });
         setIncountryFlag(IncountryFlagConst.BENELUX);
       }
-      // else if (
-      //   isNordiccountry &&
-      //   (approverRole.isRegionAdmin ||
-      //     approverRole.isCountryAdmin ||
-      //     approverRole.isNormalUser)
-      // ) {
-      //   setformfield({
-      //     ...formfield,
-      //     OrganizationalAlignment: approverRole.isRegionAdmin
-      //       ? OrganizationalAlignment.region
-      //       : OrganizationalAlignment.country,
-      //   });
-      //   setIncountryFlag(IncountryFlagConst.NORDIC);
-      // }
+      else if (
+        isNordiccountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.NORDIC);
+      }
       else if (
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
@@ -1841,9 +1841,9 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
-                  // IncountryFlag === IncountryFlagConst.ITALY ||
+                  IncountryFlag === IncountryFlagConst.ITALY ||
                   IncountryFlag === IncountryFlagConst.BENELUX ||
-                  // IncountryFlag === IncountryFlagConst.NORDIC ||
+                  IncountryFlag === IncountryFlagConst.NORDIC ||
                   isorgalignmentdisabled
                 }
               />
