@@ -301,7 +301,11 @@ function AddEditForm(props) {
           item.countryID !== IncountryIds.BENELUX &&
           item.countryID !== IncountryIds.BENELUXBELGIUM &&
           item.countryID !== IncountryIds.BENELUXLUXEMBOURG &&
-          item.countryID !== IncountryIds.BENELUXNETHERLANDS
+          item.countryID !== IncountryIds.BENELUXNETHERLANDS &&
+          item.countryID !== IncountryIds.NORDIC &&
+          item.countryID !== IncountryIds.NORDICDENMARK &&
+          item.countryID !== IncountryIds.NORDICFINALAND &&
+          item.countryID !== IncountryIds.NORDICSWEDEN
         ) {
           formIntialState.countryCode = item.countryCode;
           formIntialState.CountryId = item.countryID;
@@ -478,6 +482,28 @@ function AddEditForm(props) {
     tempopts.sort(dynamicSort("label"));
     temprfeempourment = [...tempopts];
 
+    /*tempopts = [];
+    temprfeempourmentuk.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (
+          item.isActive ||
+          item.lookupID === formIntialState.RequestForEmpowermentReason
+        ) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    tempopts.sort(dynamicSort("label"));
+    temprfeempourmentuk = [...tempopts];*/
+
     tempopts = [];
     temNewRenewal.forEach((item) => {
       if (isEditMode || isReadMode) {
@@ -640,6 +666,7 @@ function AddEditForm(props) {
         }
         //condition to set RequestForEmpowermentReason for uk
         if (IncountryFlag) {
+          debugger;
           let temprfeempourment = await getLookupByType({
             LookupType: "RFEEmpowermentReasonRequest",
             IncountryFlag: IncountryFlag,
@@ -1305,7 +1332,10 @@ function AddEditForm(props) {
     ) {
       let isUKcountry = true;
       let isSingaporecountry = true;
+      let isItalycountry = true;
       let isBeneluxcountry = true;
+      let isNordiccountry = true;
+      let isAustraliacountry = true;
       let isIndonesiacountry = true;
       let isLatamregion = true;
       let isIncountryselected = true;
@@ -1332,6 +1362,16 @@ function AddEditForm(props) {
         } else {
           isSingaporecountry = false;
         }
+        if (item.value === IncountryIds.ITALY) {
+          isItalycountry = isItalycountry ? true : false;
+        } else {
+          isItalycountry = false;
+        }
+        if (item.value === IncountryIds.AUSTRALIA) {
+          isAustraliacountry = isAustraliacountry ? true : false;
+        } else {
+          isAustraliacountry = false;
+        }
         if (
           item.value === IncountryIds.BENELUX ||
           item.value === IncountryIds.BENELUXBELGIUM ||
@@ -1341,6 +1381,16 @@ function AddEditForm(props) {
           isBeneluxcountry = isBeneluxcountry ? true : false;
         } else {
           isBeneluxcountry = false;
+        }
+        if (
+          item.value === IncountryIds.NORDIC ||
+          item.value === IncountryIds.NORDICDENMARK ||
+          item.value === IncountryIds.NORDICFINALAND ||
+          item.value === IncountryIds.NORDICSWEDEN
+        ) {
+          isNordiccountry = isNordiccountry ? true : false;
+        } else {
+          isNordiccountry = false;
         }
         if (item.value === IncountryIds.INDONESIA) {
           isIndonesiacountry = isIndonesiacountry ? true : false;
@@ -1406,6 +1456,20 @@ function AddEditForm(props) {
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       }
       else if (
+        isItalycountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.ITALY);
+      } 
+      else if (
         isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
@@ -1418,6 +1482,34 @@ function AddEditForm(props) {
             : OrganizationalAlignment.country,
         });
         setIncountryFlag(IncountryFlagConst.BENELUX);
+      }
+      else if (
+        isNordiccountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.NORDIC);
+      }
+      else if (
+        isAustraliacountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.AUSTRALIA);
       }
       else if (
         isIndonesiacountry &&
@@ -1770,7 +1862,10 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
+                  IncountryFlag === IncountryFlagConst.ITALY ||
+                  IncountryFlag === IncountryFlagConst.AUSTRALIA ||
                   IncountryFlag === IncountryFlagConst.BENELUX ||
+                  IncountryFlag === IncountryFlagConst.NORDIC ||
                   isorgalignmentdisabled
                 }
               />
@@ -1806,60 +1901,35 @@ function AddEditForm(props) {
                 isToolTip={obj.tooltipmsg ? true : false}
                 tooltipmsg={eval(obj.tooltipmsg)}
               />
-
-              {obj.name === "RFELogDetails" && policyTermIds.length ? (
-                <div className="row ">
-                  <div className="col-md-12" style={{ padding: "10px" }}>
-                    <table className="policyterms table-bordered">
-                      <thead>
-                        <th width="25%">Account Name</th>
-                        <th width="25%">Policy Term Id</th>
-                        <th width="17%">Product Name</th>
-                        <th width="17%">Sub-Product Name</th>
-                        <th>DUNS number</th>
-                      </thead>
-                      {policyTermIds.map((item) => (
-                        <tr key={item.policy_term_id}>
-                          <td>{item.customer_name}</td>
-                          <td>
-                            <a
-                              href={`${policyURL}${item.policy_term_id}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {item.policy_term_id}
-                            </a>
-                          </td>
-                          <td>
-                            {item.product_name ? (
-                              <span>{item.product_name} </span>
-                            ) : (
-                              ""
-                            )}
-                          </td>
-                          <td>
-                            {item.sub_product_name ? (
-                              <span>{item.sub_product_name}</span>
-                            ) : (
-                              ""
-                            )}
-                          </td>
-                          <td>
-                            {item.duns_number ? (
-                              <span>{item.duns_number}</span>
-                            ) : (
-                              ""
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </table>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
             </div>
+            {obj.name === "RFELogDetails" && policyTermIds.length ? (
+              <div className="row ">
+                <div className="col-md-12" style={{ padding: "10px" }}>
+                  <ul>
+                    {policyTermIds.map((item) => (
+                      <li key={item.policy_term_id}>
+                        {item.customer_name} - Policy Term Id:
+                        <a
+                          style={{ padding: "0 5px" }}
+                          href={`${policyURL}${item.policy_term_id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {item.policy_term_id}
+                        </a>
+                        {item.duns_number ? (
+                          <span>(DUNS number - {item.duns_number})</span>
+                        ) : (
+                          ""
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </>
         );
         return obj.conditionaldisplay

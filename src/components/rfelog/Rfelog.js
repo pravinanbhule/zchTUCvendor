@@ -105,7 +105,10 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.UK,
     INCOUNTRY_FLAG_OPTS.LATAM,
     INCOUNTRY_FLAG_OPTS.SINGAPORE,
+    INCOUNTRY_FLAG_OPTS.ITALY,
     INCOUNTRY_FLAG_OPTS.BENELUX,
+    INCOUNTRY_FLAG_OPTS.NORDIC,
+    INCOUNTRY_FLAG_OPTS.AUSTRALIA
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);
   useSetNavMenu({ currentMenu: "Rfelog", isSubmenu: false }, props.menuClick);

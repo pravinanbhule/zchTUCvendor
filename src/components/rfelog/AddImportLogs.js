@@ -596,7 +596,10 @@ function AddImportLogs(props) {
   const checkisIncountryLog = (countryList, regionList) => {
     let isUKcountry = true;
     let isSingaporecountry = true;
+    let isAustraliacountry = true;
+    let isItalycountry = true;
     let isBeneluxcountry = true;
+    let isNordiccountry = true;
     let isIndonesiacountry = true;
     let isLatamregion = true;
     regionList.forEach((item) => {
@@ -621,6 +624,16 @@ function AddImportLogs(props) {
       } else {
         isSingaporecountry = false;
       }
+      if (item === INCOUNTRTY_IDS.AUSTRALIA) {
+        isAustraliacountry = isAustraliacountry ? true : false;
+      } else {
+        isAustraliacountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.ITALY) {
+        isItalycountry = isItalycountry ? true : false;
+      } else {
+        isItalycountry = false;
+      }
       if (
         item === INCOUNTRTY_IDS.BENELUX ||
         item === INCOUNTRTY_IDS.BENELUXNETHERLANDS ||
@@ -630,6 +643,16 @@ function AddImportLogs(props) {
         isBeneluxcountry = isBeneluxcountry ? true : false;
       } else {
         isBeneluxcountry = false;
+      }
+      if (
+        item === INCOUNTRTY_IDS.NORDIC ||
+        item === INCOUNTRTY_IDS.NORDICDENMARK ||
+        item === INCOUNTRTY_IDS.NORDICFINALAND ||
+        item === INCOUNTRTY_IDS.NORDICSWEDEN
+      ) {
+        isNordiccountry = isNordiccountry ? true : false;
+      } else {
+        isNordiccountry = false;
       }
       if (item === INCOUNTRTY_IDS.INDONESIA) {
         isIndonesiacountry = isIndonesiacountry ? true : false;
@@ -641,7 +664,10 @@ function AddImportLogs(props) {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
       isSingaporecountry: isSingaporecountry,
+      isAustraliacountry: isAustraliacountry,
+      isItalycountry: isItalycountry,
       isBeneluxcountry: isBeneluxcountry,
+      isNordiccountry: isNordiccountry,
       isIndonesiacountry: isIndonesiacountry,
     };
   };
@@ -823,7 +849,10 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isAustraliacountry,
+                  isItalycountry,
                   isBeneluxcountry,
+                  isNordiccountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 //added below codition to check if selected type is country but country is not set
@@ -857,8 +886,32 @@ function AddImportLogs(props) {
                   reportdata["invalidfields"].push(excelfieldname);
                 }
                 if (
+                  IncountryFlag === IncountryFlagCost.AUSTRALIA &&
+                  !isAustraliacountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.ITALY &&
+                  !isItalycountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
                   IncountryFlag === IncountryFlagCost.BENELUX &&
                   !isBeneluxcountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.NORDIC &&
+                  !isNordiccountry
                 ) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
@@ -876,7 +929,10 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isAustraliacountry,
+                  isItalycountry,
                   isBeneluxcountry,
+                  isNordiccountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 const approverRole = await getApproverRole(value);
@@ -885,7 +941,10 @@ function AddImportLogs(props) {
                   (isLatamregion ||
                     isUKcountry ||
                     isSingaporecountry ||
+                    isAustraliacountry ||
+                    isItalycountry ||
                     isBeneluxcountry ||
+                    isNordiccountry ||
                     isIndonesiacountry) &&
                   !approverRole.isGlobalAdmin &&
                   !approverRole.isSuperAdmin
@@ -1209,6 +1268,8 @@ function AddImportLogs(props) {
       setimportfieldscount(29);
       setmandatoryFields([...commonMandatoryFields, ...LATAMMandatoryFields]);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
+      setimportfieldscount(21);
+    } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else {
       setimportfieldscount(20);
