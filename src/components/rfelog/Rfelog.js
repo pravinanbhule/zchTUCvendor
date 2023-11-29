@@ -1765,7 +1765,7 @@ function Rfelog({ ...props }) {
           <div className="container">
             <div className="row">
               <div className="page-title col-md-9">RfE Log</div>
-              {userProfile.isAdminGroup && !isViewHide && (
+              {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
                 <div className="col-md-3" style={{ marginTop: "8px" }}>
                   <FrmSelect
                     title={"Change view"}
