@@ -116,6 +116,7 @@ function Rfelog({ ...props }) {
     value: "",
   };
   const [isLogInitcall, setisLogInitcall] = useState(true);
+  const [isViewHide, setIsViewHide] = useState(false)
   const [commonfilterOpts, setcommonfilterOpts] = useState({
     underwriterFilterOpts: [],
     statusFilterOpts: [],
@@ -879,10 +880,7 @@ function Rfelog({ ...props }) {
       if (userProfile.isAdminGroup) {
         const UserRole = userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole
         if(userProfile.isGlobalAdmin || UserRole === "GlobalUW"){
-          setcommonfilterOpts((prevstate) => ({
-            ...prevstate,
-            views: [{ label: "All", value: "gn" }],
-          }));
+          setIsViewHide(true)
         } else {
           InCountryViewOpts.forEach((item) => {
             if (userProfile.isSuperAdmin || userProfile.isGlobalAdmin) {
@@ -904,6 +902,9 @@ function Rfelog({ ...props }) {
               item.id.split(",").forEach((countryid) => {
                 if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
                   ispresent = true;
+                } 
+                if (userProfile.regionId === countryid){
+                  incountryopts.push(item);
                 }
               });
               if (userProfile.scopeCountryList && ispresent) {
@@ -1764,7 +1765,7 @@ function Rfelog({ ...props }) {
           <div className="container">
             <div className="row">
               <div className="page-title col-md-9">RfE Log</div>
-              {userProfile.isAdminGroup && (
+              {userProfile.isAdminGroup && !isViewHide && (
                 <div className="col-md-3" style={{ marginTop: "8px" }}>
                   <FrmSelect
                     title={"Change view"}
