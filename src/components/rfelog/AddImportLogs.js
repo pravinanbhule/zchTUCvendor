@@ -596,6 +596,11 @@ function AddImportLogs(props) {
   const checkisIncountryLog = (countryList, regionList) => {
     let isUKcountry = true;
     let isSingaporecountry = true;
+    let isChinacountry = true;
+    let isHongKongcountry = true;
+    let isMalaysiacountry = true;
+    let isFrancecountry = true;
+    let isMiddleEastcountry = true;
     let isAustraliacountry = true;
     let isItalycountry = true;
     let isBeneluxcountry = true;
@@ -623,6 +628,31 @@ function AddImportLogs(props) {
         isSingaporecountry = isSingaporecountry ? true : false;
       } else {
         isSingaporecountry = false;
+      }
+      if (item.value === INCOUNTRTY_IDS.CHINA) {
+        isChinacountry = isChinacountry ? true : false;
+      } else {
+        isChinacountry = false;
+      }
+      if (item.value === INCOUNTRTY_IDS.HONGKONG) {
+        isHongKongcountry = isHongKongcountry ? true : false;
+      } else {
+        isHongKongcountry = false;
+      }
+      if (item.value === INCOUNTRTY_IDS.MALAYSIA) {
+        isMalaysiacountry = isMalaysiacountry ? true : false;
+      } else {
+        isMalaysiacountry = false;
+      }
+      if (item.value === INCOUNTRTY_IDS.FRANCE) {
+        isFrancecountry = isFrancecountry ? true : false;
+      } else {
+        isFrancecountry = false;
+      }
+      if (item.value === INCOUNTRTY_IDS.MIDDLEEAST) {
+        isMiddleEastcountry = isMiddleEastcountry ? true : false;
+      } else {
+        isMiddleEastcountry = false;
       }
       if (item === INCOUNTRTY_IDS.AUSTRALIA) {
         isAustraliacountry = isAustraliacountry ? true : false;
@@ -664,6 +694,11 @@ function AddImportLogs(props) {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
       isSingaporecountry: isSingaporecountry,
+      isChinacountry : isChinacountry,
+      isHongKongcountry : isHongKongcountry,
+      isMalaysiacountry : isMalaysiacountry,
+      isFrancecountry : isFrancecountry,
+      isMiddleEastcountry : isMiddleEastcountry,
       isAustraliacountry: isAustraliacountry,
       isItalycountry: isItalycountry,
       isBeneluxcountry: isBeneluxcountry,
@@ -849,6 +884,11 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isChinacountry,
+                  isHongKongcountry,
+                  isMalaysiacountry,
+                  isFrancecountry,
+                  isMiddleEastcountry,
                   isAustraliacountry,
                   isItalycountry,
                   isBeneluxcountry,
@@ -880,6 +920,46 @@ function AddImportLogs(props) {
                 if (
                   IncountryFlag === IncountryFlagCost.SINGAPORE &&
                   !isSingaporecountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.CHINA &&
+                  !isChinacountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.HONGKONG &&
+                  !isHongKongcountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.MALAYSIA &&
+                  !isMalaysiacountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.FRANCE &&
+                  !isFrancecountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.MIDDLEEAST &&
+                  !isMiddleEastcountry
                 ) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
@@ -929,6 +1009,11 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isChinacountry,
+                  isHongKongcountry,
+                  isMalaysiacountry,
+                  isFrancecountry,
+                  isMiddleEastcountry,
                   isAustraliacountry,
                   isItalycountry,
                   isBeneluxcountry,
@@ -941,6 +1026,11 @@ function AddImportLogs(props) {
                   (isLatamregion ||
                     isUKcountry ||
                     isSingaporecountry ||
+                    isChinacountry ||
+                    isHongKongcountry ||
+                    isMalaysiacountry ||
+                    isFrancecountry ||
+                    isMiddleEastcountry ||
                     isAustraliacountry ||
                     isItalycountry ||
                     isBeneluxcountry ||

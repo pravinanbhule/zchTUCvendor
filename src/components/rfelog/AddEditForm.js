@@ -1332,6 +1332,11 @@ function AddEditForm(props) {
     ) {
       let isUKcountry = true;
       let isSingaporecountry = true;
+      let isChinacountry = true;
+      let isHongKongcountry = true;
+      let isMalaysiacountry = true;
+      let isFrancecountry = true;
+      let isMiddleEastcountry = true;
       let isItalycountry = true;
       let isBeneluxcountry = true;
       let isNordiccountry = true;
@@ -1361,6 +1366,31 @@ function AddEditForm(props) {
           isSingaporecountry = isSingaporecountry ? true : false;
         } else {
           isSingaporecountry = false;
+        }
+        if (item.value === IncountryIds.CHINA) {
+          isChinacountry = isChinacountry ? true : false;
+        } else {
+          isChinacountry = false;
+        }
+        if (item.value === IncountryIds.HONGKONG) {
+          isHongKongcountry = isHongKongcountry ? true : false;
+        } else {
+          isHongKongcountry = false;
+        }
+        if (item.value === IncountryIds.MALAYSIA) {
+          isMalaysiacountry = isMalaysiacountry ? true : false;
+        } else {
+          isMalaysiacountry = false;
+        }
+        if (item.value === IncountryIds.FRANCE) {
+          isFrancecountry = isFrancecountry ? true : false;
+        } else {
+          isFrancecountry = false;
+        }
+        if (item.value === IncountryIds.MIDDLEEAST) {
+          isMiddleEastcountry = isMiddleEastcountry ? true : false;
+        } else {
+          isMiddleEastcountry = false;
         }
         if (item.value === IncountryIds.ITALY) {
           isItalycountry = isItalycountry ? true : false;
@@ -1455,6 +1485,76 @@ function AddEditForm(props) {
         });
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       }
+      else if (
+        isChinacountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.CHINA);
+      } 
+      else if (
+        isHongKongcountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.HONGKONG);
+      } 
+      else if (
+        isMalaysiacountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.MALAYSIA);
+      } 
+      else if (
+        isFrancecountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.FRANCE);
+      } 
+      else if (
+        isMiddleEastcountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
+      } 
       else if (
         isItalycountry &&
         (approverRole.isRegionAdmin ||
@@ -1862,6 +1962,11 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
+                  IncountryFlag === IncountryFlagConst.CHINA ||
+                  IncountryFlag === IncountryFlagConst.MALAYSIA ||
+                  IncountryFlag === IncountryFlagConst.FRANCE ||
+                  IncountryFlag === IncountryFlagConst.MIDDLEEAST ||
+                  IncountryFlag === IncountryFlagConst.HONGKONG ||
                   IncountryFlag === IncountryFlagConst.ITALY ||
                   IncountryFlag === IncountryFlagConst.AUSTRALIA ||
                   IncountryFlag === IncountryFlagConst.BENELUX ||
