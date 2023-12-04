@@ -1259,6 +1259,33 @@ function AddImportLogs(props) {
     setexportData([...multiDataSet]);
   };
   const [IncountryFlag, setIncountryFlag] = useState("gn");
+
+  useEffect(async()=>{
+    if (IncountryFlag !== "gn") {
+      let temprfeempourment = await getLookupByType({
+        LookupType: "RFEEmpowermentReasonRequest",
+        IncountryFlag: IncountryFlag
+      });
+      let tempopts = [];
+      let tempObj = {};
+      temprfeempourment.forEach((item) => {
+        if (item.isActive) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+          tempObj[item.lookUpValue] = item.lookupID;
+        }
+      });
+      temprfeempourment = [...tempopts];
+      let temprfeempourmentObj = { ...tempObj };
+      setmasterdata((prevstate) => ({
+        ...prevstate,
+        rfeEmpourmentObj: { ...temprfeempourmentObj },
+      }));
+    }
+  },[IncountryFlag])
+
   const onSelectChange = (name, value) => {
     setIncountryFlag(value);
     handleCancel();
