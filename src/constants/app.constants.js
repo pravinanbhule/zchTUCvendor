@@ -23,7 +23,7 @@ export const INCOUNTRTY_IDS = {
   CHINA : "COU000007",
   HONGKONG : "COU000014",
   FRANCE: "COU000012",
-  MIDDLEEAST: "COU000022"
+  MIDDLEEAST: "COU000022",
 };
 export const BREACH_LOG_STATUS = {
   Pending: "ECA8E493-1750-4546-9BC1-A1E8DA8A1B58",
@@ -82,7 +82,8 @@ export const INCOUNTRY_FLAG = {
   HONGKONG : "HK001",
   MALAYSIA : "MY001",
   FRANCE: "FR001",
-  MIDDLEEAST: "ME001"
+  MIDDLEEAST: "ME001",
+  SPAIN: "ES001"
 };
 export const INCOUNTRY_FLAG_OPTS = {
   Indonesia: {
@@ -149,6 +150,11 @@ export const INCOUNTRY_FLAG_OPTS = {
     label: "Middle East",
     value: INCOUNTRY_FLAG.MIDDLEEAST,
     id: INCOUNTRTY_IDS.MIDDLEEAST,
+  },
+  SPAIN: {
+    label: "Spain",
+    value: INCOUNTRY_FLAG.SPAIN,
+    id: INCOUNTRTY_IDS.SPAIN,
   },
 };
 export const SHAREPOINT_LINKS = {

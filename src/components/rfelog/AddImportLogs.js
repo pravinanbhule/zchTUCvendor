@@ -600,6 +600,7 @@ function AddImportLogs(props) {
     let isHongKongcountry = true;
     let isMalaysiacountry = true;
     let isFrancecountry = true;
+    let isSpaincountry = true;
     let isMiddleEastcountry = true;
     let isAustraliacountry = true;
     let isItalycountry = true;
@@ -629,27 +630,32 @@ function AddImportLogs(props) {
       } else {
         isSingaporecountry = false;
       }
-      if (item.value === INCOUNTRTY_IDS.CHINA) {
+      if (item === INCOUNTRTY_IDS.CHINA) {
         isChinacountry = isChinacountry ? true : false;
       } else {
         isChinacountry = false;
       }
-      if (item.value === INCOUNTRTY_IDS.HONGKONG) {
+      if (item === INCOUNTRTY_IDS.HONGKONG) {
         isHongKongcountry = isHongKongcountry ? true : false;
       } else {
         isHongKongcountry = false;
       }
-      if (item.value === INCOUNTRTY_IDS.MALAYSIA) {
+      if (item === INCOUNTRTY_IDS.MALAYSIA) {
         isMalaysiacountry = isMalaysiacountry ? true : false;
       } else {
         isMalaysiacountry = false;
       }
-      if (item.value === INCOUNTRTY_IDS.FRANCE) {
+      if (item === INCOUNTRTY_IDS.FRANCE) {
         isFrancecountry = isFrancecountry ? true : false;
       } else {
         isFrancecountry = false;
       }
-      if (item.value === INCOUNTRTY_IDS.MIDDLEEAST) {
+      if (item === INCOUNTRTY_IDS.SPAIN) {
+        isSpaincountry = isSpaincountry ? true : false;
+      } else {
+        isSpaincountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.MIDDLEEAST) {
         isMiddleEastcountry = isMiddleEastcountry ? true : false;
       } else {
         isMiddleEastcountry = false;
@@ -698,6 +704,7 @@ function AddImportLogs(props) {
       isHongKongcountry : isHongKongcountry,
       isMalaysiacountry : isMalaysiacountry,
       isFrancecountry : isFrancecountry,
+      isSpaincountry : isSpaincountry,
       isMiddleEastcountry : isMiddleEastcountry,
       isAustraliacountry: isAustraliacountry,
       isItalycountry: isItalycountry,
@@ -879,7 +886,6 @@ function AddImportLogs(props) {
                   });
                 });
                 templogdata["regionId"] = regions.join(",");
-                // debugger;
                 const {
                   isLatamregion,
                   isUKcountry,
@@ -888,6 +894,7 @@ function AddImportLogs(props) {
                   isHongKongcountry,
                   isMalaysiacountry,
                   isFrancecountry,
+                  isSpaincountry,
                   isMiddleEastcountry,
                   isAustraliacountry,
                   isItalycountry,
@@ -958,6 +965,14 @@ function AddImportLogs(props) {
                   reportdata["invalidfields"].push(excelfieldname);
                 }
                 if (
+                  IncountryFlag === IncountryFlagCost.SPAIN &&
+                  !isSpaincountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
                   IncountryFlag === IncountryFlagCost.MIDDLEEAST &&
                   !isMiddleEastcountry
                 ) {
@@ -1013,6 +1028,7 @@ function AddImportLogs(props) {
                   isHongKongcountry,
                   isMalaysiacountry,
                   isFrancecountry,
+                  isSpaincountry,
                   isMiddleEastcountry,
                   isAustraliacountry,
                   isItalycountry,
@@ -1030,6 +1046,7 @@ function AddImportLogs(props) {
                     isHongKongcountry ||
                     isMalaysiacountry ||
                     isFrancecountry ||
+                    isSpaincountry ||
                     isMiddleEastcountry ||
                     isAustraliacountry ||
                     isItalycountry ||

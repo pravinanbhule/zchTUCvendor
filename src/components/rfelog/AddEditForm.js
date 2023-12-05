@@ -1314,6 +1314,7 @@ function AddEditForm(props) {
       let isMalaysiacountry = true;
       let isFrancecountry = true;
       let isMiddleEastcountry = true;
+      let isSpaincountry = true;
       let isItalycountry = true;
       let isBeneluxcountry = true;
       let isNordiccountry = true;
@@ -1368,6 +1369,11 @@ function AddEditForm(props) {
           isMiddleEastcountry = isMiddleEastcountry ? true : false;
         } else {
           isMiddleEastcountry = false;
+        }
+        if (item.value === IncountryIds.SPAIN) {
+          isSpaincountry = isSpaincountry ? true : false;
+        } else {
+          isSpaincountry = false;
         }
         if (item.value === IncountryIds.ITALY) {
           isItalycountry = isItalycountry ? true : false;
@@ -1531,6 +1537,20 @@ function AddEditForm(props) {
             : OrganizationalAlignment.country,
         });
         setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
+      } 
+      else if (
+        isSpaincountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.SPAIN);
       } 
       else if (
         isItalycountry &&
@@ -1943,6 +1963,7 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.MALAYSIA ||
                   IncountryFlag === IncountryFlagConst.FRANCE ||
                   IncountryFlag === IncountryFlagConst.MIDDLEEAST ||
+                  IncountryFlag === IncountryFlagConst.SPAIN ||
                   IncountryFlag === IncountryFlagConst.HONGKONG ||
                   IncountryFlag === IncountryFlagConst.ITALY ||
                   IncountryFlag === IncountryFlagConst.AUSTRALIA ||
