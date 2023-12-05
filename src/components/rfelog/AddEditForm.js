@@ -482,28 +482,6 @@ function AddEditForm(props) {
     tempopts.sort(dynamicSort("label"));
     temprfeempourment = [...tempopts];
 
-    /*tempopts = [];
-    temprfeempourmentuk.forEach((item) => {
-      if (isEditMode || isReadMode) {
-        if (
-          item.isActive ||
-          item.lookupID === formIntialState.RequestForEmpowermentReason
-        ) {
-          tempopts.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
-        }
-      } else if (item.isActive) {
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
-      }
-    });
-    tempopts.sort(dynamicSort("label"));
-    temprfeempourmentuk = [...tempopts];*/
-
     tempopts = [];
     temNewRenewal.forEach((item) => {
       if (isEditMode || isReadMode) {
@@ -666,7 +644,6 @@ function AddEditForm(props) {
         }
         //condition to set RequestForEmpowermentReason for uk
         if (IncountryFlag) {
-          debugger;
           let temprfeempourment = await getLookupByType({
             LookupType: "RFEEmpowermentReasonRequest",
             IncountryFlag: IncountryFlag,
@@ -2006,35 +1983,60 @@ function AddEditForm(props) {
                 isToolTip={obj.tooltipmsg ? true : false}
                 tooltipmsg={eval(obj.tooltipmsg)}
               />
-            </div>
-            {obj.name === "RFELogDetails" && policyTermIds.length ? (
-              <div className="row ">
-                <div className="col-md-12" style={{ padding: "10px" }}>
-                  <ul>
-                    {policyTermIds.map((item) => (
-                      <li key={item.policy_term_id}>
-                        {item.customer_name} - Policy Term Id:
-                        <a
-                          style={{ padding: "0 5px" }}
-                          href={`${policyURL}${item.policy_term_id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {item.policy_term_id}
-                        </a>
-                        {item.duns_number ? (
-                          <span>(DUNS number - {item.duns_number})</span>
-                        ) : (
-                          ""
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+
+              {obj.name === "RFELogDetails" && policyTermIds.length ? (
+                <div className="row ">
+                  <div className="col-md-12" style={{ padding: "10px" }}>
+                    <table className="policyterms table-bordered">
+                      <thead>
+                        <th width="25%">Account Name</th>
+                        <th width="25%">Policy Term Id</th>
+                        <th width="17%">Product Name</th>
+                        <th width="17%">Sub-Product Name</th>
+                        <th>DUNS number</th>
+                      </thead>
+                      {policyTermIds.map((item) => (
+                        <tr key={item.policy_term_id}>
+                          <td>{item.customer_name}</td>
+                          <td>
+                            <a
+                              href={`${policyURL}${item.policy_term_id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {item.policy_term_id}
+                            </a>
+                          </td>
+                          <td>
+                            {item.product_name ? (
+                              <span>{item.product_name} </span>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                          <td>
+                            {item.sub_product_name ? (
+                              <span>{item.sub_product_name}</span>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                          <td>
+                            {item.duns_number ? (
+                              <span>{item.duns_number}</span>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              ""
-            )}
+              ) : (
+                ""
+              )}
+            </div>
           </>
         );
         return obj.conditionaldisplay
