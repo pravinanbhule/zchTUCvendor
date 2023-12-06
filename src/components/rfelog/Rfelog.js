@@ -638,7 +638,7 @@ function Rfelog({ ...props }) {
                   return row.IsArchived ? (
                     <span
                       className="link"
-                      onClick={() => handleOpenSharePointLink(row.entryNumber)}
+                      onClick={() => handleOpenSharePointLink(row.EntryNumber)}
                     >
                       link
                     </span>
