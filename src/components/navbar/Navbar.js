@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 
 function Navbar({ ...props }) {
   const { appmenu } = props.state;
   const { location, userProfile } = props;
+  const [showpage, setShowPage] = useState(false)
+
+  const handleClickExemptionlogs = () => {
+    if (window.location.pathname !== "/exemptionlogs") {
+      setShowPage(true)
+    }
+  }
+
   return (
     <nav className="menu-nav">
+      {showpage &&
+        <ConfirmPopup
+          title={"Are You Sure?"}
+          hidePopup={() => setShowPage(false)}
+          itemDetails={"Are you sure you want to view Exemption logs?"}
+        />
+      }
       <div className="nav-links">
         <Link to="/">
           <div className={`menu-item ${location.pathname === "/" && "active"}`}>
@@ -206,15 +222,14 @@ function Navbar({ ...props }) {
             RfE Logs
           </div>
         </Link>
-        <Link to="/exemptionlogs">
-          <div
-            className={`menu-item ${
+        <div 
+          className={`menu-item ${
               location.pathname === "/exemptionlogs" && "active"
-            }`}
-          >
-            Exemption Logs
-          </div>
-        </Link>
+          }`} 
+          onClick={handleClickExemptionlogs}
+        >
+          Exemption Logs
+        </div>
       </div>
     </nav>
   );

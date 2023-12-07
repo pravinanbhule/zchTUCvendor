@@ -7,6 +7,7 @@ import "./Style.css";
 import breachlogo from "./../../assets/Breach.jpg";
 import rfelogo from "./../../assets/RFE.jpg";
 import exemptionlogo from "./../../assets/Exemption.jpg";
+import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 function Dashboard({ ...props }) {
   const history = useHistory();
   const { dashboardState } = props.state;
@@ -27,6 +28,7 @@ function Dashboard({ ...props }) {
   const [breachLogDetails, setbreachLogDetails] = useState(initialObj);
   const [refLogDetails, setrefLogDetails] = useState(initialObj);
   const [exemptionLogDetails, setexemptionLogDetails] = useState(initialObj);
+  const [showpage, setShowPage] = useState(false)
   useEffect(() => {
     fnOnInit();
   }, []);
@@ -59,22 +61,26 @@ function Dashboard({ ...props }) {
   }, [dashboardState.exemptionlogcount]);
 
   const handleLogClick = (logname, statusId, logtype) => {
-    setDashboardClick({
-      status: statusId,
-      logType: logtype ? logtype : "",
-    });
-    switch (logname) {
-      case "breachlog":
-        history.push("/breachlogs");
-        break;
-      case "rfelog":
-        history.push("/rfelogs");
-        break;
-      case "exemptionlog":
-        history.push("/exemptionlogs");
-        break;
-      default:
-        break;
+    if (logname === "exemptionlog") {
+      setShowPage(true)
+    } else {
+      setDashboardClick({
+        status: statusId,
+        logType: logtype ? logtype : "",
+      });
+      switch (logname) {
+        case "breachlog":
+          history.push("/breachlogs");
+          break;
+        case "rfelog":
+          history.push("/rfelogs");
+          break;
+        case "exemptionlog":
+          history.push("/exemptionlogs");
+          break;
+        default:
+          break;
+      }
     }
   };
 
@@ -182,6 +188,13 @@ function Dashboard({ ...props }) {
           )}
         </div>
       </div>
+      {showpage &&
+        <ConfirmPopup
+          title={"Are You Sure?"}
+          hidePopup={() => setShowPage(false)}
+          itemDetails={"Are you sure you want to view Exemption logs?"}
+        />
+      }
     </div>
   );
 }
