@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   exemptionlogActions,
@@ -2187,6 +2188,7 @@ function Exemptionlog({ ...props }) {
   const [isshowAddPopup, setshowAddPopup] = useState(false);
   const [isshowImportLogsPopup, setshowImportLogsPopup] = useState(false);
   const [isDataImported, setisDataImported] = useState(false);
+  const history = useHistory()
   const showAddPopup = () => {
     setshowAddPopup(true);
   };
@@ -2199,6 +2201,15 @@ function Exemptionlog({ ...props }) {
     setformIntialState(forminitval);
     setisEditMode(false);
     setisReadMode(false);
+    if (window.location.search) {
+      removeQueryParams()
+    }
+  };
+  const removeQueryParams = () => {
+    history.replace({
+        pathname: window.location.pathname,
+        search: '',
+    })
   };
   const showImportLogsPopup = () => {
     setshowImportLogsPopup(true);
@@ -2277,7 +2288,7 @@ function Exemptionlog({ ...props }) {
     isSubmit: false,
     zugChapterVersion: "",
     isActive: true,
-    exemptionLogEmailLink: window.location.href,
+    exemptionLogEmailLink: window.location.origin + window.location.pathname,
     isdirty: false,
     isArchived: false,
     ciGuidlineId: "",
@@ -2320,7 +2331,7 @@ function Exemptionlog({ ...props }) {
     fullFilePath: "",
     isSubmit: false,
     isActive: true,
-    exemptionLogEmailLink: window.location.href,
+    exemptionLogEmailLink: window.location.origin + window.location.pathname,
     isdirty: false,
     isArchived: false,
     ciGuidlineId: "",
@@ -2440,6 +2451,7 @@ function Exemptionlog({ ...props }) {
       setformIntialState({
         ...response,
         isdirty: false,
+        exemptionLogEmailLink: window.location.origin + window.location.pathname
       });
       showAddPopup();
     }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   rfelogActions,
@@ -1223,6 +1224,7 @@ function Rfelog({ ...props }) {
   const [isshowAddPopup, setshowAddPopup] = useState(false);
   const [isshowImportLogsPopup, setshowImportLogsPopup] = useState(false);
   const [isDataImported, setisDataImported] = useState(false);
+  const history = useHistory()
   const showAddPopup = () => {
     setshowAddPopup(true);
   };
@@ -1231,7 +1233,18 @@ function Rfelog({ ...props }) {
     setformIntialState(formInitialValue);
     setisEditMode(false);
     setisReadMode(false);
+    if (window.location.search) {
+      removeQueryParams()
+    }
   };
+
+  const removeQueryParams = () => {
+    history.replace({
+        pathname: window.location.pathname,
+        search: '',
+    })
+  };
+
   const showImportLogsPopup = () => {
     setshowImportLogsPopup(true);
   };
@@ -1300,7 +1313,7 @@ function Rfelog({ ...props }) {
     UnderwriterGrantingEmpowermentComments: "",
     FullFilePath: "",
     IsSubmit: false,
-    RFELogEmailLink: window.location.href,
+    RFELogEmailLink: window.location.origin + window.location.pathname,
     isdirty: false,
     IsArchived: false,
     ConditionApplicableTo: "",
@@ -1382,6 +1395,7 @@ function Rfelog({ ...props }) {
       setformIntialState({
         ...response,
         isdirty: false,
+        RFELogEmailLink: window.location.origin + window.location.pathname,
       });
       showAddPopup();
     }
