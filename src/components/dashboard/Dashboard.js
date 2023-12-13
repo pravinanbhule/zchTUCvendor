@@ -192,7 +192,7 @@ function Dashboard({ ...props }) {
         <ConfirmPopup
           title={"Are You Sure?"}
           hidePopup={() => setShowPage(false)}
-          itemDetails={"If you click on the “Yes” button, you will be directed to the Exemption log. On the other hand, if you want to create an empowerment log, click on the Rfe logs tab."}
+          itemDetails={"If you click on the 'Yes' button, you will be directed to the Exemption log. On the other hand, if you want to create an empowerment log, click on the RfE logs tab."}
         />
       }
     </div>
