@@ -374,7 +374,8 @@ function AddEditForm(props) {
             isshow = true;
           }
           if ((formIntialState.status === exemption_status.Empowerment_not_granted ||
-                formIntialState.status === exemption_status.Empowerment_granted) &&
+                formIntialState.status === exemption_status.Empowerment_granted ||
+                formIntialState.status === exemption_status.More_Information_Needed) &&
              item.lookupID === exemption_status.Pending 
           ) {
             isshow = true;  
@@ -456,6 +457,7 @@ function AddEditForm(props) {
           userroles.isgrantedempowrment) &&
         formIntialState.status !== exemption_status.Empowerment_granted &&
         formIntialState.status !== exemption_status.Empowerment_not_granted &&
+        formIntialState.status !== exemption_status.More_Information_Needed &&
         formIntialState.status !== exemption_status.Pending
       ) {
         if (!isReadMode) {
