@@ -5,23 +5,9 @@ import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 function Navbar({ ...props }) {
   const { appmenu } = props.state;
   const { location, userProfile } = props;
-  const [showpage, setShowPage] = useState(false)
-
-  const handleClickExemptionlogs = () => {
-    if (window.location.pathname !== "/exemptionlogs") {
-      setShowPage(true)
-    }
-  }
 
   return (
     <nav className="menu-nav">
-      {showpage &&
-        <ConfirmPopup
-          title={"Are You Sure?"}
-          hidePopup={() => setShowPage(false)}
-          itemDetails={"If you click on the 'Yes' button, you will be directed to the Exemption log. On the other hand, if you want to create an empowerment log, click on the RfE logs tab."}
-        />
-      }
       <div className="nav-links">
         <Link to="/">
           <div className={`menu-item ${location.pathname === "/" && "active"}`}>
@@ -222,14 +208,16 @@ function Navbar({ ...props }) {
             RfE Logs
           </div>
         </Link>
-        <div 
-          className={`menu-item ${
+
+        <Link to="/exemptionlogs">
+          <div
+            className={`menu-item ${
               location.pathname === "/exemptionlogs" && "active"
-          }`} 
-          onClick={handleClickExemptionlogs}
-        >
-          Exemption Logs
-        </div>
+            }`}
+          >
+            Exemption Logs
+          </div>
+        </Link>
       </div>
     </nav>
   );

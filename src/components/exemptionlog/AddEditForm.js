@@ -373,6 +373,12 @@ function AddEditForm(props) {
           ) {
             isshow = true;
           }
+          if ((formIntialState.status === exemption_status.Empowerment_not_granted ||
+                formIntialState.status === exemption_status.Empowerment_granted) &&
+             item.lookupID === exemption_status.Pending 
+          ) {
+            isshow = true;  
+          }
         }
       }
       /*if (
@@ -397,7 +403,6 @@ function AddEditForm(props) {
     setfrmTypeOfBusiness([...tempTypeOfBusiness]);
     setfrmFullTransitional([selectInitiVal, ...tempFullTransitional]);
     setfrmURPMSection([selectInitiVal, ...tempURPMSection]);
-
     if (frmstatus.length) {
       setfrmstatus([...frmstatus]);
     }
@@ -450,6 +455,7 @@ function AddEditForm(props) {
           userroles.issubmitter ||
           userroles.isgrantedempowrment) &&
         formIntialState.status !== exemption_status.Empowerment_granted &&
+        formIntialState.status !== exemption_status.Empowerment_not_granted &&
         formIntialState.status !== exemption_status.Pending
       ) {
         if (!isReadMode) {

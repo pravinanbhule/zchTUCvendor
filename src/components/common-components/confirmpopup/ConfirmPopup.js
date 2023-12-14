@@ -1,12 +1,9 @@
 import React from "react";
 import Popup from "../Popup";
-import { useHistory } from "react-router-dom";
 function ConfirmPopup(props) {
-  const { title, hidePopup, itemDetails } = props;
-  const history = useHistory()
+  const { title, hidePopup, itemDetails, showPage } = props;
   const handleConfirm = () => {
-    history.push("/exemptionlogs")
-    hidePopup()
+    showPage()
   };
   const handleCancel = ()=>{
     hidePopup()

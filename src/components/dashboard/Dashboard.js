@@ -28,7 +28,6 @@ function Dashboard({ ...props }) {
   const [breachLogDetails, setbreachLogDetails] = useState(initialObj);
   const [refLogDetails, setrefLogDetails] = useState(initialObj);
   const [exemptionLogDetails, setexemptionLogDetails] = useState(initialObj);
-  const [showpage, setShowPage] = useState(false)
   useEffect(() => {
     fnOnInit();
   }, []);
@@ -61,9 +60,6 @@ function Dashboard({ ...props }) {
   }, [dashboardState.exemptionlogcount]);
 
   const handleLogClick = (logname, statusId, logtype) => {
-    if (logname === "exemptionlog") {
-      setShowPage(true)
-    } else {
       setDashboardClick({
         status: statusId,
         logType: logtype ? logtype : "",
@@ -81,7 +77,6 @@ function Dashboard({ ...props }) {
         default:
           break;
       }
-    }
   };
 
   const getLogCountBlock = (status, logname, logtype) => {
@@ -188,13 +183,6 @@ function Dashboard({ ...props }) {
           )}
         </div>
       </div>
-      {showpage &&
-        <ConfirmPopup
-          title={"Are You Sure?"}
-          hidePopup={() => setShowPage(false)}
-          itemDetails={"If you click on the 'Yes' button, you will be directed to the Exemption log. On the other hand, if you want to create an empowerment log, click on the RfE logs tab."}
-        />
-      }
     </div>
   );
 }
