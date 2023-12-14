@@ -3034,7 +3034,7 @@ function Exemptionlog({ ...props }) {
           title={"Are You Sure?"}
           hidePopup={() => setShowPage(false)}
           showPage={showAddPopup}
-          itemDetails={`If you click on the 'Yes' button, you will be directed to the Exemption log which is used for Exemptions to ${selectedExemptionLog.toUpperCase()} that apply for a portfolio. On the other hand, if you want to request empowerment  (referral) for one account, click 'No' to stay in the Request for Empowerment log.`}
+          itemDetails={`If you click on the 'Yes' button, you will be directed to the Exemption log. On the other hand, if you want to create an empowerment log, click on the RfE logs tab.`}
         />
       }
       {isshowAddPopup && (
