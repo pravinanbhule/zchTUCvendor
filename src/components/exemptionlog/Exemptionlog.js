@@ -42,7 +42,6 @@ import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
-import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -315,7 +314,6 @@ function Exemptionlog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
-  const [showpage, setShowPage] = useState(false)
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
     setselfilter({
@@ -2192,14 +2190,8 @@ function Exemptionlog({ ...props }) {
   const [isDataImported, setisDataImported] = useState(false);
   const history = useHistory()
   const showAddPopup = () => {
-    if (showpage) {
-      setShowPage(false)
-    }
     setshowAddPopup(true);
-  };
-  const confirmationPopup = () => {
-    setShowPage(true)
-  };
+    };
   const hideAddPopup = () => {
     setshowAddPopup(false);
     let forminitval =
@@ -3029,14 +3021,6 @@ function Exemptionlog({ ...props }) {
   };
   return (
     <div className="exemptionlog">
-      {showpage &&
-        <ConfirmPopup
-          title={"Are You Sure?"}
-          hidePopup={() => setShowPage(false)}
-          showPage={showAddPopup}
-          itemDetails={`If you click on the 'Yes' button, you will be directed to the Exemption log which is used for Exemptions to ${selectedExemptionLog.toUpperCase()} that apply for a portfolio. On the other hand, if you want to request empowerment  (referral) for one account, click 'No' to stay in the Request for Empowerment log.`}
-        />
-      }
       {isshowAddPopup && (
         <AddEditForm
           title={isReadMode ? "View Exemption Log" : "Add/Edit Exemption Log"}
@@ -3385,7 +3369,7 @@ function Exemptionlog({ ...props }) {
                   pageno={pageIndex}
                   pagesize={pagesize}
                   totalItems={totalLogCount}
-                  showAddPopup={confirmationPopup}
+                  showAddPopup={showAddPopup}
                   showImportLogsPopup={showImportLogsPopup}
                   defaultSorted={defaultSorted}
                   isExportReport={true}
