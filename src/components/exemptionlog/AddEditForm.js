@@ -389,7 +389,7 @@ function AddEditForm(props) {
         isshow = true;
       }*/
 
-      if (isshow) {
+      if (isshow && item.isActive) {
         frmstatus.push({
           label: item.lookUpValue,
           value: item.lookupID,
