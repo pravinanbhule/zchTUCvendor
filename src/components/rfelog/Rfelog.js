@@ -49,6 +49,7 @@ import MoreActions from "../common-components/moreactions/MoreActions";
 import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
+import { useHistory } from "react-router-dom";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
