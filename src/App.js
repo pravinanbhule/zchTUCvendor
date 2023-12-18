@@ -62,13 +62,19 @@ function App({ state, menuClick }) {
                 <div className="site-container">
                   <Route
                     path="/"
-                    render={(routeParams) => (
-                      <Navbar
+                    render={(routeParams) => {
+                      if (window.location.search) {
+                        return;
+                      } else if (window.location.pathname === "/rfelogs/create-rfelog" && !localStorage.getItem('in-app')) {
+                        return;
+                      } else {
+                        return <Navbar
                         userProfile={state.userprofileState.userProfile}
                         state={state}
                         {...routeParams}
                       />
-                    )}
+                    }
+                    }}
                   />
                   <div className="pageview-container">
                     <Switch>

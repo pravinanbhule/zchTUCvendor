@@ -173,8 +173,10 @@ function CreateRfelogForm(props) {
     }, [rfelogState.accounts]);
 
     const hideAddPopup = () => {
+        setformIntialState(formInitialValue)
         localStorage.removeItem("id");
         localStorage.removeItem("status");
+        localStorage.removeItem("in-app");
         history.push("/rfelogs");
     };
 
@@ -254,7 +256,7 @@ function CreateRfelogForm(props) {
 
     const handleEdit = async (e, hasqueryparam) => {
         let itemid = queryparam.id;
-        let mode = queryparam.status ? queryparam.status : "view";
+        let mode = queryparam.status !== "undefined" ? queryparam.status : "view";
 
         let response = await getById({
             rfeLogId: itemid,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   exemptionlogActions,
@@ -41,6 +42,7 @@ import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
+import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -313,6 +315,7 @@ function Exemptionlog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
+  const [showpage, setShowPage] = useState(false)
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
     setselfilter({
@@ -2187,8 +2190,15 @@ function Exemptionlog({ ...props }) {
   const [isshowAddPopup, setshowAddPopup] = useState(false);
   const [isshowImportLogsPopup, setshowImportLogsPopup] = useState(false);
   const [isDataImported, setisDataImported] = useState(false);
+  const history = useHistory()
   const showAddPopup = () => {
+    if (showpage) {
+      setShowPage(false)
+    }
     setshowAddPopup(true);
+  };
+  const confirmationPopup = () => {
+    setShowPage(true)
   };
   const hideAddPopup = () => {
     setshowAddPopup(false);
@@ -2199,6 +2209,15 @@ function Exemptionlog({ ...props }) {
     setformIntialState(forminitval);
     setisEditMode(false);
     setisReadMode(false);
+    if (window.location.search) {
+      removeQueryParams()
+    }
+  };
+  const removeQueryParams = () => {
+    history.replace({
+        pathname: window.location.pathname,
+        search: '',
+    })
   };
   const showImportLogsPopup = () => {
     setshowImportLogsPopup(true);
@@ -2277,7 +2296,7 @@ function Exemptionlog({ ...props }) {
     isSubmit: false,
     zugChapterVersion: "",
     isActive: true,
-    exemptionLogEmailLink: window.location.href,
+    exemptionLogEmailLink: window.location.origin + window.location.pathname,
     isdirty: false,
     isArchived: false,
     ciGuidlineId: "",
@@ -2320,7 +2339,7 @@ function Exemptionlog({ ...props }) {
     fullFilePath: "",
     isSubmit: false,
     isActive: true,
-    exemptionLogEmailLink: window.location.href,
+    exemptionLogEmailLink: window.location.origin + window.location.pathname,
     isdirty: false,
     isArchived: false,
     ciGuidlineId: "",
@@ -2440,6 +2459,7 @@ function Exemptionlog({ ...props }) {
       setformIntialState({
         ...response,
         isdirty: false,
+        exemptionLogEmailLink: window.location.origin + window.location.pathname
       });
       showAddPopup();
     }
@@ -3009,6 +3029,14 @@ function Exemptionlog({ ...props }) {
   };
   return (
     <div className="exemptionlog">
+      {showpage &&
+        <ConfirmPopup
+          title={"Are You Sure?"}
+          hidePopup={() => setShowPage(false)}
+          showPage={showAddPopup}
+          itemDetails={`If you click on the 'Yes' button, you will be directed to the Exemption log. On the other hand, if you want to create an empowerment log, click on the RfE logs tab.`}
+        />
+      }
       {isshowAddPopup && (
         <AddEditForm
           title={isReadMode ? "View Exemption Log" : "Add/Edit Exemption Log"}
@@ -3357,7 +3385,7 @@ function Exemptionlog({ ...props }) {
                   pageno={pageIndex}
                   pagesize={pagesize}
                   totalItems={totalLogCount}
-                  showAddPopup={showAddPopup}
+                  showAddPopup={confirmationPopup}
                   showImportLogsPopup={showImportLogsPopup}
                   defaultSorted={defaultSorted}
                   isExportReport={true}

@@ -116,7 +116,7 @@ function VersionHistoryPopupRfe(props) {
                                           ? item[key]
                                             ? "Yes"
                                             : "No"
-                                          : item[key]
+                                          : item[key].split(',').join(', ')
                                         : ""}
                                     </td>
                                   </tr>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import FrmInput from "../common-components/frminput/FrmInput";
 import FrmDatePicker from "../common-components/frmdatepicker/FrmDatePicker";
@@ -257,7 +257,7 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
       getToolTip({ type: "RFELogs" }),
-      getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
+      //getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
     ]);
     //tempcountryItems = await getAllCountry();
     tempcountryItems = dbvalues[0];
@@ -301,11 +301,11 @@ function AddEditForm(props) {
           item.countryID !== IncountryIds.BENELUX &&
           item.countryID !== IncountryIds.BENELUXBELGIUM &&
           item.countryID !== IncountryIds.BENELUXLUXEMBOURG &&
-          item.countryID !== IncountryIds.BENELUXNETHERLANDS
-          // item.countryID !== IncountryIds.NORDIC &&
-          // item.countryID !== IncountryIds.NORDICDENMARK &&
-          // item.countryID !== IncountryIds.NORDICFINALAND &&
-          // item.countryID !== IncountryIds.NORDICSWEDEN
+          item.countryID !== IncountryIds.BENELUXNETHERLANDS &&
+          item.countryID !== IncountryIds.NORDIC &&
+          item.countryID !== IncountryIds.NORDICDENMARK &&
+          item.countryID !== IncountryIds.NORDICFINALAND &&
+          item.countryID !== IncountryIds.NORDICSWEDEN
         ) {
           formIntialState.countryCode = item.countryCode;
           formIntialState.CountryId = item.countryID;
@@ -407,7 +407,7 @@ function AddEditForm(props) {
     let tempstatus = dbvalues[7];
     let temNewRenewal = dbvalues[8];
     let tempToolTips = dbvalues[9];
-    let temprfeempourmentuk = dbvalues[10];
+    //let temprfeempourmentuk = dbvalues[10];
     let tooltipObj = {};
     tempToolTips.forEach((item) => {
       tooltipObj[item.toolTipField] = item.toolTipText;
@@ -481,28 +481,6 @@ function AddEditForm(props) {
     });
     tempopts.sort(dynamicSort("label"));
     temprfeempourment = [...tempopts];
-
-    tempopts = [];
-    temprfeempourmentuk.forEach((item) => {
-      if (isEditMode || isReadMode) {
-        if (
-          item.isActive ||
-          item.lookupID === formIntialState.RequestForEmpowermentReason
-        ) {
-          tempopts.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
-        }
-      } else if (item.isActive) {
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
-      }
-    });
-    tempopts.sort(dynamicSort("label"));
-    temprfeempourmentuk = [...tempopts];
 
     tempopts = [];
     temNewRenewal.forEach((item) => {
@@ -592,7 +570,7 @@ function AddEditForm(props) {
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
-    setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
+    //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
 
     setinCountryOptsLATAM((prevstate) => ({
@@ -647,37 +625,65 @@ function AddEditForm(props) {
   };
   useEffect(() => {
     if (IncountryFlag !== undefined) {
-      if (IncountryFlag === IncountryFlagConst.LATAM) {
-        if (frmBranchOpts.length > 1) {
-          setmandatoryFields([
-            ...initialMandotoryFields,
-            ...LATAMMandatoryFields,
-            "Branch",
-          ]);
+      const fnonIncountryFlagChange = async () => {
+        if (IncountryFlag === IncountryFlagConst.LATAM) {
+          if (frmBranchOpts.length > 1) {
+            setmandatoryFields([
+              ...initialMandotoryFields,
+              ...LATAMMandatoryFields,
+              "Branch",
+            ]);
+          } else {
+            setmandatoryFields([
+              ...initialMandotoryFields,
+              ...LATAMMandatoryFields,
+            ]);
+          }
         } else {
-          setmandatoryFields([
-            ...initialMandotoryFields,
-            ...LATAMMandatoryFields,
-          ]);
+          setmandatoryFields([...initialMandotoryFields]);
         }
-      } else {
-        setmandatoryFields([...initialMandotoryFields]);
-      }
-      //condition to set RequestForEmpowermentReason for uk
-      if (IncountryFlag === IncountryFlagConst.UK) {
-        setfrmrfeempourment([...frmrfeempourmentuk]);
-      } else {
-        setfrmrfeempourment([...frmrfeempourmentglobal]);
-        if (formfield.RequestForEmpowermentReason) {
-          const isPresent = frmrfeempourmentglobal.filter(
-            (item) => item.value === formfield.RequestForEmpowermentReason
-          );
-          if (!isPresent?.length) {
-            setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+        //condition to set RequestForEmpowermentReason for uk
+        if (IncountryFlag) {
+          let temprfeempourment = await getLookupByType({
+            LookupType: "RFEEmpowermentReasonRequest",
+            IncountryFlag: IncountryFlag,
+          });
+          let tempopts = [];
+          temprfeempourment.forEach((item) => {
+            if (isEditMode || isReadMode) {
+              if (
+                item.isActive ||
+                item.lookupID === formIntialState.RequestForEmpowermentReason
+              ) {
+                tempopts.push({
+                  label: item.lookUpValue,
+                  value: item.lookupID,
+                });
+              }
+            } else if (item.isActive) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          });
+          tempopts.sort(dynamicSort("label"));
+          temprfeempourment = [...tempopts];
+          setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
+        } else {
+          setfrmrfeempourment([...frmrfeempourmentglobal]);
+          if (formfield.RequestForEmpowermentReason) {
+            const isPresent = frmrfeempourmentglobal.filter(
+              (item) => item.value === formfield.RequestForEmpowermentReason
+            );
+            if (!isPresent?.length) {
+              setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+            }
           }
         }
-      }
-      fnloadcountryview();
+        fnloadcountryview();
+      };
+      fnonIncountryFlagChange();
     }
   }, [IncountryFlag]);
 
@@ -1303,9 +1309,16 @@ function AddEditForm(props) {
     ) {
       let isUKcountry = true;
       let isSingaporecountry = true;
-      // let isItalycountry = true;
+      let isChinacountry = true;
+      let isHongKongcountry = true;
+      let isMalaysiacountry = true;
+      let isFrancecountry = true;
+      let isMiddleEastcountry = true;
+      let isSpaincountry = true;
+      let isItalycountry = true;
       let isBeneluxcountry = true;
-      // let isNordiccountry = true;
+      let isNordiccountry = true;
+      let isAustraliacountry = true;
       let isIndonesiacountry = true;
       let isLatamregion = true;
       let isIncountryselected = true;
@@ -1332,11 +1345,46 @@ function AddEditForm(props) {
         } else {
           isSingaporecountry = false;
         }
-        // if (item.value === IncountryIds.ITALY) {
-        //   isItalycountry = isItalycountry ? true : false;
-        // } else {
-        //   isItalycountry = false;
-        // }
+        if (item.value === IncountryIds.CHINA) {
+          isChinacountry = isChinacountry ? true : false;
+        } else {
+          isChinacountry = false;
+        }
+        if (item.value === IncountryIds.HONGKONG) {
+          isHongKongcountry = isHongKongcountry ? true : false;
+        } else {
+          isHongKongcountry = false;
+        }
+        if (item.value === IncountryIds.MALAYSIA) {
+          isMalaysiacountry = isMalaysiacountry ? true : false;
+        } else {
+          isMalaysiacountry = false;
+        }
+        if (item.value === IncountryIds.FRANCE) {
+          isFrancecountry = isFrancecountry ? true : false;
+        } else {
+          isFrancecountry = false;
+        }
+        if (item.value === IncountryIds.MIDDLEEAST) {
+          isMiddleEastcountry = isMiddleEastcountry ? true : false;
+        } else {
+          isMiddleEastcountry = false;
+        }
+        if (item.value === IncountryIds.SPAIN) {
+          isSpaincountry = isSpaincountry ? true : false;
+        } else {
+          isSpaincountry = false;
+        }
+        if (item.value === IncountryIds.ITALY) {
+          isItalycountry = isItalycountry ? true : false;
+        } else {
+          isItalycountry = false;
+        }
+        if (item.value === IncountryIds.AUSTRALIA) {
+          isAustraliacountry = isAustraliacountry ? true : false;
+        } else {
+          isAustraliacountry = false;
+        }
         if (
           item.value === IncountryIds.BENELUX ||
           item.value === IncountryIds.BENELUXBELGIUM ||
@@ -1347,16 +1395,16 @@ function AddEditForm(props) {
         } else {
           isBeneluxcountry = false;
         }
-        // if (
-        //   item.value === IncountryIds.NORDIC ||
-        //   item.value === IncountryIds.NORDICDENMARK ||
-        //   item.value === IncountryIds.NORDICFINALAND ||
-        //   item.value === IncountryIds.NORDICSWEDEN
-        // ) {
-        //   isNordiccountry = isNordiccountry ? true : false;
-        // } else {
-        //   isNordiccountry = false;
-        // }
+        if (
+          item.value === IncountryIds.NORDIC ||
+          item.value === IncountryIds.NORDICDENMARK ||
+          item.value === IncountryIds.NORDICFINALAND ||
+          item.value === IncountryIds.NORDICSWEDEN
+        ) {
+          isNordiccountry = isNordiccountry ? true : false;
+        } else {
+          isNordiccountry = false;
+        }
         if (item.value === IncountryIds.INDONESIA) {
           isIndonesiacountry = isIndonesiacountry ? true : false;
         } else {
@@ -1420,20 +1468,104 @@ function AddEditForm(props) {
         });
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       }
-      // else if (
-      //   isItalycountry &&
-      //   (approverRole.isRegionAdmin ||
-      //     approverRole.isCountryAdmin ||
-      //     approverRole.isNormalUser)
-      // ) {
-      //   setformfield({
-      //     ...formfield,
-      //     OrganizationalAlignment: approverRole.isRegionAdmin
-      //       ? OrganizationalAlignment.region
-      //       : OrganizationalAlignment.country,
-      //   });
-      //   setIncountryFlag(IncountryFlagConst.ITALY);
-      // } 
+      else if (
+        isChinacountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.CHINA);
+      } 
+      else if (
+        isHongKongcountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.HONGKONG);
+      } 
+      else if (
+        isMalaysiacountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.MALAYSIA);
+      } 
+      else if (
+        isFrancecountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.FRANCE);
+      } 
+      else if (
+        isMiddleEastcountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
+      } 
+      else if (
+        isSpaincountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.SPAIN);
+      } 
+      else if (
+        isItalycountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.ITALY);
+      } 
       else if (
         isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
@@ -1448,20 +1580,34 @@ function AddEditForm(props) {
         });
         setIncountryFlag(IncountryFlagConst.BENELUX);
       }
-      // else if (
-      //   isNordiccountry &&
-      //   (approverRole.isRegionAdmin ||
-      //     approverRole.isCountryAdmin ||
-      //     approverRole.isNormalUser)
-      // ) {
-      //   setformfield({
-      //     ...formfield,
-      //     OrganizationalAlignment: approverRole.isRegionAdmin
-      //       ? OrganizationalAlignment.region
-      //       : OrganizationalAlignment.country,
-      //   });
-      //   setIncountryFlag(IncountryFlagConst.NORDIC);
-      // } 
+      else if (
+        isNordiccountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.NORDIC);
+      }
+      else if (
+        isAustraliacountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.AUSTRALIA);
+      }
       else if (
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
@@ -1592,6 +1738,7 @@ function AddEditForm(props) {
     // }
     // hideAddPopup();
   };
+  const history = useHistory()
   const hidePopup = () => {
     let isconfirmed = true;
     if (formfield.isdirty) {
@@ -1601,7 +1748,8 @@ function AddEditForm(props) {
       if (queryparam.id) {
         localStorage.removeItem("id");
         localStorage.removeItem("status");
-        window.location = "/rfelogs";
+        localStorage.removeItem("in-app");
+        history.push("/rfelogs")
       } else {
         hideAddPopup();
       }
@@ -1815,9 +1963,16 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
-                  // IncountryFlag === IncountryFlagConst.ITALY ||
+                  IncountryFlag === IncountryFlagConst.CHINA ||
+                  IncountryFlag === IncountryFlagConst.MALAYSIA ||
+                  IncountryFlag === IncountryFlagConst.FRANCE ||
+                  IncountryFlag === IncountryFlagConst.MIDDLEEAST ||
+                  IncountryFlag === IncountryFlagConst.SPAIN ||
+                  IncountryFlag === IncountryFlagConst.HONGKONG ||
+                  IncountryFlag === IncountryFlagConst.ITALY ||
+                  IncountryFlag === IncountryFlagConst.AUSTRALIA ||
                   IncountryFlag === IncountryFlagConst.BENELUX ||
-                  // IncountryFlag === IncountryFlagConst.NORDIC ||
+                  IncountryFlag === IncountryFlagConst.NORDIC ||
                   isorgalignmentdisabled
                 }
               />
@@ -1853,35 +2008,60 @@ function AddEditForm(props) {
                 isToolTip={obj.tooltipmsg ? true : false}
                 tooltipmsg={eval(obj.tooltipmsg)}
               />
-            </div>
-            {obj.name === "RFELogDetails" && policyTermIds.length ? (
-              <div className="row ">
-                <div className="col-md-12" style={{ padding: "10px" }}>
-                  <ul>
-                    {policyTermIds.map((item) => (
-                      <li key={item.policy_term_id}>
-                        {item.customer_name} - Policy Term Id:
-                        <a
-                          style={{ padding: "0 5px" }}
-                          href={`${policyURL}${item.policy_term_id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {item.policy_term_id}
-                        </a>
-                        {item.duns_number ? (
-                          <span>(DUNS number - {item.duns_number})</span>
-                        ) : (
-                          ""
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+
+              {obj.name === "RFELogDetails" && policyTermIds.length ? (
+                <div className="row ">
+                  <div className="col-md-12" style={{ padding: "10px" }}>
+                    <table className="policyterms table-bordered">
+                      <thead>
+                        <th width="25%">Account Name</th>
+                        <th width="25%">Policy Term Id</th>
+                        <th width="17%">Product Name</th>
+                        <th width="17%">Sub-Product Name</th>
+                        <th>DUNS number</th>
+                      </thead>
+                      {policyTermIds.map((item) => (
+                        <tr key={item.policy_term_id}>
+                          <td>{item.customer_name}</td>
+                          <td>
+                            <a
+                              href={`${policyURL}${item.policy_term_id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {item.policy_term_id}
+                            </a>
+                          </td>
+                          <td>
+                            {item.product_name ? (
+                              <span>{item.product_name} </span>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                          <td>
+                            {item.sub_product_name ? (
+                              <span>{item.sub_product_name}</span>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                          <td>
+                            {item.duns_number ? (
+                              <span>{item.duns_number}</span>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              ""
-            )}
+              ) : (
+                ""
+              )}
+            </div>
           </>
         );
         return obj.conditionaldisplay
@@ -1968,7 +2148,7 @@ function AddEditForm(props) {
           <form onSubmit={handleSubmit} id="myForm">
             <>
               <Prompt
-                when={formfield?.isdirty ? true : false}
+                when={formIntialState?.isdirty ? true : false}
                 message={(location) => alertMessage.commonmsg.promptmsg}
               />
               <div className="frm-field-bggray">

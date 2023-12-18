@@ -596,9 +596,16 @@ function AddImportLogs(props) {
   const checkisIncountryLog = (countryList, regionList) => {
     let isUKcountry = true;
     let isSingaporecountry = true;
-    // let isItalycountry = true;
+    let isChinacountry = true;
+    let isHongKongcountry = true;
+    let isMalaysiacountry = true;
+    let isFrancecountry = true;
+    let isSpaincountry = true;
+    let isMiddleEastcountry = true;
+    let isAustraliacountry = true;
+    let isItalycountry = true;
     let isBeneluxcountry = true;
-    // let isNordiccountry = true;
+    let isNordiccountry = true;
     let isIndonesiacountry = true;
     let isLatamregion = true;
     regionList.forEach((item) => {
@@ -623,11 +630,46 @@ function AddImportLogs(props) {
       } else {
         isSingaporecountry = false;
       }
-      // if (item === INCOUNTRTY_IDS.ITALY) {
-      //   isItalycountry = isItalycountry ? true : false;
-      // } else {
-      //   isItalycountry = false;
-      // }
+      if (item === INCOUNTRTY_IDS.CHINA) {
+        isChinacountry = isChinacountry ? true : false;
+      } else {
+        isChinacountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.HONGKONG) {
+        isHongKongcountry = isHongKongcountry ? true : false;
+      } else {
+        isHongKongcountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.MALAYSIA) {
+        isMalaysiacountry = isMalaysiacountry ? true : false;
+      } else {
+        isMalaysiacountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.FRANCE) {
+        isFrancecountry = isFrancecountry ? true : false;
+      } else {
+        isFrancecountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.SPAIN) {
+        isSpaincountry = isSpaincountry ? true : false;
+      } else {
+        isSpaincountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.MIDDLEEAST) {
+        isMiddleEastcountry = isMiddleEastcountry ? true : false;
+      } else {
+        isMiddleEastcountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.AUSTRALIA) {
+        isAustraliacountry = isAustraliacountry ? true : false;
+      } else {
+        isAustraliacountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.ITALY) {
+        isItalycountry = isItalycountry ? true : false;
+      } else {
+        isItalycountry = false;
+      }
       if (
         item === INCOUNTRTY_IDS.BENELUX ||
         item === INCOUNTRTY_IDS.BENELUXNETHERLANDS ||
@@ -638,16 +680,16 @@ function AddImportLogs(props) {
       } else {
         isBeneluxcountry = false;
       }
-      // if (
-      //   item === INCOUNTRTY_IDS.NORDIC ||
-      //   item === INCOUNTRTY_IDS.NORDICDENMARK ||
-      //   item === INCOUNTRTY_IDS.NORDICFINALAND ||
-      //   item === INCOUNTRTY_IDS.NORDICSWEDEN
-      // ) {
-      //   isNordiccountry = isNordiccountry ? true : false;
-      // } else {
-      //   isNordiccountry = false;
-      // }
+      if (
+        item === INCOUNTRTY_IDS.NORDIC ||
+        item === INCOUNTRTY_IDS.NORDICDENMARK ||
+        item === INCOUNTRTY_IDS.NORDICFINALAND ||
+        item === INCOUNTRTY_IDS.NORDICSWEDEN
+      ) {
+        isNordiccountry = isNordiccountry ? true : false;
+      } else {
+        isNordiccountry = false;
+      }
       if (item === INCOUNTRTY_IDS.INDONESIA) {
         isIndonesiacountry = isIndonesiacountry ? true : false;
       } else {
@@ -658,9 +700,16 @@ function AddImportLogs(props) {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
       isSingaporecountry: isSingaporecountry,
-      // isItalycountry: isItalycountry,
+      isChinacountry : isChinacountry,
+      isHongKongcountry : isHongKongcountry,
+      isMalaysiacountry : isMalaysiacountry,
+      isFrancecountry : isFrancecountry,
+      isSpaincountry : isSpaincountry,
+      isMiddleEastcountry : isMiddleEastcountry,
+      isAustraliacountry: isAustraliacountry,
+      isItalycountry: isItalycountry,
       isBeneluxcountry: isBeneluxcountry,
-      // isNordiccountry: isNordiccountry,
+      isNordiccountry: isNordiccountry,
       isIndonesiacountry: isIndonesiacountry,
     };
   };
@@ -837,14 +886,20 @@ function AddImportLogs(props) {
                   });
                 });
                 templogdata["regionId"] = regions.join(",");
-                // debugger;
                 const {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
-                  // isItalycountry,
+                  isChinacountry,
+                  isHongKongcountry,
+                  isMalaysiacountry,
+                  isFrancecountry,
+                  isSpaincountry,
+                  isMiddleEastcountry,
+                  isAustraliacountry,
+                  isItalycountry,
                   isBeneluxcountry,
-                  // isNordiccountry,
+                  isNordiccountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 //added below codition to check if selected type is country but country is not set
@@ -877,14 +932,70 @@ function AddImportLogs(props) {
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
-                // if (
-                //   IncountryFlag === IncountryFlagCost.ITALY &&
-                //   !isItalycountry
-                // ) {
-                //   isvalid = false;
-                //   reportdata["isvalid"] = false;
-                //   reportdata["invalidfields"].push(excelfieldname);
-                // }
+                if (
+                  IncountryFlag === IncountryFlagCost.CHINA &&
+                  !isChinacountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.HONGKONG &&
+                  !isHongKongcountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.MALAYSIA &&
+                  !isMalaysiacountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.FRANCE &&
+                  !isFrancecountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.SPAIN &&
+                  !isSpaincountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.MIDDLEEAST &&
+                  !isMiddleEastcountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.AUSTRALIA &&
+                  !isAustraliacountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.ITALY &&
+                  !isItalycountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
                 if (
                   IncountryFlag === IncountryFlagCost.BENELUX &&
                   !isBeneluxcountry
@@ -893,14 +1004,14 @@ function AddImportLogs(props) {
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
-                // if (
-                //   IncountryFlag === IncountryFlagCost.NORDIC &&
-                //   !isNordiccountry
-                // ) {
-                //   isvalid = false;
-                //   reportdata["isvalid"] = false;
-                //   reportdata["invalidfields"].push(excelfieldname);
-                // }
+                if (
+                  IncountryFlag === IncountryFlagCost.NORDIC &&
+                  !isNordiccountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
               }
               if (
                 isvalidval &&
@@ -913,9 +1024,16 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
-                  // isItalycountry,
+                  isChinacountry,
+                  isHongKongcountry,
+                  isMalaysiacountry,
+                  isFrancecountry,
+                  isSpaincountry,
+                  isMiddleEastcountry,
+                  isAustraliacountry,
+                  isItalycountry,
                   isBeneluxcountry,
-                  // isNordiccountry,
+                  isNordiccountry,
                   isIndonesiacountry,
                 } = checkisIncountryLog(tempCoutries, regions);
                 const approverRole = await getApproverRole(value);
@@ -924,9 +1042,16 @@ function AddImportLogs(props) {
                   (isLatamregion ||
                     isUKcountry ||
                     isSingaporecountry ||
-                    // isItalycountry ||
+                    isChinacountry ||
+                    isHongKongcountry ||
+                    isMalaysiacountry ||
+                    isFrancecountry ||
+                    isSpaincountry ||
+                    isMiddleEastcountry ||
+                    isAustraliacountry ||
+                    isItalycountry ||
                     isBeneluxcountry ||
-                    // isNordiccountry ||
+                    isNordiccountry ||
                     isIndonesiacountry) &&
                   !approverRole.isGlobalAdmin &&
                   !approverRole.isSuperAdmin
@@ -1241,6 +1366,33 @@ function AddImportLogs(props) {
     setexportData([...multiDataSet]);
   };
   const [IncountryFlag, setIncountryFlag] = useState("gn");
+
+  useEffect(async()=>{
+    if (IncountryFlag !== "gn") {
+      let temprfeempourment = await getLookupByType({
+        LookupType: "RFEEmpowermentReasonRequest",
+        IncountryFlag: IncountryFlag
+      });
+      let tempopts = [];
+      let tempObj = {};
+      temprfeempourment.forEach((item) => {
+        if (item.isActive) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+          tempObj[item.lookUpValue] = item.lookupID;
+        }
+      });
+      temprfeempourment = [...tempopts];
+      let temprfeempourmentObj = { ...tempObj };
+      setmasterdata((prevstate) => ({
+        ...prevstate,
+        rfeEmpourmentObj: { ...temprfeempourmentObj },
+      }));
+    }
+  },[IncountryFlag])
+
   const onSelectChange = (name, value) => {
     setIncountryFlag(value);
     handleCancel();
@@ -1250,6 +1402,8 @@ function AddImportLogs(props) {
       setimportfieldscount(29);
       setmandatoryFields([...commonMandatoryFields, ...LATAMMandatoryFields]);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
+      setimportfieldscount(21);
+    } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else {
       setimportfieldscount(20);
