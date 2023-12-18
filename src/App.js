@@ -34,6 +34,7 @@ import Exemptionlog from "./components/exemptionlog/Exemptionlog";
 import Unauthorized from "./components/unauthorized/Unauthorized";
 import PrivateRoute from "./components/privateroute/PrivateRoute";
 import Loader from "./components/common-components/Loading";
+import AddRfelogForm from "./components/rfelog/CreateRfelogForm";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -61,13 +62,19 @@ function App({ state, menuClick }) {
                 <div className="site-container">
                   <Route
                     path="/"
-                    render={(routeParams) => (
-                      <Navbar
+                    render={(routeParams) => {
+                      if (window.location.search) {
+                        return;
+                      } else if (window.location.pathname === "/rfelogs/create-rfelog" && !localStorage.getItem('in-app')) {
+                        return;
+                      } else {
+                        return <Navbar
                         userProfile={state.userprofileState.userProfile}
                         state={state}
                         {...routeParams}
                       />
-                    )}
+                    }
+                    }}
                   />
                   <div className="pageview-container">
                     <Switch>
@@ -160,7 +167,14 @@ function App({ state, menuClick }) {
                       />
                       <PrivateRoute
                         path="/rfelogs"
+                        exact
                         component={Rfelog}
+                        menuClick={menuClick}
+                      />
+                      <PrivateRoute
+                        path="/rfelogs/create-rfelog"
+                        exact
+                        component={AddRfelogForm}
                         menuClick={menuClick}
                       />
                       <PrivateRoute

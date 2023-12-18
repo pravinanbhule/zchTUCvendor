@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import FrmInput from "../common-components/frminput/FrmInput";
 import FrmDatePicker from "../common-components/frmdatepicker/FrmDatePicker";
@@ -1738,6 +1738,7 @@ function AddEditForm(props) {
     // }
     // hideAddPopup();
   };
+  const history = useHistory()
   const hidePopup = () => {
     let isconfirmed = true;
     if (formfield.isdirty) {
@@ -1745,7 +1746,10 @@ function AddEditForm(props) {
     }
     if (isconfirmed) {
       if (queryparam.id) {
-        window.location = "/rfelogs";
+        localStorage.removeItem("id");
+        localStorage.removeItem("status");
+        localStorage.removeItem("in-app");
+        history.push("/rfelogs")
       } else {
         hideAddPopup();
       }
@@ -2144,7 +2148,7 @@ function AddEditForm(props) {
           <form onSubmit={handleSubmit} id="myForm">
             <>
               <Prompt
-                when={formfield?.isdirty ? true : false}
+                when={formIntialState?.isdirty ? true : false}
                 message={(location) => alertMessage.commonmsg.promptmsg}
               />
               <div className="frm-field-bggray">
