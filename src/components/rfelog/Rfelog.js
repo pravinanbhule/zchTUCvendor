@@ -1320,7 +1320,7 @@ function Rfelog({ ...props }) {
     UnderwriterGrantingEmpowermentComments: "",
     FullFilePath: "",
     IsSubmit: false,
-    RFELogEmailLink: window.location.origin + window.location.pathname,
+    RFELogEmailLink: window.location.origin + '/rfelogs',
     isdirty: false,
     IsArchived: false,
     ConditionApplicableTo: "",
@@ -1548,12 +1548,12 @@ function Rfelog({ ...props }) {
   const handleCopyItem = (itemid) => {
     setshareitemDetails({
       id: itemid,
-      link: `${window.location.href}/create-rfelog?id=${itemid}`,
+      link: `${window.location.href}?id=${itemid}`,
     });
     setshowCopyLog(true);
   };
   const openShareItem = (itemid, isSubmit) => {
-    const link = `${window.location.href}/create-rfelog?id=${itemid}`;
+    const link = `${window.location.href}?id=${itemid}`;
     setshareitemDetails({
       id: itemid,
       link: link,

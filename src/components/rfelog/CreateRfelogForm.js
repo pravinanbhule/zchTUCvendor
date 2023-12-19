@@ -66,7 +66,7 @@ function CreateRfelogForm(props) {
         UnderwriterGrantingEmpowermentComments: "",
         FullFilePath: "",
         IsSubmit: false,
-        RFELogEmailLink: window.location.href,
+        RFELogEmailLink: window.location.origin + '/rfelogs',
         isdirty: false,
         IsArchived: false,
         ConditionApplicableTo: "",
@@ -108,6 +108,20 @@ function CreateRfelogForm(props) {
     const [loading, setloading] = useState(true)
     const history = useHistory();
     const location = useLocation()
+
+    useEffect(() => {
+        const handleTabClose = event => {
+            localStorage.removeItem("id");
+            localStorage.removeItem("status");
+            localStorage.removeItem("in-app");
+        };
+
+        window.addEventListener('beforeunload', handleTabClose);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleTabClose);
+        };
+    }, []);
 
     useEffect(() => {
         let selectOpts = [];
