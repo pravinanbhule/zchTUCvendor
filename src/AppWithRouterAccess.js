@@ -21,10 +21,10 @@ const AppWithRouterAccess = ({ state, menuClick }) => {
     history.push("/login");
   };
   const restoreOriginalUri = async (_oktaAuth, originalUri) => {
-    let redirectURL = "/";
-    if (originalUri && originalUri.indexOf("?id=") !== -1) {
-      redirectURL = originalUri;
-    }
+    let redirectURL = originalUri;
+    // if (originalUri || originalUri.indexOf("?id=") !== -1 || originalUri.indexOf("?invokeAppId=") !== -1) {
+    //   redirectURL = originalUri;
+    // }
     //originalUri - will redirect to the original path/location
     history.replace(toRelativeUrl(redirectURL, window.location.origin));
   };
