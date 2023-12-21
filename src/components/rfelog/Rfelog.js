@@ -1338,6 +1338,7 @@ function Rfelog({ ...props }) {
     SUBLOBID: "",
     mappedLOBs: "",
     PolicyTermId: "",
+    invokedAPIFrom:""
   };
   const [formIntialState, setformIntialState] = useState(formInitialValue);
 

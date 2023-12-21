@@ -84,6 +84,7 @@ function CreateRfelogForm(props) {
         SUBLOBID: "",
         mappedLOBs: "",
         PolicyTermId: "",
+        invokedAPIFrom: ""
     };
     const [formIntialState, setformIntialState] = useState(formInitialValue);
     const [frmCountrySelectOpts, setfrmCountrySelectOpts] = useState([]);
@@ -140,6 +141,10 @@ function CreateRfelogForm(props) {
     useEffect(async () => {
         let itemid;
         let status;
+        if (getUrlParameter("invokeAppId")) {
+            let invokeAppId = getUrlParameter("invokeAppId")
+            setformIntialState({ ...formIntialState, invokedAPIFrom: invokeAppId });
+        }
         if (getUrlParameter("id")) {
             itemid = getUrlParameter("id");
             status = getUrlParameter("status");
