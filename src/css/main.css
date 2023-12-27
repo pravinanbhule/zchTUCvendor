@@ -610,6 +610,7 @@ button:focus {
 }
 .filter-container {
   width: 100%;
+  margin-left: 0;
   /*display: flex;
   justify-content: left;
   flex-wrap: wrap;
