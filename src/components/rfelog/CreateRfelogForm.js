@@ -144,8 +144,8 @@ function CreateRfelogForm(props) {
         if (getUrlParameter("invokeAppId")) {
             let invokeAppId = getUrlParameter("invokeAppId")
             setformIntialState({ ...formIntialState, invokedAPIFrom: invokeAppId });
-        }
-        if (getUrlParameter("id")) {
+            setloading(false)
+        } else if (getUrlParameter("id")) {
             itemid = getUrlParameter("id");
             status = getUrlParameter("status");
             localStorage.setItem("id", itemid);
