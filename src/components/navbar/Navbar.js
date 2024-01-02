@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 
 function Navbar({ ...props }) {
   const { appmenu } = props.state;
@@ -39,6 +38,15 @@ function Navbar({ ...props }) {
                         }`}
                       >
                         Region
+                      </div>
+                    </Link>
+                    <Link to="/token">
+                      <div
+                        className={`menu-item ${
+                          location.pathname === "/token" && "active"
+                        }`}
+                      >
+                        Token
                       </div>
                     </Link>
                     <Link to="/country">

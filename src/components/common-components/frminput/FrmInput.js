@@ -17,6 +17,8 @@ function FrmInput(props) {
     isdisabled,
     isToolTip,
     tooltipmsg,
+    iserror,
+    errormsg
   } = props;
 
   return (
@@ -54,6 +56,9 @@ function FrmInput(props) {
             maxLength="150"
             autoComplete="off"
           ></input>
+          {iserror && (
+            <div className="validationError">{errormsg}</div>
+          )}
           {isRequired && issubmitted && !value ? (
             <div className="validationError">{validationmsg}</div>
           ) : (
