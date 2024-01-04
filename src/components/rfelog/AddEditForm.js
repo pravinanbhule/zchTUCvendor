@@ -257,6 +257,12 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
       getToolTip({ type: "RFELogs" }),
+      getLookupByType({ 
+        LookupType: "RFEEmpowermentReasonRequest",
+        IncountryFlag: formIntialState?.IncountryFlag 
+          ? formIntialState.IncountryFlag
+          : "",
+       }),
       //getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
     ]);
     //tempcountryItems = await getAllCountry();
@@ -407,7 +413,7 @@ function AddEditForm(props) {
     let tempstatus = dbvalues[7];
     let temNewRenewal = dbvalues[8];
     let tempToolTips = dbvalues[9];
-    //let temprfeempourmentuk = dbvalues[10];
+    let temprfeempourmentcountry = dbvalues[10];
     let tooltipObj = {};
     tempToolTips.forEach((item) => {
       tooltipObj[item.toolTipField] = item.toolTipText;
@@ -481,6 +487,28 @@ function AddEditForm(props) {
     });
     tempopts.sort(dynamicSort("label"));
     temprfeempourment = [...tempopts];
+    
+    tempopts = [];
+    temprfeempourmentcountry.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (
+          item.isActive ||
+          item.lookupID === formIntialState.RequestForEmpowermentReason
+        ) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    tempopts.sort(dynamicSort("label"));
+    temprfeempourmentcountry = [...tempopts];
 
     tempopts = [];
     temNewRenewal.forEach((item) => {
@@ -568,7 +596,7 @@ function AddEditForm(props) {
 
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
-    setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
+    setfrmrfeempourment([selectInitiVal, ...temprfeempourmentcountry]);
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
     //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
