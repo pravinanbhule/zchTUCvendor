@@ -106,14 +106,14 @@ function Token({ ...props }) {
       },
       align: "left",
     },
-    // {
-    //   dataField: "tokenId",
-    //   text: "Token ID",
-    //   sort: true,
-    //   headerStyle: (colum, colIndex) => {
-    //     return { width: "150px", textAlign: "left" };
-    //   },
-    // },
+    {
+      dataField: "applicationId",
+      text: "Application ID",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px", textAlign: "left" };
+      },
+    },
     {
       dataField: "userName",
       text: "User Name",
