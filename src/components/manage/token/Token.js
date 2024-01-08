@@ -49,16 +49,18 @@ function Token({ ...props }) {
         return (
           <div
             className="edit-icon"
-            onClick={() => handleEdit(row)}
+            // onClick={() => handleEdit(row)}
             rowid={row.applicationId}
+            disabled={true}
+            style={{ cursor: "not-allowed" }}
           ></div>
         );
       },
       sort: false,
       headerStyle: (colum, colIndex) => {
         return {
-          width: "50px",
-          textAlign: "center",
+          width: "75px",
+          textAlign: "center"
         };
       },
     },
@@ -77,10 +79,11 @@ function Token({ ...props }) {
       sort: false,
       headerStyle: (colum, colIndex) => {
         return {
-          width: '40px',
-          textAlign: "center !important",
+          width: '75px',
+          textAlign: "left"
         };
       },
+      align: "center",
     },
     {
       dataField: "copyaction",
@@ -97,33 +100,26 @@ function Token({ ...props }) {
       sort: false,
       headerStyle: (colum, colIndex) => {
         return {
-          width: "65px",
-          textAlign: "-webkit-center !important",
+          width: "75px",
+          textAlign: "left"
         };
       },
+      align: "left",
     },
-    {
-      dataField: "applicationId",
-      text: "Application ID",
-      sort: true,
-      headerStyle: (colum, colIndex) => {
-        return { width: "70px" };
-      },
-    },
-    {
-      dataField: "tokenId",
-      text: "Token ID",
-      sort: true,
-      headerStyle: (colum, colIndex) => {
-        return { width: "200px" };
-      },
-    },
+    // {
+    //   dataField: "tokenId",
+    //   text: "Token ID",
+    //   sort: true,
+    //   headerStyle: (colum, colIndex) => {
+    //     return { width: "150px", textAlign: "left" };
+    //   },
+    // },
     {
       dataField: "userName",
       text: "User Name",
       sort: false,
       headerStyle: (colum, colIndex) => {
-        return { width: "150px" };
+        return { width: "250px", textAlign: "left" };
       },
     },
     {
@@ -131,7 +127,7 @@ function Token({ ...props }) {
       text: "Created Date",
       sort: false,
       headerStyle: (colum, colIndex) => {
-        return { width: "170px" };
+        return { width: "400px" };
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
