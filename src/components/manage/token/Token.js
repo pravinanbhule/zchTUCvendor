@@ -42,17 +42,40 @@ function Token({ ...props }) {
     //     return { width: "40px", textAlign: "center" };
     //   },
     // },
+    // {
+    //   dataField: "editaction",
+    //   text: "Edit",
+    //   formatter: (cell, row, rowIndex, formatExtraData) => {
+    //     return (
+    //       <div
+    //         className="edit-icon"
+    //         // onClick={() => handleEdit(row)}
+    //         rowid={row.applicationId}
+    //         disabled={true}
+    //         style={{ cursor: "not-allowed" }}
+    //       ></div>
+    //     );
+    //   },
+    //   sort: false,
+    //   headerStyle: (colum, colIndex) => {
+    //     return {
+    //       width: "75px",
+    //       textAlign: "center"
+    //     };
+    //   },
+    // },
     {
-      dataField: "editaction",
-      text: "Edit",
+      dataField: "deleteaction",
+      text: "Delete",
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
-            className="edit-icon"
-            // onClick={() => handleEdit(row)}
+            className="delete-icon"
+            onClick={() => handleDelete(row)}
             rowid={row.applicationId}
-            disabled={true}
-            style={{ cursor: "not-allowed" }}
+            style={{
+              marginLeft: "30px"
+            }}
           ></div>
         );
       },
@@ -63,27 +86,6 @@ function Token({ ...props }) {
           textAlign: "center"
         };
       },
-    },
-    {
-      dataField: "deleteaction",
-      text: "Delete",
-      formatter: (cell, row, rowIndex, formatExtraData) => {
-        return (
-          <div
-            className="delete-icon"
-            onClick={() => handleDelete(row)}
-            rowid={row.applicationId}
-          ></div>
-        );
-      },
-      sort: false,
-      headerStyle: (colum, colIndex) => {
-        return {
-          width: '75px',
-          textAlign: "left"
-        };
-      },
-      align: "center",
     },
     {
       dataField: "copyaction",
