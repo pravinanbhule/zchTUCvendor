@@ -40,15 +40,6 @@ function Navbar({ ...props }) {
                         Region
                       </div>
                     </Link>
-                    <Link to="/token">
-                      <div
-                        className={`menu-item ${
-                          location.pathname === "/token" && "active"
-                        }`}
-                      >
-                        Token
-                      </div>
-                    </Link>
                     <Link to="/country">
                       <div
                         className={`menu-item ${
@@ -92,6 +83,15 @@ function Navbar({ ...props }) {
                         }`}
                       >
                         LoB Chapter
+                      </div>
+                    </Link>
+                    <Link to="/token">
+                      <div
+                        className={`menu-item ${
+                          location.pathname === "/token" && "active"
+                        }`}
+                      >
+                        Token
                       </div>
                     </Link>
                     <Link to="/znaorganization1">
