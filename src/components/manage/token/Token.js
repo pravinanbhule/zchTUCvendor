@@ -22,46 +22,18 @@ function Token({ ...props }) {
   const [dataActItems, setdataActItems] = useState({});
   const [data, setdata] = useState([]);
   const [paginationdata, setpaginationdata] = useState([]);
-
   const columns = [
-    // {
-    //   dataField: "checkbox",
-    //   text: "",
-    //   formatter: (cell, row, rowIndex, formatExtraData) => {
-    //     return (
-    //       <FrmActiveCheckbox
-    //         name={row.applicationId}
-    //         value={dataActItems.applicationId}
-    //         handleChange={handleItemSelect}
-    //         isdisabled={!row.isActiveEnable}
-    //       />
-    //     );
-    //   },
-    //   sort: false,
-    //   headerStyle: (colum, colIndex) => {
-    //     return { width: "40px", textAlign: "center" };
-    //   },
-    // },
     // {
     //   dataField: "editaction",
     //   text: "Edit",
     //   formatter: (cell, row, rowIndex, formatExtraData) => {
     //     return (
-    //       <div
-    //         className="edit-icon"
-    //         // onClick={() => handleEdit(row)}
-    //         rowid={row.applicationId}
-    //         disabled={true}
-    //         style={{ cursor: "not-allowed" }}
-    //       ></div>
+    //       <div className="edit-icon" onClick={handleEdit} rowid={row.applicationId}></div>
     //     );
     //   },
     //   sort: false,
     //   headerStyle: (colum, colIndex) => {
-    //     return {
-    //       width: "75px",
-    //       textAlign: "center"
-    //     };
+    //     return { width: "65px", textAlign: "center" };
     //   },
     // },
     {
@@ -73,19 +45,16 @@ function Token({ ...props }) {
             className="delete-icon"
             onClick={() => handleDelete(row)}
             rowid={row.applicationId}
-            style={{
-              marginLeft: "30px"
-            }}
           ></div>
         );
       },
       sort: false,
       headerStyle: (colum, colIndex) => {
         return {
-          width: "75px",
+          width: "70px",
           textAlign: "center"
         };
-      },
+      }
     },
     {
       dataField: "copyaction",
@@ -102,11 +71,10 @@ function Token({ ...props }) {
       sort: false,
       headerStyle: (colum, colIndex) => {
         return {
-          width: "75px",
-          textAlign: "left"
+          width: "110px",
+          textAlign: "center"
         };
       },
-      align: "left",
     },
     {
       dataField: "applicationId",
@@ -121,7 +89,7 @@ function Token({ ...props }) {
       text: "User Name",
       sort: false,
       headerStyle: (colum, colIndex) => {
-        return { width: "250px", textAlign: "left" };
+        return { width: "180px" };
       },
     },
     {
@@ -129,7 +97,7 @@ function Token({ ...props }) {
       text: "Created Date",
       sort: false,
       headerStyle: (colum, colIndex) => {
-        return { width: "100px" };
+        return { width: "150px" };
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
@@ -139,9 +107,6 @@ function Token({ ...props }) {
       dataField: "modifiedDate",
       text: "Modified Date",
       sort: false,
-      headerStyle: (colum, colIndex) => {
-        return { width: "500px" };
-      },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
       },
