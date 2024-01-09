@@ -129,7 +129,18 @@ function Token({ ...props }) {
       text: "Created Date",
       sort: false,
       headerStyle: (colum, colIndex) => {
-        return { width: "400px" };
+        return { width: "100px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "500px" };
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
