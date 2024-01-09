@@ -254,10 +254,7 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFEOrganizationalAlignment" }),
       getLookupByType({ LookupType: "RFECHZ" }),
       getLookupByType({
-        LookupType: "RFEEmpowermentReasonRequest",
-        IncountryFlag: formIntialState?.IncountryFlag
-          ? formIntialState.IncountryFlag
-          : "",
+        LookupType: "RFEEmpowermentReasonRequest"
       }),
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
