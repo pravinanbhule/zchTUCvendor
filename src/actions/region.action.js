@@ -33,10 +33,6 @@ const getAllRegions = (requestParam) => {
     return { type: regionConstants.GETALLREGION_FAILURE, payload: error };
   };
   const requestParams = requestParam ? requestParam : {};
-  /*const requestParams = {
-    PageIndex: 1,
-    PageSize: 50,
-  };*/
 
   return async (dispatch) => {
     try {

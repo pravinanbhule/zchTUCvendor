@@ -253,7 +253,12 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "ConditionApplicableTo" }),
       getLookupByType({ LookupType: "RFEOrganizationalAlignment" }),
       getLookupByType({ LookupType: "RFECHZ" }),
-      getLookupByType({ LookupType: "RFEEmpowermentReasonRequest" }),
+      getLookupByType({
+        LookupType: "RFEEmpowermentReasonRequest",
+        IncountryFlag: formIntialState?.IncountryFlag
+          ? formIntialState.IncountryFlag
+          : "",
+      }),
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
       getToolTip({ type: "RFELogs" }),
@@ -698,6 +703,14 @@ function AddEditForm(props) {
           tempopts.sort(dynamicSort("label"));
           temprfeempourment = [...tempopts];
           setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
+          if (formfield.RequestForEmpowermentReason) {
+            const isPresent = frmrfeempourmentglobal.filter(
+              (item) => item.value === formfield.RequestForEmpowermentReason
+            );
+            if (!isPresent?.length) {
+              setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+            }
+          }
         } else {
           setfrmrfeempourment([...frmrfeempourmentglobal]);
           if (formfield.RequestForEmpowermentReason) {
