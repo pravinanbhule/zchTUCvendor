@@ -77,7 +77,7 @@ function AddEditForm(props) {
               errormsg={"Please input valid email"}
             />
             <FrmInput
-              title={"Application ID"}
+              title={"Application Name"}
               name={"applicationId"}
               value={formfield.applicationId}
               type={"text"}
