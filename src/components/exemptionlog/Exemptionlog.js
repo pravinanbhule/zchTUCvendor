@@ -43,6 +43,7 @@ import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
 import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
+import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -2195,6 +2196,9 @@ function Exemptionlog({ ...props }) {
     if (showpage) {
       setShowPage(false)
     }
+    if (showpage) {
+      setShowPage(false)
+    }
     setshowAddPopup(true);
     };
     const confirmationPopup = () => {
@@ -3034,7 +3038,7 @@ function Exemptionlog({ ...props }) {
           title={"Are You Sure?"}
           hidePopup={() => setShowPage(false)}
           showPage={showAddPopup}
-          itemDetails={`If you click on the 'Yes' button, you will be directed to the Exemption log which is used for Exemptions to ${selectedExemptionLog.toUpperCase()} that apply for a portfolio. On the other hand, if you want to request empowerment  (referral) for one account, click 'No' to stay in the Request for Empowerment log.`}
+          itemDetails={`If you click on the 'Yes' button, you will create an exemption log. Instead, if you want to create a request for empowerment, click on the RfE logs tab.`}
         />
       }
       {isshowAddPopup && (

@@ -78,7 +78,7 @@ function Token({ ...props }) {
     },
     {
       dataField: "applicationId",
-      text: "Application ID",
+      text: "Application Name",
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "150px", textAlign: "left" };
@@ -238,7 +238,7 @@ function Token({ ...props }) {
       </div>
       {isshowAddPopup ? (
         <AddEditForm
-          title={"Add/Edit Token"}
+          title={"Add Token"}
           hideAddPopup={hideAddPopup}
           postItem={postItemHandler}
           putItem={putItemHandler}
