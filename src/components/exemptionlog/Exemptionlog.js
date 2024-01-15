@@ -43,7 +43,6 @@ import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
 import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
-import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
