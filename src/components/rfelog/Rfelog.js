@@ -101,6 +101,7 @@ function Rfelog({ ...props }) {
   const rfelogActiveSharePointLink = SHAREPOINT_LINKS.RFElogActive;
   const rfelogArchiveSharePointLink = SHAREPOINT_LINKS.RFElogArchive;
   const rfelogLATAMActiveSharePointLink = SHAREPOINT_LINKS.RFElogLATAMActive;
+  const rfelogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEUKlogActive;
   const InCountryViewOpts = [
     INCOUNTRY_FLAG_OPTS.Indonesia,
     INCOUNTRY_FLAG_OPTS.UK,
@@ -1513,20 +1514,28 @@ function Rfelog({ ...props }) {
 
   const handleOpenSharePointLink = (itemid) => {
     let id = itemid;
+    let link;
     let splink = rfelogActiveSharePointLink;
     if (itemid.indexOf("ACT_") !== -1) {
       id = itemid.split("ACT_")[1];
       splink = rfelogActiveSharePointLink;
+      link = `${splink}?ID=${id}&isDlg=1`;
     }
     if (itemid.indexOf("ARC_") !== -1) {
       id = itemid.split("ARC_")[1];
       splink = rfelogArchiveSharePointLink;
+      link = `${splink}?ID=${id}&isDlg=1`;
     }
     if (itemid.indexOf("ACT_01") !== -1) {
       id = itemid.split("ACT_01")[1];
       splink = rfelogLATAMActiveSharePointLink;
+      link = `${splink}?ID=${id}&isDlg=1`;
     }
-    const link = `${splink}?ID=${id}&isDlg=1`;
+    if (itemid.indexOf("ACT_02") !== -1) {
+      id = itemid.split("ACT_02")[1];
+      splink = rfelogUKActiveSharePointLink;
+      link = `${splink}?ID=${id}`;
+    }
     window.open(link);
   };
 
