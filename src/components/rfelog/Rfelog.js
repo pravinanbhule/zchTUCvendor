@@ -102,6 +102,7 @@ function Rfelog({ ...props }) {
   const rfelogArchiveSharePointLink = SHAREPOINT_LINKS.RFElogArchive;
   const rfelogLATAMActiveSharePointLink = SHAREPOINT_LINKS.RFElogLATAMActive;
   const rfelogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEUKlogActive;
+  const rfelogNordicActiveSharePointLink = SHAREPOINT_LINKS.RFENordiclogActive;
   const InCountryViewOpts = [
     INCOUNTRY_FLAG_OPTS.Indonesia,
     INCOUNTRY_FLAG_OPTS.UK,
@@ -1545,6 +1546,11 @@ function Rfelog({ ...props }) {
     if (itemid.indexOf("ACT_02") !== -1) {
       id = itemid.split("ACT_02")[1];
       splink = rfelogUKActiveSharePointLink;
+      link = `${splink}?ID=${id}`;
+    }
+    if (itemid.indexOf("ACT_05") !== -1) {
+      id = itemid.split("ACT_05")[1];
+      splink = rfelogNordicActiveSharePointLink;
       link = `${splink}?ID=${id}`;
     }
     window.open(link);
