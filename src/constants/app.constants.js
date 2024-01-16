@@ -168,6 +168,8 @@ export const SHAREPOINT_LINKS = {
     "https://zurichinsurance.sharepoint.com/sites/001295/Lists/LatAM%20Request%20for%20Empowerment%20log/DispForm.aspx",
   RFEUKlogActive:
       "https://zurichinsurance.sharepoint.com/sites/001403/Lists/UK%20Commercial%20Insurance%20Referral%20Log%2020/DispForm.aspx",
+  RFENordiclogActive:
+      "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Nordic/Default%20View.aspx",
   ZUGlog:
     "https://zurichinsurance.sharepoint.com/sites/CIExemptionLog/Lists/CI%20Guideline%20Feedback%20and%20Exemption%20Log/DispForm.aspx",
   URPM: "https://zurichinsurance.sharepoint.com/sites/globuz20app/01/Lists/exlog/DispForm.aspx",
