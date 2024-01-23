@@ -30,6 +30,7 @@ function CreateRfelogForm(props) {
         userProfile,
         getDataVersion,
         getById,
+        getAllCountry
     } = props;
 
     const [isEditMode, setisEditMode] = useState(false);
@@ -143,7 +144,27 @@ function CreateRfelogForm(props) {
         let status;
         if (getUrlParameter("invokeAppId")) {
             let invokeAppId = getUrlParameter("invokeAppId")
-            setformIntialState({ ...formIntialState, invokedAPIFrom: invokeAppId });
+            let lob = getUrlParameter("lob")
+            let tempcountryItems = [];
+            tempcountryItems = await getAllCountry({ profileCountryId: userProfile.profileCountry })
+            tempcountryItems.forEach((item) => {
+                if (item.countryID === userProfile.profileCountry) {
+                    let tempObj = {
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                        countryCode: item.countryCode,
+                    };
+                    setformIntialState({
+                        ...formIntialState,
+                        CountryList: [tempObj],
+                        CountryId: item.countryID,
+                        countryCode: item.countryCode,
+                        invokedAPIFrom: invokeAppId,
+                        LOBId: lob
+                    });
+                }
+            });
             setloading(false)
         } else if (getUrlParameter("id")) {
             itemid = getUrlParameter("id");
