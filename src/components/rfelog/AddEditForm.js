@@ -321,7 +321,7 @@ function AddEditForm(props) {
         }
       }
 
-      if (formIntialState.CountryId.indexOf(item.countryID) !== -1) {
+      if (formIntialState.CountryId?.indexOf(item.countryID) !== -1) {
         regions.push(item.regionID);
       }
     });

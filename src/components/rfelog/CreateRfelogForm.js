@@ -30,7 +30,8 @@ function CreateRfelogForm(props) {
         userProfile,
         getDataVersion,
         getById,
-        getAllCountry
+        getAllCountry,
+        getAlllob
     } = props;
 
     const [isEditMode, setisEditMode] = useState(false);
@@ -146,25 +147,37 @@ function CreateRfelogForm(props) {
             let invokeAppId = getUrlParameter("invokeAppId")
             let lob = getUrlParameter("lob")
             let tempcountryItems = [];
+            let countryObj = {}
+            let lobId = ""
             tempcountryItems = await getAllCountry({ profileCountryId: userProfile.profileCountry })
             tempcountryItems.forEach((item) => {
                 if (item.countryID === userProfile.profileCountry) {
-                    let tempObj = {
+                    countryObj = {
                         label: item.countryName.trim(),
                         value: item.countryID,
                         regionId: item.regionID,
                         countryCode: item.countryCode,
                     };
-                    setformIntialState({
-                        ...formIntialState,
-                        CountryList: [tempObj],
-                        CountryId: item.countryID,
-                        countryCode: item.countryCode,
-                        invokedAPIFrom: invokeAppId,
-                        LOBId: lob
-                    });
                 }
             });
+            let tempLoBItems = await getAlllob({ isActive: true })
+            tempLoBItems.forEach((item) => {
+                if (item.lobName === lob) {
+                    console.log("item>>", item);
+                    lobId = item.lobid
+                }
+            })
+            if (countryObj.value) {
+                console.log("countryObj>>", countryObj);
+                setformIntialState({
+                    ...formIntialState,
+                    CountryList: [countryObj],
+                    CountryId: countryObj.countryID,
+                    countryCode: countryObj.countryCode,
+                    invokedAPIFrom: invokeAppId,
+                    LOBId: lobId
+                });
+            }
             setloading(false)
         } else if (getUrlParameter("id")) {
             itemid = getUrlParameter("id");
