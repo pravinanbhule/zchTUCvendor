@@ -179,9 +179,7 @@ function AddEditForm(props) {
     "RequestForEmpowermentStatus",
     "Underwriter",
   ];
-  const [mandatoryFields, setmandatoryFields] = useState(
-    initialMandotoryFields
-  );
+  const [mandatoryFields, setmandatoryFields] = useState([]);
   const [LATAMMandatoryFields, setLATAMMandatoryFields] = useState([
     "CustomerSegment",
     "NewRenewal",
@@ -659,22 +657,22 @@ function AddEditForm(props) {
   useEffect(() => {
     if (IncountryFlag !== undefined) {
       const fnonIncountryFlagChange = async () => {
-        if (IncountryFlag === IncountryFlagConst.LATAM) {
-          if (frmBranchOpts.length > 1) {
-            setmandatoryFields([
-              ...initialMandotoryFields,
-              ...LATAMMandatoryFields,
-              "Branch",
-            ]);
-          } else {
-            setmandatoryFields([
-              ...initialMandotoryFields,
-              ...LATAMMandatoryFields,
-            ]);
-          }
-        } else {
-          setmandatoryFields([...initialMandotoryFields]);
-        }
+        // if (IncountryFlag === IncountryFlagConst.LATAM) {
+        //   if (frmBranchOpts.length > 1) {
+        //     setmandatoryFields([
+        //       ...initialMandotoryFields,
+        //       ...LATAMMandatoryFields,
+        //       "Branch",
+        //     ]);
+        //   } else {
+        //     setmandatoryFields([
+        //       ...initialMandotoryFields,
+        //       ...LATAMMandatoryFields,
+        //     ]);
+        //   }
+        // } else {
+        //   setmandatoryFields([...initialMandotoryFields]);
+        // }
         //condition to set RequestForEmpowermentReason for uk
         if (IncountryFlag) {
           let temprfeempourment = await getLookupByType({
@@ -733,10 +731,14 @@ function AddEditForm(props) {
       IncountryFlag: IncountryFlag,
       FieldType: "Form",
     });
+    setmandatoryFields([])
     // setfromfieldsdblist(tempfields);
     let tempfields = [];
     tempdbfields?.forEach((item) => {
       if (item.isActive) {
+        if (item.isMandatory) {
+          setmandatoryFields((mandatoryFields)=>[...mandatoryFields, item.fieldName])
+        }
         let tempformobj = formfieldsmapping[item.fieldName];
         if (tempformobj) {
           let tempobj = {
@@ -750,7 +752,7 @@ function AddEditForm(props) {
             clsrowname: tempformobj["clsrowname"]
               ? tempformobj["clsrowname"]
               : "",
-            ismandotory: mandatoryFields.includes(item.fieldName),
+            ismandatory: item.isMandatory,
           };
           if (tempformobj["options"]) {
             tempobj = {
@@ -1850,7 +1852,7 @@ function AddEditForm(props) {
                     : ""
                 }
                 isReadMode={isReadMode}
-                isRequired={obj.ismandotory}
+                isRequired={obj.ismandatory}
                 validationmsg={"Mandatory field"}
                 issubmitted={issubmitted}
                 isdisabled={isfrmdisabled}
@@ -1958,7 +1960,7 @@ function AddEditForm(props) {
               name={obj.name}
               value={formfield[obj.name] ? formfield[obj.name] : []}
               handleChange={handleMultiSelectChange}
-              isRequired={mandatoryFields.includes(obj.name)}
+              isRequired={mandatoryFields.includes(obj.name) || obj.ismandatory }
               isReadMode={isReadMode}
               validationmsg={"Mandatory field"}
               issubmitted={issubmitted}
