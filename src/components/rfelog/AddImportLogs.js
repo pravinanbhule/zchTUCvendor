@@ -62,26 +62,27 @@ function AddImportLogs(props) {
     getAllSegment,
     getMultiUserProfile,
     incountryopts,
+    getLogFields,
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "TUC_RFELog_Import_Template.xlsm";
-  const [commonMandatoryFields, setcommonMandatoryFields] = useState([
-    "AccountName",
-    "OrganizationalAlignment",
-    "CountryId",
-    "LOBId",
-    "DurationofApproval",
-    "RequestForEmpowermentReason",
-    "RFELogDetails",
-    "UnderwriterGrantingEmpowerment",
-    "RequestForEmpowermentStatus",
-    "Underwriter",
-  ]);
-  const [LATAMMandatoryFields, setLATAMMandatoryFields] = useState([
-    "CustomerSegment",
-    "NewRenewal",
-    "GWP",
-  ]);
+  // const [commonMandatoryFields, setcommonMandatoryFields] = useState([
+  //   "AccountName",
+  //   "OrganizationalAlignment",
+  //   "CountryId",
+  //   "LOBId",
+  //   "DurationofApproval",
+  //   "RequestForEmpowermentReason",
+  //   "RFELogDetails",
+  //   "UnderwriterGrantingEmpowerment",
+  //   "RequestForEmpowermentStatus",
+  //   "Underwriter",
+  // ]);
+  // const [LATAMMandatoryFields, setLATAMMandatoryFields] = useState([
+  //   "CustomerSegment",
+  //   "NewRenewal",
+  //   "GWP",
+  // ]);
   const [mandatoryFields, setmandatoryFields] = useState([]);
   const organizationalAlignment = {
     global: RFE_LOG_ORGALINMENT.Global,
@@ -581,6 +582,10 @@ function AddImportLogs(props) {
     "LatAm_Decision Date": {
       fieldname: "DecisionDate",
       date: true,
+    },
+    "New/Renewal": {
+      lookupObj: "newRenewalObj",
+      fieldname: "NewRenewal",
     },
   };
   const [isSubmitted, setisSubmitted] = useState(false);
@@ -1391,7 +1396,23 @@ function AddImportLogs(props) {
         rfeEmpourmentObj: { ...temprfeempourmentObj },
       }));
     }
-  },[IncountryFlag])
+  }, [IncountryFlag])
+
+  useEffect(async () => {
+    setmandatoryFields([])
+    const tempdbfields = await getLogFields({
+      IncountryFlag: IncountryFlag,
+      FieldType: "Form",
+    });
+    tempdbfields?.forEach((item) => {
+      if (item.isActive) {
+        if (item.isMandatory) {
+          setmandatoryFields((mandatoryFields) => [...mandatoryFields, item.fieldName])
+        }
+      }
+
+    })
+  }, [IncountryFlag])
 
   const onSelectChange = (name, value) => {
     setIncountryFlag(value);
@@ -1400,14 +1421,12 @@ function AddImportLogs(props) {
   useEffect(() => {
     if (IncountryFlag === IncountryFlagCost.LATAM) {
       setimportfieldscount(29);
-      setmandatoryFields([...commonMandatoryFields, ...LATAMMandatoryFields]);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
-      setimportfieldscount(21);
+      setimportfieldscount(22);
     } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else {
       setimportfieldscount(20);
-      setmandatoryFields([...commonMandatoryFields]);
     }
   }, [IncountryFlag]);
 
@@ -1606,5 +1625,6 @@ const mapActions = {
   getAllCurrency: currencyActions.getAllCurrency,
   getAllBranch: branchActions.getAllBranch,
   getMultiUserProfile: userprofileActions.getMultiUserProfile,
+  getLogFields: commonActions.getLogFields,
 };
 export default connect(mapStateToProp, mapActions)(AddImportLogs);
