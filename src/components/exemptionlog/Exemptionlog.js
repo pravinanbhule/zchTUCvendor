@@ -3037,7 +3037,7 @@ function Exemptionlog({ ...props }) {
           title={"Are You Sure?"}
           hidePopup={() => setShowPage(false)}
           showPage={showAddPopup}
-          itemDetails={`If you click on the 'Yes' button, you will create an exemption log. Instead, if you want to create a request for empowerment, click on the RfE logs tab.`}
+          itemDetails={`Clicking 'Yes' will create an exemption (generally for a portfolio) to the ZUG Guidelines. To request empowerment for a single account, new product, or new DAA, click on the "RfE Logs" tab in the left menu.`}
         />
       }
       {isshowAddPopup && (
