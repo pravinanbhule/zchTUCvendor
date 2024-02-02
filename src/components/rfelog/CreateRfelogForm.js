@@ -30,6 +30,8 @@ function CreateRfelogForm(props) {
         userProfile,
         getDataVersion,
         getById,
+        getAllCountry,
+        getAlllob
     } = props;
 
     const [isEditMode, setisEditMode] = useState(false);
@@ -143,7 +145,39 @@ function CreateRfelogForm(props) {
         let status;
         if (getUrlParameter("invokeAppId")) {
             let invokeAppId = getUrlParameter("invokeAppId")
-            setformIntialState({ ...formIntialState, invokedAPIFrom: invokeAppId });
+            let lob = getUrlParameter("lob")
+            let tempcountryItems = [];
+            let countryObj = {}
+            let lobId = ""
+            tempcountryItems = await getAllCountry({ profileCountryId: userProfile.profileCountry })
+            tempcountryItems.forEach((item) => {
+                if (item.countryID === userProfile.profileCountry) {
+                    countryObj = {
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                        countryCode: item.countryCode,
+                    };
+                }
+            });
+            let tempLoBItems = await getAlllob({ isActive: true })
+            tempLoBItems.forEach((item) => {
+                if (item.lobName === lob) {
+                    console.log("item>>", item);
+                    lobId = item.lobid
+                }
+            })
+            if (countryObj.value) {
+                console.log("countryObj>>", countryObj);
+                setformIntialState({
+                    ...formIntialState,
+                    CountryList: [countryObj],
+                    CountryId: countryObj.countryID,
+                    countryCode: countryObj.countryCode,
+                    invokedAPIFrom: invokeAppId,
+                    LOBId: lobId
+                });
+            }
             setloading(false)
         } else if (getUrlParameter("id")) {
             itemid = getUrlParameter("id");
