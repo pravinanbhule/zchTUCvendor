@@ -725,7 +725,7 @@ button:not(:last-child) {
   background: url("../assets/edit_hover.png") center no-repeat;
 }
 .delete-icon {
-  width: 100%;
+  width: auto;
   height: 22px;
   background: url("../assets/trash.png") center no-repeat;
 }
