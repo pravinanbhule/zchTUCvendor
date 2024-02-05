@@ -639,7 +639,7 @@ function Rfelog({ ...props }) {
               headerobj = {
                 ...headerobj,
                 formatter: (cell, row, rowIndex, formatExtraData) => {
-                  return row.IsArchived ? (
+                  return row.IsArchived && !row.EntryNumber.includes("POL_")  ? (
                     <span
                       className="link"
                       onClick={() => handleOpenSharePointLink(row.EntryNumber)}
