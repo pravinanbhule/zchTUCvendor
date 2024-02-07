@@ -1397,8 +1397,7 @@ function Rfelog({ ...props }) {
       }
       setformIntialState({
         ...response,
-        isdirty: false,
-        RFELogEmailLink: window.location.origin + window.location.pathname,
+        isdirty: false
       });
       showAddPopup();
     }
