@@ -235,7 +235,7 @@ function FrmInputSearch(props) {
           ""
         ) : (
           <div
-            className="delete-icon"
+            className="popup-delete-icon"
             onClick={() => handleRemoveItem(user.emailAddress)}
           ></div>
         )}
