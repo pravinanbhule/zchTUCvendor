@@ -42,6 +42,7 @@ import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
+import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -314,6 +315,7 @@ function Exemptionlog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
+  const [showpage, setShowPage] = useState(false)
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
     setselfilter({
@@ -2190,8 +2192,14 @@ function Exemptionlog({ ...props }) {
   const [isDataImported, setisDataImported] = useState(false);
   const history = useHistory()
   const showAddPopup = () => {
+    if (showpage) {
+      setShowPage(false)
+    }
     setshowAddPopup(true);
-    };
+  };
+  const confirmationPopup = () => {
+    setShowPage(true)
+  };
   const hideAddPopup = () => {
     setshowAddPopup(false);
     let forminitval =
@@ -3021,6 +3029,14 @@ function Exemptionlog({ ...props }) {
   };
   return (
     <div className="exemptionlog">
+      {showpage &&
+        <ConfirmPopup
+          title={"Are You Sure?"}
+          hidePopup={() => setShowPage(false)}
+          showPage={showAddPopup}
+          itemDetails={`Clicking 'Yes' will create an exemption (generally for a portfolio) to the ZUG Guidelines. To request empowerment for a single account, new product, or new DAA, click on the "RfE Logs" tab in the left menu.`}
+        />
+      }
       {isshowAddPopup && (
         <AddEditForm
           title={isReadMode ? "View Exemption Log" : "Add/Edit Exemption Log"}
@@ -3369,7 +3385,7 @@ function Exemptionlog({ ...props }) {
                   pageno={pageIndex}
                   pagesize={pagesize}
                   totalItems={totalLogCount}
-                  showAddPopup={showAddPopup}
+                  showAddPopup={confirmationPopup}
                   showImportLogsPopup={showImportLogsPopup}
                   defaultSorted={defaultSorted}
                   isExportReport={true}
