@@ -732,6 +732,15 @@ button:not(:last-child) {
   cursor: pointer;
   background: url("../assets/trash_hover.png") center no-repeat;
 }
+.popup-delete-icon {
+  width: 50px !important;
+  height: 22px;
+  background: url("../assets/trash.png") center no-repeat;
+}
+.popup-delete-icon:hover {
+  cursor: pointer;
+  background: url("../assets/trash_hover.png") center no-repeat;
+}
 .restore-icon {
   width: 100%;
   min-width: 22px;
