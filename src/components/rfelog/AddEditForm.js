@@ -13,6 +13,7 @@ import { Prompt } from "react-router-dom";
 import { isNotEmptyValue } from "../../helpers";
 import { formfieldsmapping } from "./Rfelogconstants";
 import { isEmptyObjectKeys } from "../../helpers";
+import Dropdown from "react-dropdown";
 import "./Style.css";
 import {
   RFE_LOG_ORGALINMENT,
@@ -76,6 +77,7 @@ function AddEditForm(props) {
     getAllPolicyAccounts,
     getPolicyTermId,
     getMultiUserProfile,
+    getLanguageDetails,
     uploadFile,
     deleteFile,
     downloadFile,
@@ -188,6 +190,21 @@ function AddEditForm(props) {
   const [fileuploadloader, setfileuploadloader] = useState(false);
 
   const [loading, setloading] = useState(true);
+  const [languageDetails, setLanguageDetails] = useState([])
+  const [selectedlanguage, setSelectedlanguage] = useState()
+
+  useEffect(async()=>{
+    const language = await getLanguageDetails()
+    let objLanguage = []
+    language.filter((item)=> {
+      objLanguage.push({
+        label: item.languageName,
+        value: item.languageCode
+      })
+    })
+    // setSelectedlanguage({label: "English", value: "EN001"})
+    setLanguageDetails(objLanguage)
+  },[])
 
   useEffect(() => {
     const tempuserroles = {
@@ -723,10 +740,23 @@ function AddEditForm(props) {
     }
   }, [IncountryFlag]);
 
+  useEffect(async()=>{
+    if (selectedlanguage?.value) {
+      fnloadcountryview();
+      let tempToolTips = await getToolTip({ type: "RFELogs", LanguageCode: selectedlanguage?.value });
+      let tooltipObj = {};
+      tempToolTips.forEach((item) => {
+        tooltipObj[item.toolTipField] = item.toolTipText;
+      });
+      settooltip(tooltipObj);
+    }
+  },[selectedlanguage])
+
   const fnloadcountryview = async () => {
     const tempdbfields = await getLogFields({
       IncountryFlag: IncountryFlag,
       FieldType: "Form",
+      LanguageCode: selectedlanguage?.value
     });
     setmandatoryFields([])
     // setfromfieldsdblist(tempfields);
@@ -1354,6 +1384,7 @@ function AddEditForm(props) {
       let isMalaysiacountry = true;
       let isFrancecountry = true;
       let isMiddleEastcountry = true;
+      let isGermanycountry = true;
       let isSpaincountry = true;
       let isItalycountry = true;
       let isBeneluxcountry = true;
@@ -1409,6 +1440,11 @@ function AddEditForm(props) {
           isMiddleEastcountry = isMiddleEastcountry ? true : false;
         } else {
           isMiddleEastcountry = false;
+        }
+        if (item.value === IncountryIds.GERMANY) {
+          isGermanycountry = isGermanycountry ? true : false;
+        } else {
+          isGermanycountry = false;
         }
         if (item.value === IncountryIds.SPAIN) {
           isSpaincountry = isSpaincountry ? true : false;
@@ -1577,6 +1613,20 @@ function AddEditForm(props) {
             : OrganizationalAlignment.country,
         });
         setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
+      } 
+      else if (
+        isGermanycountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.GERMANY);
       } 
       else if (
         isSpaincountry &&
@@ -2176,6 +2226,16 @@ function AddEditForm(props) {
                 Edit
               </div>
             )}
+           <div className="dropdowncls" style={{ marginRight: "10px" }}>
+            <Dropdown
+              className="drop-down"
+              options={languageDetails}
+              onChange={(e)=> setSelectedlanguage(e)}
+              value={selectedlanguage?.value ? selectedlanguage.value : {label: "English", value: "EN001"}}
+              placeholder="Select"
+              // disabled={isdisabled ? isdisabled : false}
+            />
+          </div>
           <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
             Back
           </div>
@@ -2911,5 +2971,6 @@ const mapActions = {
   getMultiUserProfile: userprofileActions.getMultiUserProfile,
   getAllPolicyAccounts: rfelogActions.getAllPolicyAccounts,
   getPolicyTermId: rfelogActions.getPolicyTermId,
+  getLanguageDetails: commonActions.getLanguageDetails,
 };
 export default connect(mapStateToProp, mapActions)(AddEditForm);

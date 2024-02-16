@@ -734,7 +734,7 @@ button:not(:last-child) {
   background: url("../assets/trash_hover.png") center no-repeat;
 }
 .popup-delete-icon {
-  width: 55px !important;
+  width: 50px !important;
   height: 22px;
   background: url("../assets/trash.png") center no-repeat;
 }
