@@ -192,6 +192,11 @@ function AddEditForm(props) {
   const [loading, setloading] = useState(true);
   const [languageDetails, setLanguageDetails] = useState([])
   const [selectedlanguage, setSelectedlanguage] = useState()
+  const [segmentAccount, setSegmentAccount] = useState([
+    "B3E9745F-D84F-4203-A866-2C47C3300C9D", 
+    "5DE8C7C1-6A54-4A63-BCE6-451A97F81FC7", 
+    "5C4951E2-6D7D-438D-BF32-026F8310FAE7"
+  ])
 
   useEffect(async()=>{
     const language = await getLanguageDetails()
@@ -256,7 +261,7 @@ function AddEditForm(props) {
   const fnOnInit = async () => {
     let tempopts = [];
     let tempcountryItems = [];
-    getAllSegment({ logType: "rfelogs" });
+    // getAllSegment({ logType: "rfelogs" });
     getAllCurrency();
     getAllBranch();
     getAllSublob();
@@ -848,6 +853,7 @@ function AddEditForm(props) {
     });
     if (tempfields.length) {
       setformdomfields(tempfields);
+      handleAccountNumberField(tempfields)
     }
   };
 
@@ -1088,7 +1094,36 @@ function AddEditForm(props) {
     }
     setformfield({ ...formfield, isdirty: true, [name]: value });
   };
-  const handleSelectChange = (name, value) => {
+
+  useEffect(() => {
+    if (IncountryFlag !== undefined && IncountryFlag !== IncountryFlagConst.GERMANY) {
+      getAllSegment({ logType: "rfelogs" });
+    } else if (IncountryFlag === IncountryFlagConst.GERMANY){
+      getAllSegment({ logType: "rfelogsGermany" });
+    }
+  }, [IncountryFlag])
+
+  const handleAccountNumberField = (tempfields) =>{
+    const newFormdomFields = tempfields
+    const indexToInsertAfter = newFormdomFields.findIndex(item => item.name === "CustomerSegment");
+    if (indexToInsertAfter && segmentAccount.includes(formIntialState?.CustomerSegment)){
+      newFormdomFields.splice(indexToInsertAfter + 1, 0, {
+        componenttype: "FrmInput",
+        title: `Account Number`,
+        name: 'AccountNumber',
+        eventhandler: "",
+        colspan: 3,
+        clsrowname: "",
+        ismandatory: false,
+        fieldTitleHtml: false,
+      });
+      setTimeout(() => {
+        setformdomfields(newFormdomFields)
+      }, 2000);
+    }
+  }
+
+  const handleSelectChange = (name, value, fieldName) => {
     let newDOA = "";
     if (name === "LOBId") {
       let tempopts = [];
@@ -1116,6 +1151,34 @@ function AddEditForm(props) {
       setfrmSublob([selectInitiVal, ...sublobopts]);
     } else if (name === "LOBId" && value === "") {
       setfrmSublob([]);
+    } else if (name === 'CustomerSegment' && segmentAccount.includes(value)) {
+      const newFormdomFields = formdomfields
+      const indexToInsertAfter = formdomfields.findIndex(item => item.name === name);
+      newFormdomFields.splice(indexToInsertAfter + 1, 0, {
+        componenttype: "FrmInput",
+        title: `Account Number`,
+        name: 'AccountNumber',
+        eventhandler: "",
+        colspan: 3,
+        clsrowname: "",
+        ismandatory: false,
+        fieldTitleHtml: false,
+      });
+      setformdomfields(newFormdomFields)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === 'CustomerSegment' && !segmentAccount.includes(value)) {
+      const indexToInsertAfter = formdomfields.filter(item => item.name !== 'AccountNumber');
+      setformdomfields(indexToInsertAfter)
+      delete formfield?.AccountNumber
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
     } else {
       /*if (name === "CountryId") {
         let countrycode = "";
@@ -2228,12 +2291,10 @@ function AddEditForm(props) {
             )}
            <div className="dropdowncls" style={{ marginRight: "10px" }}>
             <Dropdown
-              className="drop-down"
               options={languageDetails}
               onChange={(e)=> setSelectedlanguage(e)}
               value={selectedlanguage?.value ? selectedlanguage.value : {label: "English", value: "EN001"}}
               placeholder="Select"
-              // disabled={isdisabled ? isdisabled : false}
             />
           </div>
           <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
