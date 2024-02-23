@@ -810,6 +810,7 @@ function AddEditForm(props) {
               ...tempobj,
               isAddButton: formIntialState.ReferralReasonLevel2 ? false : true,
             };
+            handleReasonOptions("RequestForEmpowermentReason", formIntialState.RequestForEmpowermentReason)
           }
           if (item.fieldName === "ReferralReasonLevel2") {
             tempobj = {
@@ -817,6 +818,7 @@ function AddEditForm(props) {
               isAddButton: formIntialState.ReferralReasonLevel3 ? false : true,
               colspan: formIntialState.ReferralReasonLevel2 ? 3 : 0
             };
+            handleReasonOptions2("ReferralReasonLevel2", formIntialState?.ReferralReasonLevel2)
           }
           if (item.fieldName === "ReferralReasonLevel3") {
             tempobj = {
@@ -824,6 +826,7 @@ function AddEditForm(props) {
               isAddButton: false,
               colspan: formIntialState.ReferralReasonLevel3 ? 3 : 0
             };
+            handleReasonOptions3("ReferralReasonLevel3", formIntialState?.ReferralReasonLevel3)
           }
           if (item.fieldName === "AccountNumber") {
             tempobj = {
