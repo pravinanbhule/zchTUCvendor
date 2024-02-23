@@ -21,6 +21,12 @@ function FrmSelect(props) {
     tooltipmsg,
     itemid,
     isinline,
+    isAddButton,
+    handleClickButton,
+    isRemoveButton,
+    isShowTextBox,
+    textValue,
+    isAddButtonDisable
   } = props;
   const onSelect = (selectedopt) => {
     handleChange(name, selectedopt.value, itemid);
@@ -69,15 +75,30 @@ function FrmSelect(props) {
         <div>{value ? getSelectedOpt() : ""}</div>
       ) : (
         <>
-          <div className="dropdowncls">
+          <div className={`${isAddButton || isRemoveButton ? "dropdowncls" : ""}`}>
             <Dropdown
-              className="drop-down"
+              className={`${isAddButton || isRemoveButton ? "drop-down" : ""}`}
               options={selectopts}
               onChange={onSelect}
               value={value}
               placeholder="Select"
               disabled={isdisabled ? isdisabled : false}
             />
+            {isAddButton ?
+              <div className={`${isAddButtonDisable ? "plus-button Button-disabled" : "plus-button"}`} onClick={() => handleClickButton("add", name)}>+</div> : ""}
+            {isRemoveButton ?
+              <div className="plus-button" onClick={() => handleClickButton("remove", name)}>-</div> : ""}
+            {isShowTextBox ?
+              <input
+                name={name}
+                value={textValue}
+                disabled={isdisabled ? isdisabled : false}
+                onChange={(e) => handleChange(name, e.target.value, "Textboxvalue")}
+                placeholder="Add your Reason here"
+                maxLength="150"
+                autoComplete="off"
+                className="marginTop"
+              ></input> : ""}
           </div>
           {isRequired && issubmitted && !value ? (
             <div className="validationError">{validationmsg}</div>

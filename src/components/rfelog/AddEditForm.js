@@ -105,6 +105,9 @@ function AddEditForm(props) {
   const [frmConditionOpts, setConditionOpts] = useState([]);
   const [frmrfechz, setfrmrfechz] = useState([]);
   const [frmrfeempourment, setfrmrfeempourment] = useState([]);
+  const [frmrfeempourmentgermany, setfrmrfeempourmentgermany] = useState([]);
+  const [referralReasonLevel2Option, setReferralReasonLevel2Option] = useState([]);
+  const [referralReasonLevel3Option, setReferralReasonLevel3Option] = useState([]);
   const [frmrfeempourmentuk, setfrmrfeempourmentuk] = useState([]);
   const [frmrfeempourmentglobal, setfrmrfeempourmentglobal] = useState([]);
   const [frmstatus, setfrmstatus] = useState([]);
@@ -192,6 +195,14 @@ function AddEditForm(props) {
   const [loading, setloading] = useState(true);
   const [languageDetails, setLanguageDetails] = useState([])
   const [selectedlanguage, setSelectedlanguage] = useState()
+  const [isGermany, setIsGermany] = useState(false)
+  const [showTextBox, setShowTextBox] = useState(false)
+  const [buttonsDisable, setButtonsDisable] = useState(true)
+  const [showButtons, setShowButtons] = useState(false)
+  const [reasonfields, setReasonfields] = useState({
+    ReferralReasonLevel2: false,
+    ReferralReasonLevel3: false
+  })
   const [segmentAccount, setSegmentAccount] = useState([
     "B3E9745F-D84F-4203-A866-2C47C3300C9D", 
     "5DE8C7C1-6A54-4A63-BCE6-451A97F81FC7", 
@@ -619,6 +630,7 @@ function AddEditForm(props) {
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourmentcountry]);
+    setfrmrfeempourmentgermany([...temprfeempourmentcountry]);
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
     //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
@@ -720,6 +732,7 @@ function AddEditForm(props) {
           tempopts.sort(dynamicSort("label"));
           temprfeempourment = [...tempopts];
           setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
+          setfrmrfeempourmentgermany([...temprfeempourment]);
           if (formfield.RequestForEmpowermentReason) {
             const isPresent = frmrfeempourmentglobal.filter(
               (item) => item.value === formfield.RequestForEmpowermentReason
@@ -764,7 +777,13 @@ function AddEditForm(props) {
       LanguageCode: selectedlanguage?.value
     });
     setmandatoryFields([])
-    // setfromfieldsdblist(tempfields);
+    let newFields = tempdbfields
+    let index = newFields.findIndex(item => item.fieldName === "CustomerSegment");
+    let AccountNumber = newFields.filter(item => item.fieldName === "AccountNumber")
+    newFields.filter(item => item.fieldName !== "AccountNumber")
+    if (index !== -1) {
+      newFields.splice(index + 1, 0, AccountNumber[0]);
+    }
     let tempfields = [];
     tempdbfields?.forEach((item) => {
       if (item.isActive) {
@@ -786,6 +805,32 @@ function AddEditForm(props) {
               : "",
             ismandatory: item.isMandatory,
           };
+          if (item.fieldName === "RequestForEmpowermentReason") {
+            tempobj = {
+              ...tempobj,
+              isAddButton: formIntialState.ReferralReasonLevel2 ? false : true,
+            };
+          }
+          if (item.fieldName === "ReferralReasonLevel2") {
+            tempobj = {
+              ...tempobj,
+              isAddButton: formIntialState.ReferralReasonLevel3 ? false : true,
+              colspan: formIntialState.ReferralReasonLevel2 ? 3 : 0
+            };
+          }
+          if (item.fieldName === "ReferralReasonLevel3") {
+            tempobj = {
+              ...tempobj,
+              isAddButton: false,
+              colspan: formIntialState.ReferralReasonLevel3 ? 3 : 0
+            };
+          }
+          if (item.fieldName === "AccountNumber") {
+            tempobj = {
+              ...tempobj,
+              colspan: formIntialState.AccountNumber ? 3 : 0
+            };
+          }
           if (tempformobj["options"]) {
             tempobj = {
               ...tempobj,
@@ -853,7 +898,6 @@ function AddEditForm(props) {
     });
     if (tempfields.length) {
       setformdomfields(tempfields);
-      handleAccountNumberField(tempfields)
     }
   };
 
@@ -1096,34 +1140,87 @@ function AddEditForm(props) {
   };
 
   useEffect(() => {
+    if (IncountryFlag !== IncountryFlagConst.GERMANY) {
+      setIsGermany(false)
+      setShowTextBox(false)
+      setShowButtons(false)
+      setButtonsDisable(true)
+    } else if (IncountryFlag === IncountryFlagConst.GERMANY) {
+      setIsGermany(true)
+      getAllSegment({ logType: "rfelogsGermany" });
+      if (formIntialState.RequestForEmpowermentReason !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" && formIntialState.RequestForEmpowermentReason !== "") {
+        setShowButtons(true)
+        setButtonsDisable(false)
+      } else if (formIntialState.RequestForEmpowermentReason === "00EBEE31-9CAE-4094-853F-D8F5EB1F124B") {
+        setShowButtons(false)
+        setButtonsDisable(true)
+        setShowTextBox(true)
+      } else if (formIntialState.RequestForEmpowermentReason === "") {
+        setShowButtons(true)
+        setButtonsDisable(true)
+      }
+    }
     if (IncountryFlag !== undefined && IncountryFlag !== IncountryFlagConst.GERMANY) {
       getAllSegment({ logType: "rfelogs" });
-    } else if (IncountryFlag === IncountryFlagConst.GERMANY){
-      getAllSegment({ logType: "rfelogsGermany" });
     }
   }, [IncountryFlag])
 
-  const handleAccountNumberField = (tempfields) =>{
-    const newFormdomFields = tempfields
-    const indexToInsertAfter = newFormdomFields.findIndex(item => item.name === "CustomerSegment");
-    if (indexToInsertAfter && segmentAccount.includes(formIntialState?.CustomerSegment)){
-      newFormdomFields.splice(indexToInsertAfter + 1, 0, {
-        componenttype: "FrmInput",
-        title: `Account Number`,
-        name: 'AccountNumber',
-        eventhandler: "",
-        colspan: 3,
-        clsrowname: "",
-        ismandatory: false,
-        fieldTitleHtml: false,
-      });
-      setTimeout(() => {
-        setformdomfields(newFormdomFields)
-      }, 2000);
+  const handleMultiDropdown = (value, name) => {
+    if (name === "RequestForEmpowermentReason") {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: true
+      })
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.colspan = 3 : item.colspan = item.colspan);
+      formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = false : item.name = item.name);
+    } else if (name === "ReferralReasonLevel2") {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel3: true
+      })
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel3" ? item.colspan = 3 : item.colspan = item.colspan);
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.isAddButton = false : item.name = item.name);
+    }
+  }
+
+  const handleReasonOptions = (name, value) =>{
+    const GermanyOptions = frmrfeempourmentgermany 
+    if (name === "RequestForEmpowermentReason" || value !== "") {
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
+      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1])
+    }
+  }
+  const handleReasonOptions2 = (name, value) =>{
+    const GermanyOptions = frmrfeempourmentgermany 
+    if (name === "ReferralReasonLevel2" || value !== "") {
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.RequestForEmpowermentReason && item.value !== formIntialState.RequestForEmpowermentReason)
+      setfrmrfeempourment([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1])
+    }
+  }
+  const handleReasonOptions3 = (name, value) =>{
+    const GermanyOptions = frmrfeempourmentgermany 
+    if (name === "ReferralReasonLevel3" || value !== "") {
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.RequestForEmpowermentReason && item.value !== formIntialState.RequestForEmpowermentReason)
+      setfrmrfeempourment([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption1])
     }
   }
 
   const handleSelectChange = (name, value, fieldName) => {
+    if (name === "RequestForEmpowermentReason") {
+      handleReasonOptions(name, value)
+    }
+    if (name === "ReferralReasonLevel2") {
+      handleReasonOptions2(name, value)
+    }
+    if (name === "ReferralReasonLevel3") {
+      handleReasonOptions3(name, value)
+    }
     let newDOA = "";
     if (name === "LOBId") {
       let tempopts = [];
@@ -1151,29 +1248,50 @@ function AddEditForm(props) {
       setfrmSublob([selectInitiVal, ...sublobopts]);
     } else if (name === "LOBId" && value === "") {
       setfrmSublob([]);
-    } else if (name === 'CustomerSegment' && segmentAccount.includes(value)) {
-      const newFormdomFields = formdomfields
-      const indexToInsertAfter = formdomfields.findIndex(item => item.name === name);
-      newFormdomFields.splice(indexToInsertAfter + 1, 0, {
-        componenttype: "FrmInput",
-        title: `Account Number`,
-        name: 'AccountNumber',
-        eventhandler: "",
-        colspan: 3,
-        clsrowname: "",
-        ismandatory: false,
-        fieldTitleHtml: false,
-      });
-      setformdomfields(newFormdomFields)
+    } else if (name === "RequestForEmpowermentReason" && value === "") {
+      delete formfield.OtherReferralReason
+      setShowTextBox(false)
+      setShowButtons(true)
+      setButtonsDisable(true)
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === 'CustomerSegment' && !segmentAccount.includes(value)) {
-      const indexToInsertAfter = formdomfields.filter(item => item.name !== 'AccountNumber');
-      setformdomfields(indexToInsertAfter)
-      delete formfield?.AccountNumber
+    } else if (name === "RequestForEmpowermentReason" && value === "00EBEE31-9CAE-4094-853F-D8F5EB1F124B") {
+      setShowTextBox(true)
+      setShowButtons(false)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "RequestForEmpowermentReason" && fieldName === "Textboxvalue") {
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        "OtherReferralReason": value,
+      });
+    } else if (name === "RequestForEmpowermentReason" && (value !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" || value !== "")) {
+      setShowTextBox(false)
+      setShowButtons(true)
+      setButtonsDisable(false)
+      setformfield({
+        ...formfield,
+        OtherReferralReason: null,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "CustomerSegment" && !segmentAccount.includes(value)) {
+      formdomfields.filter((item) => item.name === "AccountNumber" ? item.colspan = 0 : item.colspan = item.colspan);
+      setformfield({
+        ...formfield,
+        AccountNumber: null,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "CustomerSegment" && segmentAccount.includes(value)) {
+      formdomfields.filter((item) => item.name === "AccountNumber" ? item.colspan = 3 : item.colspan = item.colspan);
       setformfield({
         ...formfield,
         isdirty: true,
@@ -1943,7 +2061,7 @@ function AddEditForm(props) {
     let tempelement;
     switch (obj.componenttype) {
       case "FrmInput":
-        return (
+        tempelement = (
           <div className={`col-md-${obj.colspan}`}>
             {obj.peoplepickertype ? (
               <FrmInput
@@ -1992,6 +2110,11 @@ function AddEditForm(props) {
             )}
           </div>
         );
+        return obj.conditionaldisplay
+          ? eval(obj.conditionaldisplay)
+            ? tempelement
+            : ""
+          : tempelement;
       case "FrmInputAutocomplete":
         tempelement = (
           <div className={`col-md-${obj.colspan}`}>
@@ -2049,7 +2172,13 @@ function AddEditForm(props) {
                 isfrmdisabled ||
                 (obj.disablecondition && eval(obj.disablecondition))
               }
+              isAddButton={isGermany && showButtons && obj.isAddButton === true ? true : false}
+              isAddButtonDisable={buttonsDisable}
+              handleClickButton={(value, name) => handleMultiDropdown(value, name)}
+              // isRemoveButton={obj.name === "ReferralReasonLevel2" || obj.name === "ReferralReasonLevel3" ? true : false}
               isToolTip={obj.tooltipmsg ? true : false}
+              isShowTextBox={obj.name === "RequestForEmpowermentReason" && showTextBox && isGermany}
+              textValue={formfield.OtherReferralReason}
               tooltipmsg={eval(obj.tooltipmsg)}
             />
           </div>

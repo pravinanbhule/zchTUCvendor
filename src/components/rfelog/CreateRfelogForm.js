@@ -86,7 +86,9 @@ function CreateRfelogForm(props) {
         SUBLOBID: "",
         mappedLOBs: "",
         PolicyTermId: "",
-        invokedAPIFrom: ""
+        invokedAPIFrom: "",
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null
     };
     const [formIntialState, setformIntialState] = useState(formInitialValue);
     const [frmCountrySelectOpts, setfrmCountrySelectOpts] = useState([]);
