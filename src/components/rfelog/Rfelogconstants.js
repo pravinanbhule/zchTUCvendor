@@ -212,6 +212,22 @@ export const formfieldsmapping = {
     colspan: 3,
     fieldTitleHtml: true,
   },
+  ReferralReasonLevel2: {
+    componenttype: "FrmSelect",
+    options: "referralReasonLevel2Option",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 0,
+    conditionaldisplay: "reasonfields.ReferralReasonLevel2 === true ? true : false || formfield.ReferralReasonLevel2 !== null ? true : false",
+  },
+  ReferralReasonLevel3: {
+    componenttype: "FrmSelect",
+    options: "referralReasonLevel3Option",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 0,
+    conditionaldisplay: "reasonfields.ReferralReasonLevel3 === true ? true : false || formfield.ReferralReasonLevel3 !== null ? true : false",
+  },
   UnderwriterGrantingEmpowerment: {
     componenttype: "FrmInput",
     eventhandler: "handleChange",
@@ -263,6 +279,12 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     colspan: 3,
     startbgcls: "frm-field-bggray",
+  },
+  AccountNumber: {
+    componenttype: "FrmInput",
+    eventhandler: "handleChange",
+    colspan: 0,
+    conditionaldisplay: "segmentAccount.includes(formfield?.CustomerSegment)",
   },
   NewRenewal: {
     componenttype: "FrmSelect",
