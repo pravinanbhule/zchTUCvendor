@@ -1169,11 +1169,13 @@ function AddEditForm(props) {
       if (formIntialState.RequestForEmpowermentReason !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" && formIntialState.RequestForEmpowermentReason !== "") {
         setShowButtons(true)
         setButtonsDisable(false)
-      } else if (formIntialState.RequestForEmpowermentReason === "00EBEE31-9CAE-4094-853F-D8F5EB1F124B") {
+      }
+      if (formIntialState.RequestForEmpowermentReason === "00EBEE31-9CAE-4094-853F-D8F5EB1F124B") {
         setShowButtons(false)
         setButtonsDisable(true)
         setShowTextBox(true)
-      } else if (formIntialState.RequestForEmpowermentReason === "") {
+      }
+      if (formIntialState?.RequestForEmpowermentReason === "" || formIntialState.RequestForEmpowermentReason === undefined) {
         setShowButtons(true)
         setButtonsDisable(true)
       }
@@ -1295,6 +1297,8 @@ function AddEditForm(props) {
         ReferralReasonLevel2: false,
         ReferralReasonLevel3: false,
       })
+      delete formIntialState.ReferralReasonLevel2
+      delete formIntialState.ReferralReasonLevel3
       formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.colspan = 0 : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : item.colspan = item.colspan);
       setformfield({
         ...formfield,
@@ -1429,6 +1433,10 @@ function AddEditForm(props) {
         ReferralReasonLevel2: false,
         ReferralReasonLevel3: false,
       })
+      setButtonsDisable(true)
+      delete formIntialState.RequestForEmpowermentReason
+      delete formIntialState.ReferralReasonLevel2
+      delete formIntialState.ReferralReasonLevel3
       setformfield({
         ...formfield,
         ReferralReasonLevel2: null,
