@@ -201,7 +201,7 @@ export const formfieldsmapping = {
     options: "frmSublob",
     eventhandler: "handleSelectChange",
     titlelinespace: true,
-    colspan: 3,
+    colspan: 0,
     conditionaldisplay: "frmSublob.length > 1",
   },
   RequestForEmpowermentReason: {
@@ -218,7 +218,8 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     titlelinespace: true,
     colspan: 0,
-    conditionaldisplay: "reasonfields.ReferralReasonLevel2 === true ? true : false || formfield.ReferralReasonLevel2 !== null ? true : false",
+    startbgcls: "frm-field-bggray",
+    conditionaldisplay: "reasonfields.ReferralReasonLevel2 || formfield.ReferralReasonLevel2 !== null ? true : false",
   },
   ReferralReasonLevel3: {
     componenttype: "FrmSelect",
@@ -226,7 +227,8 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     titlelinespace: true,
     colspan: 0,
-    conditionaldisplay: "reasonfields.ReferralReasonLevel3 === true ? true : false || formfield.ReferralReasonLevel3 !== null ? true : false",
+    startbgcls: "frm-field-bggray",
+    conditionaldisplay: "reasonfields.ReferralReasonLevel3 || formfield.ReferralReasonLevel3 !== null ? true : false",
   },
   UnderwriterGrantingEmpowerment: {
     componenttype: "FrmInput",
@@ -320,6 +322,8 @@ export const formfieldsmapping = {
     eventhandler: "handleChange",
     colspan: 3,
     clsrowname: "border-bottom",
+    breakblock: true,
+    startbgcls: "frm-field-bggray",
   },
   CHZ: {
     componenttype: "FrmSelect",

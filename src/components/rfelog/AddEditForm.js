@@ -780,9 +780,12 @@ function AddEditForm(props) {
     let newFields = tempdbfields
     let index = newFields.findIndex(item => item.fieldName === "CustomerSegment");
     let AccountNumber = newFields.filter(item => item.fieldName === "AccountNumber")
-    newFields.filter(item => item.fieldName !== "AccountNumber")
-    if (index !== -1) {
-      newFields.splice(index + 1, 0, AccountNumber[0]);
+    for(let i = 0; i < newFields.length; i++) {
+      if(newFields[i].fieldName === "CustomerSegment") {
+          newFields.splice(index + 1, 0, AccountNumber[0]);
+        } else if (newFields[i].fieldName === "AccountNumber" && newFields[i - 1].fieldName !== "CustomerSegment") {
+          newFields.splice(i, 1);
+        }
     }
     let tempfields = [];
     tempdbfields?.forEach((item) => {
@@ -810,7 +813,9 @@ function AddEditForm(props) {
               ...tempobj,
               isAddButton: formIntialState.ReferralReasonLevel2 ? false : true,
             };
-            handleReasonOptions("RequestForEmpowermentReason", formIntialState.RequestForEmpowermentReason)
+            if (isEditMode) {
+              handleReasonOptions("RequestForEmpowermentReason", formIntialState.RequestForEmpowermentReason)
+            }
           }
           if (item.fieldName === "ReferralReasonLevel2") {
             tempobj = {
@@ -818,7 +823,9 @@ function AddEditForm(props) {
               isAddButton: formIntialState.ReferralReasonLevel3 ? false : true,
               colspan: formIntialState.ReferralReasonLevel2 ? 3 : 0
             };
-            handleReasonOptions2("ReferralReasonLevel2", formIntialState?.ReferralReasonLevel2)
+            if (isEditMode) {
+              handleReasonOptions2("ReferralReasonLevel2", formIntialState?.ReferralReasonLevel2)
+            }
           }
           if (item.fieldName === "ReferralReasonLevel3") {
             tempobj = {
@@ -826,7 +833,15 @@ function AddEditForm(props) {
               isAddButton: false,
               colspan: formIntialState.ReferralReasonLevel3 ? 3 : 0
             };
-            handleReasonOptions3("ReferralReasonLevel3", formIntialState?.ReferralReasonLevel3)
+            if (isEditMode) {
+              handleReasonOptions3("ReferralReasonLevel3", formIntialState?.ReferralReasonLevel3)
+            }
+          }
+          if (item.fieldName === "SUBLOBID") {
+            tempobj = {
+              ...tempobj,
+              colspan: formIntialState.SUBLOBID ? 3 : 0
+            };
           }
           if (item.fieldName === "AccountNumber") {
             tempobj = {
@@ -1174,8 +1189,14 @@ function AddEditForm(props) {
         ...reasonfields,
         ReferralReasonLevel2: true
       })
-      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.colspan = 3 : item.colspan = item.colspan);
+      setButtonsDisable(true)
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? (item.colspan = 3, item.isAddButton = true) : item.colspan = item.colspan);
       formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = false : item.name = item.name);
+      const GermanyOptions = frmrfeempourmentgermany 
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" && item.value !== formfield.RequestForEmpowermentReason && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" && item.value !== formfield.RequestForEmpowermentReason && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
+      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1])
     } else if (name === "ReferralReasonLevel2") {
       setReasonfields({
         ...reasonfields,
@@ -1249,6 +1270,11 @@ function AddEditForm(props) {
       });
       let sublobopts = frmSublobAll.filter((item) => item.lob === value);
       setfrmSublob([selectInitiVal, ...sublobopts]);
+      if (sublobopts?.length > 0) {
+        formdomfields.filter((item) => item.name === "SUBLOBID" ? item.colspan = 3 : item.colspan = item.colspan);
+      } else {
+        formdomfields.filter((item) => item.name === "SUBLOBID" ? item.colspan = 0 : item.colspan = item.colspan);
+      }
     } else if (name === "LOBId" && value === "") {
       setfrmSublob([]);
     } else if (name === "RequestForEmpowermentReason" && value === "") {
@@ -1264,8 +1290,16 @@ function AddEditForm(props) {
     } else if (name === "RequestForEmpowermentReason" && value === "00EBEE31-9CAE-4094-853F-D8F5EB1F124B") {
       setShowTextBox(true)
       setShowButtons(false)
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+      })
+      formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.colspan = 0 : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : item.colspan = item.colspan);
       setformfield({
         ...formfield,
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null,
         isdirty: true,
         [name]: value,
       });
@@ -1295,6 +1329,20 @@ function AddEditForm(props) {
       });
     } else if (name === "CustomerSegment" && segmentAccount.includes(value)) {
       formdomfields.filter((item) => item.name === "AccountNumber" ? item.colspan = 3 : item.colspan = item.colspan);
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "ReferralReasonLevel2" && value === "") {
+      setButtonsDisable(true)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "ReferralReasonLevel2" && value !== "") {
+      setButtonsDisable(false)
       setformfield({
         ...formfield,
         isdirty: true,
@@ -1376,8 +1424,15 @@ function AddEditForm(props) {
         });
       });
       setfrmselectedRegion([...selectedregions]);
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+      })
       setformfield({
         ...formfield,
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null,
         isdirty: true,
         [name]: value,
         Branch: "",
@@ -2469,7 +2524,8 @@ function AddEditForm(props) {
                     domblockspancnt === 12 ||
                     domblockspancnt + nextelement?.colspan > 12 ||
                     (item.breakblock && !nextelement.breakblock) ||
-                    index === formdomfields.length - 1
+                    index === formdomfields.length - 1 ||
+                    item.name === "ZurichShare"
                   ) {
                     blockelelements.push(item);
                     const eleblock = getformsfieldsblock(
