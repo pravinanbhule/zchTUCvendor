@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Style.css";
 import ToolTip from "../tooltip/ToolTip";
+import AppLocale from "../../../IngProvider";
 function FrmInputAutocomplete(props) {
   const {
     title,
@@ -17,6 +18,7 @@ function FrmInputAutocomplete(props) {
     isToolTip,
     tooltipmsg,
     options,
+    selectedlanguage
   } = props;
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestions = options?.length
@@ -82,7 +84,7 @@ function FrmInputAutocomplete(props) {
               value={value}
               disabled={isdisabled ? isdisabled : false}
               onChange={handleInputChange}
-              placeholder="Search"
+              placeholder={selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.search"] : "Search"}
               onFocus={() => setShowSuggestions(true)}
               maxLength="80"
               autoComplete="off"
