@@ -347,7 +347,7 @@ function CreateRfelogForm(props) {
                 regionId: country.regionID,
             }));
             response["CountryList"] = [...countryList];
-            if (mode === "edit" && response.IsSubmit) {
+            if (mode === "edit") {
                 setisEditMode(true);
             }
             if (mode === "view") {
