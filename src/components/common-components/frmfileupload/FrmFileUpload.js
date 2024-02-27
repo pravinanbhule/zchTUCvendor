@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Style.css";
 import { formatDate } from "../../../helpers";
+import AppLocale from "../../../IngProvider";
 function FrmFileUpload(props) {
   const {
     title,
@@ -17,6 +18,7 @@ function FrmFileUpload(props) {
     isdisabled,
     isShowDelete,
     downloadfile,
+    selectedlanguage
   } = props;
   const [selectedfile, setselectedfile] = useState();
   const [filename, setfilename] = useState("");
@@ -124,12 +126,12 @@ function FrmFileUpload(props) {
             <label for="file">
               <div className="select-filebox">
                 <div className="selected-files">
-                  {filename ? filename : "Choose a file…"}
+                  {filename ? filename : selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.chooseafile"] : "Choose a file…"}
                 </div>
                 <div
                   className={`btn-blue browse-btn ${isdisabled && "disable"}`}
                 >
-                  Browse
+                  {selectedlanguage ? AppLocale[selectedlanguage].messages["label.browser"] : "Browser"}
                 </div>
               </div>
             </label>
@@ -139,7 +141,7 @@ function FrmFileUpload(props) {
               }`}
               onClick={onfileuploadhandler}
             >
-              Upload
+              {selectedlanguage ? AppLocale[selectedlanguage].messages["button.upload"] : "Upload"}
             </div>
             {isshowloading ? <span>Loading...</span> : ""}
           </div>

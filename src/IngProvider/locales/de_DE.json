@@ -1,0 +1,18 @@
+{
+  "button.edit": "Bearbeiten",
+  "button.versionhistory": "Versionsgeschichte",
+  "button.back": "Zurück",
+  "button.submit": "Einreichen",
+  "button.save": "Speichern",
+  "button.upload": "Anhang",
+  "label.modifieddate":"Änderungsdatum",
+  "label.modifiedby":"Geändert durch",
+  "label.createddate":"Erstellungsdatum",
+  "label.createdby":"Erstellt durch",
+  "label.uploadattachment":"Anhang hochladen",
+  "label.browser": "Browser",
+  "label.entrynumber": "Eintrittsnummer",
+  "placeholder.select": "Wählen",
+  "placeholder.chooseafile": "Wähle eine Datei aus…",
+  "placeholder.search": "Suchen"
+}

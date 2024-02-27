@@ -449,6 +449,10 @@ function AddImportLogs(props) {
       lookupObj: "",
       fieldname: "AccountName",
     },
+    "Account Number": {
+      lookupObj: "",
+      fieldname: "AccountNumber",
+    },
     Country: {
       lookupObj: "countryObj",
       fieldname: "CountryId",
@@ -484,6 +488,28 @@ function AddImportLogs(props) {
     "Request for empowerment reason": {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "RequestForEmpowermentReason",
+    },
+    "Referral Reason Level 2": {
+      lookupObj: "rfeEmpourmentObj",
+      fieldname: "ReferralReasonLevel2",
+    },
+    "Referral Reason Level 3": {
+      lookupObj: "rfeEmpourmentObj",
+      fieldname: "ReferralReasonLevel3",
+    },
+    "Customer Segment": {
+      lookupObj: "segmentObj",
+      fieldname: "CustomerSegment",
+    },
+    GWP: {
+      fieldname: "GWP",
+    },
+    "Add your Reason here": {
+      lookupObj: "",
+      fieldname: "OtherReferralReason",
+    },
+    "Zurich Share": {
+      fieldname: "ZurichShare",
     },
     "Specific Details": {
       lookupObj: "",
@@ -1443,6 +1469,8 @@ function AddImportLogs(props) {
       setimportfieldscount(22);
     } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
+    } else if (IncountryFlag === IncountryFlagCost.GERMANY) {
+      setimportfieldscount(29);
     } else {
       setimportfieldscount(20);
     }
