@@ -180,8 +180,7 @@ const getAllAccountService = async (requestParam) => {
   return response;
 };
 const getPolicyTermIdService = async (requestParam) => {
-  const param = { params: requestParam };
-  const response = await Axios.get(`common/GetPolicyTearmId`, param);
+  const response = await Axios.post(`common/GetPolicyTearmId`, requestParam);
   return response;
 };
 const getByIdService = async (requestParam) => {
