@@ -201,8 +201,8 @@ function AddEditForm(props) {
   const [buttonsDisable, setButtonsDisable] = useState(true)
   const [showButtons, setShowButtons] = useState(false)
   const [reasonfields, setReasonfields] = useState({
-    ReferralReasonLevel2: false,
-    ReferralReasonLevel3: false
+    ReferralReasonLevel2: (isEditMode || isReadMode && formIntialState.ReferralReasonLevel2) ? true : false,
+    ReferralReasonLevel3: (isEditMode || isReadMode && formIntialState.ReferralReasonLevel3) ? true : false,
   })
   const [segmentAccount, setSegmentAccount] = useState([
     "B3E9745F-D84F-4203-A866-2C47C3300C9D", 
@@ -849,7 +849,7 @@ function AddEditForm(props) {
           if (item.fieldName === "RequestForEmpowermentReason") {
             tempobj = {
               ...tempobj,
-              isAddButton: formIntialState.ReferralReasonLevel2 || (formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== "") ? false : true,
+              isAddButton: formIntialState.ReferralReasonLevel2 || (formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== undefined) ? false : true,
             };
             if (isEditMode || isReadMode) {
               handleReasonOptions("RequestForEmpowermentReason", formIntialState.RequestForEmpowermentReason)
@@ -858,7 +858,7 @@ function AddEditForm(props) {
           if (item.fieldName === "ReferralReasonLevel2") {
             tempobj = {
               ...tempobj,
-              isAddButton: formIntialState.ReferralReasonLevel3 || (formfield.ReferralReasonLevel3 !== null && formfield.ReferralReasonLevel3 !== "") ? false : true,
+              isAddButton: formIntialState.ReferralReasonLevel3 || (formfield.ReferralReasonLevel3 !== null && formfield.ReferralReasonLevel3 !== "" && formfield.ReferralReasonLevel3 !== undefined) ? false : true,
               titlelinespace: selectedlanguage?.value === "DE001" ? false : true,
               colspan: formIntialState.RequestForEmpowermentReason === "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" ? 0 : formIntialState.ReferralReasonLevel2 || (formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== "") ? 3 : 0
             };
@@ -1232,8 +1232,8 @@ function AddEditForm(props) {
         ReferralReasonLevel2: true
       })
       setButtonsDisable(true)
-      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? (item.colspan = 3, item.isAddButton = true) : item.colspan = item.colspan);
-      formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = false : item.name = item.name);
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.colspan = 3 : item.colspan = item.colspan);
+      formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = false : item.name === "ReferralReasonLevel2" && formfield.ReferralReasonLevel3 !== null ? item.isAddButton = false : item.name === "ReferralReasonLevel2" ? item.isAddButton = true : item.name = item.name);
       const GermanyOptions = frmrfeempourmentgermany 
       let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" && item.value !== formfield.RequestForEmpowermentReason && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
       let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== "00EBEE31-9CAE-4094-853F-D8F5EB1F124B" && item.value !== formfield.RequestForEmpowermentReason && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
@@ -1250,6 +1250,18 @@ function AddEditForm(props) {
   }
 
   const handleReasonOptions = (name, value) =>{
+    if ((isEditMode || isReadMode) && formIntialState.ReferralReasonLevel2) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: true 
+      })
+    }
+    if ((isEditMode || isReadMode) && formIntialState.ReferralReasonLevel3) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel3: true 
+      })
+    }
     const GermanyOptions = frmrfeempourmentgermany 
     if (name === "RequestForEmpowermentReason" || value !== "") {
       let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
@@ -1259,6 +1271,18 @@ function AddEditForm(props) {
     }
   }
   const handleReasonOptions2 = (name, value) =>{
+    if ((isEditMode || isReadMode) && formIntialState.ReferralReasonLevel2) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: true 
+      })
+    }
+    if ((isEditMode || isReadMode) && formIntialState.ReferralReasonLevel3) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel3: true 
+      })
+    }
     const GermanyOptions = frmrfeempourmentgermany 
     if (name === "ReferralReasonLevel2" || value !== "") {
       let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
@@ -3163,7 +3187,7 @@ function AddEditForm(props) {
       {!isReadMode ? (
         <div className="popup-footer-container">
           <div className="btn-container">
-            {!isEditMode ? (
+            {!isEditMode && !formIntialState?.IsSubmit ? (
               <>
                 <button
                   className={`btn-blue ${isfrmdisabled && "disable"}`}
