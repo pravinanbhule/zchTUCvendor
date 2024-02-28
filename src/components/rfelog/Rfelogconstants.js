@@ -219,7 +219,7 @@ export const formfieldsmapping = {
     titlelinespace: true,
     colspan: 0,
     startbgcls: "frm-field-bggray",
-    conditionaldisplay: "reasonfields.ReferralReasonLevel2 || (formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== '') ? true : false",
+    conditionaldisplay: "reasonfields.ReferralReasonLevel2 ? true : false",
   },
   ReferralReasonLevel3: {
     componenttype: "FrmSelect",
@@ -228,7 +228,7 @@ export const formfieldsmapping = {
     titlelinespace: true,
     colspan: 0,
     startbgcls: "frm-field-bggray",
-    conditionaldisplay: "reasonfields.ReferralReasonLevel3 || (formfield.ReferralReasonLevel3 !== null && formfield.ReferralReasonLevel3 !== '') ? true : false",
+    conditionaldisplay: "reasonfields.ReferralReasonLevel3 ? true : false",
   },
   UnderwriterGrantingEmpowerment: {
     componenttype: "FrmInput",
