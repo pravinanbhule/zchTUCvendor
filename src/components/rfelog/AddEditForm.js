@@ -2437,11 +2437,11 @@ function AddEditForm(props) {
                   <div className="col-md-12" style={{ padding: "10px" }}>
                     <table className="policyterms table-bordered">
                       <thead>
-                        <th width="25%">Account Name</th>
-                        <th width="25%">Policy Term Id</th>
-                        <th width="17%">Product Name</th>
-                        <th width="17%">Sub-Product Name</th>
-                        <th>DUNS number</th>
+                        <th width="25%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.accountname"]}</th>
+                        <th width="25%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.policytermid"]}</th>
+                        <th width="17%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.productname"]}</th>
+                        <th width="17%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.subproductname"]}</th>
+                        <th>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.dunsnumber"]}</th>
                       </thead>
                       {policyTermIds.map((item) => (
                         <tr key={item.policy_term_id}>
