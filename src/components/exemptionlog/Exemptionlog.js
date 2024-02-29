@@ -2195,11 +2195,14 @@ function Exemptionlog({ ...props }) {
     if (showpage) {
       setShowPage(false)
     }
+    if (showpage) {
+      setShowPage(false)
+    }
     setshowAddPopup(true);
-  };
-  const confirmationPopup = () => {
-    setShowPage(true)
-  };
+    };
+    const confirmationPopup = () => {
+      setShowPage(true)
+    };
   const hideAddPopup = () => {
     setshowAddPopup(false);
     let forminitval =
