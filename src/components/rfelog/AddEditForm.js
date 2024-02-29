@@ -761,6 +761,11 @@ function AddEditForm(props) {
 
   useEffect(async()=>{
     if (selectedlanguage?.value) {
+      if (selectedlanguage.value === "DE001") {
+        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : item.colspan = item.colspan);
+      } else {
+        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : item.colspan = item.colspan);
+      }
       fnloadcountryview();
       let tempToolTips = await getToolTip({ type: "RFELogs", LanguageCode: selectedlanguage?.value });
       let tooltipObj = {};
@@ -2293,7 +2298,7 @@ function AddEditForm(props) {
                   obj.title
                 )
               }
-              titlelinespace={obj.titlelinespace ? true : false}
+              titlelinespace={(obj.name === "ReferralReasonLevel2" || obj.name === "ReferralReasonLevel3" ) && selectedlanguage?.value && selectedlanguage?.value !== "EN001" ? false : obj.titlelinespace ? true : false}
               name={obj.name}
               value={formfield[obj.name]}
               handleChange={handleSelectChange}
@@ -2554,16 +2559,16 @@ function AddEditForm(props) {
                 {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.edit"]}
               </div>
             )}
-           <div className="dropdowncls" style={{ marginRight: "10px" }}>
+          <div className="addedit-close btn-blue" style={{ marginRight: "10px" }} onClick={() => hidePopup()}>
+            {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.back"]}
+          </div>
+           <div className="dropdowncls">
             <Dropdown
               options={languageDetails}
               onChange={(e)=> setSelectedlanguage(e)}
               value={selectedlanguage?.value ? selectedlanguage.value : {label: "English", value: "EN001"}}
               placeholder="Select"
             />
-          </div>
-          <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
-            {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.back"]}
           </div>
         </div>
       </div>

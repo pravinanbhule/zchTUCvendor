@@ -72,7 +72,10 @@ function FrmSelect(props) {
 
       {titlelinespace && <br></br>}
       {isReadMode ? (
-        <div>{value ? getSelectedOpt() : ""}</div>
+        <>
+          <div>{value ? getSelectedOpt() : ""}</div>
+          <div className="marginTop">{isShowTextBox ? textValue : ""}</div>
+        </>
       ) : (
         <>
           <div className={`${isAddButton || isRemoveButton ? "dropdowncls" : ""}`}>
