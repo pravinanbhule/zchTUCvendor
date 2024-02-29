@@ -86,7 +86,9 @@ function CreateRfelogForm(props) {
         SUBLOBID: "",
         mappedLOBs: "",
         PolicyTermId: "",
-        invokedAPIFrom: ""
+        invokedAPIFrom: "",
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null
     };
     const [formIntialState, setformIntialState] = useState(formInitialValue);
     const [frmCountrySelectOpts, setfrmCountrySelectOpts] = useState([]);
@@ -345,7 +347,7 @@ function CreateRfelogForm(props) {
                 regionId: country.regionID,
             }));
             response["CountryList"] = [...countryList];
-            if (mode === "edit" && response.IsSubmit) {
+            if (mode === "edit") {
                 setisEditMode(true);
             }
             if (mode === "view") {
