@@ -102,6 +102,7 @@ function Rfelog({ ...props }) {
   const rfelogArchiveSharePointLink = SHAREPOINT_LINKS.RFElogArchive;
   const rfelogLATAMActiveSharePointLink = SHAREPOINT_LINKS.RFElogLATAMActive;
   const rfelogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEUKlogActive;
+  const rfeARClogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEARCUKlogActive;
   const rfelogNordicActiveSharePointLink = SHAREPOINT_LINKS.RFENordiclogActive;
   const rfelogItalyActiveSharePointLink = SHAREPOINT_LINKS.RFEItalylogActive;
   const InCountryViewOpts = [
@@ -1526,6 +1527,11 @@ function Rfelog({ ...props }) {
       id = itemid.split("ARC_")[1];
       splink = rfelogArchiveSharePointLink;
       link = `${splink}?ID=${id}&isDlg=1`;
+    }
+    if (itemid.indexOf("ARC_02") !== -1) {
+      id = itemid.split("ARC_02")[1];
+      splink = rfeARClogUKActiveSharePointLink;
+      link = `${splink}?ID=${id}`;
     }
     if (itemid.indexOf("ACT_01") !== -1) {
       id = itemid.split("ACT_01")[1];
