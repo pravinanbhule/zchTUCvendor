@@ -119,6 +119,7 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.MALAYSIA,
     INCOUNTRY_FLAG_OPTS.FRANCE,
     INCOUNTRY_FLAG_OPTS.MIDDLEEAST,
+    INCOUNTRY_FLAG_OPTS.GERMANY,
     INCOUNTRY_FLAG_OPTS.SPAIN
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);

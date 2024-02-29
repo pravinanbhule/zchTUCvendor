@@ -1,0 +1,23 @@
+{
+  "button.edit": "Edit",
+  "button.versionhistory": "Version History",
+  "button.back": "Back",
+  "button.submit": "Submit",
+  "button.save": "Save",
+  "button.upload": "Upload",
+  "label.accountname": "Account Name",
+  "label.policytermid": "Policy Term Id",
+  "label.productname": "Product Name",
+  "label.subproductname": "Sub-Product Name",
+  "label.dunsnumber": "DUNS number",
+  "label.modifieddate":"Modified Date",
+  "label.modifiedby":"Modified By",
+  "label.createddate":"Created Date",
+  "label.createdby":"Created By",
+  "label.uploadattachment":"Upload Attachment",
+  "label.browser": "Browser",
+  "label.entrynumber": "Entry Number",
+  "placeholder.select": "Select",
+  "placeholder.chooseafile": "Choose a file…",
+  "placeholder.search": "Search"
+}

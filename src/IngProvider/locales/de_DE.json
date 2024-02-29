@@ -1,0 +1,23 @@
+{
+  "button.edit": "Bearbeiten",
+  "button.versionhistory": "Version",
+  "button.back": "Zurück",
+  "button.submit": "bestätigen",
+  "button.save": "Speichern",
+  "button.upload": "hochladen",
+  "label.accountname": "Versicherungsnehmer / Account",
+  "label.policytermid": "Versicherungsdauer (ID) / Policy Term ID",
+  "label.productname": "Product Name",
+  "label.subproductname": "Sub-Product Name",
+  "label.dunsnumber": "DUNS number",
+  "label.modifieddate":"Änderungsdatum",
+  "label.modifiedby":"Geändert durch",
+  "label.createddate":"Erstellungsdatum",
+  "label.createdby":"Erstellt durch",
+  "label.uploadattachment":"Anhang hochladen",
+  "label.browser": "suchen",
+  "label.entrynumber": "Entry Number",
+  "placeholder.select": "auswählen",
+  "placeholder.chooseafile": "Wähle einen Anhang aus…",
+  "placeholder.search": "Suchen"
+}
