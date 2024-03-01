@@ -35,6 +35,7 @@ function CreateRfelogForm(props) {
     } = props;
 
     const [isEditMode, setisEditMode] = useState(false);
+    const [isDraft, setisDraft] = useState(false);
     const [isReadMode, setisReadMode] = useState(false);
     const formInitialValue = {
         AccountName: "",
@@ -165,12 +166,10 @@ function CreateRfelogForm(props) {
             let tempLoBItems = await getAlllob({ isActive: true })
             tempLoBItems.forEach((item) => {
                 if (item.lobName === lob) {
-                    console.log("item>>", item);
                     lobId = item.lobid
                 }
             })
             if (countryObj.value) {
-                console.log("countryObj>>", countryObj);
                 setformIntialState({
                     ...formIntialState,
                     CountryList: [countryObj],
@@ -347,8 +346,11 @@ function CreateRfelogForm(props) {
                 regionId: country.regionID,
             }));
             response["CountryList"] = [...countryList];
-            if (mode === "edit") {
+            if (mode === "edit" && response.IsSubmit) {
                 setisEditMode(true);
+            }
+            if (mode === "edit" && !response.IsSubmit) {
+                setisDraft(true);
             }
             if (mode === "view") {
                 setisReadMode(true);
@@ -379,6 +381,7 @@ function CreateRfelogForm(props) {
                     setInEditMode={setInEditMode}
                     queryparam={queryparam}
                     handleDataVersion={handleDataVersion}
+                    isDraft={isDraft}
                 ></AddEditForm>
             }
             {showVersionHistory ? (
