@@ -950,7 +950,7 @@ function AddEditForm(props) {
             ]);
             formfield.status = exemption_status.Pending;
           }
-          putItem(formfield);
+          putItem({...formfield, isSubmit: true});
         } else {
           postItem({ ...formfield, isSubmit: true });
         }
