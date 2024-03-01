@@ -286,7 +286,7 @@ export const formfieldsmapping = {
     componenttype: "FrmInput",
     eventhandler: "handleChange",
     colspan: 0,
-    conditionaldisplay: "segmentAccount.includes(formfield?.CustomerSegment)",
+    conditionaldisplay: "accountNumberShow",
   },
   NewRenewal: {
     componenttype: "FrmSelect",
