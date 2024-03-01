@@ -5,6 +5,7 @@
   "button.submit": "Submit",
   "button.save": "Save",
   "button.upload": "Upload",
+  "button.cancel": "Cancel",
   "label.accountname": "Account Name",
   "label.policytermid": "Policy Term Id",
   "label.productname": "Product Name",

@@ -29,7 +29,7 @@ function FrmSelect(props) {
     isAddButtonDisable
   } = props;
   const onSelect = (selectedopt) => {
-    handleChange(name, selectedopt.value, itemid);
+    handleChange(name, selectedopt.value, itemid, selectedopt.label);
   };
 
   const getSelectedOpt = () => {
