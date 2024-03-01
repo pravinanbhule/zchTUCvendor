@@ -1751,7 +1751,7 @@ function AddEditForm(props) {
           ) {
             formfield.RequestForEmpowermentStatus = rfelog_status.Pending;
           }
-          putItem({ ...formfield, IncountryFlag: IncountryFlag });
+          putItem({ ...formfield, IsSubmit: true, IncountryFlag: IncountryFlag });
         } else {
           postItem({
             ...formfield,
