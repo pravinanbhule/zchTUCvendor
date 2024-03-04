@@ -1419,9 +1419,11 @@ function AddEditForm(props) {
       setShowTextBox(false)
       setShowButtons(true)
       setButtonsDisable(false)
+      delete formIntialState?.RequestForEmpowermentReasonValue
       setformfield({
         ...formfield,
         OtherReferralReason: null,
+        RequestForEmpowermentReasonValue: null,
         isdirty: true,
         [name]: value,
       });
