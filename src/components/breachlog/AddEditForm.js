@@ -1126,7 +1126,7 @@ function AddEditForm(props) {
       //end of code
       if (formfield.breachStatus)
         if (isEditMode) {
-          putItem(formfield);
+          putItem({ ...formfield, isSubmit: true });
         } else {
           postItem({ ...formfield, isSubmit: true });
         }
