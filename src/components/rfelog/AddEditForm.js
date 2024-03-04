@@ -765,9 +765,9 @@ function AddEditForm(props) {
   useEffect(async()=>{
     if (selectedlanguage?.value) {
       if (selectedlanguage.value === "DE001") {
-        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : item.colspan = item.colspan);
+        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
       } else {
-        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : item.colspan = item.colspan);
+        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
       }
       fnloadcountryview();
       let tempToolTips = await getToolTip({ type: "RFELogs", LanguageCode: selectedlanguage?.value });
@@ -784,7 +784,7 @@ function AddEditForm(props) {
         })
         delete formIntialState.ReferralReasonLevel2
         delete formIntialState.ReferralReasonLevel3
-        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.colspan = 0 : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : item.colspan = item.colspan);
+        formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.colspan = 0 : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
         setformfield({
           ...formfield,
           ReferralReasonLevel2: null,
@@ -799,14 +799,14 @@ function AddEditForm(props) {
           ReferralReasonLevel3: false,
         })
         delete formIntialState.ReferralReasonLevel3
-        formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? (item.isAddButton = true,item.colspan = 3) : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : item.colspan = item.colspan);
+        formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? (item.isAddButton = true,item.colspan = 3) : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
         setformfield({
           ...formfield,
           ReferralReasonLevel3: null,
           isdirty: true,
         });
       } else if ((formfield.ReferralReasonLevel3 !== "" && formfield.ReferralReasonLevel3 !== null) && (formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== null)){
-        formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.isAddButton = false : item.name === "ReferralReasonLevel3" ? item.colspan = 3 : item.colspan = item.colspan);
+        formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.isAddButton = false : item.name === "ReferralReasonLevel3" ? item.colspan = 3 : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
       }
       if (formfield.RequestForEmpowermentReason !== "" && formfield.RequestForEmpowermentReason !== null ) {
         setButtonsDisable(false)
@@ -894,7 +894,31 @@ function AddEditForm(props) {
           if (item.fieldName === "AccountNumber") {
             tempobj = {
               ...tempobj,
-              colspan: formIntialState.AccountNumber ? 3 : 0
+              colspan: (formIntialState.AccountNumber || accountNumberShow) ? 3 : 0
+            };
+          }
+          if (item.fieldName === "CustomerSegment") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "NewRenewal") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "GWP") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "ZurichShare") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
             };
           }
           if (tempformobj["options"]) {
@@ -1311,7 +1335,7 @@ function AddEditForm(props) {
 
   const handleSelectChange = (name, value, fieldName, label) => {
     let SelectedLabel = "";
-    if (name === "RequestForEmpowermentReason" || name === "CustomerSegment") {
+    if (label && (name === "RequestForEmpowermentReason" || name === "CustomerSegment")) {
       SelectedLabel = label.toLowerCase().replace(/\s/g, '')
     }
     if (name === "RequestForEmpowermentReason") {
