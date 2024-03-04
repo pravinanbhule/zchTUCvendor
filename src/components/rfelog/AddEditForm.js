@@ -924,6 +924,12 @@ function AddEditForm(props) {
               titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
             };
           }
+          if (item.fieldName === "ConditionApplicableTo") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: window.innerWidth < 1488 ? true : false
+            };
+          }
           if (tempformobj["options"]) {
             tempobj = {
               ...tempobj,
