@@ -792,7 +792,7 @@ function AddEditForm(props) {
           isdirty: true,
         });
       }
-      if ((formfield.ReferralReasonLevel3 === "" || formfield.ReferralReasonLevel3 === null || formfield.ReferralReasonLevel3 === undefined) && (formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== null || formfield.ReferralReasonLevel2 !== undefined)) {
+      if ((formfield.ReferralReasonLevel3 === "" || formfield.ReferralReasonLevel3 === null || formfield.ReferralReasonLevel3 === undefined) && (formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== undefined)) {
         setReasonfields({
           ...reasonfields,
           ReferralReasonLevel2: true,
@@ -1310,7 +1310,10 @@ function AddEditForm(props) {
   }
 
   const handleSelectChange = (name, value, fieldName, label) => {
-    let SelectedLabel = label.toLowerCase().replace(/\s/g, '')
+    let SelectedLabel = "";
+    if (name === "RequestForEmpowermentReason" || name === "CustomerSegment") {
+      SelectedLabel = label.toLowerCase().replace(/\s/g, '')
+    }
     if (name === "RequestForEmpowermentReason") {
       handleReasonOptions(name, value)
     }
