@@ -833,6 +833,9 @@ function AddEditForm(props) {
           }
       }
     }
+    if ((isEditMode || isReadMode || isDraft) && formIntialState?.AccountNumber) {
+      setAccountNumberShow(true)
+    }
     let tempfields = [];
     tempdbfields?.forEach((item) => {
       if (item.isActive) {
