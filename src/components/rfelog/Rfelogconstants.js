@@ -366,7 +366,6 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     options: "frmConditionOpts",
     tooltipmsg: "tooltip.ConditionApplicableTo",
-    titlelinespace: true,
     colspan: 3,
     conditionaldisplay:
       "formfield.RequestForEmpowermentStatus ===rfelog_status.Empowerment_granted_with_conditions",
