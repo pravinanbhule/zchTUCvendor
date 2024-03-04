@@ -833,7 +833,7 @@ function AddEditForm(props) {
           }
       }
     }
-    if ((isEditMode || isReadMode || isDraft) && formIntialState?.AccountNumber) {
+    if (formIntialState?.CountryName === "Germany" && (isEditMode || isReadMode || isDraft) && segmentAccount.includes(formIntialState?.CustomerSegmentValue?.toLowerCase().replace(/\s/g, ''))) {
       setAccountNumberShow(true)
     }
     let tempfields = [];
