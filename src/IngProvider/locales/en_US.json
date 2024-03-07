@@ -6,6 +6,7 @@
   "button.save": "Save",
   "button.upload": "Upload",
   "button.cancel": "Cancel",
+  "button.apply": "Apply",
   "label.accountname": "Account Name",
   "label.policytermid": "Policy Term Id",
   "label.productname": "Product Name",
@@ -20,5 +21,13 @@
   "label.entrynumber": "Entry Number",
   "placeholder.select": "Select",
   "placeholder.chooseafile": "Choose a file…",
-  "placeholder.search": "Search"
+  "placeholder.search": "Search",
+  "title.mycountryquicklinks": "My Country Quick Links",
+  "title.underwritergrantingempowerment": "Underwriter Granting Empowerment",
+  "title.underwriter": "Underwriter",
+  "title.requestforempowermentCC": "Request for Empowerment CC",
+  "title.suggestedapprover": "List of recommended Global approvers",
+  "message.suggestedapprover": "The list of recommended Global approvers is displayed. Please use the search for in Country/Region approvers.",
+  "message.noresultfound": "No result found",
+  "title.searchuser": "Search User"
 }
