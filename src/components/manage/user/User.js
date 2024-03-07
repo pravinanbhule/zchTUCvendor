@@ -153,6 +153,7 @@ function User({ ...props }) {
     isglobaladmin: false,
     isregionadmin: false,
     iscountryadmin: false,
+    iscountrysuperadmin: false,
   });
   useEffect(() => {
     let loggeduserrole = userProfile ? userProfile.userRoles[0].roleId : "";
@@ -161,6 +162,7 @@ function User({ ...props }) {
       isglobaladmin: false,
       isregionadmin: false,
       iscountryadmin: false,
+      iscountrysuperadmin: false,
     };
     if (loggeduserrole === USER_ROLE.superAdmin) {
       tempuserroles.issuperadmin = true;
@@ -173,6 +175,9 @@ function User({ ...props }) {
     }
     if (loggeduserrole === USER_ROLE.countryAdmin) {
       tempuserroles.iscountryadmin = true;
+    }
+    if (loggeduserrole === USER_ROLE.countrySuperAdmin) {
+      tempuserroles.iscountrysuperadmin = true;
     }
     setuserroles(tempuserroles);
   }, [userProfile]);

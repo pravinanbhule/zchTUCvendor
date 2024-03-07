@@ -22,7 +22,7 @@ function Navbar({ ...props }) {
             )}
             {userProfile &&
               !userProfile.isSuperAdmin &&
-              (userProfile.isGlobalAdmin || userProfile.isRegionAdmin) && (
+              (userProfile.isGlobalAdmin || userProfile.isRegionAdmin || userProfile.isCountrySuperAdmin) && (
                 <Link to="/user">
                   <div className="menu-item">Manage</div>
                 </Link>
@@ -94,6 +94,10 @@ function Navbar({ ...props }) {
                         Token
                       </div>
                     </Link>
+                  </>
+                )}
+                {userProfile && (userProfile.isSuperAdmin || (userProfile.isCountrySuperAdmin && userProfile.profileRegionName === "ZNA")) && (
+                  <>
                     <Link to="/znaorganization1">
                       <div
                         className={`menu-item ${
@@ -130,6 +134,10 @@ function Navbar({ ...props }) {
                         ZNA Organization 4
                       </div>
                     </Link>
+                  </>
+                )}
+                {userProfile && (userProfile.isSuperAdmin || (userProfile.isCountrySuperAdmin && userProfile.profileRegionName === "ZNA")) && (
+                  <>
                     <Link to="/office">
                       <div
                         className={`menu-item ${
@@ -162,7 +170,8 @@ function Navbar({ ...props }) {
                 {userProfile &&
                   (userProfile.isSuperAdmin ||
                     userProfile.isGlobalAdmin ||
-                    userProfile.isRegionAdmin) && (
+                    userProfile.isRegionAdmin ||
+                    userProfile.isCountrySuperAdmin) && (
                     <Link to="/user">
                       <div
                         className={`menu-item ${
@@ -173,7 +182,7 @@ function Navbar({ ...props }) {
                       </div>
                     </Link>
                   )}
-                {userProfile && userProfile.isSuperAdmin && (
+                {userProfile && (userProfile.isSuperAdmin || userProfile.isCountrySuperAdmin) && (
                   <>
                     <Link to="/lookup">
                       <div

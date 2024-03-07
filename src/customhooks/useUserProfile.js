@@ -10,6 +10,7 @@ async function useUserProfile(initialval) {
     isGlobalAdmin: false,
     isRegionAdmin: false,
     isCountryAdmin: false,
+    isCountrySuperAdmin: false,
   };
 
   let userProfile =
@@ -34,6 +35,10 @@ async function useUserProfile(initialval) {
   }
   if (userRoles.roleId === USER_ROLE.countryAdmin) {
     userProfile.isCountryAdmin = true;
+    userProfile.isAdminGroup = true;
+  }
+  if (userRoles.roleId === USER_ROLE.countrySuperAdmin) {
+    userProfile.isCountrySuperAdmin = true;
     userProfile.isAdminGroup = true;
   }
   return { ...userProfile, initialprofile };

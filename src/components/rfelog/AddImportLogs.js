@@ -138,6 +138,7 @@ function AddImportLogs(props) {
     isRegionAdmin: false,
     isCountryAdmin: false,
     isNormalUser: false,
+    isCountrySuperAdmin: false
   };
   /* const [incountryopts, setincountryopts] = useState([
     { label: "Global", value: "gn" },
@@ -1324,6 +1325,8 @@ function AddImportLogs(props) {
         return { ...approverIntialRole, isCountryAdmin: true };
       } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.normalUser) {
         return { ...approverIntialRole, isNormalUser: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.countrySuperAdmin) {
+        return { ...approverIntialRole, isCountrySuperAdmin: true };
       }
     } else {
       return { ...approverIntialRole };

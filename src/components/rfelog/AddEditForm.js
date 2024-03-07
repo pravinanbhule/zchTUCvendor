@@ -160,6 +160,7 @@ function AddEditForm(props) {
     isRegionAdmin: false,
     isCountryAdmin: false,
     isNormalUser: false,
+    isCountrySuperAdmin: false
   };
 
   const [approverRole, setapproverRole] = useState(approverIntialRole);
@@ -1737,6 +1738,8 @@ function AddEditForm(props) {
       setapproverRole({ ...approverIntialRole, isCountryAdmin: true });
     } else if (userRole.roleId === USER_ROLE.normalUser) {
       setapproverRole({ ...approverIntialRole, isNormalUser: true });
+    } else if (userRole.roleId === USER_ROLE.countrySuperAdmin) {
+      setapproverRole({ ...approverIntialRole, isCountrySuperAdmin: true });
     }
   };
   useEffect(() => {

@@ -380,6 +380,7 @@ function AddEditForm(props) {
                 issubmitted={issubmitted}
                 selectopts={frmuserType}
                 isdisabled={isdisabled || formfield.isGeneralUser}
+                isSidebySide={true}
               />
               {frmuserTypeObj[formfield.userType] === "Region" ||
               frmuserTypeObj[formfield.userType] === "Country" ? (
@@ -396,7 +397,8 @@ function AddEditForm(props) {
               ) : (
                 ""
               )}
-              {frmuserTypeObj[formfield.userType] === "Country" ? (
+              {frmuserTypeObj[formfield.userType] === "Country" ||
+              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}

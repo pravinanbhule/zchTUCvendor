@@ -28,6 +28,7 @@ function LoggedInUser({ ...props }) {
           isGlobalAdmin: false,
           isRegionAdmin: false,
           isCountryAdmin: false,
+          isCountrySuperAdmin: false
         };
         if (tempUserProfile) {
           //tempUserProfile.email = "paula.wolfenson@zurich.com";
@@ -52,6 +53,10 @@ function LoggedInUser({ ...props }) {
           }
           if (userRoles.roleId === USER_ROLE.countryAdmin) {
             userprofile.isCountryAdmin = true;
+            userprofile.isAdminGroup = true;
+          }
+          if (userRoles.roleId === USER_ROLE.countrySuperAdmin) {
+            userprofile.isCountrySuperAdmin = true;
             userprofile.isAdminGroup = true;
           }
           tempUserProfile = {
