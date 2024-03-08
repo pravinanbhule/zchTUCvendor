@@ -22,6 +22,7 @@ function AddEditForm(props) {
     e.preventDefault();
     setissubmitted(true);
     if (formfield.coName) {
+      formfield.coName = formfield.coName.replace(/\s+$/, '')
       if (isEditMode) {
         putItem(formfield);
       } else {

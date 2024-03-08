@@ -22,6 +22,34 @@ const getAll = () => {
     }
   };
 };
+const getById = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await coService.getByIdService(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
+const checkNameExist = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await coService.checkNameExistService(requestParam);
+      return response.data;
+    } catch (err) {}
+  };
+};
+const checkIsInUse = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await coService.checkIsInUseService(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 const postItem = (requestParam) => {
   return async (dispatch) => {
     try {
@@ -52,15 +80,47 @@ const deleteItem = (requestParam) => {
     }
   };
 };
+const downloadCO = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await coService.downloadService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 export const coActions = {
   getAll,
+  getById,
+  checkNameExist,
+  checkIsInUse,
   postItem,
   putItem,
   deleteItem,
+  downloadCO
 };
 const getAllService = async (requestParam) => {
   const param = { params: requestParam };
   const response = await Axios.get(`co/getallcolist`, param);
+  return response;
+};
+const getByIdService = async (requestParam) => {
+  console.log("requestParam", requestParam);
+  const param = { params: requestParam };
+  const response = await Axios.get(`co/getco`, param);
+  return response;
+};
+const checkNameExistService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`co/isconameinuse`, param);
+  return response;
+};
+const checkIsInUseService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`co/isinusecount`, param);
   return response;
 };
 const postItemService = async (requestParam) => {
@@ -72,8 +132,17 @@ const deleteItemService = async (requestParam) => {
     const response = await Axios.delete(`co/deleteco`, param);
     return response;
 };
+const downloadService = async (requestParam) => {
+  const param = { params: requestParam, responseType: "blob" };
+  const response = await Axios.get(`co/getallcodownload`, param);
+  return response;
+};
 const coService = {
   getAllService,
+  getByIdService,
+  checkNameExistService,
+  checkIsInUseService,
   postItemService,
   deleteItemService,
+  downloadService
 };
