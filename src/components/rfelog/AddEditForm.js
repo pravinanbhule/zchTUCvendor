@@ -195,6 +195,7 @@ function AddEditForm(props) {
   const [fileuploadloader, setfileuploadloader] = useState(false);
 
   const [loading, setloading] = useState(true);
+  const [isFirst, setIsFirst] = useState(false)
   const [languageDetails, setLanguageDetails] = useState([])
   const [selectedlanguage, setSelectedlanguage] = useState()
   const [isGermany, setIsGermany] = useState(false)
@@ -227,6 +228,7 @@ function AddEditForm(props) {
     } else {
       setSelectedlanguage({label: "English", value: "EN001"})
     }
+    setIsFirst(true)
     setLanguageDetails(objLanguage)
   },[])
 
@@ -774,7 +776,7 @@ function AddEditForm(props) {
 
   useEffect(async()=>{
     localStorage.setItem("language", selectedlanguage?.value ? selectedlanguage.value : "EN001" )
-    if (selectedlanguage?.value) {
+    if (isFirst && selectedlanguage?.value) {
       if (selectedlanguage.value === "DE001") {
         formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
       } else {
