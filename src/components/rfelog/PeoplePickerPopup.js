@@ -78,7 +78,7 @@ function PeoplePickerPopup(props) {
                 handleChange={handleApproverChange}
                 singleSelection={singleSelection ? singleSelection : false}
                 isRequired={false}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[language].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 handleInputSearchChange={handleInputSearchChange}
                 searchItems={userState.userItems ? userState.userItems : []}
