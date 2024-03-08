@@ -36,6 +36,7 @@ import PrivateRoute from "./components/privateroute/PrivateRoute";
 import Loader from "./components/common-components/Loading";
 import AddRfelogForm from "./components/rfelog/CreateRfelogForm";
 import Token from "./components/manage/token/Token";
+import Co from "./components/manage/co/Co";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -163,6 +164,11 @@ function App({ state, menuClick }) {
                       <PrivateRoute
                         path="/lookup"
                         component={Lookup}
+                        menuClick={menuClick}
+                      />
+                       <PrivateRoute
+                        path="/co"
+                        component={Co}
                         menuClick={menuClick}
                       />
 

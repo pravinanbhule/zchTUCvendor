@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import "./Style.css";
@@ -43,10 +43,12 @@ function FrmSelect(props) {
     }
   };
 
+  const [language, setLanguage] = useState(selectedlanguage ? selectedlanguage : "EN001")
+  
   useEffect(()=>{
-    if (selectedlanguage === "DE001" && selectopts[0].label === "Select") {
+    if (language === "DE001" && selectopts[0]?.label === "Select") {
       selectopts[0] = {label: "Auswählen", value: ""}
-    } else if (selectopts[0].label === "Auswählen") {
+    } else if (selectopts[0]?.label === "Auswählen") {
       selectopts[0] = {label: "Select", value: ""}
     }
   },[selectedlanguage])
@@ -95,7 +97,7 @@ function FrmSelect(props) {
               onChange={onSelect}
               value={value}
               placeholder="Select"
-              placeholderClassName={value ? "" : selectedlanguage !== "EN001" ? "Dropdown-Germany-placeholder" : "Dropdown-English-placeholder"}
+              placeholderClassName={value ? "" : language !== "EN001" ? "Dropdown-Germany-placeholder" : "Dropdown-English-placeholder"}
               disabled={isdisabled ? isdisabled : false}
             />
             {isAddButton ?
