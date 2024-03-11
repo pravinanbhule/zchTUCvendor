@@ -166,7 +166,7 @@ function Co({ ...props }) {
   }, []);
 
   const fnOnInit = async () => {
-    getAll({ RequesterUserId: userProfile.userId });
+    getAll();
   };
 
   useEffect(() => {
