@@ -38,7 +38,8 @@
   "message.noresultfound": "No result found",
   "message.mandatory": "Mandatory field",
 
-  "rfelog.alert.addmsg": "The RfE log is successfully updated.",
+  "rfelog.alert.addmsg": "The RfE log is successfully added.",
+  "rfelog.alert.updatemsg": "The RfE log is successfully updated.",
 
   "common.alert.promptmsg": "You have some unsaved changes. Press OK to continue without saving."
 }
