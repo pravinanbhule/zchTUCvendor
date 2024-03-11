@@ -38,7 +38,8 @@
   "message.noresultfound": "No result found",
   "message.mandatory": "Pflichtfeld",
 
-  "rfelog.alert.addmsg": "Das RfE-Protokoll wurde erfolgreich aktualisiert.",
+  "rfelog.alert.addmsg": "Das RfE-Protokoll wurde erfolgreich hinzugefügt.",
+  "rfelog.alert.updatemsg": "Das RfE-Protokoll wurde erfolgreich aktualisiert.",
 
   "common.alert.promptmsg": "Sie haben einige nicht gespeicherte Änderungen. Drücken Sie OK, um fortzufahren, ohne zu speichern."
 }

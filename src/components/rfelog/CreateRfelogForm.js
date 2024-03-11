@@ -283,6 +283,7 @@ function CreateRfelogForm(props) {
     };
 
     const putItemHandler = async (item) => {
+        const language = localStorage.getItem("language")
         let tempfullPathArr = item.RFEAttachmentList.map((item) => item.filePath);
         let fullFilePath = tempfullPathArr.join(",");
         item.FullFilePath = fullFilePath;
@@ -298,7 +299,7 @@ function CreateRfelogForm(props) {
         });
 
         if (response) {
-            alert(alertMessage.rfelog.update);
+            alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.updatemsg"]);
             hideAddPopup();
         }
         setisEditMode(false);
