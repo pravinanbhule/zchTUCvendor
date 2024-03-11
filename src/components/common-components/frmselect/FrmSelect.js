@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import "./Style.css";
@@ -26,7 +26,8 @@ function FrmSelect(props) {
     isRemoveButton,
     isShowTextBox,
     textValue,
-    isAddButtonDisable
+    isAddButtonDisable,
+    selectedlanguage
   } = props;
   const onSelect = (selectedopt) => {
     handleChange(name, selectedopt.value, itemid, selectedopt.label);
@@ -41,6 +42,18 @@ function FrmSelect(props) {
       return;
     }
   };
+
+  const [language, setLanguage] = useState("EN001")
+  
+  useEffect(()=>{
+    setLanguage(selectedlanguage ? selectedlanguage : "EN001")
+    if (language === "DE001" && selectopts[0]?.label === "Select") {
+      selectopts[0] = {label: "Auswählen", value: ""}
+    } else if (selectopts[0]?.label === "Auswählen") {
+      selectopts[0] = {label: "Select", value: ""}
+    }
+  },[selectedlanguage])
+
   return (
     <div
       className={`frm-field ${isRequired ? "mandatory" : ""} ${
@@ -85,6 +98,7 @@ function FrmSelect(props) {
               onChange={onSelect}
               value={value}
               placeholder="Select"
+              placeholderClassName={value ? "" : language !== "EN001" ? "Dropdown-Germany-placeholder" : "Dropdown-English-placeholder"}
               disabled={isdisabled ? isdisabled : false}
             />
             {isAddButton ?

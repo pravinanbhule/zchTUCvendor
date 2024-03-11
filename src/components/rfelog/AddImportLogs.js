@@ -1456,6 +1456,9 @@ function AddImportLogs(props) {
       }
 
     })
+    if (IncountryFlag === IncountryFlagCost.GERMANY) {
+      getAllSegment({ logType: "rfelogsGermany" });
+    }
   }, [IncountryFlag])
 
   const onSelectChange = (name, value) => {
