@@ -48,8 +48,8 @@ function FrmSelect(props) {
   useEffect(()=>{
     setLanguage(selectedlanguage ? selectedlanguage : "EN001")
     if (language === "DE001" && selectopts[0]?.label === "Select") {
-      selectopts[0] = {label: 'Auswählen', value: ""}
-    } else if (selectopts[0]?.label === "Auswählen") {
+      selectopts[0] = {label: 'Auswahl', value: ""}
+    } else if (selectopts[0]?.label === "Auswahl") {
       selectopts[0] = {label: "Select", value: ""}
     }
   },[selectedlanguage])
