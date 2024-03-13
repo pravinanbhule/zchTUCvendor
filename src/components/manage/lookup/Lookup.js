@@ -87,6 +87,23 @@ function Lookup({ ...props }) {
   const [lookuptyps, setlookuptypes] = useState([]);
 
   const [issubmitted, setissubmitted] = useState(false);
+
+  useEffect(()=>{
+    if (userProfile.isCountrySuperAdmin && Country && selfilter.logtype === "RFELogs" && lookuptyps.length === 21) {
+      let RfELookuptyps = []
+      lookuptyps.map((item, i)=>{
+        Country.map((name) => {
+          let itemName = item.type.toLowerCase()
+          let countryName = name.toLowerCase()
+          if (itemName.search(countryName) !== -1) {
+            RfELookuptyps.push(item)
+          }
+        })
+      })
+      setlookuptypes(RfELookuptyps)
+    }
+  },[lookuptyps])
+
   useEffect(() => {
     getLogTypes({
       LookupType: "logs",

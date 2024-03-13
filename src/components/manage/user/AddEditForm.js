@@ -27,13 +27,14 @@ function AddEditForm(props) {
     userState,
     getAllUsers,
     userroles,
+    countryAllOpts
   } = props;
 
   const [regionopts, setregionopts] = useState([]);
   const [countryopts, setcountryopts] = useState([]);
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
-
+  const [allCountryOpts, setAllCountryOpts] = useState([])
   const [isdisabled, setisdisabled] = useState(false);
 
   const [accessBreachLogOpts, setaccessBreachLogOpts] = useState([
@@ -91,6 +92,24 @@ function AddEditForm(props) {
     });
     setcountryopts(tempopts);
     setformfield(formIntialState);
+    tempopts = [];
+    selectedlist = formIntialState.countryList;
+    countryAllOpts.forEach((item) => {
+      if (isEditMode) {
+        let isselected = false;
+        selectedlist.forEach((country) => {
+          if (item.countryID === country.value) {
+            isselected = true;
+          }
+        });
+        if (item.isActive || isselected) {
+          tempopts.push(item);
+        }
+      } else if (item.isActive) {
+        tempopts.push(item);
+      }
+    });
+    setAllCountryOpts(tempopts)
   };
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -186,7 +205,11 @@ function AddEditForm(props) {
     }
   }, [formfield.userType]);
   useEffect(() => {
-    mapCountryRegion();
+    if (frmuserTypeObj[formfield.userType] === "CountrySuperAdmin") {
+      setformfield({ ...formfield });
+    } else {
+      mapCountryRegion();
+    }
   }, [formfield.regionList]);
 
   const mapCountryRegion = () => {
@@ -259,6 +282,12 @@ function AddEditForm(props) {
       if (
         frmuserTypeObj[formfield.userType] === "Country" &&
         !formfield.regionList.length &&
+        !formfield.countryList.length
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
         !formfield.countryList.length
       ) {
         return;
@@ -397,8 +426,7 @@ function AddEditForm(props) {
               ) : (
                 ""
               )}
-              {frmuserTypeObj[formfield.userType] === "Country" ||
-              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+              {frmuserTypeObj[formfield.userType] === "Country" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}
@@ -409,6 +437,22 @@ function AddEditForm(props) {
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+              {frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+                <div onClick={handleCountryClick}>
+                  <FrmMultiselect
+                    title={"Country"}
+                    name={"countryList"}
+                    value={formfield.countryList ? formfield.countryList : []}
+                    handleChange={handleMultiSelectChange}
+                    isRequired={true}
+                    validationmsg={"Mandatory field"}
+                    issubmitted={issubmitted}
+                    selectopts={allCountryOpts}
                   />
                 </div>
               ) : (
