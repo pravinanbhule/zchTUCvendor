@@ -195,6 +195,7 @@ function AddEditForm(props) {
   const [fileuploadloader, setfileuploadloader] = useState(false);
 
   const [loading, setloading] = useState(true);
+  const [isFirst, setIsFirst] = useState(false)
   const [languageDetails, setLanguageDetails] = useState([])
   const [selectedlanguage, setSelectedlanguage] = useState()
   const [isGermany, setIsGermany] = useState(false)
@@ -227,6 +228,7 @@ function AddEditForm(props) {
     } else {
       setSelectedlanguage({label: "English", value: "EN001"})
     }
+    setIsFirst(true)
     setLanguageDetails(objLanguage)
   },[])
 
@@ -774,7 +776,7 @@ function AddEditForm(props) {
 
   useEffect(async()=>{
     localStorage.setItem("language", selectedlanguage?.value ? selectedlanguage.value : "EN001" )
-    if (selectedlanguage?.value) {
+    if (isFirst && selectedlanguage?.value) {
       if (selectedlanguage.value === "DE001") {
         formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
       } else {
@@ -2158,8 +2160,8 @@ function AddEditForm(props) {
       return;
     }
     setissubmitted(true);
-    let selectedCountryItems = formfield.CountryList.map((item) => item.value);
-    formfield.CountryId = selectedCountryItems.join(",");
+    let selectedCountryItems = formfield?.CountryList?.map((item) => item.value);
+    formfield.CountryId = selectedCountryItems?.join(",");
     if (validateform()) {
       /*formfield.underwriterAD = {
         userName: formfield.underwriterName,
@@ -2214,7 +2216,7 @@ function AddEditForm(props) {
   const hidePopup = () => {
     let isconfirmed = true;
     if (formfield.isdirty) {
-      isconfirmed = window.confirm(alertMessage.commonmsg.promptmsg);
+      isconfirmed = window.confirm(AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["common.alert.promptmsg"]);
     }
     if (isconfirmed) {
       if (queryparam.id) {
@@ -2286,7 +2288,7 @@ function AddEditForm(props) {
                 }
                 isReadMode={isReadMode}
                 isRequired={obj.ismandatory}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 isdisabled={isfrmdisabled}
                 isToolTip={obj.tooltipmsg ? true : false}
@@ -2302,7 +2304,7 @@ function AddEditForm(props) {
                 handleChange={handleChange}
                 isReadMode={isReadMode}
                 isRequired={mandatoryFields.includes(obj.name)}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 isdisabled={isfrmdisabled}
                 isToolTip={obj.tooltipmsg ? true : false}
@@ -2329,7 +2331,7 @@ function AddEditForm(props) {
               options={eval(obj.options)}
               isReadMode={isReadMode}
               isRequired={mandatoryFields.includes(obj.name)}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               isdisabled={isfrmdisabled}
               isToolTip={obj.tooltipmsg ? true : false}
@@ -2367,7 +2369,7 @@ function AddEditForm(props) {
               handleChange={handleSelectChange}
               isRequired={mandatoryFields.includes(obj.name)}
               isReadMode={isReadMode}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               selectopts={eval(obj.options)}
               isdisabled={
@@ -2408,7 +2410,7 @@ function AddEditForm(props) {
               handleChange={handleMultiSelectChange}
               isRequired={mandatoryFields.includes(obj.name) || obj.ismandatory }
               isReadMode={isReadMode}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               selectopts={eval(obj.options)}
               isdisabled={
@@ -2438,7 +2440,7 @@ function AddEditForm(props) {
                 handleChange={handleChange}
                 isRequired={mandatoryFields.includes(obj.name)}
                 isReadMode={isReadMode}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 isToolTip={obj.tooltipmsg ? true : false}
                 tooltipmsg={eval(obj.tooltipmsg)}
                 issubmitted={issubmitted}
@@ -2485,7 +2487,7 @@ function AddEditForm(props) {
                 handleChange={handleSelectChange}
                 isRequired={mandatoryFields.includes(obj.name)}
                 isReadMode={isReadMode}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 isdisabled={
                   isfrmdisabled ||
@@ -2569,7 +2571,7 @@ function AddEditForm(props) {
               isReadMode={isReadMode}
               minDate={obj.minDate ? eval(obj.minDate) : ""}
               maxDate={obj.maxDate ? eval(obj.maxDate) : ""}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               isToolTip={obj.tooltipmsg ? true : false}
               tooltipmsg={eval(obj.tooltipmsg)}
@@ -2598,7 +2600,7 @@ function AddEditForm(props) {
   ) : (
     <div className="addedit-logs-container">
       <div className="addedit-header-container">
-        <div className="addedit-header-title">{title}</div>
+        <div className="addedit-header-title">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages[isReadMode ? "title.viewrfe" : "title.addeditrfe"]}</div>
         <div className="header-btn-container">
           {formfield?.IsSubmit && (
             <div
@@ -2645,7 +2647,7 @@ function AddEditForm(props) {
             <>
               <Prompt
                 when={formIntialState?.isdirty ? true : false}
-                message={(location) => alertMessage.commonmsg.promptmsg}
+                message={(location) => AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["common.alert.promptmsg"]}
               />
               <div className="frm-field-bggray">
                 <div className="row">
@@ -3207,7 +3209,7 @@ function AddEditForm(props) {
                         (!isReadMode && !formfield?.IsSubmit) ||
                         (!isReadMode && userProfile.isAdminGroup)
                       }
-                      validationmsg={"Mandatory field"}
+                      validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                       issubmitted={issubmitted}
                       isshowloading={
                         fileuploadloader ? fileuploadloader : false
@@ -3278,7 +3280,6 @@ function AddEditForm(props) {
             </button>
             <div className={`btn-blue`} onClick={() => hidePopup()}>
               {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.cancel"]}
-              {/* {AppLocale.EN001.messages["button.back"]} */}
             </div>
           </div>
         </div>

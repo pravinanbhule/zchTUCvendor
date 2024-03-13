@@ -20,6 +20,7 @@ import { alertMessage, dynamicSort, getUrlParameter } from "../../helpers";
 import { RFE_LOG_STATUS } from "../../constants";
 import VersionHistoryPopupRfe from "../versionhistorypopup/VersionHistoryPopupRfe";
 import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "./Rfelogconstants";
+import AppLocale from "../../IngProvider";
 
 
 function CreateRfelogForm(props) {
@@ -235,8 +236,9 @@ function CreateRfelogForm(props) {
     };
 
     const postItemHandler = async (item) => {
-        let tempfullPathArr = item.RFEAttachmentList.map((item) => item.filePath);
-        let fullFilePath = tempfullPathArr.join(",");
+        const language = localStorage.getItem("language")
+        let tempfullPathArr = item?.RFEAttachmentList?.map((item) => item.filePath);
+        let fullFilePath = tempfullPathArr?.join(",");
         item.FullFilePath = fullFilePath;
         if (
             item.RequestForEmpowermentStatus !==
@@ -252,7 +254,7 @@ function CreateRfelogForm(props) {
 
         if (response) {
             if (item.IsSubmit) {
-                alert(alertMessage.rfelog.add);
+                alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.addmsg"]);
             } else {
                 alert(alertMessage.rfelog.draft);
             }
@@ -281,6 +283,7 @@ function CreateRfelogForm(props) {
     };
 
     const putItemHandler = async (item) => {
+        const language = localStorage.getItem("language")
         let tempfullPathArr = item.RFEAttachmentList.map((item) => item.filePath);
         let fullFilePath = tempfullPathArr.join(",");
         item.FullFilePath = fullFilePath;
@@ -296,7 +299,7 @@ function CreateRfelogForm(props) {
         });
 
         if (response) {
-            alert(alertMessage.rfelog.update);
+            alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.updatemsg"]);
             hideAddPopup();
         }
         setisEditMode(false);
