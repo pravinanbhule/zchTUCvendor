@@ -1851,6 +1851,8 @@ function AddEditForm(props) {
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={frmCoList}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["CO"]}
                   />
                 </div>
               </div>
