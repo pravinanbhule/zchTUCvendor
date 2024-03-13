@@ -4,6 +4,7 @@ import { debounce } from "lodash";
 import { lobActions } from "../../../actions";
 import UserProfile from "../UserProfile";
 import "./Style.css";
+import AppLocale from "../../../IngProvider";
 function FrmInputSearch(props) {
   const {
     title,
@@ -38,11 +39,20 @@ function FrmInputSearch(props) {
   const [inputSearchOptions, setinputSearchOptions] = useState([]);
   const [suggestedOptions, setsuggestedOptions] = useState([]);
   const [showsearchResultBox, setshowsearchResultBox] = useState(false);
-
+  const [language, setLanguage] = useState("EN001")
   /*useEffect(() => {
     getAllApprover({ UserName: "#$%" });
     setinputSearchOptions([]);
   }, []);*/
+
+  useEffect(()=>{
+    const StorageLanguage = localStorage.getItem("language")
+    if (StorageLanguage) {
+      setLanguage(StorageLanguage)
+    } else {
+      setLanguage("EN001")
+    }
+  },[])
 
   useEffect(() => {
     let searchListApprovers = [];
@@ -153,13 +163,12 @@ function FrmInputSearch(props) {
       {suggestedOptions.length ? (
         <div className="suggested-users border-bottom">
           <div className="title">
-            <b>List of recommended Global approvers</b>
+            <b>{AppLocale[language].messages["title.suggestedapprover"]}</b>
           </div>
           {suggestedOptions.map((user) => getApproverBlock(user, true))}
           <div style={{ marginBottom: "10px" }}>
             <i>
-              The list of recommended Global approvers is displayed. Please use
-              the search for in Country/Region approvers.
+              {AppLocale[language].messages["message.suggestedapprover"]}
             </i>
           </div>
         </div>
@@ -206,7 +215,7 @@ function FrmInputSearch(props) {
         ) : showsearchResultBox && !showloading ? (
           <div className="searched-container" ref={wrapperRef}>
             <div className="user-view">
-              <i>No result found</i>
+              <i>{AppLocale[language].messages["message.noresultfound"]}</i>
             </div>
           </div>
         ) : (

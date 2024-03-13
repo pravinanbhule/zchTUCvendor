@@ -1,24 +1,45 @@
-{
+﻿{
+  "title.addeditrfe": "RfE-Log: Bearbeiten / hinzufügen",
+  "title.viewrfe": "RfE-Log: Sicht",
+  "title.mycountryquicklinks": "My Country Quick Links",
+  "title.underwritergrantingempowerment": "Name Approver / Genehmiger",
+  "title.underwriter": "Name Underwriter (Antragsteller)",
+  "title.requestforempowermentCC": "Request for empowerment CC",
+  "title.suggestedapprover": "Liste der empfohlenen Global Approver / Genehmiger",
+  "title.searchuser": "Benutzer suchen",
+
   "button.edit": "Bearbeiten",
   "button.versionhistory": "Version",
   "button.back": "Zurück",
-  "button.submit": "bestätigen",
+  "button.submit": "Einreichen/Abschicken",
   "button.save": "Speichern",
-  "button.upload": "hochladen",
-  "button.cancel": "löschen",
+  "button.upload": "Hochladen",
+  "button.cancel": "Löschen",
+  "button.apply": "Zustimmen",
+
   "label.accountname": "Versicherungsnehmer / Account",
-  "label.policytermid": "Versicherungsdauer (ID) / Policy Term ID",
+  "label.policytermid": "Policen ID / Policy Term ID",
   "label.productname": "Product Name",
   "label.subproductname": "Sub-Product Name",
   "label.dunsnumber": "DUNS number",
   "label.modifieddate":"Änderungsdatum",
-  "label.modifiedby":"Geändert durch",
+  "label.modifiedby":"Geändert Durch",
   "label.createddate":"Erstellungsdatum",
-  "label.createdby":"Erstellt durch",
-  "label.uploadattachment":"Anhang hochladen",
-  "label.browser": "suchen",
+  "label.createdby":"Erstellt Durch",
+  "label.uploadattachment":"Anhang Hochladen",
+  "label.browser": "Suchen",
   "label.entrynumber": "Entry Number",
-  "placeholder.select": "auswählen",
+
+  "placeholder.select": "Auswahl",
   "placeholder.chooseafile": "Wähle einen Anhang aus…",
-  "placeholder.search": "Suchen"
+  "placeholder.search": "Suchen",
+ 
+  "message.suggestedapprover": "Die Liste zeigt eine Empfehlung von globalen Approvern / Genehmigern. Um einen lokalen Approver / Genehmiger hinzuzufügen, bitte die Suchfunktion nutzen.",
+  "message.noresultfound": "No result found",
+  "message.mandatory": "Pflichtfeld",
+
+  "rfelog.alert.addmsg": "Das RfE-Protokoll wurde erfolgreich hinzugefügt.",
+  "rfelog.alert.updatemsg": "Das RfE-Protokoll wurde erfolgreich aktualisiert.",
+
+  "common.alert.promptmsg": "Sie haben einige nicht gespeicherte Änderungen. Drücken Sie OK, um fortzufahren, ohne zu speichern."
 }
