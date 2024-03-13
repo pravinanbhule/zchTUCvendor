@@ -47,7 +47,7 @@
   -webkit-transform: rotate(225deg);
 }
 .Dropdown-placeholder {
-  /* font-style: italic; */
+  font-style: italic;
   visibility: hidden;
   position: relative;
 }
