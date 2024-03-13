@@ -142,8 +142,7 @@ function AddEditForm(props) {
     "dueDate",
     "actionResponsibleName",
     "breachStatus",
-    "breachDetails",
-    "co"
+    "breachDetails"
   ]);
   const [znaMandotoryFields, setznaMandotoryFields] = useState([
     "znaSegmentId",
@@ -1846,9 +1845,8 @@ function AddEditForm(props) {
                     name={"co"}
                     value={formfield.co}
                     handleChange={handleSelectChange}
-                    isRequired={true}
+                    isRequired={false}
                     isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={frmCoList}
                     isToolTip={true}
