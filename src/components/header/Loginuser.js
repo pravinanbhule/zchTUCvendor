@@ -40,22 +40,27 @@ function LoggedInUser({ ...props }) {
               ? userprofile.userRoles[0]
               : initialprofile;
           if (userRoles.roleId === USER_ROLE.superAdmin) {
+            localStorage.setItem("Role", "SuperAdmin")
             userprofile.isSuperAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.globalAdmin) {
+            localStorage.setItem("Role", "GlobalAdmin")
             userprofile.isGlobalAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.regionAdmin) {
+            localStorage.setItem("Role", "RegionAdmin")
             userprofile.isRegionAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.countryAdmin) {
+            localStorage.setItem("Role", "CountryAdmin")
             userprofile.isCountryAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.countrySuperAdmin) {
+            localStorage.setItem("Role", "CountrySuperAdmin")
             userprofile.isCountrySuperAdmin = true;
             userprofile.isAdminGroup = true;
           }

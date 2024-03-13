@@ -349,32 +349,31 @@ function Lookup({ ...props }) {
           <div className="lookup-content-container">
             <div className="lookup-type">
               {lookuptyps.map((lookuptype, index) => {
-                if (Country.includes(lookuptype.name.split(" ").slice(-1)[0])) {
-                  return (
-                    <>
-                      <div className="lookup-title-header">
-                        <div className="title">{lookuptype.name}</div>
-                        <div className="btn-container">
-                          {index === 0 && (
-                            <>
-                              <div
-                                className={`btn-blue ${
-                                  isActiveEnable ? "" : "disable"
-                                }`}
-                                onClick={() => setMasterdataActiveState(true)}
-                              >
-                                Active
-                              </div>
-                              <div
-                                className={`btn-blue ${
-                                  isActiveEnable ? "" : "disable"
-                                }`}
-                                onClick={() => setMasterdataActiveState(false)}
-                              >
-                                Inactive
-                              </div>
-                            </>
-                          )}
+                return (
+                  <>
+                    <div className="lookup-title-header">
+                      <div className="title">{lookuptype.name}</div>
+                      <div className="btn-container">
+                        {index === 0 && (
+                          <>
+                            <div
+                              className={`btn-blue ${
+                                isActiveEnable ? "" : "disable"
+                              }`}
+                              onClick={() => setMasterdataActiveState(true)}
+                            >
+                              Active
+                            </div>
+                            <div
+                              className={`btn-blue ${
+                                isActiveEnable ? "" : "disable"
+                              }`}
+                              onClick={() => setMasterdataActiveState(false)}
+                            >
+                              Inactive
+                            </div>
+                          </>
+                        )}
 
                           <div
                             className={`btn-blue`}
@@ -529,7 +528,7 @@ function Lookup({ ...props }) {
                         </tbody>
                       </table>
                     </>
-                  )};
+                  );
                 })}
               </div>
             </div>
