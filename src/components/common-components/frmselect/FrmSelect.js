@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import "./Style.css";
@@ -21,9 +21,16 @@ function FrmSelect(props) {
     tooltipmsg,
     itemid,
     isinline,
+    isAddButton,
+    handleClickButton,
+    isRemoveButton,
+    isShowTextBox,
+    textValue,
+    isAddButtonDisable,
+    selectedlanguage
   } = props;
   const onSelect = (selectedopt) => {
-    handleChange(name, selectedopt.value, itemid);
+    handleChange(name, selectedopt.value, itemid, selectedopt.label);
   };
 
   const getSelectedOpt = () => {
@@ -35,6 +42,18 @@ function FrmSelect(props) {
       return;
     }
   };
+
+  const [language, setLanguage] = useState("EN001")
+  
+  useEffect(()=>{
+    setLanguage(selectedlanguage ? selectedlanguage : "EN001")
+    if (language === "DE001" && selectopts[0]?.label === "Select") {
+      selectopts[0] = {label: 'Auswahl', value: ""}
+    } else if (selectopts[0]?.label === "Auswahl") {
+      selectopts[0] = {label: "Select", value: ""}
+    }
+  },[selectedlanguage])
+
   return (
     <div
       className={`frm-field ${isRequired ? "mandatory" : ""} ${
@@ -66,18 +85,37 @@ function FrmSelect(props) {
 
       {titlelinespace && <br></br>}
       {isReadMode ? (
-        <div>{value ? getSelectedOpt() : ""}</div>
+        <>
+          <div>{value ? getSelectedOpt() : ""}</div>
+          <div className="marginTop">{isShowTextBox ? textValue : ""}</div>
+        </>
       ) : (
         <>
-          <div className="dropdowncls">
+          <div className={`${isAddButton || isRemoveButton ? "dropdowncls" : ""}`}>
             <Dropdown
-              className="drop-down"
+              className={`${isAddButton || isRemoveButton ? "drop-down" : ""}`}
               options={selectopts}
               onChange={onSelect}
               value={value}
               placeholder="Select"
+              placeholderClassName={value ? "" : language !== "EN001" ? "Dropdown-Germany-placeholder" : "Dropdown-English-placeholder"}
               disabled={isdisabled ? isdisabled : false}
             />
+            {isAddButton ?
+              <div className={`${isAddButtonDisable ? "plus-button Button-disabled" : "plus-button"}`} onClick={() => handleClickButton("add", name)}>+</div> : ""}
+            {isRemoveButton ?
+              <div className="plus-button" onClick={() => handleClickButton("remove", name)}>-</div> : ""}
+            {isShowTextBox ?
+              <input
+                name={name}
+                value={textValue}
+                disabled={isdisabled ? isdisabled : false}
+                onChange={(e) => handleChange(name, e.target.value, "Textboxvalue")}
+                placeholder="Add your Reason here"
+                maxLength="150"
+                autoComplete="off"
+                className="marginTop"
+              ></input> : ""}
           </div>
           {isRequired && issubmitted && !value ? (
             <div className="validationError">{validationmsg}</div>

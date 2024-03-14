@@ -24,6 +24,7 @@ export const INCOUNTRTY_IDS = {
   HONGKONG : "COU000014",
   FRANCE: "COU000012",
   MIDDLEEAST: "COU000022",
+  GERMANY: "COU000013"
 };
 export const BREACH_LOG_STATUS = {
   Pending: "ECA8E493-1750-4546-9BC1-A1E8DA8A1B58",
@@ -83,7 +84,8 @@ export const INCOUNTRY_FLAG = {
   MALAYSIA : "MY001",
   FRANCE: "FR001",
   MIDDLEEAST: "ME001",
-  SPAIN: "ES001"
+  SPAIN: "ES001",
+  GERMANY: "DE001"
 };
 export const INCOUNTRY_FLAG_OPTS = {
   Indonesia: {
@@ -156,6 +158,11 @@ export const INCOUNTRY_FLAG_OPTS = {
     value: INCOUNTRY_FLAG.SPAIN,
     id: INCOUNTRTY_IDS.SPAIN,
   },
+  GERMANY: {
+    label: "Germany",
+    value: INCOUNTRY_FLAG.GERMANY,
+    id: INCOUNTRTY_IDS.GERMANY,
+  },
 };
 export const SHAREPOINT_LINKS = {
   Breachlog:
@@ -174,6 +181,8 @@ export const SHAREPOINT_LINKS = {
       "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Nordic/DispForm.aspx",
   RFEItalylogActive:
       "https://zurichinsurance.sharepoint.com/sites/001295/Lists/Italy%20Request%20for%20Empowerment%20Log/DispForm.aspx",
+  RFEGermanylogActive:
+      "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Germany/DispForm.aspx",
   ZUGlog:
     "https://zurichinsurance.sharepoint.com/sites/CIExemptionLog/Lists/CI%20Guideline%20Feedback%20and%20Exemption%20Log/DispForm.aspx",
   URPM: "https://zurichinsurance.sharepoint.com/sites/globuz20app/01/Lists/exlog/DispForm.aspx",

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 
 function Navbar({ ...props }) {
   const { appmenu } = props.state;

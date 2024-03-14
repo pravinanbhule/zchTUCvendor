@@ -610,6 +610,7 @@ button:focus {
 }
 .filter-container {
   width: 100%;
+  margin-left: 0;
   /*display: flex;
   justify-content: left;
   flex-wrap: wrap;
@@ -798,11 +799,9 @@ button:not(:last-child) {
   background-image: url("../assets/3dots hover.png");
 }
 .copy-icon {
-    width: 100%;
-      height: 25px;
-  background-image: url("../assets/Copy normal.png");
-  background-position: 0 0;
-  background-repeat: no-repeat;
+  width: 100%;
+  height: 25px;
+  background: url("../assets/Copy normal.png") center no-repeat;
 }
 .copy-icon:hover {
   cursor: pointer;
