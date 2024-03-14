@@ -48,12 +48,30 @@
 }
 .Dropdown-placeholder {
   font-style: italic;
+  visibility: hidden;
+  position: relative;
+}
+.Dropdown-Germany-placeholder::before {
+  visibility: visible;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "Auswahl";
+}
+.Dropdown-English-placeholder::before {
+  visibility: visible;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "Select";
 }
 .Dropdown-placeholder.is-selected {
   font-style: normal;
   height: 19px;
   overflow-y: hidden;
   overflow-x: hidden;
+  visibility: visible;
+  position: absolute;
 }
 .Dropdown-option.is-selected {
   background-color: #add8ef;
@@ -67,5 +85,41 @@
 .frm-field.inlinetitle{
   display: flex;
   align-items: center;
-    justify-content: space-around;
+  justify-content: space-around;
+}
+
+.plus-button {
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  /* Make it round */
+  border: none;
+  background-color: #2167ad;
+  /* Change color as desired */
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Add shadow */
+  margin-left: 10px;
+}
+
+.drop-down {
+  width: 90%;
+}
+
+.dropdowncls {
+  display: flex;
+}
+
+.Button-disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.marginTop {
+  margin-top: 10px;
 }

@@ -201,7 +201,7 @@ export const formfieldsmapping = {
     options: "frmSublob",
     eventhandler: "handleSelectChange",
     titlelinespace: true,
-    colspan: 3,
+    colspan: 0,
     conditionaldisplay: "frmSublob.length > 1",
   },
   RequestForEmpowermentReason: {
@@ -211,6 +211,24 @@ export const formfieldsmapping = {
     tooltipmsg: "tooltip.RequestForEmpowermentReason",
     colspan: 3,
     fieldTitleHtml: true,
+  },
+  ReferralReasonLevel2: {
+    componenttype: "FrmSelect",
+    options: "referralReasonLevel2Option",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 0,
+    startbgcls: "frm-field-bggray",
+    conditionaldisplay: "reasonfields.ReferralReasonLevel2 ? true : false",
+  },
+  ReferralReasonLevel3: {
+    componenttype: "FrmSelect",
+    options: "referralReasonLevel3Option",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 0,
+    startbgcls: "frm-field-bggray",
+    conditionaldisplay: "reasonfields.ReferralReasonLevel3 ? true : false",
   },
   UnderwriterGrantingEmpowerment: {
     componenttype: "FrmInput",
@@ -264,6 +282,12 @@ export const formfieldsmapping = {
     colspan: 3,
     startbgcls: "frm-field-bggray",
   },
+  AccountNumber: {
+    componenttype: "FrmInput",
+    eventhandler: "handleChange",
+    colspan: 0,
+    conditionaldisplay: "accountNumberShow",
+  },
   NewRenewal: {
     componenttype: "FrmSelect",
     options: "inCountryOptsLATAM.frmNewRenewalOpts",
@@ -298,6 +322,8 @@ export const formfieldsmapping = {
     eventhandler: "handleChange",
     colspan: 3,
     clsrowname: "border-bottom",
+    breakblock: true,
+    startbgcls: "frm-field-bggray",
   },
   CHZ: {
     componenttype: "FrmSelect",
@@ -340,7 +366,6 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     options: "frmConditionOpts",
     tooltipmsg: "tooltip.ConditionApplicableTo",
-    titlelinespace: true,
     colspan: 3,
     conditionaldisplay:
       "formfield.RequestForEmpowermentStatus ===rfelog_status.Empowerment_granted_with_conditions",

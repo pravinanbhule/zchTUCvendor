@@ -8,11 +8,13 @@ import FrmMultiselect from "../common-components/frmmultiselect/FrmMultiselect";
 import FrmInputAutocomplete from "../common-components/frminputautocomplete/FrmInputAutocomplete";
 import FrmFileUpload from "../common-components/frmfileupload/FrmFileUpload";
 import Loading from "../common-components/Loading";
+import AppLocale from "../../IngProvider";
 import moment from "moment";
 import { Prompt } from "react-router-dom";
 import { isNotEmptyValue } from "../../helpers";
 import { formfieldsmapping } from "./Rfelogconstants";
 import { isEmptyObjectKeys } from "../../helpers";
+import Dropdown from "react-dropdown";
 import "./Style.css";
 import {
   RFE_LOG_ORGALINMENT,
@@ -61,6 +63,7 @@ function AddEditForm(props) {
     putItem,
     isReadMode,
     isEditMode,
+    isDraft,
     setInEditMode,
     formIntialState,
     accountOpts,
@@ -76,6 +79,7 @@ function AddEditForm(props) {
     getAllPolicyAccounts,
     getPolicyTermId,
     getMultiUserProfile,
+    getLanguageDetails,
     uploadFile,
     deleteFile,
     downloadFile,
@@ -103,6 +107,9 @@ function AddEditForm(props) {
   const [frmConditionOpts, setConditionOpts] = useState([]);
   const [frmrfechz, setfrmrfechz] = useState([]);
   const [frmrfeempourment, setfrmrfeempourment] = useState([]);
+  const [frmrfeempourmentgermany, setfrmrfeempourmentgermany] = useState([]);
+  const [referralReasonLevel2Option, setReferralReasonLevel2Option] = useState([]);
+  const [referralReasonLevel3Option, setReferralReasonLevel3Option] = useState([]);
   const [frmrfeempourmentuk, setfrmrfeempourmentuk] = useState([]);
   const [frmrfeempourmentglobal, setfrmrfeempourmentglobal] = useState([]);
   const [frmstatus, setfrmstatus] = useState([]);
@@ -188,6 +195,40 @@ function AddEditForm(props) {
   const [fileuploadloader, setfileuploadloader] = useState(false);
 
   const [loading, setloading] = useState(true);
+  const [languageDetails, setLanguageDetails] = useState([])
+  const [selectedlanguage, setSelectedlanguage] = useState()
+  const [isGermany, setIsGermany] = useState(false)
+  const [showTextBox, setShowTextBox] = useState(false)
+  const [buttonsDisable, setButtonsDisable] = useState(true)
+  const [showButtons, setShowButtons] = useState(false)
+  const [reasonfields, setReasonfields] = useState({
+    ReferralReasonLevel2: ((isEditMode || isReadMode || isDraft) && formIntialState.ReferralReasonLevel2) ? true : false,
+    ReferralReasonLevel3: ((isEditMode || isReadMode || isDraft) && formIntialState.ReferralReasonLevel3) ? true : false,
+  })
+  const [segmentAccount, setSegmentAccount] = useState([
+    "personallines", 
+    "middlemarket", 
+    "smallbusiness"
+  ])
+  const [accountNumberShow, setAccountNumberShow] = useState(false)
+  const [reasonOtherValue, setReasonOtherValue] = useState("others(indiesemfallbitteimkommentardenrfegrundeingeben)")
+
+  useEffect(async()=>{
+    const language = await getLanguageDetails()
+    let objLanguage = []
+    language.filter((item)=> {
+      objLanguage.push({
+        label: item.languageName,
+        value: item.languageCode
+      })
+    })
+    if (userProfile?.profileCountryName === "Germany") {
+      setSelectedlanguage({label: "German", value: "DE001"})
+    } else {
+      setSelectedlanguage({label: "English", value: "EN001"})
+    }
+    setLanguageDetails(objLanguage)
+  },[])
 
   useEffect(() => {
     const tempuserroles = {
@@ -239,7 +280,7 @@ function AddEditForm(props) {
   const fnOnInit = async () => {
     let tempopts = [];
     let tempcountryItems = [];
-    getAllSegment({ logType: "rfelogs" });
+    // getAllSegment({ logType: "rfelogs" });
     getAllCurrency();
     getAllBranch();
     getAllSublob();
@@ -252,10 +293,7 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "RFEOrganizationalAlignment" }),
       getLookupByType({ LookupType: "RFECHZ" }),
       getLookupByType({
-        LookupType: "RFEEmpowermentReasonRequest",
-        IncountryFlag: formIntialState?.IncountryFlag
-          ? formIntialState.IncountryFlag
-          : "",
+        LookupType: "RFEEmpowermentReasonRequest"
       }),
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
       getLookupByType({ LookupType: "RFELogNewRenewal" }),
@@ -273,7 +311,7 @@ function AddEditForm(props) {
     let regions = [];
     let countrycode = [];
     tempcountryItems.forEach((item) => {
-      if (isEditMode || isReadMode || formIntialState.CountryList.length) {
+      if (isEditMode || isReadMode || isDraft || formIntialState.CountryList.length) {
         let ispresent = false;
         formIntialState.CountryList.forEach((countryitem) => {
           if (item.countryID === countryitem.value) {
@@ -322,7 +360,7 @@ function AddEditForm(props) {
         }
       }
 
-      if (formIntialState.CountryId.indexOf(item.countryID) !== -1) {
+      if (formIntialState.CountryId?.indexOf(item.countryID) !== -1) {
         regions.push(item.regionID);
       }
     });
@@ -488,7 +526,9 @@ function AddEditForm(props) {
         });
       }
     });
-    tempopts.sort(dynamicSort("label"));
+    if (IncountryFlag !== IncountryFlagConst.GERMANY) {
+      tempopts.sort(dynamicSort("label"));
+    }
     temprfeempourment = [...tempopts];
     
     tempopts = [];
@@ -510,7 +550,9 @@ function AddEditForm(props) {
         });
       }
     });
-    tempopts.sort(dynamicSort("label"));
+    if (IncountryFlag !== IncountryFlagConst.GERMANY) {
+      tempopts.sort(dynamicSort("label"));
+    }
     temprfeempourmentcountry = [...tempopts];
 
     tempopts = [];
@@ -600,6 +642,7 @@ function AddEditForm(props) {
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourmentcountry]);
+    setfrmrfeempourmentgermany([...temprfeempourmentcountry]);
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
     //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
@@ -698,9 +741,12 @@ function AddEditForm(props) {
               });
             }
           });
-          tempopts.sort(dynamicSort("label"));
+          if (IncountryFlag !== IncountryFlagConst.GERMANY) {
+            tempopts.sort(dynamicSort("label"));
+          }
           temprfeempourment = [...tempopts];
           setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
+          setfrmrfeempourmentgermany([...temprfeempourment]);
           if (formfield.RequestForEmpowermentReason) {
             const isPresent = frmrfeempourmentglobal.filter(
               (item) => item.value === formfield.RequestForEmpowermentReason
@@ -726,13 +772,86 @@ function AddEditForm(props) {
     }
   }, [IncountryFlag]);
 
+  useEffect(async()=>{
+    localStorage.setItem("language", selectedlanguage?.value ? selectedlanguage.value : "EN001" )
+    if (selectedlanguage?.value) {
+      fnloadcountryview();
+      let tempToolTips = await getToolTip({ type: "RFELogs", LanguageCode: selectedlanguage?.value });
+      let tooltipObj = {};
+      tempToolTips.forEach((item) => {
+        tooltipObj[item.toolTipField] = item.toolTipText;
+      });
+      settooltip(tooltipObj);
+      if (IncountryFlag === IncountryFlagConst.GERMANY) {
+        if (selectedlanguage.value === "DE001") {
+          formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
+        } else {
+          formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.titlelinespace = false : item.name === "ReferralReasonLevel3" ? item.titlelinespace = false : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
+        }
+        if (formfield.ReferralReasonLevel2 === "" || formfield.ReferralReasonLevel2 === null || formfield.ReferralReasonLevel2 === undefined) {
+          setReasonfields({
+            ...reasonfields,
+            ReferralReasonLevel2: false,
+            ReferralReasonLevel3: false,
+          })
+          delete formIntialState.ReferralReasonLevel2
+          delete formIntialState.ReferralReasonLevel3
+          formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.colspan = 0 : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
+          setformfield({
+            ...formfield,
+            ReferralReasonLevel2: null,
+            ReferralReasonLevel3: null,
+            isdirty: true,
+          });
+        }
+        if ((formfield.ReferralReasonLevel3 === "" || formfield.ReferralReasonLevel3 === null || formfield.ReferralReasonLevel3 === undefined) && (formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== undefined)) {
+          setReasonfields({
+            ...reasonfields,
+            ReferralReasonLevel2: true,
+            ReferralReasonLevel3: false,
+          })
+          delete formIntialState.ReferralReasonLevel3
+          formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? (item.isAddButton = true,item.colspan = 3) : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
+          setformfield({
+            ...formfield,
+            ReferralReasonLevel3: null,
+            isdirty: true,
+          });
+        } else if ((formfield.ReferralReasonLevel3 !== "" && formfield.ReferralReasonLevel3 !== null) && (formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== null)){
+          formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.isAddButton = false : item.name === "ReferralReasonLevel3" ? item.colspan = 3 : (item.name === "AccountNumber" && accountNumberShow) ? item.colspan = 3 : item.colspan = item.colspan);
+        }
+        if (formfield.RequestForEmpowermentReason !== "" && formfield.RequestForEmpowermentReason !== null ) {
+          setButtonsDisable(false)
+        }
+      }
+    }
+  },[selectedlanguage])
+
   const fnloadcountryview = async () => {
     const tempdbfields = await getLogFields({
       IncountryFlag: IncountryFlag,
       FieldType: "Form",
+      LanguageCode: selectedlanguage?.value
     });
     setmandatoryFields([])
-    // setfromfieldsdblist(tempfields);
+    if (IncountryFlag === IncountryFlagConst.GERMANY) {
+      let newFields = tempdbfields
+      let index = newFields.findIndex(item => item.fieldName === "CustomerSegment");
+      let AccountNumber = newFields.filter(item => item.fieldName === "AccountNumber")
+      for(let i = 0; i < newFields.length; i++) {
+        if (newFields[i]?.fieldName === "GWP") {
+          newFields[i].isMandatory = false
+        }
+        if(newFields[i]?.fieldName === "CustomerSegment") {
+            newFields.splice(index + 1, 0, AccountNumber[0]);
+          } else if (newFields[i]?.fieldName === "AccountNumber" && newFields[i - 1]?.fieldName !== "CustomerSegment") {
+            newFields.splice(i, 1);
+          }
+      }
+    }
+    if (formIntialState?.CountryName === "Germany" && (isEditMode || isReadMode || isDraft) && segmentAccount.includes(formIntialState?.CustomerSegmentValue?.toLowerCase().replace(/\s/g, ''))) {
+      setAccountNumberShow(true)
+    }
     let tempfields = [];
     tempdbfields?.forEach((item) => {
       if (item.isActive) {
@@ -754,6 +873,79 @@ function AddEditForm(props) {
               : "",
             ismandatory: item.isMandatory,
           };
+          if (item.fieldName === "RequestForEmpowermentReason") {
+            tempobj = {
+              ...tempobj,
+              isAddButton: formIntialState.ReferralReasonLevel2 || (formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== undefined) ? false : true,
+            };
+            if (isEditMode || isReadMode || isDraft) {
+              handleReasonOptions("RequestForEmpowermentReason", formIntialState.RequestForEmpowermentReason)
+            }
+          }
+          if (item.fieldName === "ReferralReasonLevel2") {
+            tempobj = {
+              ...tempobj,
+              isAddButton: formIntialState.ReferralReasonLevel3 || (formfield.ReferralReasonLevel3 !== null && formfield.ReferralReasonLevel3 !== "" && formfield.ReferralReasonLevel3 !== undefined) ? false : true,
+              titlelinespace: selectedlanguage?.value === "DE001" ? false : true,
+              colspan: formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, '') === reasonOtherValue ? 0 : formIntialState.ReferralReasonLevel2 || (formfield.ReferralReasonLevel2 !== null && formfield.ReferralReasonLevel2 !== "" && formfield.ReferralReasonLevel2 !== undefined) ? 3 : 0
+            };
+            if (isEditMode || isReadMode || isDraft) {
+              handleReasonOptions2("ReferralReasonLevel2", formIntialState?.ReferralReasonLevel2)
+            }
+          }
+          if (item.fieldName === "ReferralReasonLevel3") {
+            tempobj = {
+              ...tempobj,
+              isAddButton: false,
+              titlelinespace: selectedlanguage?.value === "DE001" ? false : true,
+              colspan: formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, '') === reasonOtherValue ? 0 : formIntialState.ReferralReasonLevel3 || (formfield.ReferralReasonLevel3 !== null && formfield.ReferralReasonLevel3 !== "" && formfield.ReferralReasonLevel3 !== undefined) ? 3 : 0
+            };
+            if (isEditMode || isReadMode || isDraft) {
+              handleReasonOptions3("ReferralReasonLevel3", formIntialState?.ReferralReasonLevel3)
+            }
+          }
+          if (item.fieldName === "SUBLOBID") {
+            tempobj = {
+              ...tempobj,
+              colspan: formIntialState.SUBLOBID || frmSublob.length > 1 ? 3 : 0
+            };
+          }
+          if (item.fieldName === "AccountNumber") {
+            tempobj = {
+              ...tempobj,
+              colspan: (formIntialState.AccountNumber || accountNumberShow) ? 3 : 0
+            };
+          }
+          if (item.fieldName === "CustomerSegment") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "NewRenewal") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "GWP") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "ZurichShare") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: selectedlanguage?.value === "DE001" && window.innerWidth < 1488 ? true : false
+            };
+          }
+          if (item.fieldName === "ConditionApplicableTo") {
+            tempobj = {
+              ...tempobj,
+              titlelinespace: window.innerWidth < 1488 ? true : false
+            };
+          }
           if (tempformobj["options"]) {
             tempobj = {
               ...tempobj,
@@ -1061,7 +1253,125 @@ function AddEditForm(props) {
     }
     setformfield({ ...formfield, isdirty: true, [name]: value });
   };
-  const handleSelectChange = (name, value) => {
+
+  useEffect(() => {
+    if (IncountryFlag !== IncountryFlagConst.GERMANY) {
+      setIsGermany(false)
+      setShowTextBox(false)
+      setShowButtons(false)
+      setButtonsDisable(true)
+    } else if (IncountryFlag === IncountryFlagConst.GERMANY) {
+      setIsGermany(true)
+      getAllSegment({ logType: "rfelogsGermany" });
+      if (formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, '') !== reasonOtherValue && formIntialState.RequestForEmpowermentReason !== "") {
+        setShowButtons(true)
+        setButtonsDisable(false)
+      }
+      if (formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, '') === reasonOtherValue) {
+        setShowButtons(false)
+        setButtonsDisable(true)
+        setShowTextBox(true)
+      }
+      if (formIntialState?.RequestForEmpowermentReason === "" || formIntialState.RequestForEmpowermentReason === undefined) {
+        setShowButtons(true)
+        setButtonsDisable(true)
+      }
+    }
+    if (IncountryFlag !== undefined && IncountryFlag !== IncountryFlagConst.GERMANY) {
+      getAllSegment({ logType: "rfelogs" });
+    }
+  }, [IncountryFlag])
+
+  const handleMultiDropdown = (value, name) => {
+    if (name === "RequestForEmpowermentReason") {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: true
+      })
+      setButtonsDisable(true)
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.colspan = 3 : item.colspan = item.colspan);
+      formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = false : item.name === "ReferralReasonLevel2" && formfield.ReferralReasonLevel3 !== null ? item.isAddButton = false : item.name === "ReferralReasonLevel2" ? item.isAddButton = true : item.name = item.name);
+      const GermanyOptions = frmrfeempourmentgermany 
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.label.toLowerCase().replace(/\s/g, '') !== reasonOtherValue && item.value !== formfield.RequestForEmpowermentReason && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.label.toLowerCase().replace(/\s/g, '') !== reasonOtherValue && item.value !== formfield.RequestForEmpowermentReason && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
+      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1])
+    } else if (name === "ReferralReasonLevel2") {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel3: true
+      })
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel3" ? item.colspan = 3 : item.colspan = item.colspan);
+      formdomfields.filter((item) => item.name === "ReferralReasonLevel2" ? item.isAddButton = false : item.name = item.name);
+    }
+  }
+
+  const handleReasonOptions = (name, value) =>{
+    if ((isEditMode || isReadMode || isDraft) && formIntialState.ReferralReasonLevel2) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: true 
+      })
+    }
+    if ((isEditMode || isReadMode || isDraft) && formIntialState.ReferralReasonLevel3) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel3: true 
+      })
+    }
+    const GermanyOptions = frmrfeempourmentgermany 
+    if (name === "RequestForEmpowermentReason" || value !== "") {
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
+      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1])
+    }
+  }
+  const handleReasonOptions2 = (name, value) =>{
+    if ((isEditMode || isReadMode || isDraft) && formIntialState.ReferralReasonLevel2) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: true 
+      })
+    }
+    if ((isEditMode || isReadMode || isDraft) && formIntialState.ReferralReasonLevel3) {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel3: true 
+      })
+    }
+    const GermanyOptions = frmrfeempourmentgermany 
+    if (name === "ReferralReasonLevel2" || value !== "") {
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel3 && item.value !== formIntialState.ReferralReasonLevel3)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.RequestForEmpowermentReason && item.value !== formIntialState.RequestForEmpowermentReason)
+      setfrmrfeempourment([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1])
+    }
+  }
+  const handleReasonOptions3 = (name, value) =>{
+    const GermanyOptions = frmrfeempourmentgermany 
+    if (name === "ReferralReasonLevel3" || value !== "") {
+      let GermanyReasonOption = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.ReferralReasonLevel2 && item.value !== formIntialState.ReferralReasonLevel2)
+      let GermanyReasonOption1 = GermanyOptions.filter((item) => item.value !== value && item.value !== formfield.RequestForEmpowermentReason && item.value !== formIntialState.RequestForEmpowermentReason)
+      setfrmrfeempourment([selectInitiVal, ...GermanyReasonOption])
+      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption1])
+    }
+  }
+
+  const handleSelectChange = (name, value, fieldName, label) => {
+    let SelectedLabel = "";
+    if (label && (name === "RequestForEmpowermentReason" || name === "CustomerSegment")) {
+      SelectedLabel = label.toLowerCase().replace(/\s/g, '')
+    }
+    if (name === "RequestForEmpowermentReason") {
+      handleReasonOptions(name, value)
+    }
+    if (name === "ReferralReasonLevel2") {
+      handleReasonOptions2(name, value)
+    }
+    if (name === "ReferralReasonLevel3") {
+      handleReasonOptions3(name, value)
+    }
     let newDOA = "";
     if (name === "LOBId") {
       let tempopts = [];
@@ -1087,8 +1397,92 @@ function AddEditForm(props) {
       });
       let sublobopts = frmSublobAll.filter((item) => item.lob === value);
       setfrmSublob([selectInitiVal, ...sublobopts]);
+      if (sublobopts?.length > 0) {
+        formdomfields.filter((item) => item.name === "SUBLOBID" ? item.colspan = 3 : item.colspan = item.colspan);
+      } else {
+        formdomfields.filter((item) => item.name === "SUBLOBID" ? item.colspan = 0 : item.colspan = item.colspan);
+      }
     } else if (name === "LOBId" && value === "") {
       setfrmSublob([]);
+    } else if (name === "RequestForEmpowermentReason" && value === "") {
+      formdomfields.filter((item, i) => item.name === "RequestForEmpowermentReason" && formdomfields[i + 1]?.colspan !== 3 ? item.isAddButton = true : item.colspan = item.colspan);
+      delete formfield.OtherReferralReason
+      setShowTextBox(false)
+      setShowButtons(true)
+      setButtonsDisable(true)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "RequestForEmpowermentReason" && SelectedLabel === reasonOtherValue) {
+      setShowTextBox(true)
+      setShowButtons(false)
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+      })
+      delete formIntialState.ReferralReasonLevel2
+      delete formIntialState.ReferralReasonLevel3
+      formdomfields.filter((item) => item.name === "RequestForEmpowermentReason" ? item.isAddButton = true : item.name === "ReferralReasonLevel2" ? item.colspan = 0 : item.name === "ReferralReasonLevel3" ? item.colspan = 0 : item.colspan = item.colspan);
+      setformfield({
+        ...formfield,
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "RequestForEmpowermentReason" && fieldName === "Textboxvalue") {
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        "OtherReferralReason": value,
+      });
+    } else if (name === "RequestForEmpowermentReason" && (SelectedLabel !== reasonOtherValue || value !== "")) {
+      formdomfields.filter((item, i) => item.name === "RequestForEmpowermentReason" && formdomfields[i + 1]?.colspan !== 3 ? item.isAddButton = true : item.colspan = item.colspan);
+      setShowTextBox(false)
+      setShowButtons(true)
+      setButtonsDisable(false)
+      delete formIntialState?.RequestForEmpowermentReasonValue
+      setformfield({
+        ...formfield,
+        OtherReferralReason: null,
+        RequestForEmpowermentReasonValue: null,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "CustomerSegment" && !segmentAccount.includes(SelectedLabel)) {
+      formdomfields.filter((item) => item.name === "AccountNumber" ? item.colspan = 0 : item.colspan = item.colspan);
+      setAccountNumberShow(false)
+      setformfield({
+        ...formfield,
+        AccountNumber: null,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "CustomerSegment" && segmentAccount.includes(SelectedLabel)) {
+      formdomfields.filter((item) => item.name === "AccountNumber" ? item.colspan = 3 : item.colspan = item.colspan);
+      setAccountNumberShow(true)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "ReferralReasonLevel2" && value === "") {
+      setButtonsDisable(true)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "ReferralReasonLevel2" && value !== "") {
+      setButtonsDisable(false)
+      setformfield({
+        ...formfield,
+        isdirty: true,
+        [name]: value,
+      });
     } else {
       /*if (name === "CountryId") {
         let countrycode = "";
@@ -1165,8 +1559,25 @@ function AddEditForm(props) {
         });
       });
       setfrmselectedRegion([...selectedregions]);
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+      })
+      setAccountNumberShow(false)
+      setButtonsDisable(true)
+      delete formIntialState.RequestForEmpowermentReason
+      delete formIntialState.ReferralReasonLevel2
+      delete formIntialState.ReferralReasonLevel3
+      delete formIntialState.AccountNumber
+      delete formIntialState.CustomerSegment
       setformfield({
         ...formfield,
+        RequestForEmpowermentReason: null,
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null,
+        CustomerSegment: null,
+        AccountNumber: null,
         isdirty: true,
         [name]: value,
         Branch: "",
@@ -1357,6 +1768,7 @@ function AddEditForm(props) {
       let isMalaysiacountry = true;
       let isFrancecountry = true;
       let isMiddleEastcountry = true;
+      let isGermanycountry = true;
       let isSpaincountry = true;
       let isItalycountry = true;
       let isBeneluxcountry = true;
@@ -1412,6 +1824,11 @@ function AddEditForm(props) {
           isMiddleEastcountry = isMiddleEastcountry ? true : false;
         } else {
           isMiddleEastcountry = false;
+        }
+        if (item.value === IncountryIds.GERMANY) {
+          isGermanycountry = isGermanycountry ? true : false;
+        } else {
+          isGermanycountry = false;
         }
         if (item.value === IncountryIds.SPAIN) {
           isSpaincountry = isSpaincountry ? true : false;
@@ -1582,6 +1999,20 @@ function AddEditForm(props) {
         setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
       } 
       else if (
+        isGermanycountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser)
+      ) {
+        setformfield({
+          ...formfield,
+          OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+        });
+        setIncountryFlag(IncountryFlagConst.GERMANY);
+      } 
+      else if (
         isSpaincountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
@@ -1714,7 +2145,7 @@ function AddEditForm(props) {
       if (mandatoryFields.includes(key) && isvalidated) {
         let value = formfield[key];
         if (key === "RFELogDetails") {
-          value = formfield[key].replace(/<\/?[^>]+(>|$)/g, "");
+          value = formfield[key]?.replace(/<\/?[^>]+(>|$)/g, "");
         }
         if (!value) {
           isvalidated = false;
@@ -1729,8 +2160,8 @@ function AddEditForm(props) {
       return;
     }
     setissubmitted(true);
-    let selectedCountryItems = formfield.CountryList.map((item) => item.value);
-    formfield.CountryId = selectedCountryItems.join(",");
+    let selectedCountryItems = formfield?.CountryList?.map((item) => item.value);
+    formfield.CountryId = selectedCountryItems?.join(",");
     if (validateform()) {
       /*formfield.underwriterAD = {
         userName: formfield.underwriterName,
@@ -1784,7 +2215,7 @@ function AddEditForm(props) {
   const hidePopup = () => {
     let isconfirmed = true;
     if (formfield.isdirty) {
-      isconfirmed = window.confirm(alertMessage.commonmsg.promptmsg);
+      isconfirmed = window.confirm(AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["common.alert.promptmsg"]);
     }
     if (isconfirmed) {
       if (queryparam.id) {
@@ -1829,7 +2260,7 @@ function AddEditForm(props) {
     let tempelement;
     switch (obj.componenttype) {
       case "FrmInput":
-        return (
+        tempelement = (
           <div className={`col-md-${obj.colspan}`}>
             {obj.peoplepickertype ? (
               <FrmInput
@@ -1853,7 +2284,7 @@ function AddEditForm(props) {
                 }
                 isReadMode={isReadMode}
                 isRequired={obj.ismandatory}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 isdisabled={isfrmdisabled}
                 isToolTip={obj.tooltipmsg ? true : false}
@@ -1869,7 +2300,7 @@ function AddEditForm(props) {
                 handleChange={handleChange}
                 isReadMode={isReadMode}
                 isRequired={mandatoryFields.includes(obj.name)}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 isdisabled={isfrmdisabled}
                 isToolTip={obj.tooltipmsg ? true : false}
@@ -1878,6 +2309,11 @@ function AddEditForm(props) {
             )}
           </div>
         );
+        return obj.conditionaldisplay
+          ? eval(obj.conditionaldisplay)
+            ? tempelement
+            : ""
+          : tempelement;
       case "FrmInputAutocomplete":
         tempelement = (
           <div className={`col-md-${obj.colspan}`}>
@@ -1891,11 +2327,12 @@ function AddEditForm(props) {
               options={eval(obj.options)}
               isReadMode={isReadMode}
               isRequired={mandatoryFields.includes(obj.name)}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               isdisabled={isfrmdisabled}
               isToolTip={obj.tooltipmsg ? true : false}
               tooltipmsg={eval(obj.tooltipmsg)}
+              selectedlanguage={selectedlanguage?.value ? selectedlanguage?.value : "EN001" }
             />
             {obj.name === "AccountName" && policyaccloader ? (
               <div style={{ marginTop: "-20px" }}>
@@ -1922,21 +2359,28 @@ function AddEditForm(props) {
                   obj.title
                 )
               }
-              titlelinespace={obj.titlelinespace ? true : false}
+              titlelinespace={(obj.name === "ReferralReasonLevel2" || obj.name === "ReferralReasonLevel3" ) && selectedlanguage?.value && selectedlanguage?.value !== "EN001" ? false : obj.titlelinespace ? true : false}
               name={obj.name}
               value={formfield[obj.name]}
               handleChange={handleSelectChange}
               isRequired={mandatoryFields.includes(obj.name)}
               isReadMode={isReadMode}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               selectopts={eval(obj.options)}
               isdisabled={
                 isfrmdisabled ||
                 (obj.disablecondition && eval(obj.disablecondition))
               }
+              isAddButton={isGermany && showButtons && obj.isAddButton === true ? true : false}
+              isAddButtonDisable={buttonsDisable}
+              handleClickButton={(value, name) => handleMultiDropdown(value, name)}
+              // isRemoveButton={obj.name === "ReferralReasonLevel2" || obj.name === "ReferralReasonLevel3" ? true : false}
               isToolTip={obj.tooltipmsg ? true : false}
+              isShowTextBox={obj.name === "RequestForEmpowermentReason" && showTextBox && isGermany}
+              textValue={formfield.OtherReferralReason}
               tooltipmsg={eval(obj.tooltipmsg)}
+              selectedlanguage={selectedlanguage?.value ? selectedlanguage?.value : "EN001" }
             />
           </div>
         );
@@ -1962,7 +2406,7 @@ function AddEditForm(props) {
               handleChange={handleMultiSelectChange}
               isRequired={mandatoryFields.includes(obj.name) || obj.ismandatory }
               isReadMode={isReadMode}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               selectopts={eval(obj.options)}
               isdisabled={
@@ -1972,6 +2416,7 @@ function AddEditForm(props) {
               isToolTip={obj.tooltipmsg ? true : false}
               tooltipmsg={eval(obj.tooltipmsg)}
               isAllOptNotRequired={true}
+              selectedlanguage={selectedlanguage?.value ? selectedlanguage?.value : "EN001" }
             />
           </div>
         );
@@ -1991,7 +2436,7 @@ function AddEditForm(props) {
                 handleChange={handleChange}
                 isRequired={mandatoryFields.includes(obj.name)}
                 isReadMode={isReadMode}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 isToolTip={obj.tooltipmsg ? true : false}
                 tooltipmsg={eval(obj.tooltipmsg)}
                 issubmitted={issubmitted}
@@ -2038,7 +2483,7 @@ function AddEditForm(props) {
                 handleChange={handleSelectChange}
                 isRequired={mandatoryFields.includes(obj.name)}
                 isReadMode={isReadMode}
-                validationmsg={"Mandatory field"}
+                validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                 issubmitted={issubmitted}
                 isdisabled={
                   isfrmdisabled ||
@@ -2053,11 +2498,11 @@ function AddEditForm(props) {
                   <div className="col-md-12" style={{ padding: "10px" }}>
                     <table className="policyterms table-bordered">
                       <thead>
-                        <th width="25%">Account Name</th>
-                        <th width="25%">Policy Term Id</th>
-                        <th width="17%">Product Name</th>
-                        <th width="17%">Sub-Product Name</th>
-                        <th>DUNS number</th>
+                        <th width="25%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.accountname"]}</th>
+                        <th width="25%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.policytermid"]}</th>
+                        <th width="17%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.productname"]}</th>
+                        <th width="17%">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.subproductname"]}</th>
+                        <th>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.dunsnumber"]}</th>
                       </thead>
                       {policyTermIds.map((item) => (
                         <tr key={item.policy_term_id}>
@@ -2122,7 +2567,7 @@ function AddEditForm(props) {
               isReadMode={isReadMode}
               minDate={obj.minDate ? eval(obj.minDate) : ""}
               maxDate={obj.maxDate ? eval(obj.maxDate) : ""}
-              validationmsg={"Mandatory field"}
+              validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
               issubmitted={issubmitted}
               isToolTip={obj.tooltipmsg ? true : false}
               tooltipmsg={eval(obj.tooltipmsg)}
@@ -2151,7 +2596,7 @@ function AddEditForm(props) {
   ) : (
     <div className="addedit-logs-container">
       <div className="addedit-header-container">
-        <div className="addedit-header-title">{title}</div>
+        <div className="addedit-header-title">{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages[isReadMode ? "title.viewrfe" : "title.addeditrfe"]}</div>
         <div className="header-btn-container">
           {formfield?.IsSubmit && (
             <div
@@ -2161,7 +2606,7 @@ function AddEditForm(props) {
               }
               style={{ marginRight: "10px" }}
             >
-              Version History
+              {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.versionhistory"]}
             </div>
           )}
           {!isEditMode &&
@@ -2172,11 +2617,21 @@ function AddEditForm(props) {
                 onClick={() => setInEditMode()}
                 style={{ marginRight: "10px" }}
               >
-                Edit
+                {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.edit"]}
               </div>
             )}
-          <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
-            Back
+          <div className="addedit-close btn-blue" style={{ marginRight: "10px" }} onClick={() => hidePopup()}>
+            {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.back"]}
+          </div>
+          <div>
+            <FrmSelect
+              title={""}
+              name={""}
+              selectopts={languageDetails}
+              handleChange={(e, value, id, label) => setSelectedlanguage({label: label, value: value})}
+              value={selectedlanguage?.value ? selectedlanguage.value : {label: "English", value: "EN001"}}
+              inlinetitle={true}
+            />
           </div>
         </div>
       </div>
@@ -2187,8 +2642,8 @@ function AddEditForm(props) {
           <form onSubmit={handleSubmit} id="myForm">
             <>
               <Prompt
-                when={formfield?.isdirty ? true : false}
-                message={(location) => alertMessage.commonmsg.promptmsg}
+                when={formIntialState?.isdirty ? true : false}
+                message={(location) => AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["common.alert.promptmsg"]}
               />
               <div className="frm-field-bggray">
                 <div className="row">
@@ -2197,7 +2652,7 @@ function AddEditForm(props) {
                       className="col-md-12"
                       style={{ marginBottom: "15px", fontSize: "16px" }}
                     >
-                      <label>Entry Number:</label> {formfield?.EntryNumber}
+                      <label>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.entrynumber"]}:</label> {formfield?.EntryNumber}
                     </div>
                   ) : (
                     ""
@@ -2215,7 +2670,8 @@ function AddEditForm(props) {
                     domblockspancnt === 12 ||
                     domblockspancnt + nextelement?.colspan > 12 ||
                     (item.breakblock && !nextelement.breakblock) ||
-                    index === formdomfields.length - 1
+                    index === formdomfields.length - 1 ||
+                    item.name === "ZurichShare"
                   ) {
                     blockelelements.push(item);
                     const eleblock = getformsfieldsblock(
@@ -2736,7 +3192,7 @@ function AddEditForm(props) {
                 <div className="row ">
                   <div className="col-md-6">
                     <FrmFileUpload
-                      title={"Upload Attachment"}
+                      title={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.uploadattachment"]}
                       name={"FullFilePath"}
                       uploadedfiles={formfield?.RFEAttachmentList}
                       value={""}
@@ -2749,11 +3205,12 @@ function AddEditForm(props) {
                         (!isReadMode && !formfield?.IsSubmit) ||
                         (!isReadMode && userProfile.isAdminGroup)
                       }
-                      validationmsg={"Mandatory field"}
+                      validationmsg={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["message.mandatory"]}
                       issubmitted={issubmitted}
                       isshowloading={
                         fileuploadloader ? fileuploadloader : false
                       }
+                      selectedlanguage={selectedlanguage?.value ? selectedlanguage?.value : "EN001" }
                       isdisabled={isfrmdisabled}
                       downloadfile={downloadfile}
                     />
@@ -2763,24 +3220,24 @@ function AddEditForm(props) {
               {isEditMode || isReadMode ? (
                 <div className="row mb20 border-top pt10">
                   <div className="col-md-3">
-                    <label>Created by</label>
+                    <label>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.createdby"]}</label>
                     <br></br>
                     {formfield?.CreatorName}
                   </div>
                   <div className="col-md-3">
-                    <label>Created Date</label>
+                    <label>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.createddate"]}</label>
                     <br></br>
                     {formfield?.CreatedDate
                       ? formatDate(formfield?.CreatedDate)
                       : ""}
                   </div>
                   <div className="col-md-3">
-                    <label>Modified By</label>
+                    <label>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.modifiedby"]}</label>
                     <br></br>
                     {formfield?.LastModifiorName}
                   </div>
                   <div className="col-md-3">
-                    <label>Modified Date</label>
+                    <label>{AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["label.modifieddate"]}</label>
                     <br></br>
                     {formfield?.ModifiedDate
                       ? formatDate(formfield?.ModifiedDate)
@@ -2804,7 +3261,7 @@ function AddEditForm(props) {
                   className={`btn-blue ${isfrmdisabled && "disable"}`}
                   onClick={handleSaveLog}
                 >
-                  Save
+                  {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.save"]}
                 </button>
               </>
             ) : (
@@ -2815,10 +3272,10 @@ function AddEditForm(props) {
               type="submit"
               form="myForm"
             >
-              Submit
+              {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.submit"]}
             </button>
             <div className={`btn-blue`} onClick={() => hidePopup()}>
-              Cancel
+              {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.cancel"]}
             </div>
           </div>
         </div>
@@ -2827,7 +3284,7 @@ function AddEditForm(props) {
       )}
       {isshowlocallink ? (
         <Rfelocallog
-          title={"My Country Quick Links"}
+          title={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["title.mycountryquicklinks"]}
           locallinks={locallinks}
           hidePopup={hidelogPopup}
           openLocalLink={openLocalLink}
@@ -2837,7 +3294,7 @@ function AddEditForm(props) {
       )}
       {showApprover ? (
         <PeoplePickerPopup
-          title={"Underwriter Granting Empowerment"}
+          title={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["title.underwritergrantingempowerment"]}
           name={"UnderwriterGrantingEmpowerment"}
           usertype="approver"
           actionResponsible={
@@ -2854,7 +3311,7 @@ function AddEditForm(props) {
       )}
       {showCCUser ? (
         <PeoplePickerPopup
-          title={"Empowerment CC"}
+          title={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["title.requestforempowermentCC"]}
           name={"RequestForEmpowermentCC"}
           usertype="ccuser"
           actionResponsible={
@@ -2870,7 +3327,7 @@ function AddEditForm(props) {
       )}
       {showUnderwriter ? (
         <PeoplePickerPopup
-          title={"Underwriter"}
+          title={AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["title.underwriter"]}
           name={"Underwriter"}
           usertype="underwriter"
           actionResponsible={
@@ -2910,5 +3367,6 @@ const mapActions = {
   getMultiUserProfile: userprofileActions.getMultiUserProfile,
   getAllPolicyAccounts: rfelogActions.getAllPolicyAccounts,
   getPolicyTermId: rfelogActions.getPolicyTermId,
+  getLanguageDetails: commonActions.getLanguageDetails,
 };
 export default connect(mapStateToProp, mapActions)(AddEditForm);

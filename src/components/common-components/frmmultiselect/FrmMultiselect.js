@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import "./Style.css";
+import AppLocale from "../../../IngProvider";
 function FrmMultiselect(props) {
   const {
     title,
@@ -14,6 +15,7 @@ function FrmMultiselect(props) {
     isReadMode,
     isAllOptNotRequired,
     titlelinespace,
+    selectedlanguage
   } = props;
   const [selectedItems, setselectedItems] = useState(value);
   useEffect(() => {
@@ -63,7 +65,7 @@ function FrmMultiselect(props) {
           displayValue="label"
           hidePlaceholder={false}
           showCheckbox={true}
-          placeholder="Select"
+          placeholder={selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.search"] : "Select"}
           selectedValues={selectedItems}
           onClick={onClickHandle}
           onSelect={onSelect}

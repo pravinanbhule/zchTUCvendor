@@ -66,6 +66,8 @@ Axios.interceptors.response.use(
         debugger;
         alert(alertMessage.commonmsg.servererror);
         // window.location = "/";
+      } else if (err.response.status === 404) {
+        alert(err.response.data)
       } else {
         return Promise.reject(err);
       }

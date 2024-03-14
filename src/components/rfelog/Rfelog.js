@@ -50,6 +50,7 @@ import MoreActions from "../common-components/moreactions/MoreActions";
 import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
+import AppLocale from "../../IngProvider";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -105,6 +106,7 @@ function Rfelog({ ...props }) {
   const rfeARClogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEARCUKlogActive;
   const rfelogNordicActiveSharePointLink = SHAREPOINT_LINKS.RFENordiclogActive;
   const rfelogItalyActiveSharePointLink = SHAREPOINT_LINKS.RFEItalylogActive;
+  const rfelogGermanyActiveSharePointLink = SHAREPOINT_LINKS.RFEGermanylogActive;
   const InCountryViewOpts = [
     INCOUNTRY_FLAG_OPTS.Indonesia,
     INCOUNTRY_FLAG_OPTS.UK,
@@ -119,6 +121,7 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.MALAYSIA,
     INCOUNTRY_FLAG_OPTS.FRANCE,
     INCOUNTRY_FLAG_OPTS.MIDDLEEAST,
+    INCOUNTRY_FLAG_OPTS.GERMANY,
     INCOUNTRY_FLAG_OPTS.SPAIN
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);
@@ -1335,6 +1338,8 @@ function Rfelog({ ...props }) {
     SUBLOBID: "",
     mappedLOBs: "",
     PolicyTermId: "",
+    ReferralReasonLevel2: null,
+    ReferralReasonLevel3: null
   };
   const [formIntialState, setformIntialState] = useState(formInitialValue);
 
@@ -1405,6 +1410,7 @@ function Rfelog({ ...props }) {
   };
 
   const putItemHandler = async (item) => {
+    const language = localStorage.getItem("language")
     let tempfullPathArr = item.RFEAttachmentList.map((item) => item.filePath);
     let fullFilePath = tempfullPathArr.join(",");
     item.FullFilePath = fullFilePath;
@@ -1421,7 +1427,7 @@ function Rfelog({ ...props }) {
     });
 
     if (response) {
-      alert(alertMessage.rfelog.update);
+      alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.updatemsg"]);
 
       getallDraftItems();
       onPaginationSort("ModifiedDate", "desc");
@@ -1430,6 +1436,7 @@ function Rfelog({ ...props }) {
     setisEditMode(false);
   };
   const postItemHandler = async (item) => {
+    const language = localStorage.getItem("language")
     let tempfullPathArr = item.RFEAttachmentList.map((item) => item.filePath);
     let fullFilePath = tempfullPathArr.join(",");
     item.FullFilePath = fullFilePath;
@@ -1447,7 +1454,7 @@ function Rfelog({ ...props }) {
 
     if (response) {
       if (item.IsSubmit) {
-        alert(alertMessage.rfelog.add);
+        alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.addmsg"]);
       } else {
         alert(alertMessage.rfelog.draft);
       }
@@ -1551,6 +1558,11 @@ function Rfelog({ ...props }) {
     if (itemid.indexOf("ACT_03") !== -1) {
       id = itemid.split("ACT_03")[1];
       splink = rfelogItalyActiveSharePointLink;
+      link = `${splink}?ID=${id}`;
+    }
+    if (itemid.indexOf("ACT_06") !== -1) {
+      id = itemid.split("ACT_06")[1];
+      splink = rfelogGermanyActiveSharePointLink;
       link = `${splink}?ID=${id}`;
     }
     window.open(link);

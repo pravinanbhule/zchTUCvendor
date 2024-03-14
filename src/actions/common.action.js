@@ -169,6 +169,17 @@ const getLogFields = (requestParam) => {
     }
   };
 };
+const getLanguageDetails = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.getLanguageDetailsService(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
+
 export const commonActions = {
   uploadFile,
   deleteFile,
@@ -186,6 +197,7 @@ export const commonActions = {
   getAllEntryNumbers,
   getLogCount,
   getLogFields,
+  getLanguageDetails
 };
 const uploadFileService = async (requestParam) => {
   const response = await Axios.post(`common/uploadfile`, requestParam, {
@@ -271,6 +283,12 @@ const getLogFieldsService = async (requestParam) => {
   );
   return response;
 };
+const getLanguageDetailsService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`common/getLanguagedetails`, param);
+  return response;
+};
+
 const commonService = {
   uploadFileService,
   deleteFileService,
@@ -288,4 +306,5 @@ const commonService = {
   getAllEntryNumbersService,
   getLogCountService,
   getLogFieldsService,
+  getLanguageDetailsService
 };
