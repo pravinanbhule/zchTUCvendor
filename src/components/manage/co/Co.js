@@ -7,8 +7,8 @@ import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
-import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../rfelog/Rfelogconstants";
 import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "./Coconstants";
 function Co({ ...props }) {
   const { coState } = props.state;
   const {
@@ -22,7 +22,7 @@ function Co({ ...props }) {
     checkNameExist,
     downloadCO,
     getById,
-    getDataVersion
+    getMasterVersion
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "COs.xlsx";
@@ -273,12 +273,9 @@ function Co({ ...props }) {
   };
 
   const handleDataVersion = async (itemid) => {
-    let versiondata = await getDataVersion({
+    let versiondata = await getMasterVersion({
       TempId: itemid,
-      LogType: "CO",
-      IncountryFlag: "",
-      UserRole:
-        userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
+      MasterType: "CO",
     });
     setversionHistoryData(versiondata ? versiondata : []);
     setshowVersionHistory(true);
@@ -413,6 +410,6 @@ const mapActions = {
   setMasterdataActive: commonActions.setMasterdataActive,
   checkNameExist: coActions.checkNameExist,
   downloadCO: coActions.downloadCO,
-  getDataVersion: commonActions.getDataVersion,
+  getMasterVersion: commonActions.getMasterVersion,
 };
 export default connect(mapStateToProp, mapActions)(Co);

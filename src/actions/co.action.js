@@ -108,7 +108,6 @@ const getAllService = async (requestParam) => {
   return response;
 };
 const getByIdService = async (requestParam) => {
-  console.log("requestParam", requestParam);
   const param = { params: requestParam };
   const response = await Axios.get(`co/getco`, param);
   return response;

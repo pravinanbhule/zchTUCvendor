@@ -34,7 +34,7 @@ function AddEditForm(props) {
     <Popup {...props}>
       <div className="popup-box">
         <div className="popup-header-container">
-          <div className="popup-header-title">Add/Edit Office</div>
+          <div className="popup-header-title">Add/Edit CO</div>
           <div className="popup-close" onClick={() => hideAddPopup()}>
             X
           </div>
