@@ -8,7 +8,7 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import { alertMessage, dynamicSort } from "../../../helpers";
 import FrmInlineInput from "../../common-components/frminlineinput/FrmInlineInput";
 function Lookup({ ...props }) {
-  const { lookupState, countryState } = props.state;
+  const { lookupState } = props.state;
   const {
     getAllLookupByLogType,
     getLogTypes,
@@ -26,7 +26,6 @@ function Lookup({ ...props }) {
     logtype: "",
   };
   const [selfilter, setselfilter] = useState(intialfilterval);
-  const [Country, setCountry] = useState()
   const selectActVal = [
     { label: "Active", value: "true" },
     { label: "Inactive", value: "false" },
@@ -42,6 +41,7 @@ function Lookup({ ...props }) {
     if (selfilter.logtype !== "") {
       getAllLookupByLogType({
         LogType: selfilter.logtype,
+        ScopeCountryList: userProfile.isCountrySuperAdmin ? userProfile?.scopeCountryList : "",
       });
     } else {
       setdata([]);
@@ -52,6 +52,7 @@ function Lookup({ ...props }) {
     if (selfilter.logtype !== "") {
       getAllLookupByLogType({
         LogType: selfilter.logtype,
+        ScopeCountryList: userProfile.isCountrySuperAdmin ? userProfile?.scopeCountryList : "",
       });
     } else {
       setdata([]);
@@ -60,18 +61,6 @@ function Lookup({ ...props }) {
     setisActiveEnable(false);
   }, [selfilter.logtype]);
 
-  useEffect(()=>{
-    if (userProfile.isCountrySuperAdmin) {
-      let CountrySuperAdminCountryName = userProfile?.scopeCountryList.split(",")
-      let countryobj = []
-      countryState?.countryItems?.map((item, i) => {
-        if (CountrySuperAdminCountryName.includes(item.countryID)) {
-          countryobj.push(item.countryName)
-        }
-      })
-      setCountry(countryobj)
-    }
-  },[countryState.countryItems])
 
   const clearFilter = () => {
     setselfilter(intialfilterval);
@@ -87,22 +76,6 @@ function Lookup({ ...props }) {
   const [lookuptyps, setlookuptypes] = useState([]);
 
   const [issubmitted, setissubmitted] = useState(false);
-
-  useEffect(()=>{
-    if (userProfile.isCountrySuperAdmin && Country && selfilter.logtype === "RFELogs" && lookuptyps.length === 21) {
-      let RfELookuptyps = []
-      lookuptyps.map((item, i)=>{
-        Country.map((name) => {
-          let itemName = item.type.toLowerCase()
-          let countryName = name.toLowerCase()
-          if (itemName.search(countryName) !== -1) {
-            RfELookuptyps.push(item)
-          }
-        })
-      })
-      setlookuptypes(RfELookuptyps)
-    }
-  },[lookuptyps])
 
   useEffect(() => {
     getLogTypes({
@@ -123,9 +96,15 @@ function Lookup({ ...props }) {
         });
       });
       setlogtypeFilterOpts([...templottypefilterOpts]);
-      setselfilter({
-        logtype: templottypefilterOpts[0].value,
-      });
+      if (userProfile.isCountrySuperAdmin) {
+        setselfilter({
+          logtype: templottypefilterOpts[1].value,
+        });
+      } else {
+        setselfilter({
+          logtype: templottypefilterOpts[0].value,
+        });
+      }
     }
   }, [lookupState.logtyps]);
 
@@ -211,6 +190,7 @@ function Lookup({ ...props }) {
       if (response) {
         getAllLookupByLogType({
           LogType: selfilter.logtype,
+          ScopeCountryList: userProfile.isCountrySuperAdmin ? userProfile?.scopeCountryList : "",
         });
         if (param.lookupID) {
           alert(alertMessage.lookup.update);
@@ -241,6 +221,7 @@ function Lookup({ ...props }) {
       if (resonse) {
         getAllLookupByLogType({
           LogType: selfilter.logtype,
+          ScopeCountryList: userProfile.isCountrySuperAdmin ? userProfile?.scopeCountryList : "",
         });
         alert(alertMessage.lookup.delete);
       }
@@ -319,6 +300,7 @@ function Lookup({ ...props }) {
       setisActiveEnable(false);
       getAllLookupByLogType({
         LogType: selfilter.logtype,
+        ScopeCountryList: userProfile.isCountrySuperAdmin ? userProfile?.scopeCountryList : "",
       });
       if (state) {
         alert(alertMessage.commonmsg.masterdataActive);
@@ -344,6 +326,7 @@ function Lookup({ ...props }) {
                 selectopts={logtypeFilterOpts}
                 handleChange={onSearchFilterSelect}
                 value={selfilter.logtype}
+                isdisabled={userProfile.isCountrySuperAdmin ? true : false}
               />
             </div>
           </div>
