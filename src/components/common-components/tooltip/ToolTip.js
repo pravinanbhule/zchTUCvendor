@@ -11,6 +11,7 @@ function ToolTip(props) {
       backgroundColor="#EBF4FB"
       textColor="#2167AD"
       html={true}
+      className="react-tooltip-clickable-link"
     ></ReactTooltip>
   );
 }

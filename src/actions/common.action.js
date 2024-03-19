@@ -85,6 +85,16 @@ const getDataVersion = (requestParam) => {
     }
   };
 };
+const getMasterVersion = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.getMasterVersionService(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 const importExcelLogs = (requestParam) => {
   return async (dispatch) => {
     try {
@@ -189,6 +199,7 @@ export const commonActions = {
   sendLogNotification,
   setMasterdataActive,
   getDataVersion,
+  getMasterVersion,
   importExcelLogs,
   validateActDirEmail,
   shareLogEmail,
@@ -240,6 +251,11 @@ const setMasterdataActiveService = async (requestParam) => {
 const getDataVersionService = async (requestParam) => {
   const param = { params: requestParam };
   const response = await Axios.get(`common/GetLogVersionHistory`, param);
+  return response;
+};
+const getMasterVersionService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`common/GetMasterVersionHistory`, param);
   return response;
 };
 const importExcelLogsService = async (requestParam) => {
@@ -306,5 +322,6 @@ const commonService = {
   getAllEntryNumbersService,
   getLogCountService,
   getLogFieldsService,
-  getLanguageDetailsService
+  getLanguageDetailsService,
+  getMasterVersionService
 };
