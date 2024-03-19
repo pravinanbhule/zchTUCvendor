@@ -44,6 +44,7 @@ import FrmRichTextEditor from "../common-components/frmrichtexteditor/FrmRichTex
 import { alertMessage, dynamicSort, formatDate } from "../../helpers";
 import PeoplePickerPopup from "./PeoplePickerPopup";
 import Rfelocallog from "./Rfelocallog";
+import { handlePermission } from "../../permissions/Permission";
 
 function AddEditForm(props) {
   const {
@@ -2616,7 +2617,7 @@ function AddEditForm(props) {
               {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.versionhistory"]}
             </div>
           )}
-          {!isEditMode &&
+          {handlePermission("rfelogs", "isEdit") && !isEditMode &&
             isReadMode &&
             (!userroles.iscc || userroles.isadmin) && (
               <div
@@ -2626,7 +2627,7 @@ function AddEditForm(props) {
               >
                 {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.edit"]}
               </div>
-            )}
+          )}
           <div className="addedit-close btn-blue" style={{ marginRight: "10px" }} onClick={() => hidePopup()}>
             {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.back"]}
           </div>

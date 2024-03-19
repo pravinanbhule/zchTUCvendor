@@ -5,6 +5,7 @@ import ExportToExcel from "../exporttoexcel/ExportToExcel";
 import "./Style.css";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import FrmSelect from "../frmselect/FrmSelect";
+import { handlePermission } from "../../../permissions/Permission";
 function Pagination(props) {
   const {
     column,
@@ -57,14 +58,47 @@ function Pagination(props) {
     setMasterdataActiveState(state);
   };
 
+  const [isAddActive, setIsAddActive] = useState(true)
+  const [isExportActive, setIsExportActive] = useState(true)
+  const [isImportActive, setIsImportActive] = useState(true)
+
+  useEffect(()=>{
+    const addResponse = handlePermission(window.location.pathname.slice(1), "isAdd")
+    setIsAddActive(addResponse)
+    const exportResonse = handlePermission(window.location.pathname.slice(1), "isExport")
+    setIsExportActive(exportResonse)
+    const importResonse = handlePermission(window.location.pathname.slice(1), "isImport")
+    setIsImportActive(importResonse)
+  },[])
+
+  const handleAddBtnClick = () => {
+    if (isAddActive) {
+      showAddPopup() 
+    }
+  }
+
+  const handleImportBtnClick = () => {
+    if (isImportActive) {
+      showImportLogsPopup() 
+    }
+  }
+
+  const handleExportBtnClick = () => {
+    if (isExportActive) {
+      exportReportLogsHandler()
+    }
+  }
+
   return (
     <div className="site-pagination-table container-fluid">
       <div className="pagination-top-container row">
         <div className="btn-container ">
           {isImportLogs && (
             <div
-              className="btn-blue import-icon"
-              onClick={() => showImportLogsPopup()}
+              className={`btn-blue import-icon ${
+                isImportActive ? "" : "disable"
+              }`}
+              onClick={() => handleImportBtnClick()}
             >
               {importLogsTitle ? importLogsTitle : "Import Logs"}
             </div>
@@ -101,14 +135,21 @@ function Pagination(props) {
           )*/
             isExportReport && (
               <div
-                className="btn-blue exportxlsbtn"
-                onClick={() => exportReportLogsHandler()}
+                className={`btn-blue exportxlsbtn ${
+                  isExportActive ? "" : "disable"
+                }`}
+                onClick={() => handleExportBtnClick()}
               >
                 {exportReportTitle ? exportReportTitle : "Export"}
               </div>
             )
           }
-          <div className="btn-blue plus-icon" onClick={() => showAddPopup()}>
+          <div
+            className={`btn-blue plus-icon ${
+              isAddActive ? "" : "disable"
+            }`}
+            onClick={() => handleAddBtnClick()}
+          >
             {buttonTitle}
           </div>
         </div>

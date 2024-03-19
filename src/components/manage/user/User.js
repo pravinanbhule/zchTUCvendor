@@ -10,6 +10,7 @@ import AddEditForm from "./AddEditForm";
 import UserProfile from "../../common-components/UserProfile";
 import FrmInput from "../../common-components/frminput/FrmInput";
 import { USER_ROLE } from "../../../constants";
+import { handlePermission } from "../../../permissions/Permission";
 function User({ ...props }) {
   const { userState, countryState, regionState } = props.state;
   const {
@@ -189,6 +190,7 @@ function User({ ...props }) {
     {
       dataField: "editaction",
       text: "Edit",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
@@ -209,6 +211,7 @@ function User({ ...props }) {
     {
       dataField: "deleteaction",
       text: "Delete",
+      hidden: handlePermission(window.location.pathname.slice(1), "isDelete") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div

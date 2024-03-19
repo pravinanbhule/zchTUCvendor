@@ -37,6 +37,7 @@ function LoggedInUser({ ...props }) {
           let userprofile = await getUserProfile({
             EmailAddress: tempUserProfile.email,
           });
+          localStorage.setItem("UserProfile", JSON.stringify(userprofile))
           let userRoles =
             userprofile && userprofile.userRoles
               ? userprofile.userRoles[0]
@@ -74,6 +75,11 @@ function LoggedInUser({ ...props }) {
               })
             })
             userprofile.isCountrySuperAdmin = true;
+            userprofile.isAdminGroup = true;
+          }
+          if (userRoles.roleId === USER_ROLE.auditor) {
+            localStorage.setItem("Role", "Auditor")
+            userprofile.isAuditor = true;
             userprofile.isAdminGroup = true;
           }
           tempUserProfile = {

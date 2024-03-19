@@ -36,6 +36,7 @@ import FrmRadio from "../common-components/frmradio/FrmRadio";
 import FrmRichTextEditor from "../common-components/frmrichtexteditor/FrmRichTextEditor5";
 import { alertMessage, dynamicSort, formatDate } from "../../helpers";
 import PeoplePickerPopup from "./PeoplePickerPopup";
+import { handlePermission } from "../../permissions/Permission";
 
 function AddEditForm(props) {
   const {
@@ -1192,7 +1193,7 @@ function AddEditForm(props) {
               Version History
             </div>
           )}
-          {!isEditMode && isReadMode && (
+          {handlePermission(window.location.pathname.slice(1), "isEdit") && !isEditMode && isReadMode && (
             <div
               className="btn-blue"
               onClick={() => setInEditMode()}

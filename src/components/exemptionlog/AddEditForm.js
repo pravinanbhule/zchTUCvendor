@@ -32,6 +32,7 @@ import FrmRichTextEditor from "../common-components/frmrichtexteditor/FrmRichTex
 
 import { alertMessage, dynamicSort, formatDate } from "../../helpers";
 import PeoplePickerPopup from "./PeoplePickerPopup";
+import { handlePermission } from "../../permissions/Permission";
 
 function AddEditForm(props) {
   const {
@@ -1037,7 +1038,7 @@ function AddEditForm(props) {
               Version History
             </div>
           )}
-          {!isEditMode && isReadMode && isEditRights && (
+          {handlePermission(window.location.pathname.slice(1), "isEdit") && !isEditMode && isReadMode && isEditRights && (
             <div
               className="btn-blue"
               onClick={() => setInEditMode()}
