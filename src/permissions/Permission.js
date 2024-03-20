@@ -342,7 +342,8 @@ export function handlePermission(page, name) {
             Navbar: {
                 "": true,
                 regionmanage: false,
-                usermanage: true,
+                usermanage: false,
+                lookupmanage: true,
                 region: false,
                 country: false,
                 segment: false,
@@ -358,7 +359,7 @@ export function handlePermission(page, name) {
                 branch: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 currency: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 co: false,
-                user: true,
+                user: false,
                 lookup: true,
                 breachlogs: true,
                 rfelogs: true,
@@ -395,11 +396,6 @@ export function handlePermission(page, name) {
                 isDelete: true
             },
             currency: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            user: {
                 isAdd: true,
                 isEdit: true,
                 isDelete: true

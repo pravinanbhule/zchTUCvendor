@@ -220,6 +220,9 @@ function AddEditForm(props) {
     const selectedrole = frmuserType.filter(
       (item) => item.value === formfield.userType
     );
+    if (frmuserTypeObj[formfield.userType] !== "LoBAdmin") {
+      setformfield({ ...formfield, lobList: [] });
+    }
     if (frmuserTypeObj[formfield.userType] === "Global") {
       setformfield({ ...formfield, regionList: [] });
     }

@@ -37,7 +37,6 @@ function LoggedInUser({ ...props }) {
           let userprofile = await getUserProfile({
             EmailAddress: tempUserProfile.email,
           });
-          localStorage.setItem("UserProfile", JSON.stringify(userprofile))
           let userRoles =
             userprofile && userprofile.userRoles
               ? userprofile.userRoles[0]
@@ -87,6 +86,7 @@ function LoggedInUser({ ...props }) {
             userprofile.isLoBAdmin = true;
             userprofile.isAdminGroup = true;
           }
+          localStorage.setItem("UserProfile", JSON.stringify(userprofile))
           tempUserProfile = {
             ...tempUserProfile,
             ...initialprofile,

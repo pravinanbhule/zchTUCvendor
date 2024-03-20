@@ -25,7 +25,13 @@ function Navbar({ ...props }) {
                 <Link to="/user">
                   <div className="menu-item">Manage</div>
                 </Link>
-              )}
+            )}
+            {userProfile &&
+              handlePermission("Navbar", "lookupmanage") && (
+                <Link to="/lookup">
+                  <div className="menu-item">Manage</div>
+                </Link>
+            )}
             {appmenu.isSubmenu ? (
               <div className="submenu-container">
                 {userProfile && handlePermission("Navbar", "region") && (
