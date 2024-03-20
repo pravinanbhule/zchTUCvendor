@@ -173,4 +173,12 @@ export const alertMessage = {
     isInUse: "You can not delete this Token as it is in use.",
     nameExist: "The Token name already exists!",
   },
+  co: {
+    add: "The new CO is successfully added.",
+    update: "The CO is successfully updated.",
+    delete: "The CO is deleted.",
+    deleteConfirm: "Are you sure you want to delete CO?",
+    isInUse: "You can not delete this CO as it is in use.",
+    nameExist: "The CO name already exists!",
+  },
 };

@@ -31,6 +31,7 @@ import {
   znaorgnization3Actions,
   officeActions,
   commonActions,
+  coActions,
 } from "../../actions";
 import FrmRadio from "../common-components/frmradio/FrmRadio";
 import FrmRichTextEditor from "../common-components/frmrichtexteditor/FrmRichTextEditor5";
@@ -43,6 +44,7 @@ function AddEditForm(props) {
     breachlogState,
     segmentState,
     lobState,
+    coState,
     sublobState,
     officeState,
     userState,
@@ -77,6 +79,7 @@ function AddEditForm(props) {
     userProfile,
     queryparam,
     handleDataVersion,
+    getAllCOList
   } = props;
 
   const selectInitiVal = { label: "Select", value: "" };
@@ -123,6 +126,7 @@ function AddEditForm(props) {
   const [frmHowDetected, setfrmHowDetected] = useState([]);
   const [frmOffice, setfrmOffice] = useState([]);
   const [frmBreachStatus, setfrmBreachStatus] = useState([]);
+  const [frmCoList, setfrmCoList] = useState([]);
   const [tooltip, settooltip] = useState({});
 
   const [commonMandatoryFields, setcommonMandatoryFields] = useState([
@@ -139,7 +143,7 @@ function AddEditForm(props) {
     "dueDate",
     "actionResponsibleName",
     "breachStatus",
-    "breachDetails",
+    "breachDetails"
   ]);
   const [znaMandotoryFields, setznaMandotoryFields] = useState([
     "znaSegmentId",
@@ -165,6 +169,7 @@ function AddEditForm(props) {
     getAllOffice();
     getAllSublob();
     getallZNASegments();
+    getAllCOList()
     if (formIntialState.znaSegmentId) {
       getallZNASBU({ znaSegmentId: formIntialState.znaSegmentId });
     }
@@ -505,6 +510,21 @@ function AddEditForm(props) {
     tempopts.sort(dynamicSort("label"));
     setfrmLoB([selectInitiVal, ...tempopts]);
   }, [lobState.lobItems]);
+
+  useEffect(() => {
+    let tempopts = [];
+    coState.items.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || item.coId === formIntialState.co) {
+          tempopts.push({ ...item, label: item.coName, value: item.coId });
+        }
+      } else if (item.isActive) {
+        tempopts.push({ ...item, label: item.coName, value: item.coId });
+      }
+    });
+    tempopts.sort(dynamicSort("label"));
+    setfrmCoList([selectInitiVal, ...tempopts]);
+  }, [coState.items]);
 
   useEffect(() => {
     let tempopts = [];
@@ -1820,6 +1840,20 @@ function AddEditForm(props) {
                     isdisabled={isfrmdisabled}
                   />
                 </div>
+                <div className="col-md-3">
+                  <FrmSelect
+                    title={"Breach CO"}
+                    name={"co"}
+                    value={formfield.co}
+                    handleChange={handleSelectChange}
+                    isRequired={false}
+                    isReadMode={isReadMode}
+                    issubmitted={issubmitted}
+                    selectopts={frmCoList}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["CO"]}
+                  />
+                </div>
               </div>
               <div className="row border-bottom">
                 <div className="col-md-12">
@@ -2052,5 +2086,6 @@ const mapActions = {
   getallZNASegments: znaorgnization1Actions.getAllOrgnization,
   getallZNASBU: znaorgnization2Actions.getAllOrgnization,
   getallZNAMarketBasket: znaorgnization3Actions.getAllOrgnization,
+  getAllCOList: coActions.getAll
 };
 export default connect(mapStateToProp, mapActions)(AddEditForm);

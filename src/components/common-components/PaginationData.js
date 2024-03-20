@@ -35,6 +35,9 @@ function PaginationData(props) {
     exportDateFields,
     exportCapitalField,
     pageno,
+    isShowDownloadBtn,
+    handleDownload,
+    DownloadBtnState
   } = props;
   const { SearchBar, ClearSearchButton } = Search;
 
@@ -118,6 +121,10 @@ function PaginationData(props) {
   }
 
 
+  const handleDownloadButtonClick = () =>{
+    handleDownload()
+  }
+
   //const pagination = paginationFactory();
   return (
     <div>
@@ -194,6 +201,16 @@ function PaginationData(props) {
                       >
                         Inactive
                       </div>
+                    </div>
+                  )}
+                  {isShowDownloadBtn && (
+                    <div
+                      className={`btn-blue download-icon ${
+                        DownloadBtnState ? "" : "disable"
+                      }`}
+                      onClick={() => handleDownloadButtonClick()}
+                    >
+                      Download
                     </div>
                   )}
                   <div

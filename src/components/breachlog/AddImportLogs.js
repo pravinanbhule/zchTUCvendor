@@ -22,6 +22,7 @@ import {
   znaorgnization1Actions,
   znaorgnization2Actions,
   znaorgnization3Actions,
+  coActions,
 } from "../../actions";
 import {
   alertMessage,
@@ -43,6 +44,7 @@ function AddImportLogs(props) {
     znaorgnization1State,
     znaorgnization2State,
     znaorgnization3State,
+    coState,
   } = props.state;
   const {
     title,
@@ -53,6 +55,7 @@ function AddImportLogs(props) {
     getAllRegion,
     getAlllob,
     getAllSegment,
+    getAllCOList,
     getAllSublob,
     getallZNASegments,
     getallZNASBU,
@@ -109,6 +112,8 @@ function AddImportLogs(props) {
     regionObj: {},
     segments: [],
     segmentsObj: {},
+    cos:[],
+    cosObj: {},
     lobs: [],
     lobsObj: {},
     subLoBs: [],
@@ -150,6 +155,7 @@ function AddImportLogs(props) {
     getAllRegion();
     getAlllob();
     getAllSegment();
+    getAllCOList()
     getAllOffice();
     getAllSublob();
     getallZNASegments();
@@ -385,6 +391,23 @@ function AddImportLogs(props) {
   useEffect(() => {
     let tempopts = [];
     let tempObj = {};
+    coState.items.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({ ...item, label: item.coName, value: item.coId });
+      }
+      tempObj[item.coName] = item.coId;
+    });
+    tempopts.sort(dynamicSort("label"));
+    setmasterdata((prevstate) => ({
+      ...prevstate,
+      cos: [...tempopts],
+      cosObj: { ...tempObj },
+    }));
+  }, [coState.items]);
+
+  useEffect(() => {
+    let tempopts = [];
+    let tempObj = {};
     lobState.lobItems.forEach((item) => {
       if (item.isActive) {
         tempopts.push({ ...item, label: item.lobName, value: item.lobid });
@@ -609,6 +632,10 @@ function AddImportLogs(props) {
       fieldname: "breachCC",
       email: true,
     },
+    "Breach CO": {
+      lookupObj: "cosObj",
+      fieldname: "co",
+    },
     "Financial impact description": {
       lookupObj: "",
       fieldname: "financialImpactDescription",
@@ -691,7 +718,7 @@ function AddImportLogs(props) {
   const [isLoadingValidation, setisLoadingValidation] = useState(false);
   const [isDataImport, setisDataImport] = useState(false);
   const maxCount = 51;
-  const fieldCount = 37;
+  const fieldCount = 38;
   const validateExcelData = async (excelData) => {
     let excelReportData = [];
     let logData = [];
@@ -1282,5 +1309,6 @@ const mapActions = {
   importExcelLogs: commonActions.importExcelLogs,
   validateActDirEmail: commonActions.validateActDirEmail,
   downloadTemplate: commonActions.downloadTemplate,
+  getAllCOList: coActions.getAll
 };
 export default connect(mapStateToProp, mapActions)(AddImportLogs);

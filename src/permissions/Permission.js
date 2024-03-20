@@ -22,6 +22,7 @@ export function handlePermission(page, name) {
                 office: true,
                 branch: true,
                 currency: true,
+                co: true,
                 user: true,
                 lookup: true,
                 breachlogs: true,
@@ -94,6 +95,11 @@ export function handlePermission(page, name) {
                 isDelete: true
             },
             currency: {
+                isAdd: true,
+                isEdit: true,
+                isDelete: true
+            },
+            co: {
                 isAdd: true,
                 isEdit: true,
                 isDelete: true
@@ -149,88 +155,14 @@ export function handlePermission(page, name) {
                 office: false,
                 branch: false,
                 currency: false,
+                co: false,
                 user: true,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
             },
-            region: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            country: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            segment: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            sublob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lobchapter: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            token: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization1: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization2: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization3: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization4: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            office: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            branch: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            currency: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
             user: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lookup: {
                 isAdd: true,
                 isEdit: true,
                 isDelete: true
@@ -277,87 +209,13 @@ export function handlePermission(page, name) {
                 branch: false,
                 currency: false,
                 user: true,
+                co: false,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
             },
-            region: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            country: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            segment: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            sublob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lobchapter: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            token: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization1: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization2: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization3: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization4: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            office: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            branch: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            currency: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
             user: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lookup: {
                 isAdd: true,
                 isEdit: true,
                 isDelete: true
@@ -403,91 +261,12 @@ export function handlePermission(page, name) {
                 office: false,
                 branch: false,
                 currency: false,
+                co: false,
                 user: false,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
-            },
-            region: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            country: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            segment: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            sublob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lobchapter: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            token: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization1: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization2: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization3: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization4: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            office: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            branch: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            currency: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            user: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lookup: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
             },
             breachlogs: {
                 isAdd: true,
@@ -530,91 +309,12 @@ export function handlePermission(page, name) {
                 office: false,
                 branch: false,
                 currency: false,
+                co: false,
                 user: false,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
-            },
-            region: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            country: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            segment: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            sublob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lobchapter: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            token: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization1: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization2: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization3: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            znaorganization4: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            office: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            branch: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            currency: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            user: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lookup: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
             },
             breachlogs: {
                 isAdd: true,
@@ -657,46 +357,12 @@ export function handlePermission(page, name) {
                 office: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 branch: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 currency: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
+                co: false,
                 user: true,
                 lookup: true,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
-            },
-            region: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            country: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            segment: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            sublob: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            lobchapter: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
-            },
-            token: {
-                isAdd: true,
-                isEdit: true,
-                isDelete: true
             },
             znaorganization1: {
                 isAdd: true,
@@ -784,6 +450,7 @@ export function handlePermission(page, name) {
                 office: true,
                 branch: true,
                 currency: true,
+                co: true,
                 user: true,
                 lookup: true,
                 breachlogs: true,
@@ -860,6 +527,11 @@ export function handlePermission(page, name) {
                 isEdit: false,
                 isDelete: false
             },
+            co: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
             user: {
                 isAdd: false,
                 isEdit: false,
@@ -911,91 +583,12 @@ export function handlePermission(page, name) {
                 office: false,
                 branch: false,
                 currency: false,
+                co: false,
                 user: false,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
-            },
-            region: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            country: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            segment: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            lob: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            sublob: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            lobchapter: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            token: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            znaorganization1: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            znaorganization2: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            znaorganization3: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            znaorganization4: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            office: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            branch: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            currency: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            user: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
-            },
-            lookup: {
-                isAdd: false,
-                isEdit: false,
-                isDelete: false
             },
             breachlogs: {
                 isAdd: true,
