@@ -9,6 +9,7 @@ import AddEditForm from "./AddEditFrom";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "./Coconstants";
+import { handlePermission } from "../../../permissions/Permission";
 function Co({ ...props }) {
   const { coState } = props.state;
   const {
@@ -35,6 +36,7 @@ function Co({ ...props }) {
     {
       dataField: "checkbox",
       text: "",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <FrmActiveCheckbox
@@ -53,6 +55,7 @@ function Co({ ...props }) {
     {
       dataField: "editaction",
       text: "Edit",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div className="edit-icon" onClick={handleEdit} rowid={row.coId}></div>
@@ -66,6 +69,7 @@ function Co({ ...props }) {
     {
       dataField: "deleteaction",
       text: "Delete",
+      hidden: handlePermission(window.location.pathname.slice(1), "isDelete") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
