@@ -5,6 +5,7 @@ export function handlePermission(page, name) {
     const Permission = {
         SuperAdmin: {
             Navbar: {
+                "": true,
                 regionmanage: true,
                 usermanage: false,
                 region: true,
@@ -131,6 +132,7 @@ export function handlePermission(page, name) {
         },
         GlobalAdmin: {
             Navbar: {
+                "": true,
                 regionmanage: false,
                 usermanage: true,
                 region: false,
@@ -257,6 +259,7 @@ export function handlePermission(page, name) {
         },
         RegionAdmin: {
             Navbar: {
+                "": true,
                 regionmanage: false,
                 usermanage: true,
                 region: false,
@@ -383,6 +386,7 @@ export function handlePermission(page, name) {
         },
         CountryAdmin: {
             Navbar: {
+                "": true,
                 regionmanage: false,
                 usermanage: false,
                 region: false,
@@ -509,6 +513,7 @@ export function handlePermission(page, name) {
         },
         NormalUser: {
             Navbar: {
+                "": true,
                 regionmanage: false,
                 usermanage: false,
                 region: false,
@@ -635,6 +640,7 @@ export function handlePermission(page, name) {
         },
         CountrySuperAdmin: {
             Navbar: {
+                "": true,
                 regionmanage: false,
                 usermanage: true,
                 region: false,
@@ -761,6 +767,7 @@ export function handlePermission(page, name) {
         },
         Auditor: {
             Navbar: {
+                "": true,
                 regionmanage: true,
                 usermanage: false,
                 region: true,
@@ -885,8 +892,135 @@ export function handlePermission(page, name) {
                 isDelete: false
             }
         },
+        LoBAdmin: {
+            Navbar: {
+                "": true,
+                regionmanage: false,
+                usermanage: false,
+                region: false,
+                country: false,
+                segment: false,
+                loB: false,
+                sublob: false,
+                lobchapter: false,
+                token: false,
+                znaorganization1: false,
+                znaorganization2: false,
+                znaorganization3: false,
+                znaorganization4: false,
+                office: false,
+                branch: false,
+                currency: false,
+                user: false,
+                lookup: false,
+                breachlogs: true,
+                rfelogs: true,
+                exemptionlogs: true
+            },
+            region: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            country: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            segment: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            lob: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            sublob: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            lobchapter: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            token: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            znaorganization1: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            znaorganization2: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            znaorganization3: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            znaorganization4: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            office: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            branch: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            currency: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            user: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            lookup: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
+            breachlogs: {
+                isAdd: true,
+                isEdit: true,
+                isExport: true,
+                isImport: true,
+                isDelete: true
+            },
+            rfelogs: {
+                isAdd: true,
+                isEdit: true,
+                isExport: true,
+                isImport: true,
+                isDelete: true
+            },
+            exemptionlogs: {
+                isAdd: true,
+                isEdit: true,
+                isExport: true,
+                isImport: true,
+                isDelete: true
+            }
+        },
     }
     let response = false
-    response = Permission[role][page][name]
+    response = Permission?.[role]?.[page]?.[name]
     return response
 }

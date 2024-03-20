@@ -21,6 +21,7 @@ function AddEditForm(props) {
     formIntialState,
     frmCountrySelectOpts,
     frmRegionSelectOpts,
+    frmLobSelectOpts,
     frmuserType,
     frmuserTypeObj,
     countrymapping,
@@ -32,6 +33,7 @@ function AddEditForm(props) {
 
   const [regionopts, setregionopts] = useState([]);
   const [countryopts, setcountryopts] = useState([]);
+  const [lobopts, setlobopts] = useState([]);
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
   const [allCountryOpts, setAllCountryOpts] = useState([])
@@ -110,6 +112,24 @@ function AddEditForm(props) {
       }
     });
     setAllCountryOpts(tempopts)
+    tempopts = [];
+    selectedlist = formIntialState.regionList;
+    frmLobSelectOpts.forEach((item) => {
+      if (isEditMode) {
+        let isselected = false;
+        selectedlist.forEach((lob) => {
+          if (item.lobid === lob.value) {
+            isselected = true;
+          }
+        });
+        if (item.isActive || isselected) {
+          tempopts.push(item);
+        }
+      } else if (item.isActive) {
+        tempopts.push(item);
+      }
+    });
+    setlobopts(tempopts);
   };
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -156,6 +176,7 @@ function AddEditForm(props) {
         ...formfield,
         regionList: [],
         countryList: [],
+        lobList: [],
         userType: "Super Admin",
         isAccessBreachLog: false,
         isAccessDeleteLog: true,
@@ -175,6 +196,7 @@ function AddEditForm(props) {
         ...formfield,
         regionList: [],
         countryList: [],
+        lobList: [],
         userType: "",
         isAccessBreachLog: false,
         isGeneralUser: true,
@@ -185,6 +207,7 @@ function AddEditForm(props) {
         ...formfield,
         regionList: [],
         countryList: [],
+        lobList: [],
         userType: "",
         isAccessBreachLog: false,
         isGeneralUser: false,
@@ -201,6 +224,9 @@ function AddEditForm(props) {
       setformfield({ ...formfield, regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Region") {
+      setformfield({ ...formfield, countryList: [] });
+    }
+    if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
       setformfield({ ...formfield, countryList: [] });
     }
   }, [formfield.userType]);
@@ -289,6 +315,12 @@ function AddEditForm(props) {
       if (
         frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
         !formfield.countryList.length
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "LoBAdmin" &&
+        !formfield.lobList.length
       ) {
         return;
       }
@@ -453,6 +485,22 @@ function AddEditForm(props) {
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={allCountryOpts}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ? (
+                <div onClick={handleCountryClick}>
+                  <FrmMultiselect
+                    title={"LoB"}
+                    name={"lobList"}
+                    value={formfield.lobList ? formfield.lobList : []}
+                    handleChange={handleMultiSelectChange}
+                    isRequired={true}
+                    validationmsg={"Mandatory field"}
+                    issubmitted={issubmitted}
+                    selectopts={lobopts}
                   />
                 </div>
               ) : (

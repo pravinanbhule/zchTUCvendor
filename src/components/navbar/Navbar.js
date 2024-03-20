@@ -15,20 +15,20 @@ function Navbar({ ...props }) {
         </Link>
         {userProfile && (
           <>
-            {userProfile && handlePermission("Navbar", "regionmanage", userProfile) && (
+            {userProfile && handlePermission("Navbar", "regionmanage") && (
               <Link to="/region">
                 <div className="menu-item">Manage</div>
               </Link>
             )}
             {userProfile &&
-              handlePermission("Navbar", "usermanage", userProfile) && (
+              handlePermission("Navbar", "usermanage") && (
                 <Link to="/user">
                   <div className="menu-item">Manage</div>
                 </Link>
               )}
             {appmenu.isSubmenu ? (
               <div className="submenu-container">
-                {userProfile && handlePermission("Navbar", "region", userProfile) && (
+                {userProfile && handlePermission("Navbar", "region") && (
                   <Link to="/region">
                     <div
                       className={`menu-item ${
@@ -39,7 +39,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "country", userProfile) && (
+                {userProfile && handlePermission("Navbar", "country") && (
                   <Link to="/country">
                     <div
                       className={`menu-item ${
@@ -50,7 +50,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "segment", userProfile) && (
+                {userProfile && handlePermission("Navbar", "segment") && (
                   <Link to="/segment">
                     <div
                       className={`menu-item ${
@@ -61,7 +61,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "lob", userProfile) && (
+                {userProfile && handlePermission("Navbar", "lob") && (
                   <Link to="/lob">
                     <div
                       className={`menu-item ${
@@ -72,7 +72,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "sublob", userProfile) && (
+                {userProfile && handlePermission("Navbar", "sublob") && (
                   <Link to="/sublob">
                     <div
                       className={`menu-item ${
@@ -83,7 +83,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "lobchapter", userProfile) && (
+                {userProfile && handlePermission("Navbar", "lobchapter") && (
                   <Link to="/lobchapter">
                     <div
                       className={`menu-item ${
@@ -94,7 +94,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "token", userProfile) && (
+                {userProfile && handlePermission("Navbar", "token") && (
                   <Link to="/token">
                     <div
                       className={`menu-item ${
@@ -105,7 +105,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "znaorganization1", userProfile) && (
+                {userProfile && handlePermission("Navbar", "znaorganization1") && (
                   <Link to="/znaorganization1">
                     <div
                       className={`menu-item ${
@@ -116,7 +116,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "znaorganization2", userProfile) && (
+                {userProfile && handlePermission("Navbar", "znaorganization2") && (
                   <Link to="/znaorganization2">
                     <div
                       className={`menu-item ${
@@ -127,7 +127,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "znaorganization3", userProfile) && (
+                {userProfile && handlePermission("Navbar", "znaorganization3") && (
                   <Link to="/znaorganization3">
                     <div
                       className={`menu-item ${
@@ -138,7 +138,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "znaorganization4", userProfile) && (
+                {userProfile && handlePermission("Navbar", "znaorganization4") && (
                   <Link to="/znaorganization4">
                     <div
                       className={`menu-item ${
@@ -149,7 +149,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "office", userProfile) && (
+                {userProfile && handlePermission("Navbar", "office") && (
                   <Link to="/office">
                     <div
                       className={`menu-item ${
@@ -160,7 +160,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "branch", userProfile) && (
+                {userProfile && handlePermission("Navbar", "branch") && (
                   <Link to="/branch">
                     <div
                       className={`menu-item ${
@@ -171,7 +171,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {userProfile && handlePermission("Navbar", "currency", userProfile) && (
+                {userProfile && handlePermission("Navbar", "currency") && (
                   <Link to="/currency">
                     <div
                       className={`menu-item ${
@@ -183,7 +183,7 @@ function Navbar({ ...props }) {
                   </Link>
                 )}
                 {userProfile &&
-                  handlePermission("Navbar", "user", userProfile) && (
+                  handlePermission("Navbar", "user") && (
                     <Link to="/user">
                       <div
                         className={`menu-item ${
@@ -194,7 +194,7 @@ function Navbar({ ...props }) {
                       </div>
                     </Link>
                   )}
-                {userProfile && handlePermission("Navbar", "lookup", userProfile) && (
+                {userProfile && handlePermission("Navbar", "lookup") && (
                   <>
                     <Link to="/lookup">
                       <div

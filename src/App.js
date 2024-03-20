@@ -36,6 +36,7 @@ import PrivateRoute from "./components/privateroute/PrivateRoute";
 import Loader from "./components/common-components/Loading";
 import AddRfelogForm from "./components/rfelog/CreateRfelogForm";
 import Token from "./components/manage/token/Token";
+import { handlePermission } from "./permissions/Permission";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -49,6 +50,17 @@ function App({ state, menuClick }) {
   } else {
     //userProfile = TokenService.getUser();
     userProfile = {};
+  }
+
+  if (window.location.pathname !== "/rfelogs/create-rfelog" && handlePermission("Navbar", window.location.pathname.slice(1)) === false) {
+    console.log("come First");
+    state.userprofileState.isAuthenticated = false
+    state.userprofileState.isUnAuthenticated = true
+  }
+  if(window.location.pathname === "/rfelogs/create-rfelog" && handlePermission("Navbar", "rfelogs") === false){
+    console.log("come Second");
+    state.userprofileState.isAuthenticated = false
+    state.userprofileState.isUnAuthenticated = true
   }
 
   return (

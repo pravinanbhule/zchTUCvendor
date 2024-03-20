@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions } from "../../../actions";
+import { userActions, countryActions, regionActions, lobActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
@@ -12,7 +12,7 @@ import FrmInput from "../../common-components/frminput/FrmInput";
 import { USER_ROLE } from "../../../constants";
 import { handlePermission } from "../../../permissions/Permission";
 function User({ ...props }) {
-  const { userState, countryState, regionState } = props.state;
+  const { userState, countryState, regionState, lobState } = props.state;
   const {
     getAll,
     getAllUsers,
@@ -28,6 +28,7 @@ function User({ ...props }) {
     postItem,
     deleteItem,
     userProfile,
+    getAlllob,
   } = props;
 
   useSetNavMenu({ currentMenu: "User", isSubmenu: true }, props.menuClick);
@@ -296,6 +297,7 @@ function User({ ...props }) {
     getAllCountry({ IsLog: true });
     getAllRegion({ IsLog: true });
     getAllUsersRoles({ RequesterUserId: userProfile.userId });
+    getAlllob({ isActive: true });
   }, []);
   useEffect(() => {
     let tempdata = [];
@@ -374,6 +376,17 @@ function User({ ...props }) {
     setcountrymapping([...tempCountryMapping]);
   }, [countryState.countryItems]);
 
+  const [frmLobSelectOpts, setfrmLobSelectOpts] = useState([]);
+  useEffect(() => {
+    let tempItems = lobState.lobItems.map((item) => ({
+      ...item,
+      label: item.lobName,
+      value: item.lobid,
+    }));
+    tempItems.sort(dynamicSort("label"));
+    setfrmLobSelectOpts([...tempItems]);
+  }, [lobState.lobItems]);
+
   const [frmRegionSelectOpts, setfrmRegionSelectOpts] = useState([]);
   useEffect(() => {
     let selectOpts = [];
@@ -450,6 +463,7 @@ function User({ ...props }) {
     user: [],
     regionList: [],
     countryList: [],
+    lobList: [],
     userType: "",
     PreviousRoleID: "",
     isAccessBreachLog: false,
@@ -474,6 +488,7 @@ function User({ ...props }) {
     ];
     let regionList = [];
     let countryList = [];
+    let lobList = [];
     let tempunauthorizedRegions = [];
     let tempunauthorizedCountries = [];
     response.regionDataList.forEach((item) => {
@@ -514,6 +529,20 @@ function User({ ...props }) {
         });
       }
     });
+    response.lobDataList.forEach((item) => {
+      let isPresent = false;
+      frmLobSelectOpts.forEach((lob) => {
+        if (lob.lobid === item.lobid.trim()) {
+          isPresent = true;
+        }
+      });
+      if (isPresent) {
+        lobList.push({
+          label: item.lobName.trim(),
+          value: item.lobid.trim(),
+        });
+      }
+    });
     setisEditMode(true);
     let isSuperAdmin = response.userType === "SuperAdmin" ? true : false;
     let isAccessDeleteLog =
@@ -529,6 +558,7 @@ function User({ ...props }) {
       user: user,
       regionList: regionList,
       countryList: countryList,
+      lobList: lobList,
       userType: response.roleId,
       PreviousRoleID: response.roleId,
       isAccessBreachLog: response.isAccessBreachLog,
@@ -555,6 +585,9 @@ function User({ ...props }) {
     tempregionList = [...tempregionList, ...tempunauthorizedRegionList].join(
       ","
     );
+    let templobList = item.lobList.map((item) => item.value);
+    templobList = templobList.join(",")
+  
     if (item.isSuperAdmin) {
       item.isAccessBreachLog = true;
       for (let i = 0; i < frmuserType.length; i++) {
@@ -575,6 +608,7 @@ function User({ ...props }) {
       RoleID: item.userType,
       regionList: tempregionList,
       countryList: tempcountryList,
+      lobList: templobList,
       isAccessBreachLog: item.isAccessBreachLog,
       requesterUserId: userProfile.userId,
       PreviousRoleID: item.PreviousRoleID,
@@ -597,6 +631,8 @@ function User({ ...props }) {
     tempcountryList = tempcountryList.join(",");
     let tempregionList = item.regionList.map((item) => item.value);
     tempregionList = tempregionList.join(",");
+    let templobList = item.lobList.map((item) => item.value);
+    templobList = templobList.join(",")
     if (item.isSuperAdmin) {
       item.isAccessBreachLog = true;
       for (let i = 0; i < frmuserType.length; i++) {
@@ -618,6 +654,7 @@ function User({ ...props }) {
         PreviousRoleID: "",
         regionList: tempregionList,
         countryList: tempcountryList,
+        lobList: templobList,
         isAccessBreachLog: item.isAccessBreachLog,
         requesterUserId: userProfile.userId,
         profileCountry: item.user[0].profileCountry,
@@ -756,6 +793,7 @@ function User({ ...props }) {
           title={"Add/Edit User"}
           frmCountrySelectOpts={frmCountrySelectOpts}
           frmRegionSelectOpts={frmRegionSelectOpts}
+          frmLobSelectOpts={frmLobSelectOpts}
           frmuserType={frmuserType.filter(
             (item) => item.label !== "Super Admin"
           )}
@@ -794,6 +832,7 @@ const mapActions = {
   checkIsInUse: userActions.checkIsInUse,
   postItem: userActions.postItem,
   deleteItem: userActions.deleteItem,
+  getAlllob: lobActions.getAlllob,
 };
 
 export default connect(mapStateToProp, mapActions)(User);

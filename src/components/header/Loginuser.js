@@ -82,6 +82,11 @@ function LoggedInUser({ ...props }) {
             userprofile.isAuditor = true;
             userprofile.isAdminGroup = true;
           }
+          if (userRoles.roleId === USER_ROLE.lobAdmin) {
+            localStorage.setItem("Role", "LoBAdmin")
+            userprofile.isLoBAdmin = true;
+            userprofile.isAdminGroup = true;
+          }
           tempUserProfile = {
             ...tempUserProfile,
             ...initialprofile,
