@@ -1,0 +1,36 @@
+.border-bottom-class{
+    border-bottom: solid 2px #2167ad;
+}
+.userview-class, .btn-group.btn-group-toggle{
+    margin-top: 1% !important;
+} 
+.userview-class hr{
+    margin-top: 0% !important;
+    margin-bottom: 1% !important;
+    border-top: solid 2px #2167ad !important;
+} 
+.userview-class, .btn-group, .btn.btn-primary.active {
+    font-weight: bold;
+    border-bottom: solid 2px black !important;
+    background-color: white !important;
+    color: #2167ad !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+}
+.userview-class, .btn-group, .btn.btn-primary {
+    background-color: white !important;
+    color: #2167ad !important;
+    border: none !important;
+    margin-bottom: 0px;
+}
+.userview-class, .btn-group, .btn.btn-primary:hover {
+    font-weight: bold;
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+}
+.userview-class, .btn-group, .btn.focus, .btn:focus{
+    outline: none !important;
+    box-shadow: none !important;
+}

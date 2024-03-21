@@ -199,6 +199,17 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
+                {userProfile && handlePermission("Navbar", "userview") && (
+                  <Link to="/userview">
+                    <div
+                      className={`menu-item ${
+                        location.pathname === "/co" && "active"
+                      }`}
+                    >
+                      User View
+                    </div>
+                  </Link>
+                )}
                 {userProfile &&
                   handlePermission("Navbar", "user") && (
                     <Link to="/user">

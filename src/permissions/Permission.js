@@ -23,6 +23,7 @@ export function handlePermission(page, name) {
                 branch: true,
                 currency: true,
                 co: true,
+                userview: true,
                 user: true,
                 lookup: true,
                 breachlogs: true,
@@ -104,6 +105,11 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isDelete: true
             },
+            userview: {
+                isAdd: true,
+                isEdit: true,
+                isDelete: true
+            },
             user: {
                 isAdd: true,
                 isEdit: true,
@@ -156,6 +162,7 @@ export function handlePermission(page, name) {
                 branch: false,
                 currency: false,
                 co: false,
+                userview: false,
                 user: true,
                 lookup: false,
                 breachlogs: true,
@@ -210,6 +217,7 @@ export function handlePermission(page, name) {
                 currency: false,
                 user: true,
                 co: false,
+                userview: false,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
@@ -262,6 +270,7 @@ export function handlePermission(page, name) {
                 branch: false,
                 currency: false,
                 co: false,
+                userview: false,
                 user: false,
                 lookup: false,
                 breachlogs: true,
@@ -310,6 +319,7 @@ export function handlePermission(page, name) {
                 branch: false,
                 currency: false,
                 co: false,
+                userview: false,
                 user: false,
                 lookup: false,
                 breachlogs: true,
@@ -359,6 +369,7 @@ export function handlePermission(page, name) {
                 branch: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 currency: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 co: false,
+                userview: false,
                 user: false,
                 lookup: true,
                 breachlogs: true,
@@ -447,6 +458,7 @@ export function handlePermission(page, name) {
                 branch: true,
                 currency: true,
                 co: true,
+                userview: true,
                 user: true,
                 lookup: true,
                 breachlogs: true,
@@ -528,6 +540,11 @@ export function handlePermission(page, name) {
                 isEdit: false,
                 isDelete: false
             },
+            userview: {
+                isAdd: true,
+                isEdit: true,
+                isDelete: true
+            },
             user: {
                 isAdd: false,
                 isEdit: false,
@@ -580,6 +597,7 @@ export function handlePermission(page, name) {
                 branch: false,
                 currency: false,
                 co: false,
+                userview: false,
                 user: false,
                 lookup: false,
                 breachlogs: true,
