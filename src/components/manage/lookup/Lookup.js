@@ -7,6 +7,7 @@ import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import { alertMessage, dynamicSort } from "../../../helpers";
 import FrmInlineInput from "../../common-components/frminlineinput/FrmInlineInput";
+import { handlePermission } from "../../../permissions/Permission";
 function Lookup({ ...props }) {
   const { lookupState } = props.state;
   const {
@@ -353,47 +354,55 @@ function Lookup({ ...props }) {
                   <>
                     <div className="lookup-title-header">
                       <div className="title">{lookuptype.name}</div>
-                      <div className="btn-container">
-                        {index === 0 && (
-                          <>
-                            <div
-                              className={`btn-blue ${
-                                isActiveEnable ? "" : "disable"
-                              }`}
-                              onClick={() => setMasterdataActiveState(true)}
-                            >
-                              Active
-                            </div>
-                            <div
-                              className={`btn-blue ${
-                                isActiveEnable ? "" : "disable"
-                              }`}
-                              onClick={() => setMasterdataActiveState(false)}
-                            >
-                              Inactive
-                            </div>
-                          </>
-                        )}
+                      {handlePermission(window.location.pathname.slice(1), "isAdd") === true ? (
+                        <div className="btn-container">
+                          {index === 0 && (
+                            <>
+                              <div
+                                className={`btn-blue ${
+                                  isActiveEnable ? "" : "disable"
+                                }`}
+                                onClick={() => setMasterdataActiveState(true)}
+                              >
+                                Active
+                              </div>
+                              <div
+                                className={`btn-blue ${
+                                  isActiveEnable ? "" : "disable"
+                                }`}
+                                onClick={() => setMasterdataActiveState(false)}
+                              >
+                                Inactive
+                              </div>
+                            </>
+                          )}
 
-                          <div
-                            className={`btn-blue`}
-                            onClick={() =>
-                              handleAdd({
-                                lookUpType: lookuptype.type,
-                                lookupID: "",
-                              })
-                            }
-                          >
-                            Add
+                            <div
+                              className={`btn-blue`}
+                              onClick={() =>
+                                handleAdd({
+                                  lookUpType: lookuptype.type,
+                                  lookupID: "",
+                                })
+                              }
+                            >
+                              Add
+                            </div>
                           </div>
-                        </div>
+                      ) : ""}
                       </div>
                       <table className="table">
                         <thead>
                           <tr>
-                            <th style={{ width: "40px" }}></th>
-                            <th style={tableiconclmStyle}>Edit</th>
-                            <th style={tableiconclmStyle}>Delete</th>
+                            {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
+                              <>
+                                <th style={{ width: "40px" }}></th>
+                                <th style={tableiconclmStyle}>Edit</th>
+                              </>
+                            )}
+                            {handlePermission(window.location.pathname.slice(1), "isDelete") === true && (
+                              <th style={tableiconclmStyle}>Delete</th>
+                            )}
                             <th style={{ width: "250px" }}>Value</th>
                             <th>Active/Inactive</th>
                           </tr>
@@ -446,42 +455,48 @@ function Lookup({ ...props }) {
                           {data.map((item) => {
                             return lookuptype.type === item.lookUpType ? (
                               <tr>
-                                <td>
-                                  <FrmActiveCheckbox
-                                    name={item.lookupID}
-                                    value={dataActItems.lookupID}
-                                    handleChange={handleItemSelect}
-                                    isdisabled={false}
-                                  />
-                                </td>
-                                <td
-                                  style={tableiconclmStyle}
-                                  className={`${
-                                    item.isEditMode ? "save-icon" : "edit-icon"
-                                  }`}
-                                  onClick={() => {
-                                    item.isEditMode
-                                      ? handleSave({
-                                          lookUpType: lookuptype.type,
-                                          lookupID: item.lookupID,
-                                        })
-                                      : handleEdit({
-                                          lookUpType: lookuptype.type,
-                                          lookupID: item.lookupID,
-                                        });
-                                  }}
-                                  rowid={item.lookupID}
-                                ></td>
-                                <td
-                                  className="delete-icon"
-                                  onClick={() =>
-                                    handleDelete({
-                                      lookUpType: lookuptype.type,
-                                      lookupID: item.lookupID,
-                                    })
-                                  }
-                                  rowid={item.lookupID}
-                                ></td>
+                                 {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
+                                  <>
+                                    <td>
+                                      <FrmActiveCheckbox
+                                        name={item.lookupID}
+                                        value={dataActItems.lookupID}
+                                        handleChange={handleItemSelect}
+                                        isdisabled={false}
+                                      />
+                                    </td>
+                                    <td
+                                      style={tableiconclmStyle}
+                                      className={`${
+                                        item.isEditMode ? "save-icon" : "edit-icon"
+                                      }`}
+                                      onClick={() => {
+                                        item.isEditMode
+                                          ? handleSave({
+                                              lookUpType: lookuptype.type,
+                                              lookupID: item.lookupID,
+                                            })
+                                          : handleEdit({
+                                              lookUpType: lookuptype.type,
+                                              lookupID: item.lookupID,
+                                            });
+                                      }}
+                                      rowid={item.lookupID}
+                                    ></td>
+                                  </>
+                                )}
+                                {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
+                                  <td
+                                    className="delete-icon"
+                                    onClick={() =>
+                                      handleDelete({
+                                        lookUpType: lookuptype.type,
+                                        lookupID: item.lookupID,
+                                      })
+                                    }
+                                    rowid={item.lookupID}
+                                  ></td>
+                                )}
                                 <td>
                                   {item.isEditMode ? (
                                     <FrmInlineInput
