@@ -1237,20 +1237,20 @@ function AddEditForm(props) {
     if (e.target.type === "checkbox") {
       value = e.target.checked;
     }
-    if (
-      name === "OrganizationalAlignment" &&
-      value === OrganizationalAlignment.country
-    ) {
-      setisfrmdisabled(true);
-      showlogPopup();
-      alert(alertMessage.rfelog.orgalignmetmsg);
-    } else if (
-      name === "OrganizationalAlignment" &&
-      value !== OrganizationalAlignment.country
-    ) {
-      setisfrmdisabled(false);
-      hidelogPopup();
-    }
+    // if (
+    //   name === "OrganizationalAlignment" &&
+    //   value === OrganizationalAlignment.country
+    // ) {
+    //   setisfrmdisabled(true);
+    //   // showlogPopup();
+    //   // alert(alertMessage.rfelog.orgalignmetmsg);
+    // } else if (
+    //   name === "OrganizationalAlignment" &&
+    //   value !== OrganizationalAlignment.country
+    // ) {
+    //   setisfrmdisabled(false);
+    //   // hidelogPopup();
+    // }
     setformfield({ ...formfield, isdirty: true, [name]: value });
   };
 
@@ -2465,14 +2465,14 @@ function AddEditForm(props) {
                 }
               />
             </div>
-            {formfield.OrganizationalAlignment ===
+            {/* {formfield.OrganizationalAlignment ===
               OrganizationalAlignment.country && !IncountryFlag ? (
               <div className="col-md-3 btn-blue" onClick={showlogPopup}>
                 Local country log
               </div>
             ) : (
               ""
-            )}
+            )} */}
           </>
         );
       case "FrmRichTextEditor":
