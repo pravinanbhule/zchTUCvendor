@@ -359,7 +359,7 @@ export function handlePermission(page, name) {
                 branch: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 currency: userProfile?.isLATAMCountrySuperAdmin === true ? true : false,
                 co: false,
-                user: false,
+                user: true,
                 lookup: true,
                 breachlogs: true,
                 rfelogs: true,
@@ -396,6 +396,11 @@ export function handlePermission(page, name) {
                 isDelete: true
             },
             currency: {
+                isAdd: true,
+                isEdit: true,
+                isDelete: true
+            },
+            user: {
                 isAdd: true,
                 isEdit: true,
                 isDelete: true
