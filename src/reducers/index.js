@@ -21,6 +21,7 @@ import { officeReducer as officeState } from "./office.reducer";
 import { dashboardReducer as dashboardState } from "./dashboard.reducer";
 import { branchReducer as branchState } from "./branch.reducer";
 import { currencyReducer as currencyState } from "./currency.reducer";
+import { coReducer as coState } from "./co.reducer";
 const rootReducer = combineReducers({
   appmenu,
   userprofileState,
@@ -44,5 +45,6 @@ const rootReducer = combineReducers({
   dashboardState,
   branchState,
   currencyState,
+  coState
 });
 export default rootReducer;

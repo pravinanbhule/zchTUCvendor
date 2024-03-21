@@ -165,4 +165,12 @@ export const alertMessage = {
       "One or more entries have invalid data, please correct them and re-import file.",
     confirmImportDataMsg: "Are you sure you want to import this data?",
   },
+  co: {
+    add: "The new CO is successfully added.",
+    update: "The CO is successfully updated.",
+    delete: "The CO is deleted.",
+    deleteConfirm: "Are you sure you want to delete CO?",
+    isInUse: "You can not delete this CO as it is in use.",
+    nameExist: "The CO name already exists!",
+  },
 };

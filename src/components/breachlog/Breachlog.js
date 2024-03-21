@@ -2308,6 +2308,7 @@ function Breachlog({ ...props }) {
     BreachLogEmailLink: "Link",
     ImportedBy: "Imported By",
     BreachCCName: "Breach CC",
+    COValue: "CO"
   };
   const versionHistoryexportDateFields = {
     DateBreachOccurred: "dateBreachOccurred",

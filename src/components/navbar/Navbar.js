@@ -148,6 +148,15 @@ function Navbar({ ...props }) {
                         Currency
                       </div>
                     </Link>
+                    <Link to="/co">
+                      <div
+                        className={`menu-item ${
+                          location.pathname === "/co" && "active"
+                        }`}
+                      >
+                        CO
+                      </div>
+                    </Link>
                   </>
                 )}
                 {userProfile &&
