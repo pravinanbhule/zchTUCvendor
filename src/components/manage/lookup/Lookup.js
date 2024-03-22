@@ -179,12 +179,14 @@ function Lookup({ ...props }) {
           lookupID: param.lookupID,
           lookUpType: param.lookUpType,
           lookUpValue: item[0].lookUpValue,
+          requesterUserId: userProfile.userId
         });
       } else {
         response = await postLookupItem({
           lookUpType: param.lookUpType,
           lookUpValue: formfield[param.lookUpType],
           isActive: formfield["isActive"] === "true" ? true : false,
+          requesterUserId: userProfile.userId
         });
         setformfield({ isActive: "true" });
       }
