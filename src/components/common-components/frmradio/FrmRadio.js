@@ -16,6 +16,8 @@ function FrmRadio(props) {
     isdisabled,
     isToolTip,
     tooltipmsg,
+    isSidebySide,
+    isclickDisable
   } = props;
   const getSelectedOpt = () => {
     let selectopt;
@@ -26,7 +28,7 @@ function FrmRadio(props) {
     <div className={`frm-field ${isRequired ? "mandatory" : ""}`}>
       <label
         htmlFor={name}
-        className={`${isdisabled && !isReadMode ? "disabled" : ""}`}
+        className={`${isdisabled && !isReadMode && !isclickDisable ? "disabled" : ""}`}
       >
         <div className="label">{title}</div>
         {isToolTip ? (

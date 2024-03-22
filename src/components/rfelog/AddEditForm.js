@@ -2445,6 +2445,7 @@ function AddEditForm(props) {
                 tooltipmsg={eval(obj.tooltipmsg)}
                 issubmitted={issubmitted}
                 selectopts={eval(obj.options)}
+                isclickDisable={true}
                 isdisabled={
                   (isfrmdisabled && isshowlocallink) ||
                   IncountryFlag === IncountryFlagConst.LATAM ||
@@ -2461,7 +2462,8 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.AUSTRALIA ||
                   IncountryFlag === IncountryFlagConst.BENELUX ||
                   IncountryFlag === IncountryFlagConst.NORDIC ||
-                  isorgalignmentdisabled
+                  isorgalignmentdisabled || 
+                  obj.name === "OrganizationalAlignment"
                 }
               />
             </div>
