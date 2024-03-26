@@ -1592,6 +1592,7 @@ function AddEditForm(props) {
                 <div className="col-md-3">
                   <FrmSelect
                     title={"Breach CO"}
+                    titlelinespace={true}
                     name={"co"}
                     value={formfield.co}
                     handleChange={handleSelectChange}
