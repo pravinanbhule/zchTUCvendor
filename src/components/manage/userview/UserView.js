@@ -2,38 +2,102 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { userActions, countryActions, regionActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
-import useSetNavMenu from "../../../customhooks/useSetNavMenu";
-import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
-import AddEditForm from "./AddEditForm";
-import UserProfile from "../../common-components/UserProfile";
-import FrmInput from "../../common-components/frminput/FrmInput";
-import { USER_ROLE } from "../../../constants";
+import BreachAddEditForm from "./BreachAddEditForm";
 import './Style.css'
-import ToolkitProvider, { ColumnToggle } from "react-bootstrap-table2-toolkit";
-import BootstrapTable from "react-bootstrap-table-next";
 function UserView({ ...props }) {
 
-  const { ToggleList } = ColumnToggle;
-  const columns = [{
-    dataField: 'breachlog',
-    text: 'Breach Log Filters'
-  }, {
-    dataField: 'rfelog',
-    text: 'RfE Log Filters'
-  }, {
-    dataField: 'exemptionlog',
-    text: 'Exemption Log Filters'
-  }];
+  const [selectedTab, setSelectedTab] = useState("rfelog")
+  const [isshowAddPopup, setIsshowAddPopup] = useState(true)
+  const [paginationdata, setpaginationdata] = useState([
+    {
+      userviewId: "1",
+      userViewName: "View 1",
+      roles: "Super admin, Global admin"
+    },
+    {
+      userviewId: "2",
+      userViewName: "View 2",
+      roles: "Global admin"
+    },
+    {
+      userviewId: "3",
+      userViewName: "View 3",
+      roles: "Normal User"
+    },
+  ]);
 
-  const [isshowAddPopup, setIsshowAddPopup] = useState(false)
+  useEffect(() => {
+    if (selectedTab === "breachlog  ") {
+      setpaginationdata([
+        {
+          userviewId: "1",
+          userViewName: "View 1",
+          roles: "Super admin, Global admin"
+        },
+        {
+          userviewId: "2",
+          userViewName: "View 2",
+          roles: "Global admin"
+        },
+        {
+          userviewId: "3",
+          userViewName: "View 3",
+          roles: "Normal User"
+        },
+      ])
+    } else if (selectedTab === "rfelog") {
+      setpaginationdata([
+        {
+          userviewId: "4",
+          userViewName: "View 4",
+          roles: "Super admin, Global admin"
+        },
+        {
+          userviewId: "5",
+          userViewName: "View 5",
+          roles: "Global admin"
+        },
+        {
+          userviewId: "6",
+          userViewName: "View 6",
+          roles: "Normal User"
+        },
+      ])
+    } else if (selectedTab === "exemptionlog") {
+      setpaginationdata([
+        {
+          userviewId: "7",
+          userViewName: "View 7",
+          roles: "Super admin, Global admin"
+        },
+        {
+          userviewId: "8",
+          userViewName: "View 8",
+          roles: "Global admin"
+        },
+        {
+          userviewId: "3",
+          userViewName: "View 3",
+          roles: "Normal User"
+        },
+      ])
+    }
 
+  }, [selectedTab])
+
+  const showAddPopup = () => {
+    setIsshowAddPopup(true);
+  };
   const hideAddPopup = () => {
     setIsshowAddPopup(false)
   }
 
-  const data = [
+  const handleSelectTab = (value) => {
+    setSelectedTab(value)
+  }
+
+  const columns = [
     {
       dataField: "editaction",
       text: "Edit",
@@ -42,27 +106,7 @@ function UserView({ ...props }) {
           <div
             className="edit-icon"
             // onClick={handleEdit}
-            rowid={row.userId}
-          ></div>
-        );
-      },
-      sort: false,
-      headerStyle: (colum, colIndex) => {
-        return {
-          width: "65px",
-          textAlign: "center",
-        };
-      },
-    },
-    {
-      dataField: "deleteaction",
-      text: "Delete",
-      formatter: (cell, row, rowIndex, formatExtraData) => {
-        return (
-          <div
-            className="delete-icon"
-            // onClick={handleDelete}
-            rowid={row.userId}
+            rowid={row.userviewId}
           ></div>
         );
       },
@@ -73,9 +117,48 @@ function UserView({ ...props }) {
           textAlign: "center",
         };
       },
-      align: "center",
+    },
+    {
+      dataField: "viewaction",
+      text: "View",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="view-icon"
+            // onClick={handleEdit}
+            rowid={row.userviewId}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "70px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
+      dataField: "userViewName",
+      text: "User View Name",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "250px" };
+      },
+    },
+    {
+      dataField: "roles",
+      text: "Role",
+      sort: false,
     }
-  ]
+  ];
+  const defaultSorted = [
+    {
+      dataField: "znaSegmentName",
+      order: "asc",
+    },
+  ];
 
   return (
     <>
@@ -83,46 +166,34 @@ function UserView({ ...props }) {
         <>
           <div className="page-title border-bottom-class">Manage User View</div>
           <div className="userview-class">
-            <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Active</a>
+            <ul className="nav nav-tabs">
+              <li className="nav-item" onClick={() => handleSelectTab("breachlog")}>
+                <a className={`nav-link ${selectedTab === 'breachlog' ? 'active' : ''}`} aria-current="page" >Breach Log Filters</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="#">Link</a>
+              <li className="nav-item" onClick={() => handleSelectTab("rfelog")}>
+                <a className={`nav-link ${selectedTab === 'rfelog' ? 'active' : ''}`} >RfE Log Filters</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="#">Link</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+              <li className="nav-item" onClick={() => handleSelectTab("exemptionlog")}>
+                <a className={`nav-link ${selectedTab === 'exemptionlog' ? 'active' : ''}`} >Exemption Log Filters</a>
               </li>
             </ul>
-            {/* <ToolkitProvider
-              keyField="id"
-              data={data}
-              columns={columns}
-              columnToggle
-            >
-              {
-                props => (
-                  <div>
-                    <ToggleList {...props.columnToggleProps} />
-                    <hr />
-                    <BootstrapTable
-                      {...props.baseProps}
-                    />
-                  </div>
-                )
-              }
-            </ToolkitProvider> */}
           </div>
+          <PaginationData
+            id={"userviewId"}
+            column={columns}
+            data={paginationdata}
+            showAddPopup={showAddPopup}
+            defaultSorted={defaultSorted}
+            buttonTitle={"New View"}
+            hidesearch={true}
+          />
         </>
       )}
       {isshowAddPopup && (
-        <AddEditForm
+        <BreachAddEditForm
           title={"Add/Edit Exemption Log"}
           hideAddPopup={hideAddPopup}
-        ></AddEditForm>
+        ></BreachAddEditForm>
       )}
     </>
   );

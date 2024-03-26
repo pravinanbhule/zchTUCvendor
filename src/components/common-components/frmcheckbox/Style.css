@@ -6,6 +6,12 @@ label {
   display: none;
 }
 
+.radiobtn-container-aftertitle {
+  width: auto !important;
+  /* margin-right: 10px; */
+  /* margin-left: 170px; */
+}
+
 .radiobtn-container .regular-checkbox + label {
   -webkit-appearance: none;
   background-color: #fff;
@@ -44,6 +50,12 @@ label {
   left: 3px;
   color: #fff;
 }
+.frm-field.inlinetitle{
+  display: flex;
+  align-items: center;
+  justify-content: normal;
+}
+
 
 /*.regular-checkbox + label {
   background-color: #fff;
