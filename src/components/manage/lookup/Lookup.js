@@ -181,7 +181,7 @@ function Lookup({ ...props }) {
           lookUpType: param.lookUpType,
           lookUpValue: item[0].lookUpValue,
           requesterUserId: userProfile.userId,
-          CountryId: selfilter.logtype === "RFELogs" ? handleGetCountryList(param.lookUpType) : ""
+          countryId: selfilter.logtype === "RFELogs" ? handleGetCountryList(param.lookUpType) : ""
         }
         response = await postLookupItem(payload);
       } else {
@@ -190,7 +190,7 @@ function Lookup({ ...props }) {
           lookUpValue: formfield[param.lookUpType],
           isActive: formfield["isActive"] === "true" ? true : false,
           requesterUserId: userProfile.userId,
-          CountryId: selfilter.logtype === "RFELogs" ? handleGetCountryList(param.lookUpType) : ""
+          countryId: selfilter.logtype === "RFELogs" ? handleGetCountryList(param.lookUpType) : ""
         }
         response = await postLookupItem(payload);
         setformfield({ isActive: "true" });
