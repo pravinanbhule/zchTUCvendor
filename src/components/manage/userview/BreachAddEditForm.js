@@ -7,12 +7,14 @@ import FrmMultiselect from "../../common-components/frmmultiselect/FrmMultiselec
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmInputSearch from "../../common-components/frmpeoplepicker/FrmInputSearch";
 import FrmDatePicker from "../../common-components/frmdatepicker/FrmDatePicker";
+import FrmInputAutocomplete from "../../common-components/frminputautocomplete/FrmInputAutocomplete";
 import moment from "moment";
 
 function BreachAddEditForm(props) {
 
   const {
-    hideAddPopup
+    hideAddPopup,
+    isReadMode
   } = props;
 
   const [formfield, setformfield] = useState({})
@@ -133,6 +135,7 @@ function BreachAddEditForm(props) {
 
   const handleChange = (e) => {
     let { name, value } = e.target;
+    console.log(name, value);
     if (e.target.type === "checkbox") {
       value = e.target.checked;
     }
@@ -185,6 +188,7 @@ function BreachAddEditForm(props) {
   };
 
   const handleSubmit = (e) => {
+    console.log("formfield>>>>", formfield);
     e.preventDefault();
     // setissubmitted(true);
     // if (formfield.znaSegmentId && formfield.sbuName) {
@@ -212,8 +216,8 @@ function BreachAddEditForm(props) {
             <div className="col-md-3">
               <FrmInput
                 title={"View Name"}
-                name={"sbuName"}
-                value={formfield?.sbuName}
+                name={"viewName"}
+                value={formfield?.viewName}
                 type={"text"}
                 handleChange={handleChange}
                 isRequired={false}
@@ -259,7 +263,7 @@ function BreachAddEditForm(props) {
           <div className="frm-container-bgwhite">
             <div className="row">
               <div className="col-md-3">
-                <div className="frm-filter col-md-3">
+                <div className="frm-filter">
                   <FrmInputAutocomplete
                     title={"Entry Number"}
                     name={"entityNumber"}
@@ -278,7 +282,7 @@ function BreachAddEditForm(props) {
                   type={"input"}
                   issubmitted={issubmitted}
                   handleChange={onSearchFilterInput}
-                  value={selfilter.title}
+                  value={formfield.title}
                 />
               </div>
               <div className="col-md-3">
@@ -315,16 +319,15 @@ function BreachAddEditForm(props) {
                 />
               </div>
               <div className="col-md-3">
-                <FrmInputSearch
+                <FrmInputAutocomplete
                   title={"Action Responsible"}
                   name={"actionResponsible"}
+                  type={"input"}
+                  handleChange={onSearchFilterInputAutocomplete}
                   value={formfield.actionResponsible}
-                  type={"text"}
-                  handleChange={handleApproverChange}
-                  singleSelection={true}
-                  issubmitted={issubmitted}
-                  handleInputSearchChange={handleInputSearchChange}
-                  searchItems={[]}
+                  options={
+                    commonfilterOpts.actionResponsibleFilterOpts
+                  }
                 />
               </div>
               <div className="col-md-3">
@@ -351,7 +354,7 @@ function BreachAddEditForm(props) {
               </div>
             </div>
           </div>
-          <div className="border-bottom frm-container-bgwhite">
+          <div className="frm-container-bgwhite">
             <div className="user-view-advance-filter-btn-container">
               <div
                 className={`user-view-advance-filter-btn`}
@@ -449,16 +452,14 @@ function BreachAddEditForm(props) {
                 />
               </div>
               <div className="col-md-3">
-                <FrmInputSearch
+                <FrmInputAutocomplete
                   title={"Creator"}
-                  name={"creator"}
-                  value={formfield.creator}
-                  type={"text"}
-                  handleChange={handleApproverChange}
-                  singleSelection={true}
+                  name={"creatorName"}
+                  type={"input"}
+                  handleChange={onSearchFilterInputAutocomplete}
+                  value={formfield.creatorName}
+                  options={commonfilterOpts.creatorFilterOpts}
                   issubmitted={issubmitted}
-                  handleInputSearchChange={handleInputSearchChange}
-                  searchItems={[]}
                 />
               </div>
               <div className="col-md-6 filter-date-container">
@@ -566,8 +567,38 @@ function BreachAddEditForm(props) {
             </div>
           </div>
         </form>
-      </div >
-    </div >
+      </div>
+      {!isReadMode ? (
+        <div className="popup-footer-container">
+          <div className="btn-container">
+            {/* {!isEditMode ? (
+              <>
+                <button
+                  className={`btn-blue ${isfrmdisabled && "disable"}`}
+                  onClick={handleSaveLog}
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              ""
+            )} */}
+            <button
+              className={`btn-blue`}
+              type="submit"
+              form="myForm"
+            >
+              Submit
+            </button>
+            <div className="btn-blue" onClick={() => hidePopup()}>
+              Cancel
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
+    </div>
   );
 }
 const mapStateToProp = (state) => {
