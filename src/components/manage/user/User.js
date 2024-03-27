@@ -428,7 +428,13 @@ function User({ ...props }) {
             item.roleId === USER_ROLE.normalUser)) ||
         userroles.issuperadmin
       ) {
-        if (item.roleId !== USER_ROLE.normalUser) {
+        if (userProfile?.isCountrySuperAdmin === false && item.roleId !== USER_ROLE.normalUser) {
+          tempuserroles.push({
+            label: item.displayRole,
+            value: item.roleId,
+          });
+        }
+        if (userProfile.isCountrySuperAdmin && item.roleId === USER_ROLE.countryAdmin) {
           tempuserroles.push({
             label: item.displayRole,
             value: item.roleId,

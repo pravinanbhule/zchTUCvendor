@@ -9,7 +9,7 @@ import { alertMessage, dynamicSort } from "../../../helpers";
 import FrmInlineInput from "../../common-components/frminlineinput/FrmInlineInput";
 import { handlePermission } from "../../../permissions/Permission";
 function Lookup({ ...props }) {
-  const { lookupState } = props.state;
+  const { lookupState, countryState } = props.state;
   const {
     getAllLookupByLogType,
     getLogTypes,
@@ -159,6 +159,7 @@ function Lookup({ ...props }) {
   };
   const handleSave = async (param) => {
     let item = {};
+    let payload = {};
     let response;
     if (param.lookupID) {
       item = data.filter((item) => item.lookupID === param.lookupID);
@@ -174,18 +175,24 @@ function Lookup({ ...props }) {
     }
     if (!response) {
       if (param.lookupID) {
-        response = await postLookupItem({
+        payload = {
           ...item[0],
           lookupID: param.lookupID,
           lookUpType: param.lookUpType,
           lookUpValue: item[0].lookUpValue,
-        });
+          requesterUserId: userProfile.userId,
+          countryId: selfilter.logtype === "RFELogs" ? handleGetCountryList(param.lookUpType) : ""
+        }
+        response = await postLookupItem(payload);
       } else {
-        response = await postLookupItem({
+        payload = {
           lookUpType: param.lookUpType,
           lookUpValue: formfield[param.lookUpType],
           isActive: formfield["isActive"] === "true" ? true : false,
-        });
+          requesterUserId: userProfile.userId,
+          countryId: selfilter.logtype === "RFELogs" ? handleGetCountryList(param.lookUpType) : ""
+        }
+        response = await postLookupItem(payload);
         setformfield({ isActive: "true" });
       }
       if (response) {
@@ -207,6 +214,33 @@ function Lookup({ ...props }) {
       [param.lookUpType]: false,
     });
   };
+
+  const handleGetCountryList = (lookUpType) => {
+    let response = ""
+    let search = lookUpType.search("RFEEmpowermentReasonRequest")
+    let countryName = lookUpType.replace("RFEEmpowermentReasonRequest", "")
+    if (search !== -1 && countryName !== "" ) {
+      if(countryName.toLowerCase() === "nordic" || countryName.toLowerCase() === "benelux") {
+        countryName = countryName + " All Countries"
+      }
+      let countryDetail = countryState.countryItems.filter((item,i)=> item.countryName.toLowerCase() === countryName.toLowerCase())
+      if (countryName.toLowerCase() === "nordic all countries" ||
+          countryName.toLowerCase() === "benelux all countries" ||
+          countryName.toLowerCase() === "latam") {
+        let countryList = []
+        countryState.countryItems.map((item, i) => {
+          if (item.isActive === true && item.incountryFlag === countryDetail[0].incountryFlag) {
+            countryList.push(item.countryID)
+          }
+        })
+        response = countryList.toString()
+      } else if (countryDetail?.length){
+        response = countryDetail[0]?.countryID
+      }
+    }
+    return response
+  }
+
   const handleDelete = async (param) => {
     if (!window.confirm(alertMessage.lookup.deleteConfirm)) {
       return;

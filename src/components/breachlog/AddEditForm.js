@@ -1590,6 +1590,21 @@ function AddEditForm(props) {
                   />
                 </div>
                 <div className="col-md-3">
+                  <FrmSelect
+                    title={"Breach CO"}
+                    titlelinespace={true}
+                    name={"co"}
+                    value={formfield.co}
+                    handleChange={handleSelectChange}
+                    isRequired={false}
+                    isReadMode={isReadMode}
+                    issubmitted={issubmitted}
+                    selectopts={frmCoList}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["CO"]}
+                  />
+                </div>
+                <div className="col-md-3">
                   {formfield.regionId?.indexOf(emeaRegionValue) !== -1 ? (
                     <FrmToggleSwitch
                       title={
@@ -1766,6 +1781,23 @@ function AddEditForm(props) {
                   />
                 </div>
                 <div className="col-md-3">
+                  <FrmInput
+                    title={"Breach CC"}
+                    name={"breachCCName"}
+                    value={formfield.breachCCName}
+                    type={"text"}
+                    handleChange={handleChange}
+                    handleClick={(e) => handleshowpeoplepicker("breachCC", e)}
+                    isRequired={false}
+                    isReadMode={isReadMode}
+                    validationmsg={"Mandatory field"}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["BreachCC"]}
+                    issubmitted={issubmitted}
+                    isdisabled={isfrmdisabled}
+                  />
+                </div>
+                <div className="col-md-3">
                   <FrmDatePicker
                     title={"Due Date"}
                     name={"dueDate"}
@@ -1820,39 +1852,6 @@ function AddEditForm(props) {
                       ? formatDate(formfield.originalDueDate)
                       : ""}
                   </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-3">
-                  <FrmInput
-                    title={"Breach CC"}
-                    name={"breachCCName"}
-                    value={formfield.breachCCName}
-                    type={"text"}
-                    handleChange={handleChange}
-                    handleClick={(e) => handleshowpeoplepicker("breachCC", e)}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["BreachCC"]}
-                    issubmitted={issubmitted}
-                    isdisabled={isfrmdisabled}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <FrmSelect
-                    title={"Breach CO"}
-                    name={"co"}
-                    value={formfield.co}
-                    handleChange={handleSelectChange}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    issubmitted={issubmitted}
-                    selectopts={frmCoList}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["CO"]}
-                  />
                 </div>
               </div>
               <div className="row border-bottom">
