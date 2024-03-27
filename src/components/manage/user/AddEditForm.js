@@ -230,15 +230,14 @@ function AddEditForm(props) {
       setformfield({ ...formfield, countryList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
-      setformfield({ ...formfield, countryList: [] });
+      setformfield({ ...formfield, countryList: [], regionList: [] });
+    }
+    if (frmuserTypeObj[formfield.userType] === "Auditor") {
+      setformfield({ ...formfield, countryList: [], regionList: [] });
     }
   }, [formfield.userType]);
   useEffect(() => {
-    if (frmuserTypeObj[formfield.userType] === "CountrySuperAdmin") {
-      setformfield({ ...formfield });
-    } else {
       mapCountryRegion();
-    }
   }, [formfield.regionList]);
 
   const mapCountryRegion = () => {
@@ -317,6 +316,7 @@ function AddEditForm(props) {
       }
       if (
         frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
+        !formfield.regionList.length &&
         !formfield.countryList.length
       ) {
         return;
@@ -447,7 +447,8 @@ function AddEditForm(props) {
                 isSidebySide={true}
               />
               {frmuserTypeObj[formfield.userType] === "Region" ||
-              frmuserTypeObj[formfield.userType] === "Country" ? (
+              frmuserTypeObj[formfield.userType] === "Country" ||
+              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
                 <FrmMultiselect
                   title={"Region"}
                   name={"regionList"}
@@ -461,7 +462,8 @@ function AddEditForm(props) {
               ) : (
                 ""
               )}
-              {frmuserTypeObj[formfield.userType] === "Country" ? (
+              {frmuserTypeObj[formfield.userType] === "Country" ||
+              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}
@@ -477,7 +479,7 @@ function AddEditForm(props) {
               ) : (
                 ""
               )}
-              {frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+              {/* {frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}
@@ -492,7 +494,7 @@ function AddEditForm(props) {
                 </div>
               ) : (
                 ""
-              )}
+              )} */}
               {frmuserTypeObj[formfield.userType] === "LoBAdmin" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
