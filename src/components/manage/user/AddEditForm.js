@@ -233,7 +233,7 @@ function AddEditForm(props) {
       setformfield({ ...formfield, countryList: [], regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Auditor") {
-      setformfield({ ...formfield, countryList: [], regionList: [] });
+      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false });
     }
   }, [formfield.userType]);
   useEffect(() => {
@@ -418,21 +418,25 @@ function AddEditForm(props) {
                   selectopts={accessBreachLogOpts}
                   isdisabled={isdisabled}
                 />
-                <FrmCheckbox
-                  title={"Can Delete Log"}
-                  name={"isAccessDeleteLog"}
-                  value={formfield.isAccessDeleteLog}
-                  handleChange={handleChange}
-                  isRequired={false}
-                  validationmsg={"Mandatory field"}
-                  issubmitted={issubmitted}
-                  selectopts={accessBreachLogOpts}
-                  isdisabled={
-                    isdisabled ||
-                    frmuserTypeObj[formfield.userType] === "Global" ||
-                    frmuserTypeObj[formfield.userType] === "Region"
-                  }
-                />
+                {frmuserTypeObj[formfield.userType] !== "Auditor" ? (
+                  <FrmCheckbox
+                    title={"Can Delete Log"}
+                    name={"isAccessDeleteLog"}
+                    value={formfield.isAccessDeleteLog}
+                    handleChange={handleChange}
+                    isRequired={false}
+                    validationmsg={"Mandatory field"}
+                    issubmitted={issubmitted}
+                    selectopts={accessBreachLogOpts}
+                    isdisabled={
+                      isdisabled ||
+                      frmuserTypeObj[formfield.userType] === "Global" ||
+                      frmuserTypeObj[formfield.userType] === "Region"
+                    }
+                  />
+                ) : (
+                  ""
+                )}
               </div>
               <FrmRadio
                 title={"Special User"}
