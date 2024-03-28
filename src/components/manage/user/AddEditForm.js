@@ -462,6 +462,7 @@ function AddEditForm(props) {
                   validationmsg={"Mandatory field"}
                   issubmitted={issubmitted}
                   selectopts={regionopts}
+                  isAllOptNotRequired={true}
                 />
               ) : (
                 ""
@@ -478,6 +479,7 @@ function AddEditForm(props) {
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
+                    isAllOptNotRequired={true}
                   />
                 </div>
               ) : (
