@@ -5,9 +5,10 @@ import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
 import BreachAddEditForm from "./BreachAddEditForm";
 import './Style.css'
+import ExemptionAddEditForm from "./ExemptionAddEditForm";
 function UserView({ ...props }) {
 
-  const [selectedTab, setSelectedTab] = useState("rfelog")
+  const [selectedTab, setSelectedTab] = useState("exemptionlog")
   const [isshowAddPopup, setIsshowAddPopup] = useState(true)
   const [paginationdata, setpaginationdata] = useState([
     {
@@ -190,10 +191,20 @@ function UserView({ ...props }) {
         </>
       )}
       {isshowAddPopup && (
+      <>
+      {selectedTab === 'breachlog' &&(
         <BreachAddEditForm
           title={"Add/Edit Exemption Log"}
           hideAddPopup={hideAddPopup}
         ></BreachAddEditForm>
+      )}
+      {selectedTab === 'exemptionlog' &&(
+        <ExemptionAddEditForm
+          title={"Add/Edit Exemption Log"}
+          hideAddPopup={hideAddPopup}
+        ></ExemptionAddEditForm>
+      )}
+      </>
       )}
     </>
   );
