@@ -50,6 +50,7 @@ import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { useHistory } from "react-router-dom";
+import { handlePermission } from "../../permissions/Permission";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -458,6 +459,7 @@ function Rfelog({ ...props }) {
           ? {
               dataField: "editaction",
               text: "Edit",
+              hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
               formatter: (cell, row, rowIndex, formatExtraData) => {
                 let isedit = fnIsEditAccess(row);
 
@@ -484,6 +486,7 @@ function Rfelog({ ...props }) {
           : {
               dataField: "editaction",
               text: "Restore",
+              hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
               formatter: (cell, row, rowIndex, formatExtraData) => {
                 return (
                   <div

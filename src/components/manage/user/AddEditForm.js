@@ -21,19 +21,22 @@ function AddEditForm(props) {
     formIntialState,
     frmCountrySelectOpts,
     frmRegionSelectOpts,
+    frmLobSelectOpts,
     frmuserType,
     frmuserTypeObj,
     countrymapping,
     userState,
     getAllUsers,
     userroles,
+    countryAllOpts
   } = props;
 
   const [regionopts, setregionopts] = useState([]);
   const [countryopts, setcountryopts] = useState([]);
+  const [lobopts, setlobopts] = useState([]);
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
-
+  const [allCountryOpts, setAllCountryOpts] = useState([])
   const [isdisabled, setisdisabled] = useState(false);
 
   const [accessBreachLogOpts, setaccessBreachLogOpts] = useState([
@@ -91,6 +94,42 @@ function AddEditForm(props) {
     });
     setcountryopts(tempopts);
     setformfield(formIntialState);
+    tempopts = [];
+    selectedlist = formIntialState.countryList;
+    countryAllOpts.forEach((item) => {
+      if (isEditMode) {
+        let isselected = false;
+        selectedlist.forEach((country) => {
+          if (item.countryID === country.value) {
+            isselected = true;
+          }
+        });
+        if (item.isActive || isselected) {
+          tempopts.push(item);
+        }
+      } else if (item.isActive) {
+        tempopts.push(item);
+      }
+    });
+    setAllCountryOpts(tempopts)
+    tempopts = [];
+    selectedlist = formIntialState.regionList;
+    frmLobSelectOpts.forEach((item) => {
+      if (isEditMode) {
+        let isselected = false;
+        selectedlist.forEach((lob) => {
+          if (item.lobid === lob.value) {
+            isselected = true;
+          }
+        });
+        if (item.isActive || isselected) {
+          tempopts.push(item);
+        }
+      } else if (item.isActive) {
+        tempopts.push(item);
+      }
+    });
+    setlobopts(tempopts);
   };
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -137,6 +176,7 @@ function AddEditForm(props) {
         ...formfield,
         regionList: [],
         countryList: [],
+        lobList: [],
         userType: "Super Admin",
         isAccessBreachLog: false,
         isAccessDeleteLog: true,
@@ -156,6 +196,7 @@ function AddEditForm(props) {
         ...formfield,
         regionList: [],
         countryList: [],
+        lobList: [],
         userType: "",
         isAccessBreachLog: false,
         isGeneralUser: true,
@@ -166,6 +207,7 @@ function AddEditForm(props) {
         ...formfield,
         regionList: [],
         countryList: [],
+        lobList: [],
         userType: "",
         isAccessBreachLog: false,
         isGeneralUser: false,
@@ -178,15 +220,24 @@ function AddEditForm(props) {
     const selectedrole = frmuserType.filter(
       (item) => item.value === formfield.userType
     );
+    if (frmuserTypeObj[formfield.userType] !== "LoBAdmin") {
+      setformfield({ ...formfield, lobList: [] });
+    }
     if (frmuserTypeObj[formfield.userType] === "Global") {
       setformfield({ ...formfield, regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Region") {
       setformfield({ ...formfield, countryList: [] });
     }
+    if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
+      setformfield({ ...formfield, countryList: [], regionList: [] });
+    }
+    if (frmuserTypeObj[formfield.userType] === "Auditor") {
+      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false });
+    }
   }, [formfield.userType]);
   useEffect(() => {
-    mapCountryRegion();
+      mapCountryRegion();
   }, [formfield.regionList]);
 
   const mapCountryRegion = () => {
@@ -260,6 +311,19 @@ function AddEditForm(props) {
         frmuserTypeObj[formfield.userType] === "Country" &&
         !formfield.regionList.length &&
         !formfield.countryList.length
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
+        !formfield.regionList.length &&
+        !formfield.countryList.length
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "LoBAdmin" &&
+        !formfield.lobList.length
       ) {
         return;
       }
@@ -354,21 +418,25 @@ function AddEditForm(props) {
                   selectopts={accessBreachLogOpts}
                   isdisabled={isdisabled}
                 />
-                <FrmCheckbox
-                  title={"Can Delete Log"}
-                  name={"isAccessDeleteLog"}
-                  value={formfield.isAccessDeleteLog}
-                  handleChange={handleChange}
-                  isRequired={false}
-                  validationmsg={"Mandatory field"}
-                  issubmitted={issubmitted}
-                  selectopts={accessBreachLogOpts}
-                  isdisabled={
-                    isdisabled ||
-                    frmuserTypeObj[formfield.userType] === "Global" ||
-                    frmuserTypeObj[formfield.userType] === "Region"
-                  }
-                />
+                {frmuserTypeObj[formfield.userType] !== "Auditor" ? (
+                  <FrmCheckbox
+                    title={"Can Delete Log"}
+                    name={"isAccessDeleteLog"}
+                    value={formfield.isAccessDeleteLog}
+                    handleChange={handleChange}
+                    isRequired={false}
+                    validationmsg={"Mandatory field"}
+                    issubmitted={issubmitted}
+                    selectopts={accessBreachLogOpts}
+                    isdisabled={
+                      isdisabled ||
+                      frmuserTypeObj[formfield.userType] === "Global" ||
+                      frmuserTypeObj[formfield.userType] === "Region"
+                    }
+                  />
+                ) : (
+                  ""
+                )}
               </div>
               <FrmRadio
                 title={"Special User"}
@@ -380,9 +448,11 @@ function AddEditForm(props) {
                 issubmitted={issubmitted}
                 selectopts={frmuserType}
                 isdisabled={isdisabled || formfield.isGeneralUser}
+                isSidebySide={true}
               />
               {frmuserTypeObj[formfield.userType] === "Region" ||
-              frmuserTypeObj[formfield.userType] === "Country" ? (
+              frmuserTypeObj[formfield.userType] === "Country" ||
+              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
                 <FrmMultiselect
                   title={"Region"}
                   name={"regionList"}
@@ -392,11 +462,13 @@ function AddEditForm(props) {
                   validationmsg={"Mandatory field"}
                   issubmitted={issubmitted}
                   selectopts={regionopts}
+                  isAllOptNotRequired={true}
                 />
               ) : (
                 ""
               )}
-              {frmuserTypeObj[formfield.userType] === "Country" ? (
+              {frmuserTypeObj[formfield.userType] === "Country" ||
+              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}
@@ -407,6 +479,39 @@ function AddEditForm(props) {
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
+                    isAllOptNotRequired={true}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+              {/* {frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+                <div onClick={handleCountryClick}>
+                  <FrmMultiselect
+                    title={"Country"}
+                    name={"countryList"}
+                    value={formfield.countryList ? formfield.countryList : []}
+                    handleChange={handleMultiSelectChange}
+                    isRequired={true}
+                    validationmsg={"Mandatory field"}
+                    issubmitted={issubmitted}
+                    selectopts={allCountryOpts}
+                  />
+                </div>
+              ) : (
+                ""
+              )} */}
+              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ? (
+                <div onClick={handleCountryClick}>
+                  <FrmMultiselect
+                    title={"LoB"}
+                    name={"lobList"}
+                    value={formfield.lobList ? formfield.lobList : []}
+                    handleChange={handleMultiSelectChange}
+                    isRequired={true}
+                    validationmsg={"Mandatory field"}
+                    issubmitted={issubmitted}
+                    selectopts={lobopts}
                   />
                 </div>
               ) : (

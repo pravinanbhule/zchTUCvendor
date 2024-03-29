@@ -7,6 +7,7 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import ExportToExcel from "./exporttoexcel/ExportToExcel";
 import { ExportCSV } from "./exporttoexcel/ExportCSV";
 import ExportList from "./exportlist/ExportList";
+import { handlePermission } from "../../permissions/Permission";
 function PaginationData(props) {
   const {
     column,
@@ -106,6 +107,20 @@ function PaginationData(props) {
     setMasterdataActiveState(state);
   };
 
+  const [isAddActive, setIsAddActive] = useState(true)
+
+  useEffect(()=>{
+    const resonse = handlePermission(window.location.pathname.slice(1), "isAdd")
+    setIsAddActive(resonse)
+  },[])
+
+  const handleAddBtnClick = () =>{
+    if (isAddActive) {
+      showAddPopup() 
+    }
+  }
+
+
   const handleDownloadButtonClick = () =>{
     handleDownload()
   }
@@ -199,8 +214,10 @@ function PaginationData(props) {
                     </div>
                   )}
                   <div
-                    className="btn-blue plus-icon"
-                    onClick={() => showAddPopup()}
+                    className={`btn-blue  ${
+                      isAddActive ? "" : "disable"
+                    } plus-icon`}
+                    onClick={() => handleAddBtnClick()}
                   >
                     {buttonTitle}
                   </div>

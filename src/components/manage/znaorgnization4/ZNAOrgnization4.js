@@ -8,6 +8,7 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, dynamicSort } from "../../../helpers";
 import AddEditForm from "./AddEditForm";
+import { handlePermission } from "../../../permissions/Permission";
 function ZNAOrgnization4({ ...props }) {
   const { znaorgnization4State } = props.state;
   const {
@@ -76,6 +77,7 @@ function ZNAOrgnization4({ ...props }) {
     {
       dataField: "checkbox",
       text: "",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <FrmActiveCheckbox
@@ -94,6 +96,7 @@ function ZNAOrgnization4({ ...props }) {
     {
       dataField: "editaction",
       text: "Edit",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
@@ -114,6 +117,7 @@ function ZNAOrgnization4({ ...props }) {
     {
       dataField: "deleteaction",
       text: "Delete",
+      hidden: handlePermission(window.location.pathname.slice(1), "isDelete") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div

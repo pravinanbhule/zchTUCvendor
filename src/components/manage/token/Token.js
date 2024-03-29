@@ -7,6 +7,7 @@ import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import CopyItem from "../../common-components/copyitem/CopyItem";
+import { handlePermission } from "../../../permissions/Permission";
 function Token({ ...props }) {
   const { tokenState } = props.state;
   const {
@@ -39,6 +40,7 @@ function Token({ ...props }) {
     {
       dataField: "deleteaction",
       text: "Delete",
+      hidden: handlePermission(window.location.pathname.slice(1), "isDelete") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div

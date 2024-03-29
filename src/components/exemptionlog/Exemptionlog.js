@@ -43,6 +43,7 @@ import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
 import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
+import { handlePermission } from "../../permissions/Permission";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -709,6 +710,7 @@ function Exemptionlog({ ...props }) {
       ? {
           dataField: "editaction",
           text: "Edit",
+          hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
           formatter: (cell, row, rowIndex, formatExtraData) => {
             let isedit = fnIsEditAccess(row);
             /* let loggeduser = userProfile.emailAddress;
@@ -760,6 +762,7 @@ function Exemptionlog({ ...props }) {
       : {
           dataField: "editaction",
           text: "Restore",
+          hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
           formatter: (cell, row, rowIndex, formatExtraData) => {
             return (
               <div
@@ -1126,6 +1129,7 @@ function Exemptionlog({ ...props }) {
       ? {
           dataField: "editaction",
           text: "Edit",
+          hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
           formatter: (cell, row, rowIndex, formatExtraData) => {
             let isedit = fnIsEditAccess(row);
 
@@ -1151,6 +1155,7 @@ function Exemptionlog({ ...props }) {
       : {
           dataField: "editaction",
           text: "Restore",
+          hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
           formatter: (cell, row, rowIndex, formatExtraData) => {
             return (
               <div
