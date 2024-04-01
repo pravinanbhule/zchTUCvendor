@@ -119,6 +119,78 @@ export const filterfieldsmapping = {
       minDate: "selfilter.createdFromDate",
     },
   },
+  Currency: {
+    componenttype: "FrmSelect",
+    options: "commonfilterOpts.currencyOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
+  Branch: {
+    componenttype: "FrmSelect",
+    options: "commonfilterOpts.branchOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
+  DurationofApproval: {
+    componenttype: "FrmSelect",
+    options: "commonfilterOpts.durationofApprovalOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
+  NewRenewal: {
+    componenttype: "FrmSelect",
+    options: "commonfilterOpts.newRenewalOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
+  Limit: {
+    componenttype: "FrmInput",
+    options: "",
+    eventhandler: "onSearchFilterInput",
+    filtertype: "Incountry",
+  },
+  ZurichShare: {
+    componenttype: "FrmInput",
+    options: "",
+    eventhandler: "onSearchFilterInput",
+    filtertype: "Incountry",
+  },
+  AccountNumber: {
+    componenttype: "FrmInput",
+    options: "",
+    eventhandler: "onSearchFilterInput",
+    filtertype: "Incountry",
+  },
+  CustomerSegment: {
+    componenttype: "FrmSelect",
+    options: "commonfilterOpts.customerSegmentOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
+  PolicyPeriod: {
+    componenttype: "FrmInput",
+    options: "",
+    eventhandler: "onSearchFilterInput",
+    filtertype: "Incountry",
+  },
+  ConditionApplicableTo: {
+    componenttype: "FrmSelect",
+    options: "commonfilterOpts.conditionApplicableToOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
+  GWP: {
+    componenttype: "FrmInput",
+    options: "",
+    eventhandler: "onSearchFilterInput",
+    filtertype: "Incountry",
+  },
+  SUBLOBID: {
+    componenttype: "FrmSelect",
+    options: "sublobFilterOpts",
+    eventhandler: "onSearchFilterSelect",
+    filtertype: "Incountry",
+  },
 };
 export const versionHistoryexportFieldTitles = {
   EntryNumber: "Entry Number",
