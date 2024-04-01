@@ -8,6 +8,10 @@ import {
   lobActions,
   commonActions,
   dashboardActions,
+  currencyActions,
+  branchActions,
+  sublobActions,
+  segmentActions,
 } from "../../actions";
 import Loading from "../common-components/Loading";
 import useSetNavMenu from "../../customhooks/useSetNavMenu";
@@ -55,7 +59,12 @@ let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
 function Rfelog({ ...props }) {
-  const { rfelogState, regionState, countryState, lobState, dashboardState } =
+  const { 
+    rfelogState, regionState, 
+    countryState, lobState, 
+    dashboardState, currencyState,
+    branchState, sublobState,
+    segmentState } =
     props.state;
   const {
     getAll,
@@ -81,6 +90,10 @@ function Rfelog({ ...props }) {
     getDataVersion,
     clearDashboardClick,
     exportReportLogs,
+    getAllCurrency,
+    getAllBranch,
+    getAllSublob,
+    getAllSegment,
   } = props;
   const [logstate, setlogstate] = useState({
     loading: true,
@@ -157,15 +170,25 @@ function Rfelog({ ...props }) {
     creatorFilterOpts: [],
     underwriterGrantingEmpowermentOpts: [],
     views: [{ label: "All", value: "gn" }],
+    currencyOpts: [],
+    branchOpts: [],
+    durationofApprovalOpts: [],
+    newRenewalOpts: [],
+    customerSegmentOpts: [],
+    conditionApplicableToOpts: [],
+
   });
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
+  const [isInCountryfilterApplied, setisInCountryfilterApplied] = useState(false);
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
   const [regionOptsAll, setregionOptsAll] = useState([]);
   const [lobFilterOpts, setlobFilterOpts] = useState([]);
+  const [sublobFilterOpts, setsublobFilterOpts] = useState([]);
+  const [allsublobFilterOpts, setallsublobFilterOpts] = useState([]);
   const [accountOpts, setaccountOpts] = useState({});
 
   const [selfilter, setselfilter] = useState(intialFilterState);
@@ -173,6 +196,7 @@ function Rfelog({ ...props }) {
   const [filterdomfields, setfilterdomfields] = useState({
     common: [],
     advance: [],
+    Incountry: []
   });
   const [filterfieldslist, setfilterfieldslist] = useState();
 
@@ -207,6 +231,21 @@ function Rfelog({ ...props }) {
       setselfilter({
         ...selfilter,
         underwriter: "",
+        [name]: value,
+      });
+    }
+    if (name === "LOBId") {
+      if (value === "") {
+        setsublobFilterOpts(allsublobFilterOpts);
+      } else{
+        let sublobopts = allsublobFilterOpts.filter(
+          (item) => item.lob === selfilter.LOBId
+        );
+        setsublobFilterOpts([...sublobopts]);
+      }
+      setselfilter({
+        ...selfilter,
+        SUBLOBID: "",
         [name]: value,
       });
     }
@@ -302,6 +341,7 @@ function Rfelog({ ...props }) {
       setisfilterApplied(true);
       setfilterbox(false);
       setisAdvfilterApplied(false);
+      setisInCountryfilterApplied(false)
       pageIndex = 1;
       loadAPIData();
     }
@@ -321,7 +361,7 @@ function Rfelog({ ...props }) {
   }, [isfilterApplied]);
 
   useEffect(() => {
-    let tempfields = { common: [], advance: [] };
+    let tempfields = { common: [], advance: [], Incountry: [] };
     filterfieldslist?.forEach((item) => {
       if (item.isActive) {
         let tempfilterobj = filterfieldsmapping[item.fieldName];
@@ -371,8 +411,10 @@ function Rfelog({ ...props }) {
           }
           if (tempfilterobj["filtertype"] === "common") {
             tempfields.common.push(tempobj);
-          } else {
+          } else if(tempfilterobj["filtertype"] === "advance") {
             tempfields.advance.push(tempobj);
+          } else if (tempfilterobj["filtertype"] === "Incountry") {
+            tempfields.Incountry.push(tempobj);
           }
         }
       }
@@ -886,6 +928,10 @@ function Rfelog({ ...props }) {
       totalLogCount = 0;
       getAllCountry();
       getAllRegion();
+      getAllCurrency();
+      getAllBranch();
+      getAllSublob();
+      getAllSegment({ logType: "rfelogs" });
       getAlllob({ isActive: true });
       loadCreatorUsers();
       loadUnderwriterUsers();
@@ -964,12 +1010,24 @@ function Rfelog({ ...props }) {
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
       }),
+      getLookupByType({ 
+        LookupType: "DurationofApproval" 
+      }),
+      getLookupByType({ 
+        LookupType: "RFELogNewRenewal" 
+      }),
+      getLookupByType({ 
+        LookupType: "ConditionApplicableTo" 
+      }),
     ]);
 
     let tempStatus = lookupvalues[0];
     let temporgnizationalalignment = lookupvalues[1];
     let temprfechz = lookupvalues[2];
     let temprfeempourment = lookupvalues[3];
+    let tempDurationOfApproval = lookupvalues[4];
+    let tempNewRenewal = lookupvalues[5];
+    let tempCondition = lookupvalues[6];
 
     let tempopts = [];
     tempStatus.forEach((item) => {
@@ -1014,16 +1072,53 @@ function Rfelog({ ...props }) {
     });
     temprfeempourment = [...tempopts];
     tempopts = [];
+    tempDurationOfApproval.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    tempDurationOfApproval = [...tempopts];
+    tempopts = [];
+    tempNewRenewal.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    tempNewRenewal = [...tempopts];
+    tempopts = [];
+    tempCondition.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    tempCondition = [...tempopts];
+    tempopts = [];
+
     tempStatus.sort(dynamicSort("label"));
     temporgnizationalalignment.sort(dynamicSort("label"));
     temprfechz.sort(dynamicSort("label"));
     temprfeempourment.sort(dynamicSort("label"));
+    tempDurationOfApproval.sort(dynamicSort("label"));
+    tempNewRenewal.sort(dynamicSort("label"));
+    tempCondition.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
       statusFilterOpts: [selectInitiVal, ...tempStatus],
       organizationalAlignmentOpts: [...temporgnizationalalignment],
       requestForEmpowermentReasonOpts: [...temprfeempourment],
       chzOpts: [...temprfechz],
+      durationofApprovalOpts: [...tempDurationOfApproval],
+      newRenewalOpts: [...tempNewRenewal],
+      conditionApplicableToOpts: [...tempCondition]
     }));
     const tempfilterfields = await getLogFields({
       IncountryFlag: "",
@@ -1196,6 +1291,85 @@ function Rfelog({ ...props }) {
       setaccountOpts({ ...tempAccObj });
     }
   }, [rfelogState.accounts]);
+
+  useEffect(() => {
+    let tempopts = [];
+    currencyState.currencyItems.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          ...item,
+          label: item.currencyName,
+          value: item.currencyID,
+        });
+      }
+    });
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      currencyOpts: [...tempopts],
+    }));
+  }, [currencyState.currencyItems]);
+
+  useEffect(() => {
+    if (branchState.branchItems.length) {
+      let tempopts = [];
+      branchState.branchItems.forEach((item) => {
+        if (item.isActive) {
+          tempopts.push({
+            ...item,
+            label: item.branchName,
+            value: item.branchId,
+          });
+        }
+      });
+      tempopts.sort(dynamicSort("label"));
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        branchOpts: [...tempopts],
+      }));
+    }
+  }, [branchState.branchItems]);
+
+  useEffect(() => {
+    let tempopts = [];
+    segmentState.segmentItems.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          ...item,
+          label: item.segmentName,
+          value: item.segmentID,
+          country: item.countryList,
+        });
+      }
+    });
+    tempopts.sort(dynamicSort("label"));
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      customerSegmentOpts: [...tempopts],
+    }));
+  }, [segmentState.segmentItems]);
+  
+  useEffect(() => {
+    let tempopts = [];
+    sublobState.sublobitems.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          ...item,
+          label: item.subLOBName,
+          value: item.subLOBID,
+          lob: item.lobid,
+        });
+      }
+    });
+    tempopts.sort(dynamicSort("label"));
+    setallsublobFilterOpts(tempopts)
+    setsublobFilterOpts(tempopts);
+    if (selfilter.LOBId) {
+      let sublobopts = tempopts.filter(
+        (item) => item.lob === selfilter.LOBId
+      );
+      setsublobFilterOpts([...sublobopts]);
+    }
+  }, [sublobState.sublobitems]);
 
   const fnsetPaginationData = (data) => {
     //if (data.length) {
@@ -1502,9 +1676,13 @@ function Rfelog({ ...props }) {
   const handleFilterBoxState = () => {
     setfilterbox(!filterbox);
     setisAdvfilterApplied(false);
+    setisInCountryfilterApplied(false)
   };
   const handlesetAdvSearch = (e) => {
     setisAdvfilterApplied(!isAdvfilterApplied);
+  };
+  const handlesetInCountrySearch = (e) => {
+    setisInCountryfilterApplied(!isInCountryfilterApplied);
   };
   //version history
   const [showVersionHistory, setshowVersionHistory] = useState(false);
@@ -2086,6 +2264,39 @@ function Rfelog({ ...props }) {
                   ) : (
                     ""
                   )}
+                  <div className="advance-filter-btn-container mt-5">
+                    <div
+                      className={`advance-filter-btn ${
+                        isInCountryfilterApplied ? "selected" : "normal"
+                      }`}
+                      onClick={handlesetInCountrySearch}
+                    >
+                      Incountry Search
+                    </div>
+                  </div>
+                  {isInCountryfilterApplied ? (
+                    <div className="filter-advance">
+                      <div className="filter-container container">
+                        <div className="row">
+                          {filterdomfields.Incountry.length
+                            ? filterdomfields.Incountry.map((item) =>
+                                item.componenttype === "FrmDatePicker" ? (
+                                  Filterdomobj(item)
+                                ) : (
+                                  <div
+                                    className={`frm-filter col-md-${item.colspan}`}
+                                  >
+                                    {Filterdomobj(item)}
+                                  </div>
+                                )
+                              )
+                            : "Loading..."}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                   <div className="btn-container">
                     <div
                       className={`btn-blue ${
@@ -2253,6 +2464,10 @@ const mapActions = {
   getLogCount: commonActions.getLogCount,
   getLogFields: commonActions.getLogFields,
   clearDashboardClick: dashboardActions.clearDashboardClick,
+  getAllCurrency: currencyActions.getAllCurrency,
+  getAllBranch: branchActions.getAllBranch,
+  getAllSublob: sublobActions.getAllSublob,
+  getAllSegment: segmentActions.getAllSegment,
 };
 
 export default connect(mapStateToProp, mapActions)(Rfelog);
