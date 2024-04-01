@@ -421,9 +421,11 @@ button:focus {
   display: inline-block;
 }
 .advance-filter-btn.normal{
+  background-position-x: 97%;
   background-image: url("../assets/Expand.png");
 }
 .advance-filter-btn.selected {
+  background-position-x: 97%;
   background-image: url("../assets/Colapse.png");
 }
 .advance-filter-btn:hover{
