@@ -9,45 +9,50 @@ import FrmInputSearch from "../../common-components/frmpeoplepicker/FrmInputSear
 import FrmDatePicker from "../../common-components/frmdatepicker/FrmDatePicker";
 import FrmInputAutocomplete from "../../common-components/frminputautocomplete/FrmInputAutocomplete";
 import moment from "moment";
-import { breachlogActions, commonActions, countryActions, dashboardActions, lobActions, lookupActions, officeActions, regionActions, segmentActions, sublobActions, userActions, znaorgnization1Actions, znaorgnization2Actions, znaorgnization3Actions } from "../../../actions";
+import { breachlogActions, commonActions, countryActions, dashboardActions, lobActions, lobchapterActions, lookupActions, officeActions, regionActions, segmentActions, sublobActions, userActions, znaorgnization1Actions, znaorgnization2Actions, znaorgnization3Actions } from "../../../actions";
 import { dynamicSort, isNotEmptyValue } from "../../../helpers";
 import { REGION_EMEA, REGION_ZNA } from "../../../constants";
 
 function ExemptionAddEditForm(props) {
 
     const {
-        breachlogState,
         countryState,
         regionState,
-        segmentState,
-        lobState,
-        sublobState,
-        dashboardState,
-        officeState,
-        znaorgnization1State,
-        znaorgnization2State,
-        znaorgnization3State,
+        lobchapterState
     } = props.state;
 
     const {
         hideAddPopup,
-        isReadMode,
+        // isReadMode,
         getAllCountry,
         getAllRegion,
-        getAlllob,
-        getAllSublob,
-        getAllSegment,
         getLookupByType,
-        clearDashboardClick,
-        getAllOffice,
-        getallZNASegments,
-        getallZNASBU,
-        getallZNAMarketBasket,
         getLogUsers,
-        getActionResponsible,
+        getAlllobChapter,
+        getAllEntryNumbers,
+        userProfile,
+        getExemptionUserView
     } = props;
 
-    const [formfield, setformfield] = useState({})
+    const [formfield, setformfield] = useState({
+        isPrivate: true,
+        entryNumber: "",
+        countryId: [],
+        regionId: [],
+        LOBChapter: "",
+        section: "",
+        role: "",
+        status: "",
+        typeOfExemption: "",
+        individualGrantedEmpowerment: "",
+        approver: "",
+        zugChapterVersion: "",
+        empowermentRequestedBy: "",
+        createdFromDate: "",
+        createdToDate: "",
+        ciGuidlineId: "",
+        PC_URPMExemptionRequired: "",
+    })
     const [issubmitted, setissubmitted] = useState(false);
     const selectInitiVal = {
         label: "Select",
@@ -124,6 +129,15 @@ function ExemptionAddEditForm(props) {
     ])
     const [regionFilterOpts, setregionFilterOpts] = useState([]);
     const [regionOptsAll, setregionOptsAll] = useState([]);
+    const [isReadMode, setIsReadmode] = useState(false)
+
+    useEffect(async()=>{
+        const response = await getExemptionUserView();
+        setformfield(response[0])
+        setIsReadmode(false)
+        console.log("response??", response);
+    },[])
+    
     useEffect(() => {
         let selectOpts = [];
         regionState.regionItems.forEach((item) => {
@@ -139,7 +153,6 @@ function ExemptionAddEditForm(props) {
     }, [regionState.regionItems]);
 
     const [countryFilterOpts, setcountryFilterOpts] = useState([]);
-    const [countrymapping, setcountrymapping] = useState([]);
 
     useEffect(() => {
         let selectOpts = [];
@@ -150,7 +163,7 @@ function ExemptionAddEditForm(props) {
             selectOpts.push({
                 ...item,
                 label: item.countryName.trim(),
-                value: item.countryID,
+                value: item.countryId,
                 regionId: item.regionID,
             });
 
@@ -160,7 +173,7 @@ function ExemptionAddEditForm(props) {
                     country: [
                         {
                             label: item.countryName,
-                            value: item.countryID,
+                            value: item.countryId,
                         },
                     ],
                 });
@@ -169,7 +182,7 @@ function ExemptionAddEditForm(props) {
                     if (countryitem.region === item.regionID) {
                         countryitem.country.push({
                             label: item.countryName,
-                            value: item.countryID,
+                            value: item.countryId,
                         });
                     }
                 });
@@ -177,25 +190,21 @@ function ExemptionAddEditForm(props) {
             tempRegionListObj[item.regionID] = item.countryName;
         });
         selectOpts.sort(dynamicSort("label"));
-        setcountrymapping([...tempCountryMapping]);
         setcountryFilterOpts([...selectOpts]);
     }, [countryState.countryItems]);
 
+    useEffect(() => {
+        let selectOpts = [];
+        lobchapterState.lobChapterItems.forEach((item) => {
+            selectOpts.push({
+                label: item.lobChapterName.trim(),
+                value: item.lobChapterID,
+            });
+        });
+        selectOpts.sort(dynamicSort("label"));
+        setlobChapterFilterOpts([selectInitiVal, ...selectOpts]);
+    }, [lobchapterState.lobChapterItems]);
 
-    const [statusopts, seStatusopts] = useState([
-        {
-            label: "Closed",
-            value: "closed"
-        },
-        {
-            label: "Pending",
-            value: "pending"
-        },
-        {
-            label: "Reopen",
-            value: "reopen"
-        }
-    ])
 
     useEffect(() => {
         fnOnInit();
@@ -204,136 +213,148 @@ function ExemptionAddEditForm(props) {
     const fnOnInit = async () => {
         getAllCountry();
         getAllRegion();
-        getAllSegment({ isActive: true });
-        getAlllob({ isActive: true });
-        getAllSublob({ isActive: true });
-        getAllOffice({ isActive: true });
-        getallZNASegments();
-        getallZNASBU();
-        getallZNAMarketBasket();
-        loadCreatorUsers();
-        loadActionResponsibleUser();
-        loadUWRInvolvedUser();
+        getAlllobChapter();
+        loadIndividualGrantedEmpowermentUsers();
+        loadApproverUsers();
+        fnOnLogSpecData();
+        let tempopts = [];
         const lookupvalues = await Promise.all([
-            getLookupByType({ LookupType: "BreachClassification" }),
-            getLookupByType({ LookupType: "BreachNature" }),
-            getLookupByType({ LookupType: "BreachStatus" }),
-            getLookupByType({ LookupType: "BreachType" }),
-            getLookupByType({ LookupType: "BreachRootCause" }),
-            getLookupByType({ LookupType: "BreachFinancialRange" }),
-            getLookupByType({ LookupType: "BreachDetection" }),
+            getLookupByType({
+                LookupType: "EXMPZUGStatus",
+            }),
+            getLookupByType({
+                LookupType: "EXMPURPMSection",
+            }),
+            getLookupByType({
+                LookupType: "EXMPTypeOfExemption",
+            }),
         ]);
-        let tempClassification = lookupvalues[0];
-        let tempNatureOfBreach = lookupvalues[1];
-        let tempStatus = lookupvalues[2];
-        let tempTypeOfBreach = lookupvalues[3];
-        let tempRootCauseBreach = lookupvalues[4];
-        let tempRangeFinImpact = lookupvalues[5];
-        let tempHowDetected = lookupvalues[6];
-
-        tempClassification = tempClassification.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-        tempNatureOfBreach = tempNatureOfBreach.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-        tempStatus = tempStatus.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-        tempTypeOfBreach = tempTypeOfBreach.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-        tempRootCauseBreach = tempRootCauseBreach.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-        tempRangeFinImpact = tempRangeFinImpact.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-        tempHowDetected = tempHowDetected.map((item) => ({
-            label: item.lookUpValue,
-            value: item.lookupID,
-        }));
-
-        //tempClassification.sort(dynamicSort("label"));
-        tempNatureOfBreach.sort(dynamicSort("label"));
-        tempStatus.sort(dynamicSort("label"));
-        tempTypeOfBreach.sort(dynamicSort("label"));
-        tempRootCauseBreach.sort(dynamicSort("label"));
-        tempRangeFinImpact.sort(dynamicSort("label"));
-        tempHowDetected.sort(dynamicSort("label"));
+        let tempZUGStatus = lookupvalues[0];
+        let tempURPMSection = lookupvalues[1];
+        let tempTypeOfExemption = lookupvalues[2];
+        tempZUGStatus.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        tempZUGStatus = [...tempopts];
+        tempopts = [];
+        tempURPMSection.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        tempURPMSection = [...tempopts];
+        tempopts = [];
+        tempTypeOfExemption.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        tempTypeOfExemption = [...tempopts];
+        tempZUGStatus.sort(dynamicSort("label"));
+        //tempURPMStatus.sort(dynamicSort("label"));
+        tempURPMSection.sort(dynamicSort("label"));
+        tempTypeOfExemption.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            classificationFilterOpts: [selectInitiVal, ...tempClassification],
-            natureOfBreachFilterOpts: [selectInitiVal, ...tempNatureOfBreach],
-            statusFilterOpts: [selectInitiVal, ...tempStatus],
-            typeOfBreachOpts: [selectInitiVal, ...tempTypeOfBreach],
-            rootCauseBreachOpts: [selectInitiVal, ...tempRootCauseBreach],
-            rangeOfFinancialImpactOpts: [selectInitiVal, ...tempRangeFinImpact],
-            howDetectedOpts: [selectInitiVal, ...tempHowDetected],
+            ZUGstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
+            typeOfExemptionOpts: [selectInitiVal, ...tempTypeOfExemption],
         }));
-        if (dashboardState.status) {
-            setformfield((prevfilter) => ({
-                ...prevfilter,
-                breachStatus: dashboardState.status,
-            }));
-            clearDashboardClick();
+    };
+
+    const loadIndividualGrantedEmpowermentUsers = async () => {
+        let logType = "zug";
+        let tempIndividualGrantedEmpowerment = await getLogUsers({
+            LogType: logType,
+            FieldName: "IndividualGrantedEmpowerment",
+            userId: userProfile.userId,
+        });
+        tempIndividualGrantedEmpowerment = tempIndividualGrantedEmpowerment.map(
+            (item) => ({
+                label: item.userName,
+                value: item.emailAddress,
+            })
+        );
+        tempIndividualGrantedEmpowerment = tempIndividualGrantedEmpowerment.map(
+            (item) => item.label
+        );
+        tempIndividualGrantedEmpowerment.sort();
+        console.log("tempIndividualGrantedEmpowerment>>", [...tempIndividualGrantedEmpowerment]);
+        setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            individualGrantedEmpowermentOpts: [...tempIndividualGrantedEmpowerment],
+        }));
+    };
+    const loadApproverUsers = async () => {
+        let logType = "zug";
+        let tempApprovers = await getLogUsers({
+            LogType: logType,
+            FieldName: "Approver",
+            userId: userProfile.userId,
+        });
+        tempApprovers = tempApprovers.map((item) => ({
+            label: item.userName,
+            value: item.emailAddress,
+        }));
+        tempApprovers = tempApprovers.map((item) => item.label);
+        tempApprovers.sort();
+        setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            approverOpts: [...tempApprovers],
+        }));
+    };
+    const fnOnLogSpecData = async () => {
+        let logType = "zug";
+        loadApproverUsers();
+        loadIndividualGrantedEmpowermentUsers();
+        let tempEmpowermentRequestedBy = await getLogUsers({
+            LogType: logType,
+            FieldName: "EmpowermentRequestedBy",
+            userId: userProfile.userId,
+        });
+
+        tempEmpowermentRequestedBy = tempEmpowermentRequestedBy.map((item) => ({
+            label: item.userName,
+            value: item.emailAddress,
+        }));
+
+        tempEmpowermentRequestedBy = tempEmpowermentRequestedBy.map(
+            (item) => item.label
+        );
+        tempEmpowermentRequestedBy.sort();
+        setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            empowermentRequestedByOpts: [...tempEmpowermentRequestedBy],
+        }));
+    };
+    useEffect(async() => {
+        let entityNumberArr = [];
+        let reqparam = {
+          logType: "zug",
+        };
+        reqparam = { ...reqparam, isSubmit: true };
+        let tempEntries = await getAllEntryNumbers(reqparam);
+        if (tempEntries.length) {
+          tempEntries.forEach((item) => {
+            entityNumberArr.push(item.entryNumber);
+          });
+          entityNumberArr.sort();
+          setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            entryNumberOpts: [...entityNumberArr],
+          }));
         }
-    };
-
-    const loadCreatorUsers = async () => {
-        let tempCreator = await getLogUsers({
-            LogType: "breachlogs",
-            FieldName: "CreatedBy",
-        });
-        tempCreator = tempCreator?.map((item) => ({
-            label: item.userName,
-            value: item.emailAddress,
-        }));
-        tempCreator.sort(dynamicSort("label"));
-        tempCreator = tempCreator.map((item) => item.label);
-        setcommonfilterOpts((prevstate) => ({
-            ...prevstate,
-            creatorFilterOpts: [...tempCreator],
-        }));
-    };
-
-    const loadActionResponsibleUser = async () => {
-        let tempActionResponsible = await getActionResponsible();
-        tempActionResponsible = tempActionResponsible.map((item) => ({
-            label: item.userName,
-            value: item.emailAddress,
-        }));
-        tempActionResponsible.sort(dynamicSort("label"));
-        //added below line to change filter type to input search
-        tempActionResponsible = tempActionResponsible.map((item) => item.label);
-        setcommonfilterOpts((prevstate) => ({
-            ...prevstate,
-            actionResponsibleFilterOpts: [...tempActionResponsible],
-        }));
-    };
-
-    const loadUWRInvolvedUser = async () => {
-        let tempuwrInvolved = await getLogUsers({
-            LogType: "breachlogs",
-            FieldName: "UWRInvolved",
-        });
-        tempuwrInvolved = tempuwrInvolved?.map((item) => ({
-            label: item.userName,
-            value: item.emailAddress,
-        }));
-        tempuwrInvolved.sort(dynamicSort("label"));
-        tempuwrInvolved = tempuwrInvolved.map((item) => item.label);
-        setcommonfilterOpts((prevstate) => ({
-            ...prevstate,
-            uwrInvolvedOpts: [...tempuwrInvolved],
-        }));
-    };
+      }, []);
 
     const hidePopup = () => {
         hideAddPopup();
@@ -404,48 +425,6 @@ function ExemptionAddEditForm(props) {
         }
     };
 
-    useEffect(() => {
-        if (formfield.regionId !== REGION_ZNA) {
-            setformfield((prevstate) => ({
-                ...prevstate,
-                UWRInvolvedName: "",
-                policyName: "",
-                policyNumber: "",
-                turNumber: "",
-                office: "",
-                dateIdentifiedTo: "",
-                dateIdentifiedFrom: "",
-                znaSegmentId: "",
-                znasbuId: "",
-                marketBasketId: "",
-            }));
-        } else if (formfield.customersegment && formfield.regionId === REGION_ZNA) {
-            setformfield((prevstate) => ({
-                ...prevstate,
-                customersegment: "",
-            }));
-        }
-        if (
-            isNotEmptyValue(formfield.nearMisses) &&
-            formfield.regionId !== REGION_EMEA
-        ) {
-            setformfield((prevstate) => ({
-                ...prevstate,
-                nearMisses: "",
-            }));
-        }
-    }, [formfield.regionId]);
-
-    const handleApproverChange = (name, value) => {
-        setformfield({ ...formfield, [name]: value });
-    };
-
-    const handleInputSearchChange = (e) => {
-        const searchval = e.target.value ? e.target.value : "#$%";
-        console.log("searchval", searchval);
-        // getAllUsers({ UserName: searchval });
-    };
-
     const handleDateSelectChange = (name, value) => {
         let dateval = value ? moment(value).format("YYYY-MM-DD") : "";
         setformfield({
@@ -503,14 +482,14 @@ function ExemptionAddEditForm(props) {
     return (
         <div className="addedit-logs-container">
             <div className="addedit-header-container">
-                <div className="addedit-header-title">New View for Breach Log</div>
+                <div className="addedit-header-title">New View for Exemption Log</div>
                 <div className="header-btn-container">
                     <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
                         Back
                     </div>
                 </div>
             </div>
-            <div className="popup-formitems logs-form">
+            <div className="exemption-popup-formitems logs-form">
                 <form onSubmit={handleSubmit} id="myForm">
                     <div className="row">
                         <div className="col-md-3">
@@ -527,8 +506,8 @@ function ExemptionAddEditForm(props) {
                         <div className="col-md-3">
                             <FrmToggleSwitch
                                 title={''}
-                                name={"switch"}
-                                value={formfield.switch}
+                                name={"isPrivate"}
+                                value={formfield.isPrivate}
                                 handleChange={handleSelectChange}
                                 isRequired={false}
                                 issubmitted={issubmitted}
@@ -560,7 +539,7 @@ function ExemptionAddEditForm(props) {
                             })}
                         </div>
                     </div>
-                    <div className="filter-container container">
+                    <div className="">
                         <div className="row">
                             <div className="col-md-3">
                                 <FrmInputAutocomplete
@@ -570,6 +549,7 @@ function ExemptionAddEditForm(props) {
                                     handleChange={onSearchFilterInputAutocomplete}
                                     value={formfield.entryNumber}
                                     options={commonfilterOpts.entryNumberOpts}
+                                    isReadMode={isReadMode}
                                 />
                             </div>
                             <div className="col-md-3">
@@ -579,15 +559,16 @@ function ExemptionAddEditForm(props) {
                                     selectopts={regionFilterOpts}
                                     handleChange={handleMultiSelectChange}
                                     value={formfield.regionId || []}
+                                    isReadMode={isReadMode}
                                 />
                             </div>
                             <div className="col-md-3">
                                 <FrmMultiselect
                                     title={"Country"}
-                                    name={"countryID"}
+                                    name={"countryId"}
                                     selectopts={countryFilterOpts}
                                     handleChange={handleMultiSelectChange}
-                                    value={formfield.countryID || []}
+                                    value={formfield.countryId || []}
                                     isAllOptNotRequired={true}
                                 />
                             </div>
@@ -600,17 +581,6 @@ function ExemptionAddEditForm(props) {
                                     value={formfield.LOBChapter}
                                 />
                             </div>
-                            <div className="col-md-3">
-                                <FrmInput
-                                    title={"Section"}
-                                    name={"section"}
-                                    type={"input"}
-                                    handleChange={onSearchFilterInput}
-                                    value={formfield.section}
-                                />
-                            </div>
-                        </div>
-                        <div className="row">
                             <div className="col-md-3">
                                 <FrmSelect
                                     title={"Type of Exemption"}
@@ -651,8 +621,6 @@ function ExemptionAddEditForm(props) {
                                     value={formfield.role}
                                 />
                             </div>
-                        </div>
-                        <div className="row">
                             <div className="col-md-3">
                                 <FrmSelect
                                     title={"Status"}
@@ -666,13 +634,13 @@ function ExemptionAddEditForm(props) {
                     </div>
                     <div className="advance-filter-btn-container">
                         <div
-                            className={`advance-filter-btn selected`}
+                            className={`advance-filter-btn`}
                         >
                             Advance Search
                         </div>
                     </div>
                     <div className="filter-advance">
-                        <div className="filter-container container">
+                        <div className="">
                             <div className="row">
                                 <div className="col-md-3">
                                     <FrmInput
@@ -721,63 +689,47 @@ function ExemptionAddEditForm(props) {
                                         />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="row">
-                                <>
-                                    <div className="col-md-3">
-                                        <FrmInput
-                                            title={"Previous Exemption ID"}
-                                            name={"ciGuidlineId"}
-                                            type={"input"}
-                                            handleChange={onSearchFilterInput}
-                                            value={formfield.ciGuidlineId}
-                                        />
-                                    </div>
-                                    <div className="col-md-3">
-                                        <FrmSelect
-                                            title={"P&C URPM exemption required"}
-                                            name={"PC_URPMExemptionRequired"}
-                                            selectopts={yesnoopts}
-                                            handleChange={onSearchFilterSelect}
-                                            value={formfield.PC_URPMExemptionRequired}
-                                        />
-                                    </div>
-                                </>
+                                <div className="col-md-3">
+                                    <FrmInput
+                                        title={"Previous Exemption ID"}
+                                        name={"ciGuidlineId"}
+                                        type={"input"}
+                                        handleChange={onSearchFilterInput}
+                                        value={formfield.ciGuidlineId}
+                                    />
+                                </div>
+                                <div className="col-md-3 frm-filter">
+                                    <FrmSelect
+                                        title={"P&C URPM exemption required"}
+                                        name={"PC_URPMExemptionRequired"}
+                                        selectopts={yesnoopts}
+                                        handleChange={onSearchFilterSelect}
+                                        value={formfield.PC_URPMExemptionRequired}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            {!isReadMode ? (
-                <div className="popup-footer-container">
-                    <div className="btn-container">
-                        {/* {!isEditMode ? (
-              <>
-                <button
-                  className={`btn-blue ${isfrmdisabled && "disable"}`}
-                  onClick={handleSaveLog}
-                >
-                  Save
-                </button>
-              </>
-            ) : (
-              ""
-            )} */}
-                        <button
-                            className={`btn-blue`}
-                            type="submit"
-                            form="myForm"
-                        >
-                            Submit
-                        </button>
-                        <div className="btn-blue" onClick={() => hidePopup()}>
-                            Cancel
+                {!isReadMode ? (
+                    <div className="popup-footer-container">
+                        <div className="btn-container">
+                            <button
+                                className={`btn-blue`}
+                                type="submit"
+                                form="myForm"
+                            >
+                                Submit
+                            </button>
+                            <div className="btn-blue" onClick={() => hidePopup()}>
+                                Cancel
+                            </div>
                         </div>
                     </div>
-                </div>
-            ) : (
-                ""
-            )}
+                ) : (
+                    ""
+                )}
         </div>
     );
 }
@@ -790,18 +742,11 @@ const mapActions = {
     getAllUsers: userActions.getAllUsers,
     getAllCountry: countryActions.getAllCountry,
     getAllRegion: regionActions.getAllRegions,
-    getAlllob: lobActions.getAlllob,
-    getAllSublob: sublobActions.getAllSublob,
-    getAllSegment: segmentActions.getAllSegment,
     getAllStatus: breachlogActions.getAllStatus,
     getLookupByType: lookupActions.getLookupByType,
     getAllEntryNumbers: commonActions.getAllEntryNumbers,
-    clearDashboardClick: dashboardActions.clearDashboardClick,
-    getAllOffice: officeActions.getAllOffice,
-    getallZNASegments: znaorgnization1Actions.getAllOrgnization,
-    getallZNASBU: znaorgnization2Actions.getAllOrgnization,
-    getallZNAMarketBasket: znaorgnization3Actions.getAllOrgnization,
     getLogUsers: commonActions.getLogUsers,
-    getActionResponsible: breachlogActions.getActionResponsible,
+    getAlllobChapter: lobchapterActions.getAlllobChapter,
+    getExemptionUserView: commonActions.getExemptionUserView
 };
 export default connect(mapStateToProp, mapActions)(ExemptionAddEditForm);

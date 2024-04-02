@@ -45,6 +45,7 @@ function BreachAddEditForm(props) {
     getallZNAMarketBasket,
     getLogUsers,
     getActionResponsible,
+    formIntialState
   } = props;
 
   const [formfield, setformfield] = useState({})
@@ -124,6 +125,11 @@ function BreachAddEditForm(props) {
   ])
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
   const [regionOptsAll, setregionOptsAll] = useState([]);
+
+  useEffect(() => {
+    console.log(formIntialState);
+  }, [])
+
   useEffect(() => {
     let selectOpts = [];
     regionState.regionItems.forEach((item) => {
@@ -180,7 +186,7 @@ function BreachAddEditForm(props) {
     setcountrymapping([...tempCountryMapping]);
     setcountryFilterOpts([...selectOpts]);
   }, [countryState.countryItems]);
-  
+
 
   const [statusopts, seStatusopts] = useState([
     {

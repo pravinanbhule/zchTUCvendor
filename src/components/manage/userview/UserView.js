@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions } from "../../../actions";
+import { userActions, countryActions, regionActions, userViewActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
 import BreachAddEditForm from "./BreachAddEditForm";
 import './Style.css'
 import ExemptionAddEditForm from "./ExemptionAddEditForm";
+import { USER_ROLE } from "../../../constants";
+import RfEAddEditForm from "./RfEAddEditForm";
 function UserView({ ...props }) {
 
-  const [selectedTab, setSelectedTab] = useState("exemptionlog")
-  const [isshowAddPopup, setIsshowAddPopup] = useState(true)
+  const {
+    userProfile,
+    getAll
+  } = props;
+
+  const [selectedTab, setSelectedTab] = useState("breachlog")
+  const [selectedRow, setSelectedRow] = useState({})
+  const [isshowAddPopup, setIsshowAddPopup] = useState(false)
   const [paginationdata, setpaginationdata] = useState([
     {
       userviewId: "1",
@@ -28,64 +36,64 @@ function UserView({ ...props }) {
     },
   ]);
 
-  useEffect(() => {
-    if (selectedTab === "breachlog  ") {
-      setpaginationdata([
-        {
-          userviewId: "1",
-          userViewName: "View 1",
-          roles: "Super admin, Global admin"
-        },
-        {
-          userviewId: "2",
-          userViewName: "View 2",
-          roles: "Global admin"
-        },
-        {
-          userviewId: "3",
-          userViewName: "View 3",
-          roles: "Normal User"
-        },
-      ])
-    } else if (selectedTab === "rfelog") {
-      setpaginationdata([
-        {
-          userviewId: "4",
-          userViewName: "View 4",
-          roles: "Super admin, Global admin"
-        },
-        {
-          userviewId: "5",
-          userViewName: "View 5",
-          roles: "Global admin"
-        },
-        {
-          userviewId: "6",
-          userViewName: "View 6",
-          roles: "Normal User"
-        },
-      ])
-    } else if (selectedTab === "exemptionlog") {
-      setpaginationdata([
-        {
-          userviewId: "7",
-          userViewName: "View 7",
-          roles: "Super admin, Global admin"
-        },
-        {
-          userviewId: "8",
-          userViewName: "View 8",
-          roles: "Global admin"
-        },
-        {
-          userviewId: "3",
-          userViewName: "View 3",
-          roles: "Normal User"
-        },
-      ])
-    }
-
+  useEffect(async () => {
+    let response = await getAll({ UserViewType: selectedTab })
+    let roleNames = []
+    response.map((item, i) => {
+      if (selectedTab === 'breachlog') {
+        item.userviewId = item.breachViewsId
+      } else if (selectedTab === 'rfelog') {
+        item.userviewId = item.rfeViewsId
+      } else if (selectedTab === 'exemptionlog') {
+        item.userviewId = item.exemptionViewsId
+      }
+      if (item.userRoles) {
+        let rolesArray = item.userRoles.split(",")
+        if (rolesArray?.length === 1) {
+          item.userRoleNames = handleCheckRoleName(rolesArray[0])
+        }
+        if (rolesArray?.length > 1) {
+          rolesArray.map((role, j) => {
+            const name = handleCheckRoleName(role)
+            if (name !== '') {
+              roleNames.push(name)
+            }
+          })
+          item.userRoleNames = roleNames.toString()
+        }
+      }
+    })
+    setpaginationdata(response)
   }, [selectedTab])
+
+  const handleCheckRoleName = (role) => {
+    let roleName = ""
+    if (role === USER_ROLE.superAdmin) {
+      roleName = "Super Admin"
+    }
+    if (role === USER_ROLE.countryAdmin) {
+      roleName = "Country Admin"
+    }
+    if (role === USER_ROLE.globalAdmin) {
+      roleName = "Global Admin"
+    }
+    if (role === USER_ROLE.countrySuperAdmin) {
+      roleName = "Country Super Admin"
+    }
+    if (role === USER_ROLE.normalUser) {
+      roleName = "Normal User"
+    }
+    if (role === USER_ROLE.regionAdmin) {
+      roleName = "Region Admin"
+    }
+    if (role === USER_ROLE.auditor) {
+      roleName = "Auditor"
+    }
+    if (role === USER_ROLE.lobAdmin) {
+      roleName = "LoB Admin"
+    }
+    return roleName
+  }
 
   const showAddPopup = () => {
     setIsshowAddPopup(true);
@@ -106,7 +114,7 @@ function UserView({ ...props }) {
         return (
           <div
             className="edit-icon"
-            // onClick={handleEdit}
+            onClick={() => handleEdit(row)}
             rowid={row.userviewId}
           ></div>
         );
@@ -141,25 +149,30 @@ function UserView({ ...props }) {
       },
     },
     {
-      dataField: "userViewName",
-      text: "User View Name",
+      dataField: "viewName",
+      text: "View Name",
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "250px" };
       },
     },
     {
-      dataField: "roles",
+      dataField: "userRoleNames",
       text: "Role",
       sort: false,
     }
   ];
   const defaultSorted = [
     {
-      dataField: "znaSegmentName",
+      dataField: "viewName",
       order: "asc",
     },
   ];
+
+  const handleEdit = (row) => {
+    console.log(row);
+    setSelectedRow(row)
+  }
 
   return (
     <>
@@ -191,20 +204,30 @@ function UserView({ ...props }) {
         </>
       )}
       {isshowAddPopup && (
-      <>
-      {selectedTab === 'breachlog' &&(
-        <BreachAddEditForm
-          title={"Add/Edit Exemption Log"}
-          hideAddPopup={hideAddPopup}
-        ></BreachAddEditForm>
-      )}
-      {selectedTab === 'exemptionlog' &&(
-        <ExemptionAddEditForm
-          title={"Add/Edit Exemption Log"}
-          hideAddPopup={hideAddPopup}
-        ></ExemptionAddEditForm>
-      )}
-      </>
+        <>
+          {selectedTab === 'breachlog' && (
+            <BreachAddEditForm
+              title={"Add/Edit Exemption Log"}
+              hideAddPopup={hideAddPopup}
+              userProfile={userProfile}
+              formIntialState={selectedRow}
+            ></BreachAddEditForm>
+          )}
+          {selectedTab === 'exemptionlog' && (
+            <ExemptionAddEditForm
+              title={"Add/Edit Exemption Log"}
+              hideAddPopup={hideAddPopup}
+              userProfile={userProfile}
+            ></ExemptionAddEditForm>
+          )}
+          {selectedTab === 'rfelog' && (
+            <RfEAddEditForm
+              title={"Add/Edit Exemption Log"}
+              hideAddPopup={hideAddPopup}
+              userProfile={userProfile}
+            ></RfEAddEditForm>
+          )}
+        </>
       )}
     </>
   );
@@ -215,19 +238,7 @@ const mapStateToProp = (state) => {
   };
 };
 const mapActions = {
-  getAll: userActions.getAll,
-  getAllUsers: userActions.getAllUsers,
-  getAllCountry: countryActions.getAllCountry,
-  getUserCountry: countryActions.getUserCountry,
-  getAllRegion: regionActions.getAllRegions,
-  getUserRegions: regionActions.getUserRegions,
-  getAllSpecialUsers: userActions.getAllSpecialUsers,
-  getAllUsersRoles: userActions.getAllUsersRoles,
-  getById: userActions.getById,
-  checkNameExist: userActions.checkNameExist,
-  checkIsInUse: userActions.checkIsInUse,
-  postItem: userActions.postItem,
-  deleteItem: userActions.deleteItem,
+  getAll: userViewActions.getAll,
 };
 
 export default connect(mapStateToProp, mapActions)(UserView);

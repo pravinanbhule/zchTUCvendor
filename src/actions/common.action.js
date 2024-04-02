@@ -189,6 +189,16 @@ const getLanguageDetails = (requestParam) => {
     }
   };
 };
+const getExemptionUserView = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.getAllExemptionUserViewList(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 
 export const commonActions = {
   uploadFile,
@@ -208,7 +218,8 @@ export const commonActions = {
   getAllEntryNumbers,
   getLogCount,
   getLogFields,
-  getLanguageDetails
+  getLanguageDetails,
+  getExemptionUserView
 };
 const uploadFileService = async (requestParam) => {
   const response = await Axios.post(`common/uploadfile`, requestParam, {
@@ -304,8 +315,14 @@ const getLanguageDetailsService = async (requestParam) => {
   const response = await Axios.get(`common/getLanguagedetails`, param);
   return response;
 };
+const getAllExemptionUserViewList = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`exemptionviews/getallzugexemptionviewslist`, param);
+  return response;
+};
 
 const commonService = {
+  getAllExemptionUserViewList,
   uploadFileService,
   deleteFileService,
   downloadFileService,

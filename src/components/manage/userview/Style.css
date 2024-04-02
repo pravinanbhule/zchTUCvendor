@@ -84,3 +84,12 @@
     outline: none !important;
     box-shadow: none !important;
 } */
+
+.exemption-popup-formitems{
+    padding: 20px;
+    padding-bottom: 0px;
+    min-height: 750px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-size: 14px;
+}
