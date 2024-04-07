@@ -10,6 +10,7 @@ import {
   lobActions,
   commonActions,
   dashboardActions,
+  userViewActions,
 } from "../../actions";
 import { SHAREPOINT_LINKS } from "../../constants";
 import Loading from "../common-components/Loading";
@@ -83,6 +84,8 @@ function Exemptionlog({ ...props }) {
     exportReportURPMLogs,
     getallZUGCount,
     getallURPMCount,
+    getViewsByUserId,
+    addEditUserView
   } = props;
 
   const [logstate, setlogstate] = useState({
@@ -277,6 +280,7 @@ function Exemptionlog({ ...props }) {
     approverOpts: [],
     zugChapterVersionOpts: [],
     empowermentRequestedByOpts: [],
+    views: [{ label: "All", value: null }],
   });
   const [exemptionlogsType, setexemptionlogsType] = useState([
     {
@@ -340,6 +344,7 @@ function Exemptionlog({ ...props }) {
   };
   const onExemptionlogSelection = (e) => {
     let { name, value } = e.target;
+    setselectedview(null)
     if (
       (value === "zug" && !logstate.ZUGLoadedAll) ||
       (value === "urpm" && !logstate.URPMLoadedAll)
@@ -348,10 +353,7 @@ function Exemptionlog({ ...props }) {
       setlogstate({ ...logstate, loading: true });
     }
     setExemLogTypeFn(value);
-    setselfilter({
-      ...selfilter,
-      [name]: value,
-    });
+    clearFilter()
   };
   const onSearchFilterSelect = (name, value) => {
     //const { name, value } = e.target;
@@ -1941,6 +1943,96 @@ function Exemptionlog({ ...props }) {
       setDashboardFilters();
     }
   };
+  
+  const [selectedview, setselectedview] = useState(null);
+  const [viewData, setViewData] = useState([])
+
+  useEffect(()=>{
+    handleViews()
+    setselectedview(null)
+  },[selectedExemptionLog])
+
+  useEffect(()=>{
+    if (selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && viewData?.length !== 0) {
+      onViewFilterSelect( "", userProfile?.zugExemptionViewsId)
+    } else if (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && viewData?.length !== 0) {
+      onViewFilterSelect( "", userProfile?.urpmExemptionViewsId)
+    }
+  },[viewData])
+
+  useEffect(() => {
+      handleFilterSearch();
+  }, [selectedview]);
+
+  const onViewFilterSelect = async(name, value) => {
+    let selectedViewData = viewData?.filter((item, i) => {
+      let id = item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId
+      if (id === value) {
+        return item
+      }
+    })
+    if (selectedViewData.length !== 0) {
+      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+      let countryArray = []
+      selectedCountryArray?.map((id, j) => {
+          countryState.countryItems.map((item, i) => {
+              if (id === item.countryID) {
+                  countryArray.push({
+                      label: item.countryName.trim(),
+                      value: item.countryID,
+                  })
+              }
+          })
+      })
+      selectedViewData[0].countryID = countryArray
+
+      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+      let regionArray = []
+      selectedRegionArray?.map((id, j) => {
+          regionState.regionItems.map((item, i) => {
+              if (id === item.regionID) {
+                  regionArray.push({
+                      label: item.regionName.trim(),
+                      value: item.regionID,
+                  })
+              }
+          })
+      })
+      selectedViewData[0].regionId = regionArray
+      setselfilter(selectedViewData[0])
+      console.log(value);
+      setselectedview(value);
+    }
+    if (value === null) {
+      setselectedview(value);
+      clearFilter()
+    }
+    // await addEditUserView({LogType: 'exemptionlogs', UserId: userProfile.userId, ViewId: value})
+    // let updatedUserProfileData = userProfile
+    // updatedUserProfileData.breachViewsId = value
+    // localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+  };
+
+  const handleViews = async () => {
+    const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'exemptionlog', exemptiontype: selectedExemptionLog ? selectedExemptionLog : 'zug'  })
+    // 
+    console.log("response>>", response);
+    setViewData(response)
+    let viewFilterOpts = []
+    response.map((item,i) => {
+      viewFilterOpts.push({
+        label: item.viewName,
+        value: item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId 
+      })
+    })
+    console.log("viewFilterOpts>>", viewFilterOpts);
+    viewFilterOpts.sort(dynamicSort("label"));
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: [{ label: "All", value: null }, ...viewFilterOpts],
+    }));
+  }
+
   useEffect(() => {
     if (
       countryFilterOpts.length &&
@@ -3099,7 +3191,23 @@ function Exemptionlog({ ...props }) {
       )}
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
-          <div className="page-title">Exemption Log</div>
+          {/* <div className="page-title">Exemption Log</div> */}
+          <div className="">
+            <div className="row">
+              <div className="page-title col-md-6" style={{ marginLeft: '1.5%'}}>Exemption Log</div>
+              {/* <div className="page-title col-md-9">RfE Log</div> */}
+              <div className="col-md-3" style={{ marginTop: "8px", right: '-24%' }}>
+                <FrmSelect
+                  title={"Switch view"}
+                  name={"switchview"}
+                  selectopts={commonfilterOpts.views}
+                  handleChange={onViewFilterSelect}
+                  value={selectedview}
+                  inlinetitle={true}
+                />
+              </div>
+            </div>
+          </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
               {filterbox ? (
@@ -3522,6 +3630,8 @@ const mapActions = {
   getLogUsers: commonActions.getLogUsers,
   getAllEntryNumbers: commonActions.getAllEntryNumbers,
   clearDashboardClick: dashboardActions.clearDashboardClick,
+  getViewsByUserId: userViewActions.getViewsByUserId,
+  addEditUserView: commonActions.addEditUserView
 };
 
 export default connect(mapStateToProp, mapActions)(Exemptionlog);

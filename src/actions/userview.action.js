@@ -15,9 +15,17 @@ const getAll = (requestParam) => {
         );
       } else if (requestParam.UserViewType === "exemptionlog") {
         delete requestParam.UserViewType
-        response = await userViewService.getAllExemptionUserViewList(
-          requestParam
-        );
+        if (requestParam.exemptiontype === 'zug') {
+          delete requestParam.exemptiontype
+          response = await userViewService.getAllZUGExemptionUserViewList(
+            requestParam
+            );
+          } else if (requestParam.exemptiontype === 'urpm') {
+          delete requestParam.exemptiontype
+          response = await userViewService.getAllURPMExemptionUserViewList(
+            requestParam
+          );
+        }
       }
       return response.data;
     } catch (err) {
@@ -25,32 +33,36 @@ const getAll = (requestParam) => {
     }
   };
 };
-// const getById = (requestParam) => {
-//   return async (dispatch) => {
-//     let response = false
-//     try {
-//       if (requestParam.UserViewType === "breachlog") {
-//         delete requestParam.UserViewType
-//         response = await userViewService.getBreachViewOnUserId(
-//           requestParam
-//         );
-//       } else if (requestParam.UserViewType === "rfelog") {
-//         delete requestParam.UserViewType
-//         response = await userViewService.getRfEViewOnUserId(
-//           requestParam
-//         );
-//       } else if (requestParam.UserViewType === "exemptionlog") {
-//         delete requestParam.UserViewType
-//         response = await userViewService.getExemptionViewOnUserId(
-//           requestParam
-//         );
-//       }
-//       return response.data;
-//     } catch (err) {
-//       return false;
-//     }
-//   };
-// };
+const getViewsByUserId = (requestParam) => {
+  return async (dispatch) => {
+    let response = false
+    try {
+      if (requestParam.UserViewType === "breachlog") {
+        delete requestParam.UserViewType
+        response = await userViewService.getBreachViewOnUserId(
+          requestParam
+        );
+      } else if (requestParam.UserViewType === "rfelog") {
+        delete requestParam.UserViewType
+        response = await userViewService.getRfEViewOnUserId(
+          requestParam
+        );
+      } else if (requestParam.UserViewType === "exemptionlog") {
+        delete requestParam.UserViewType
+        if (requestParam.exemptiontype === 'zug') {
+          delete requestParam.exemptiontype
+          response = await userViewService.getZUGExemptionViewOnUserId(requestParam);
+          } else if (requestParam.exemptiontype === 'urpm') {
+          delete requestParam.exemptiontype
+          response = await userViewService.getURPMExemptionViewOnUserId(requestParam); 
+        }
+      }
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 
 const checkIsInUse = (requestParam) => {
   return async (dispatch) => {
@@ -94,9 +106,16 @@ const postItem = (requestParam) => {
         );
       } else if (requestParam.UserViewType === "exemptionlog") {
         delete requestParam.UserViewType
-        response = await userViewService.addEditExemptionUserView(
-          requestParam
-        );
+        if (requestParam.exemptiontype === 'zug') {
+          response = await userViewService.addEditZUGExemptionUserView(
+            requestParam
+          );
+        } else if (requestParam.exemptiontype === 'urpm') {
+          delete requestParam.UserViewType
+          response = await userViewService.addEditURPMExemptionUserView(
+            requestParam
+          );
+        }
       }
       return response.data;
     } catch (err) {
@@ -120,9 +139,16 @@ const deleteItem = (requestParam) => {
         );
       } else if (requestParam.UserViewType === "exemptionlog") {
         delete requestParam.UserViewType
-        response = await userViewService.deleteExemptionUserView(
-          requestParam
-        );
+        if (requestParam.exemptiontype === 'zug') {
+          response = await userViewService.deleteZUGExemptionUserView(
+            requestParam
+          );
+        } else if (requestParam.exemptiontype === 'urpm') {
+          delete requestParam.UserViewType
+          response = await userViewService.deleteURPMExemptionUserView(
+            requestParam
+          );
+        }
       }
       return response.data;
     } catch (err) {
@@ -135,30 +161,55 @@ export const userViewActions = {
   checkIsInUse,
   postItem,
   deleteItem,
+  getViewsByUserId
 };
-const getAllExemptionUserViewList = async (requestParam) => {
+const getAllZUGExemptionUserViewList = async (requestParam) => {
   const param = { params: requestParam };
   const response = await Axios.get(`exemptionviews/getallzugexemptionviewslist`, param);
   return response;
 };
-const addEditExemptionUserView = async (requestParam) => {
-  const param = { params: requestParam };
-  const response = await Axios.post(`exemptionviews/addeditzugexemptionviews`, param);
+const addEditZUGExemptionUserView = async (requestParam) => {
+  const response = await Axios.post(`exemptionviews/addeditzugexemptionviews`, requestParam);
   return response;
 };
-const deleteExemptionUserView = async (requestParam) => {
+const deleteZUGExemptionUserView = async (requestParam) => {
   const param = { params: requestParam };
   const response = await Axios.delete(`exemptionviews/deletezugexemptionviews`, param);
   return response;
 };
-const isExemptionUserViewinUse = async (requestParam) => {
+const isZUGExemptionUserViewinUse = async (requestParam) => {
   const param = { params: requestParam };
   const response = await Axios.get(`exemptionviews/iszugexemptionviewsnameinuse`, param);
   return response;
 };
-const getExemptionViewOnUserId = async (requestParam) => {
+const getZUGExemptionViewOnUserId = async (requestParam) => {
   const param = { params: requestParam };
   const response = await Axios.get(`exemptionviews/getzugviewsbasedonuserid`, param);
+  return response;
+};
+
+const getAllURPMExemptionUserViewList = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`exemptionviews/getallurpmexemptionviewslist`, param);
+  return response;
+};
+const addEditURPMExemptionUserView = async (requestParam) => {
+  const response = await Axios.post(`exemptionviews/addediturpmexemptionviews`, requestParam);
+  return response;
+};
+const deleteURPMExemptionUserView = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.delete(`exemptionviews/deleteurpmexemptionviews`, param);
+  return response;
+};
+const isURPMExemptionUserViewinUse = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`exemptionviews/isurpmexemptionviewsnameinuse`, param);
+  return response;
+};
+const getURPMExemptionViewOnUserId = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`exemptionviews/geturpmviewsbasedonuserid`, param);
   return response;
 };
 
@@ -169,8 +220,7 @@ const getAllBreachUserViewList = async (requestParam) => {
   return response;
 };
 const addEditBreachUserView = async (requestParam) => {
-  const param = { params: requestParam };
-  const response = await Axios.post(`breachViews/addeditbreachviews`, param);
+  const response = await Axios.post(`breachViews/addeditbreachviews`, requestParam);
   return response;
 };
 const deleteBreachUserView = async (requestParam) => {
@@ -217,11 +267,17 @@ const getRfEViewOnUserId = async (requestParam) => {
 };
 
 const userViewService = {
-  getAllExemptionUserViewList,
-  addEditExemptionUserView,
-  deleteExemptionUserView,
-  isExemptionUserViewinUse,
-  getExemptionViewOnUserId,
+  getAllZUGExemptionUserViewList,
+  addEditZUGExemptionUserView,
+  deleteZUGExemptionUserView,
+  isZUGExemptionUserViewinUse,
+  getZUGExemptionViewOnUserId,
+
+  getAllURPMExemptionUserViewList,
+  addEditURPMExemptionUserView,
+  deleteURPMExemptionUserView,
+  isURPMExemptionUserViewinUse,
+  getURPMExemptionViewOnUserId,
 
   getAllBreachUserViewList,
   addEditBreachUserView,

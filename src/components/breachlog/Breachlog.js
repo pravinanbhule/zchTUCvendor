@@ -15,6 +15,7 @@ import {
   znaorgnization1Actions,
   znaorgnization2Actions,
   znaorgnization3Actions,
+  userViewActions,
 } from "../../actions";
 import Loading from "../common-components/Loading";
 import useSetNavMenu from "../../customhooks/useSetNavMenu";
@@ -95,6 +96,8 @@ function Breachlog({ ...props }) {
     getallZNASBU,
     getallZNAMarketBasket,
     exportReportLogs,
+    getViewsByUserId,
+    addEditUserView
   } = props;
 
   useSetNavMenu(
@@ -249,6 +252,7 @@ function Breachlog({ ...props }) {
     ZNASegmentOpts: [],
     ZNASBUOpts: [],
     ZNAMarketBasketOpts: [],
+    views: [{ label: "All", value: null }],
   });
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -1653,7 +1657,89 @@ function Breachlog({ ...props }) {
       clearDashboardClick();
       setdashboardStateApplied(true);
     }
+    handleViews();
   };
+
+  const [selectedview, setselectedview] = useState(null);
+  const [viewData, setViewData] = useState([])
+
+  useEffect(()=>{
+    if (userProfile?.breachViewsId && viewData.length !== 0) {
+      onViewFilterSelect( "", userProfile?.breachViewsId)
+    }
+  },[viewData])
+
+  useEffect(() => {
+      handleFilterSearch();
+  }, [selectedview]);
+
+  const onViewFilterSelect = async(name, value) => {
+    let selectedViewData = viewData.filter((item, i) => {
+      if (item.breachViewsId === value) {
+        return item
+      }
+    })
+    if (selectedViewData.length !== 0) {
+      selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
+      delete selectedViewData[0]?.entryNumber
+      let selectedCountryArray = selectedViewData[0]?.countryId.split(',')
+      let countryArray = []
+      selectedCountryArray.map((id, j) => {
+          countryState.countryItems.map((item, i) => {
+              if (id === item.countryID) {
+                  countryArray.push({
+                      label: item.countryName.trim(),
+                      value: item.countryID,
+                  })
+              }
+          })
+      })
+      selectedViewData[0].countryId = countryArray
+
+      let selectedRegionArray = selectedViewData[0]?.regionId.split(',')
+      let regionArray = []
+      selectedRegionArray.map((id, j) => {
+          regionState.regionItems.map((item, i) => {
+              if (id === item.regionID) {
+                  regionArray.push({
+                      label: item.regionName.trim(),
+                      value: item.regionID,
+                  })
+              }
+          })
+      })
+      selectedViewData[0].regionId = regionArray
+      selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : '0'
+      setselfilter(selectedViewData[0])
+      setselectedview(value);
+    }
+    if (value === null) {
+      setselectedview(value);
+      clearFilter()
+    }
+    await addEditUserView({LogType: 'breachlogs', UserId: userProfile.userId, ViewId: value})
+    let updatedUserProfileData = userProfile
+    updatedUserProfileData.breachViewsId = value
+    localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+  };
+
+  const handleViews = async () => {
+    const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'breachlog' })
+    setViewData(response)
+    let viewFilterOpts = []
+    response.map((item,i) => {
+      viewFilterOpts.push({
+        label: item.viewName,
+        value: item.breachViewsId
+      })
+    })
+    viewFilterOpts.sort(dynamicSort("label"));
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: [{ label: "All", value: null }, ...viewFilterOpts],
+    }));
+  }
+
   const loadCreatorUsers = async () => {
     let tempCreator = await getLogUsers({
       LogType: "breachlogs",
@@ -2550,7 +2636,22 @@ function Breachlog({ ...props }) {
       )}
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
-          <div className="page-title">Breach Log</div>
+          <div className="">
+            <div className="row">
+              <div className="page-title col-md-6" style={{ marginLeft: '1.5%'}}>Breach Log</div>
+              {/* <div className="page-title col-md-9">RfE Log</div> */}
+              <div className="col-md-3" style={{ marginTop: "8px", right: '-24%' }}>
+                <FrmSelect
+                  title={"Switch view"}
+                  name={"switchview"}
+                  selectopts={commonfilterOpts.views}
+                  handleChange={onViewFilterSelect}
+                  value={selectedview}
+                  inlinetitle={true}
+                />
+              </div>
+            </div>
+          </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
               {filterbox ? (
@@ -3181,6 +3282,8 @@ const mapActions = {
   getallZNASegments: znaorgnization1Actions.getAllOrgnization,
   getallZNASBU: znaorgnization2Actions.getAllOrgnization,
   getallZNAMarketBasket: znaorgnization3Actions.getAllOrgnization,
+  getViewsByUserId: userViewActions.getViewsByUserId,
+  addEditUserView: commonActions.addEditUserView
 };
 
 export default connect(mapStateToProp, mapActions)(Breachlog);

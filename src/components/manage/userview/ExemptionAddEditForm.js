@@ -1,63 +1,101 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import {
+    exemptionlogActions,
+    countryActions,
+    regionActions,
+    lobchapterActions,
+    lookupActions,
+    lobActions,
+    commonActions,
+    dashboardActions,
+    userViewActions,
+} from "../../../actions";
+import Loading from "../../common-components/Loading";
+import useSetNavMenu from "../../../customhooks/useSetNavMenu";
+import FrmSelect from "../../common-components/frmselect/FrmSelect";
+import FrmMultiselect from "../../common-components/frmmultiselect/FrmMultiselect";
+import FrmRadio from "../../common-components/frmradio/FrmRadio";
+import FrmDatePicker from "../../common-components/frmdatepicker/FrmDatePicker";
+import moment from "moment";
+import {
+    alertMessage,
+    dynamicSort,
+    formatDate,
+    isEmptyObjectKeys,
+    isNotEmptyValue,
+} from "../../../helpers";
 import FrmInput from "../../common-components/frminput/FrmInput";
+import FrmInputAutocomplete from "../../common-components/frminputautocomplete/FrmInputAutocomplete";
 import FrmToggleSwitch from "../../common-components/frmtoggelswitch/FrmToggleSwitch";
 import FrmCheckbox from "../../common-components/frmcheckbox/FrmCheckbox";
-import FrmMultiselect from "../../common-components/frmmultiselect/FrmMultiselect";
-import FrmSelect from "../../common-components/frmselect/FrmSelect";
-import FrmInputSearch from "../../common-components/frmpeoplepicker/FrmInputSearch";
-import FrmDatePicker from "../../common-components/frmdatepicker/FrmDatePicker";
-import FrmInputAutocomplete from "../../common-components/frminputautocomplete/FrmInputAutocomplete";
-import moment from "moment";
-import { breachlogActions, commonActions, countryActions, dashboardActions, lobActions, lobchapterActions, lookupActions, officeActions, regionActions, segmentActions, sublobActions, userActions, znaorgnization1Actions, znaorgnization2Actions, znaorgnization3Actions } from "../../../actions";
-import { dynamicSort, isNotEmptyValue } from "../../../helpers";
-import { REGION_EMEA, REGION_ZNA } from "../../../constants";
-
-function ExemptionAddEditForm(props) {
-
+let pageIndex = 1;
+let pagesize = 10;
+let totalLogCount = 0;
+function Exemptionlog({ ...props }) {
     const {
+        exemptionlogState,
         countryState,
         regionState,
-        lobchapterState
+        lobchapterState,
+        lobState,
+        dashboardState,
     } = props.state;
-
     const {
-        hideAddPopup,
-        // isReadMode,
+        getAll,
+        getallZUGLogs,
+        getallZUGDeletedLogs,
+        getallURPMDeletedLogs,
+        getByIdZUG,
+        getallZUGunderwriter,
+        postItemZUG,
+        getallURPMLogs,
+        getByIdURPM,
+        postItemURPM,
         getAllCountry,
         getAllRegion,
-        getLookupByType,
-        getLogUsers,
         getAlllobChapter,
+        getLookupByType,
         getAllEntryNumbers,
+        checkIsInUse,
+        deleteItem,
+        deleteLog,
+        getLogUsers,
         userProfile,
-        getExemptionUserView
+        getDataVersion,
+        clearDashboardClick,
+        exportReportZUGLogs,
+        exportReportURPMLogs,
+        getallZUGCount,
+        getallURPMCount,
+        isEditMode,
+        isReadMode,
+        formIntialState,
+        handleEdit,
+        hideAddPopup,
+        postItem,
+        exemptionType
     } = props;
 
-    const [formfield, setformfield] = useState({
-        isPrivate: true,
-        entryNumber: "",
-        countryId: [],
-        regionId: [],
-        LOBChapter: "",
-        section: "",
-        role: "",
-        status: "",
-        typeOfExemption: "",
-        individualGrantedEmpowerment: "",
-        approver: "",
-        zugChapterVersion: "",
-        empowermentRequestedBy: "",
-        createdFromDate: "",
-        createdToDate: "",
-        ciGuidlineId: "",
-        PC_URPMExemptionRequired: "",
-    })
-    const [issubmitted, setissubmitted] = useState(false);
+    const [logstate, setlogstate] = useState({
+        loading: true,
+        error: "",
+        ZUGLoadedAll: false,
+        URPMLoadedAll: false,
+        ZUGdata: [],
+        URPMdata: [],
+    });
+
+    useSetNavMenu(
+        { currentMenu: "Exemptionlog", isSubmenu: false },
+        props.menuClick
+    );
+    //initialize filter/search functionality
     const selectInitiVal = {
         label: "Select",
         value: "",
     };
+
     const [yesnoopts, setyesnoopts] = useState([
         selectInitiVal,
         {
@@ -88,136 +126,484 @@ function ExemptionAddEditForm(props) {
         zugChapterVersionOpts: [],
         empowermentRequestedByOpts: [],
     });
+    const [exemptionlogsType, setexemptionlogsType] = useState([
+        {
+            label: "ZUG",
+            value: "zug",
+        },
+        {
+            label: "URPM",
+            value: "urpm",
+        },
+    ]);
+    const [selectedExemptionLog, setselectedExemptionLog] = useState(exemptionType);
+    const [countryFilterOpts, setcountryFilterOpts] = useState([]);
+    const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
+    const [regionFilterOpts, setregionFilterOpts] = useState([]);
+    const [regionOptsAll, setregionOptsAll] = useState([]);
     const [lobChapterFilterOpts, setlobChapterFilterOpts] = useState([]);
+    const intialFilterState = {
+        entryNumber: "",
+        countryID: [],
+        regionId: [],
+        loBChapter: "",
+        section: "",
+        role: "",
+        status: "",
+        typeofExemption: "",
+        individualGrantedEmpowerment: "",
+        approver: "",
+        zugChapterVersion: "",
+        empowermentRequestedBy: "",
+        createdDateFrom: "",
+        createdDateTo: "",
+        previousExemptionID: "",
+        pC_URPMExemptionRequired: "",
+        isPrivate: false
+    };
+
+    const [userRoles, setUserRoles] = useState([
+        {
+            label: "Super Admin",
+            name: "isSuperAdmin",
+            filedValue: '1'
+        },
+        {
+            label: "Global Admin",
+            name: "isGlobalAdmin",
+            filedValue: '2'
+        },
+        {
+            label: "Region Admin",
+            name: "isRegionAdmin",
+            filedValue: '3'
+        },
+        {
+            label: "Country Admin",
+            name: "isCountryAdmin",
+            filedValue: '4'
+        },
+        {
+            label: "Normal User",
+            name: "isNormalUser",
+            filedValue: '8'
+        },
+        {
+            label: "Country Super Admin",
+            name: "isCountrySuperAdmin",
+            filedValue: '9'
+        },
+    ])
     const [switchOpts, setSwitchOpts] = useState([
         {
-            label: "Private",
+            label: "Public",
             value: false,
         },
         {
-            label: "Public",
+            label: "Private",
             value: true,
         },
     ]);
+
     const [accessBreachLogOpts, setaccessBreachLogOpts] = useState([
         {
             label: "",
             value: true,
         },
     ]);
-    const [userRoles, setUserRoles] = useState([
-        {
-            label: "Super Admin",
-            name: "isSuperAdmin"
-        },
-        {
-            label: "Global Admin",
-            name: "isGlobalAdmin"
-        },
-        {
-            label: "Region Admin",
-            name: "isRegionAdmin"
-        },
-        {
-            label: "Country Admin",
-            name: "isCountryAdmin"
-        },
-        {
-            label: "Normal User",
-            name: "isNormalUser"
-        },
-    ])
-    const [regionFilterOpts, setregionFilterOpts] = useState([]);
-    const [regionOptsAll, setregionOptsAll] = useState([]);
-    const [isReadMode, setIsReadmode] = useState(false)
 
-    useEffect(async()=>{
-        const response = await getExemptionUserView();
-        setformfield(response[0])
-        setIsReadmode(false)
-        console.log("response??", response);
-    },[])
-    
-    useEffect(() => {
-        let selectOpts = [];
-        regionState.regionItems.forEach((item) => {
-            selectOpts.push({
-                ...item,
-                label: item.regionName.trim(),
-                value: item.regionID,
-            });
+    const [formfield, setformfield] = useState(intialFilterState);
+    const [isfilterApplied, setisfilterApplied] = useState(false);
+    const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
+    const [isAdvfilterApplied, setisAdvfilterApplied] = useState(true);
+    const [loading, setLoading] = useState(false)
+
+    useEffect(async () => {
+        if (isEditMode || isReadMode) {
+            setLoading(true)
+            let response = formIntialState
+
+            if (response.region && regionState.regionItems && typeof response.region === 'string') {
+                let selectedRegionArray = response.region.split(',')
+                let regionArray = []
+                selectedRegionArray.map((id, j) => {
+                    regionState.regionItems.map((item, i) => {
+                        if (id === item.regionID) {
+                            regionArray.push({
+                                label: item.regionName.trim(),
+                                value: item.regionID,
+                            })
+                        }
+                    })
+                })
+                response.regionId = typeof response.region === 'string' && regionArray.length === 0 ? response.region : regionArray
+            } else if (response.region === null || response.region === undefined) {
+                response.regionId = []
+            }
+            response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
+            response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
+            response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
+            response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
+            response.isNormalUser = response?.userRoles?.split(',').includes('8')
+            response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
+            let Roles = response?.userRoles?.split(",") 
+            if (Roles?.length > 0) {
+                setSelectedUserRoles(Roles)
+            }
+            setTimeout(async () => {
+                if (response.country && typeof response.country === 'string') {
+                    let selectedCountryArray = response.country.split(',')
+                    let countryArray = []
+                    selectedCountryArray.map((id, j) => {
+                        countryState.countryItems.map((item, i) => {
+                            if (id === item.countryID) {
+                                countryArray.push({
+                                    label: item.countryName.trim(),
+                                    value: item.countryID,
+                                })
+                            }
+                        })
+                    })
+                    response.countryID = countryArray
+                } else if (response.country === null || response.country === undefined) {
+                    response.countryID = []
+                }
+                setLoading(false)
+                setformfield(response)
+            }, 5000);
+        }
+    }, [regionState.regionItems])
+
+
+    const onSearchFilterInput = (e) => {
+        const { name, value } = e.target;
+        setformfield({
+            ...formfield,
+            [name]: value,
         });
-        selectOpts.sort(dynamicSort("label"));
-        setregionFilterOpts([...selectOpts]);
-        setregionOptsAll([...selectOpts]);
-    }, [regionState.regionItems]);
+    };
+    const handleDateSelectChange = (name, value) => {
+        let dateval = value ? moment(value).format("YYYY-MM-DD") : "";
+        setformfield({
+            ...formfield,
+            [name]: dateval,
+        });
+    };
+    const onSearchFilterInputAutocomplete = (name, value) => {
+        //const { name, value } = e.target;
+        setformfield({
+            ...formfield,
+            [name]: value,
+        });
+    };
+    const onExemptionlogSelection = (e) => {
+        let { name, value } = e.target;
+        if (
+            (value === "zug" && !logstate.ZUGLoadedAll) ||
+            (value === "urpm" && !logstate.URPMLoadedAll)
+        ) {
+            setlogItmes([]);
+            setlogstate({ ...logstate, loading: true });
+        }
+        setExemLogTypeFn(value);
+        setformfield({
+            ...formfield,
+            [name]: value,
+        });
+    };
+    const onSearchFilterSelect = (name, value) => {
+        //const { name, value } = e.target;
+        setformfield({
+            ...formfield,
+            [name]: value,
+        });
+        if (name === "exemptionLogType") {
+            if (
+                (value === "zug" && !logstate.ZUGLoadedAll) ||
+                (value === "urpm" && !logstate.URPMLoadedAll)
+            ) {
+                setlogItmes([]);
+                setlogstate({ ...logstate, loading: true });
+            }
+            setExemLogTypeFn(value);
+        }
+    };
 
-    const [countryFilterOpts, setcountryFilterOpts] = useState([]);
-
-    useEffect(() => {
-        let selectOpts = [];
-        let tempCountryMapping = [];
-        let tempRegionListObj = {};
-
-        countryState.countryItems.forEach((item) => {
-            selectOpts.push({
-                ...item,
-                label: item.countryName.trim(),
-                value: item.countryId,
-                regionId: item.regionID,
-            });
-
-            if (!tempRegionListObj[item.regionID]) {
-                tempCountryMapping.push({
-                    region: item.regionID,
-                    country: [
-                        {
-                            label: item.countryName,
-                            value: item.countryId,
-                        },
-                    ],
-                });
-            } else {
-                tempCountryMapping.forEach((countryitem) => {
-                    if (countryitem.region === item.regionID) {
-                        countryitem.country.push({
-                            label: item.countryName,
-                            value: item.countryId,
-                        });
+    const handleMultiSelectChange = (name, value) => {
+        if (name === "regionId") {
+            let countryopts = [...formfield.countryID];
+            let regionopts = value;
+            let removeValFromIndex = [];
+            countryopts.forEach((countryitem, index) => {
+                let isExist = false;
+                regionopts.forEach((item) => {
+                    if (item.value === countryitem.regionId) {
+                        isExist = true;
                     }
                 });
+                if (!isExist) {
+                    removeValFromIndex.push(index);
+                }
+            });
+            removeValFromIndex.forEach((item) => {
+                countryopts.splice(item, 1);
+            });
+            setformfield({
+                ...formfield,
+                [name]: value,
+                countryID: countryopts,
+            });
+        }
+        if (name === "countryID") {
+            let country = value;
+            let regionOpts = [];
+            let selectedRegionopts = [];
+            country.forEach((countryitem) => {
+                regionOptsAll.forEach((item) => {
+                    if (
+                        item.value === countryitem.regionId &&
+                        !selectedRegionopts.includes(item.value)
+                    ) {
+                        selectedRegionopts.push(item.value);
+                        regionOpts.push(item);
+                    }
+                });
+            });
+            setformfield({
+                ...formfield,
+                [name]: value,
+                regionId: regionOpts,
+            });
+        }
+    };
+
+    const handleFilterSearch = async () => {
+        if (!isEmptyObjectKeys(formfield)) {
+            let tempFilterOpts = {};
+            for (let key in formfield) {
+                if (formfield[key]) {
+                    let value = formfield[key];
+                    tempFilterOpts[key] = value;
+                    if (key === "pC_URPMExemptionRequired") {
+                        tempFilterOpts[key] = value === "1" ? true : false;
+                    }
+                    if (key === "countryID" || key === "regionId") {
+                        const tmpval = value.map((item) => item.value);
+                        tempFilterOpts[key] = tmpval.join(",");
+                    }
+                }
             }
-            tempRegionListObj[item.regionID] = item.countryName;
-        });
-        selectOpts.sort(dynamicSort("label"));
-        setcountryFilterOpts([...selectOpts]);
-    }, [countryState.countryItems]);
+            tempFilterOpts.userRoles = selectedUserRoles.toString()
+            tempFilterOpts.UserViewType = 'exemptionlog'
+            tempFilterOpts.exemptiontype = selectedExemptionLog
+            tempFilterOpts.country = tempFilterOpts?.countryID
+            tempFilterOpts.region = tempFilterOpts?.regionId
+            let response = await postItem(tempFilterOpts)
+            if (response) {
+                alert(alertMessage.userview.add);
+                hideAddPopup()
+            }
+        }
+    };
+    const clearFilter = () => {
+
+        setformfield(intialFilterState);
+        setisfilterApplied(false);
+        setfilterbox(false);
+        setregionFilterOpts([...regionOptsAll]);
+    };
 
     useEffect(() => {
-        let selectOpts = [];
-        lobchapterState.lobChapterItems.forEach((item) => {
-            selectOpts.push({
-                label: item.lobChapterName.trim(),
-                value: item.lobChapterID,
-            });
-        });
-        selectOpts.sort(dynamicSort("label"));
-        setlobChapterFilterOpts([selectInitiVal, ...selectOpts]);
-    }, [lobchapterState.lobChapterItems]);
+        //on clear filter load data
+        if (isNotEmptyValue(isfilterApplied) && isfilterApplied === false) {
+            pageIndex = 1;
+            loadAPIData();
+        }
+    }, [isfilterApplied]);
 
+    //set pagination data and functionality
+    const [isPaginationSort, setisPaginationSort] = useState(false);
+    const [selSortFiled, setselSortFiled] = useState({
+        name: "modifiedDate",
+        order: "desc",
+    });
+
+    useEffect(() => {
+        if (isPaginationSort) {
+            pageIndex = 1;
+            loadAPIData();
+        }
+    }, [isPaginationSort]);
+    // const [data, setdata] = useState([]);
+    const [paginationdata, setpaginationdata] = useState([]);
+    const [logTypes, setlogTypes] = useState([]);
+    const [sellogTabType, setsellogTabType] = useState("");
+
+    //set selected exemption log type
+    const setExemLogTypeFn = (value) => {
+        setselectedExemptionLog(value);
+    };
+    //load logs data in recurrsive
+    const [logItmes, setlogItmes] = useState([]);
+    //const [pagesize, setpagesize] = useState(500);
+    const [alllogsloaded, setalllogsloaded] = useState(false);
+    const [isLoadingStarted, setisLoadingStarted] = useState(false);
+
+    const getAllLogsInRecurssion = async () => {
+        if (!sellogTabType) {
+            return;
+        }
+
+        let reqParam = {
+            RequesterUserId: userProfile.userId,
+            PageIndex: pageIndex,
+            PageSize: pagesize,
+        };
+        setisLoadingStarted(true);
+        if (sellogTabType === "draft") {
+            reqParam = {
+                ...reqParam,
+                isSubmit: false,
+            };
+        } else if (sellogTabType === "all") {
+            reqParam = {
+                ...reqParam,
+                isSubmit: true,
+            };
+        }
+
+        if (!isEmptyObjectKeys(formfield)) {
+            let tempFilterOpts = {};
+            for (let key in formfield) {
+                if (formfield[key]) {
+                    let value = formfield[key];
+                    tempFilterOpts[key] = value;
+                    if (key === "pC_URPMExemptionRequired") {
+                        tempFilterOpts[key] = value === "1" ? true : false;
+                    }
+                    if (key === "countryID" || key === "regionId") {
+                        const tmpval = value.map((item) => item.value);
+                        tempFilterOpts[key] = tmpval.join(",");
+                    }
+                }
+            }
+            reqParam = {
+                ...reqParam,
+                ...tempFilterOpts,
+                sortExp: selSortFiled.name + " " + selSortFiled.order,
+            };
+        } else {
+            reqParam = {
+                ...reqParam,
+                sortExp: selSortFiled.name + " " + selSortFiled.order,
+            };
+        }
+        try {
+            let tempItems = [];
+            const dbvalues = await Promise.all([
+                sellogTabType === "delete"
+                    ? selectedExemptionLog === "zug"
+                        ? getallZUGCount({ ...reqParam, IsDelete: true })
+                        : getallURPMCount({ ...reqParam, IsDelete: true })
+                    : selectedExemptionLog === "zug"
+                        ? getallZUGCount(reqParam)
+                        : getallURPMCount(reqParam),
+                sellogTabType === "delete"
+                    ? selectedExemptionLog === "zug"
+                        ? getallZUGDeletedLogs(reqParam)
+                        : getallURPMDeletedLogs(reqParam)
+                    : selectedExemptionLog === "zug"
+                        ? getallZUGLogs(reqParam)
+                        : getallURPMLogs(reqParam),
+            ]);
+
+            totalLogCount = dbvalues[0];
+            setlogItmes(dbvalues[1]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const loadAPIData = () => {
+        setlogstate({
+            ...logstate,
+            loading: true,
+            data: [],
+            loadedAll: false,
+            isDataImported: false,
+        });
+        getAllLogsInRecurssion();
+    };
+
+    useEffect(() => {
+        if (isLoadingStarted) {
+            setlogstate({
+                ...logstate,
+                loading: false,
+                data: [...logItmes],
+                loadedAll: true,
+            });
+            setalllogsloaded(true);
+            setisLoadingStarted(false);
+            setisPaginationSort(false);
+        }
+    }, [logItmes]);
+
+    useEffect(() => {
+        let tempStatus = [{ label: "All", value: "all" }];
+        setlogTypes(tempStatus);
+        if (!sellogTabType || tempStatus.length === 1) {
+            setsellogTabType(tempStatus[0].value);
+        }
+    }, []);
+
+    const openlogTab = (type) => {
+        if (!isLoadingStarted) {
+            setsellogTabType(type);
+        }
+    };
+
+    useEffect(() => {
+        if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
+            debugger;
+            pageIndex = 1;
+            loadAPIData();
+        }
+    }, [sellogTabType]);
+    useEffect(() => {
+        const getEntryNumbers = async () => {
+            if (!sellogTabType || !selectedExemptionLog) {
+                return;
+            }
+            let entityNumberArr = [];
+            let reqparam = {
+                logType: selectedExemptionLog === "urpm" ? "urpm" : "zug",
+            };
+            reqparam = { ...reqparam, isSubmit: true };
+
+            let tempEntries = await getAllEntryNumbers(reqparam);
+            if (tempEntries.length) {
+                tempEntries.forEach((item) => {
+                    entityNumberArr.push(item.entryNumber);
+                });
+                entityNumberArr.sort();
+
+                setcommonfilterOpts((prevstate) => ({
+                    ...prevstate,
+                    entryNumberOpts: [...entityNumberArr],
+                }));
+            }
+            setformfield(intialFilterState)
+        };
+        getEntryNumbers();
+    }, [sellogTabType, selectedExemptionLog]);
 
     useEffect(() => {
         fnOnInit();
     }, []);
 
     const fnOnInit = async () => {
-        getAllCountry();
-        getAllRegion();
-        getAlllobChapter();
-        loadIndividualGrantedEmpowermentUsers();
-        loadApproverUsers();
-        fnOnLogSpecData();
         let tempopts = [];
+        // setselectedExemptionLog(exemptionType)
         const lookupvalues = await Promise.all([
             getLookupByType({
                 LookupType: "EXMPZUGStatus",
@@ -268,35 +654,15 @@ function ExemptionAddEditForm(props) {
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
             ZUGstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
+            URPMstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
+            URPMSectionFilterOps: [selectInitiVal, ...tempURPMSection],
             typeOfExemptionOpts: [selectInitiVal, ...tempTypeOfExemption],
         }));
     };
 
-    const loadIndividualGrantedEmpowermentUsers = async () => {
-        let logType = "zug";
-        let tempIndividualGrantedEmpowerment = await getLogUsers({
-            LogType: logType,
-            FieldName: "IndividualGrantedEmpowerment",
-            userId: userProfile.userId,
-        });
-        tempIndividualGrantedEmpowerment = tempIndividualGrantedEmpowerment.map(
-            (item) => ({
-                label: item.userName,
-                value: item.emailAddress,
-            })
-        );
-        tempIndividualGrantedEmpowerment = tempIndividualGrantedEmpowerment.map(
-            (item) => item.label
-        );
-        tempIndividualGrantedEmpowerment.sort();
-        console.log("tempIndividualGrantedEmpowerment>>", [...tempIndividualGrantedEmpowerment]);
-        setcommonfilterOpts((prevstate) => ({
-            ...prevstate,
-            individualGrantedEmpowermentOpts: [...tempIndividualGrantedEmpowerment],
-        }));
-    };
+
     const loadApproverUsers = async () => {
-        let logType = "zug";
+        let logType = selectedExemptionLog === "zug" ? "zug" : "urpm";
         let tempApprovers = await getLogUsers({
             LogType: logType,
             FieldName: "Approver",
@@ -313,8 +679,31 @@ function ExemptionAddEditForm(props) {
             approverOpts: [...tempApprovers],
         }));
     };
+    const loadIndividualGrantedEmpowermentUsers = async () => {
+        let logType = selectedExemptionLog === "zug" ? "zug" : "urpm";
+        let tempIndividualGrantedEmpowerment = await getLogUsers({
+            LogType: logType,
+            FieldName: "IndividualGrantedEmpowerment",
+            userId: userProfile.userId,
+        });
+        tempIndividualGrantedEmpowerment = tempIndividualGrantedEmpowerment.map(
+            (item) => ({
+                label: item.userName,
+                value: item.emailAddress,
+            })
+        );
+        tempIndividualGrantedEmpowerment = tempIndividualGrantedEmpowerment.map(
+            (item) => item.label
+        );
+        tempIndividualGrantedEmpowerment.sort();
+        setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            individualGrantedEmpowermentOpts: [...tempIndividualGrantedEmpowerment],
+        }));
+    };
+
     const fnOnLogSpecData = async () => {
-        let logType = "zug";
+        let logType = selectedExemptionLog === "zug" ? "zug" : "urpm";
         loadApproverUsers();
         loadIndividualGrantedEmpowermentUsers();
         let tempEmpowermentRequestedBy = await getLogUsers({
@@ -337,36 +726,125 @@ function ExemptionAddEditForm(props) {
             empowermentRequestedByOpts: [...tempEmpowermentRequestedBy],
         }));
     };
-    useEffect(async() => {
-        let entityNumberArr = [];
-        let reqparam = {
-          logType: "zug",
-        };
-        reqparam = { ...reqparam, isSubmit: true };
-        let tempEntries = await getAllEntryNumbers(reqparam);
-        if (tempEntries.length) {
-          tempEntries.forEach((item) => {
-            entityNumberArr.push(item.entryNumber);
-          });
-          entityNumberArr.sort();
-          setcommonfilterOpts((prevstate) => ({
-            ...prevstate,
-            entryNumberOpts: [...entityNumberArr],
-          }));
-        }
-      }, []);
 
-    const hidePopup = () => {
-        hideAddPopup();
-    };
+    useEffect(() => {
+        fnOnLogSpecData()
+    }, [selectedExemptionLog])
+
+    const [countrymapping, setcountrymapping] = useState([]);
+    const [frmCountrySelectOpts, setfrmCountrySelectOpts] = useState([]);
+
+    //get all country
+    useEffect(() => {
+        getAllCountry();
+        getAllRegion();
+        getAlllobChapter();
+    }, []);
+
+    useEffect(() => {
+        let selectOpts = [];
+        let tempCountryMapping = [];
+        let tempRegionListObj = {};
+        countryState.countryItems.forEach((item) => {
+            selectOpts.push({
+                label: item.countryName.trim(),
+                value: item.countryID,
+                regionId: item.regionID,
+            });
+
+            if (!tempRegionListObj[item.regionID]) {
+                tempCountryMapping.push({
+                    region: item.regionID,
+                    country: [
+                        {
+                            label: item.countryName,
+                            value: item.countryID,
+                        },
+                    ],
+                });
+            } else {
+                tempCountryMapping.forEach((countryitem) => {
+                    if (countryitem.region === item.regionID) {
+                        countryitem.country.push({
+                            label: item.countryName,
+                            value: item.countryID,
+                        });
+                    }
+                });
+            }
+        });
+        selectOpts.sort(dynamicSort("label"));
+        setcountrymapping([...tempCountryMapping]);
+        setfrmCountrySelectOpts([...selectOpts]);
+        setcountryFilterOpts([...selectOpts]);
+        setcountryAllFilterOpts([...selectOpts]);
+    }, [countryState.countryItems]);
+
+    const [frmRegionSelectOpts, setfrmRegionSelectOpts] = useState([]);
+    useEffect(() => {
+        let selectOpts = [];
+        regionState.regionItems.forEach((item) => {
+            selectOpts.push({
+                ...item,
+                label: item.regionName.trim(),
+                value: item.regionID,
+            });
+        });
+        selectOpts.sort(dynamicSort("label"));
+        setfrmRegionSelectOpts([...selectOpts]);
+        setregionFilterOpts([...selectOpts]);
+        setregionOptsAll([...selectOpts]);
+    }, [regionState.regionItems]);
+
+    useEffect(() => {
+        let selectOpts = [];
+        lobchapterState.lobChapterItems.forEach((item) => {
+            selectOpts.push({
+                label: item.lobChapterName.trim(),
+                value: item.lobChapterID,
+            });
+        });
+        selectOpts.sort(dynamicSort("label"));
+        setlobChapterFilterOpts([selectInitiVal, ...selectOpts]);
+    }, [lobchapterState.lobChapterItems]);
+
+
+    useEffect(() => {
+        if (logstate.isDataImported) {
+            /* setlogstate((prevstate) => ({
+              ...prevstate,
+              isDataImported: false,
+            }));*/
+            pageIndex = 1;
+            loadAPIData();
+        }
+    }, [logstate.isDataImported]);
+
+    const [filterbox, setfilterbox] = useState(true);
+
+    const [selectedUserRoles, setSelectedUserRoles] = useState([])
 
     const handleChange = (e) => {
         let { name, value } = e.target;
-        console.log(name, value);
         if (e.target.type === "checkbox") {
             value = e.target.checked;
+            let selectedValue = selectedUserRoles
+            userRoles.map((item, i) => {
+                if (value === true && item.name === name) {
+                    selectedValue.push(item.filedValue)
+                }
+                if (value === false && item.name === name) {
+                    selectedValue = selectedUserRoles.filter((num, j) => {
+                        return num !== item.filedValue
+                    })
+                }
+            })
+            setSelectedUserRoles(selectedValue)
         }
-        setformfield({ ...formfield, [name]: value });
+        setformfield({
+            ...formfield,
+            [name]: value
+        });
     }
 
     const handleSelectChange = (name, value) => {
@@ -376,121 +854,25 @@ function ExemptionAddEditForm(props) {
         });
     };
 
-    const handleMultiSelectChange = (name, value) => {
-        if (name === "regionId") {
-            let countryopts = formfield.countryId ? [...formfield.countryId] : [];
-            let regionopts = value;
-            let removeValFromIndex = [];
-            countryopts.forEach((countryitem, index) => {
-                let isExist = false;
-                regionopts.forEach((item) => {
-                    if (item.value === countryitem.regionId) {
-                        isExist = true;
-                    }
-                });
-                if (!isExist) {
-                    removeValFromIndex.push(index);
-                }
-            });
-            removeValFromIndex.forEach((item) => {
-                countryopts.splice(item, 1);
-            });
-            setformfield({
-                ...formfield,
-                [name]: value,
-                countryId: countryopts,
-            });
-        }
-        if (name === "countryId") {
-            let country = value;
-            let regionOpts = [];
-            let selectedRegionopts = [];
-            country.forEach((countryitem) => {
-                regionOptsAll.forEach((item) => {
-                    if (
-                        item.value === countryitem.regionId &&
-                        !selectedRegionopts.includes(item.value)
-                    ) {
-                        selectedRegionopts.push(item.value);
-                        regionOpts.push(item);
-                    }
-                });
-            });
-            //setregionFilterOpts([...regionOpts]);
-            setformfield({
-                ...formfield,
-                [name]: value,
-                regionId: regionOpts,
-            });
-        }
-    };
-
-    const handleDateSelectChange = (name, value) => {
-        let dateval = value ? moment(value).format("YYYY-MM-DD") : "";
-        setformfield({
-            ...formfield,
-            [name]: dateval,
-        });
-    };
-    const onSearchFilterInputAutocomplete = (name, value) => {
-        //const { name, value } = e.target;
-        setformfield({
-            ...formfield,
-            [name]: value,
-        });
-    };
-
-    const onSearchFilterInput = (e) => {
-        const { name, value } = e.target;
-        setformfield({
-            ...formfield,
-            [name]: value,
-        });
-    };
-
-    const onSearchFilterSelect = (name, value) => {
-        //const { name, value } = e.target;
-        setformfield({
-            ...formfield,
-            [name]: value,
-        })
-        // if (name === "exemptionLogType") {
-        //   if (
-        //     (value === "zug" && !logstate.ZUGLoadedAll) ||
-        //     (value === "urpm" && !logstate.URPMLoadedAll)
-        //   ) {
-        //     setlogItmes([]);
-        //     setlogstate({ ...logstate, loading: true });
-        //   }
-        //   setExemLogTypeFn(value);
-        // }
-    };
-
-    const handleSubmit = (e) => {
-        console.log("formfield>>>>", formfield);
-        e.preventDefault();
-        // setissubmitted(true);
-        // if (formfield.znaSegmentId && formfield.sbuName) {
-        //   if (isEditMode) {
-        //     putItem(formfield);
-        //   } else {
-        //     postItem(formfield);
-        //   }
-        // }
-    }
-
     return (
         <div className="addedit-logs-container">
             <div className="addedit-header-container">
                 <div className="addedit-header-title">New View for Exemption Log</div>
                 <div className="header-btn-container">
-                    <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
+                    {isReadMode &&
+                        <div className="addedit-close btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
+                            Edit
+                        </div>
+                    }
+                    <div className="addedit-close btn-blue" onClick={() => hideAddPopup()}>
                         Back
                     </div>
                 </div>
             </div>
-            <div className="exemption-popup-formitems logs-form">
-                <form onSubmit={handleSubmit} id="myForm">
+            {loading ? (
+                <Loading />
+            ) : (
+                <div className="popup-formitems logs-form">
                     <div className="row">
                         <div className="col-md-3">
                             <FrmInput
@@ -500,7 +882,8 @@ function ExemptionAddEditForm(props) {
                                 type={"text"}
                                 handleChange={handleChange}
                                 isRequired={false}
-                                issubmitted={issubmitted}
+                                isReadMode={isReadMode}
+                            // issubmitted={issubmitted}
                             />
                         </div>
                         <div className="col-md-3">
@@ -510,17 +893,38 @@ function ExemptionAddEditForm(props) {
                                 value={formfield.isPrivate}
                                 handleChange={handleSelectChange}
                                 isRequired={false}
-                                issubmitted={issubmitted}
+                                isReadMode={isReadMode}
                                 selectopts={switchOpts}
                             />
                         </div>
+                        {/* <div className="col-md-3">
+                            <FrmRadio
+                                title={"Exemption Log Type"}
+                                name={"exemptionLogType"}
+                                selectopts={exemptionlogsType}
+                                handleChange={onExemptionlogSelection}
+                                value={selectedExemptionLog}
+                                isReadMode={isReadMode}
+                            // isdisabled={!alllogsloaded}
+                            />
+                        </div> */}
                     </div>
                     <div className="border-top font-weight-bold frm-container-bgwhite">
                         <div className="mb-4"> User Roles</div>
                     </div>
                     <div className="border-bottom border-top frm-container-bggray">
                         <div className="row m-1 mt-4">
-                            {userRoles.map((item, i) => {
+                            {isReadMode &&
+                                userRoles.map((item, i) => {
+                                    return (
+                                        formfield[item.name] &&
+                                        <div className="col-md-2">
+                                            {item.label}
+                                        </div>
+                                    )
+                                })
+                            }
+                            {!isReadMode && userRoles.map((item, i) => {
                                 return (
                                     <div className="col-md-2">
                                         <FrmCheckbox
@@ -529,207 +933,260 @@ function ExemptionAddEditForm(props) {
                                             value={formfield[item.name]}
                                             handleChange={handleChange}
                                             isRequired={false}
-                                            issubmitted={issubmitted}
                                             selectopts={accessBreachLogOpts}
                                             inlinetitle={true}
                                             aftercheckbox={true}
+                                            isReadMode={isReadMode}
                                         />
                                     </div>
                                 )
                             })}
                         </div>
                     </div>
-                    <div className="">
-                        <div className="row">
-                            <div className="col-md-3">
-                                <FrmInputAutocomplete
-                                    title={"Entry Number"}
-                                    name={"entryNumber"}
-                                    type={"input"}
-                                    handleChange={onSearchFilterInputAutocomplete}
-                                    value={formfield.entryNumber}
-                                    options={commonfilterOpts.entryNumberOpts}
-                                    isReadMode={isReadMode}
-                                />
+                    <div className="filter-normal">
+                        <div className="filter-container">
+                            <div className="row">
+                                <div className="frm-filter col-md-3">
+                                    <FrmInputAutocomplete
+                                        title={"Entry Number"}
+                                        name={"entryNumber"}
+                                        type={"input"}
+                                        handleChange={onSearchFilterInputAutocomplete}
+                                        value={formfield.entryNumber}
+                                        options={commonfilterOpts.entryNumberOpts}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
+                                <div className="frm-filter col-md-3">
+                                    <FrmMultiselect
+                                        title={"Region"}
+                                        name={"regionId"}
+                                        selectopts={regionFilterOpts}
+                                        handleChange={handleMultiSelectChange}
+                                        value={formfield.regionId}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
+                                <div className="frm-filter col-md-3">
+                                    <FrmMultiselect
+                                        title={"Country"}
+                                        name={"countryID"}
+                                        selectopts={countryFilterOpts}
+                                        handleChange={handleMultiSelectChange}
+                                        value={formfield.countryID}
+                                        isAllOptNotRequired={true}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
+                                {selectedExemptionLog === "zug" ? (
+                                    <div className="frm-filter col-md-3">
+                                        <FrmSelect
+                                            title={"LoB Chapter"}
+                                            name={"loBChapter"}
+                                            selectopts={lobChapterFilterOpts}
+                                            handleChange={onSearchFilterSelect}
+                                            value={formfield.loBChapter}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="frm-filter col-md-3">
+                                        <FrmInput
+                                            title={"Section"}
+                                            name={"section"}
+                                            type={"input"}
+                                            handleChange={onSearchFilterInput}
+                                            value={formfield.section}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                )}
                             </div>
-                            <div className="col-md-3">
-                                <FrmMultiselect
-                                    title={"Region"}
-                                    name={"regionId"}
-                                    selectopts={regionFilterOpts}
-                                    handleChange={handleMultiSelectChange}
-                                    value={formfield.regionId || []}
-                                    isReadMode={isReadMode}
-                                />
+                            <div className="row">
+                                <div className="frm-filter col-md-3">
+                                    <FrmSelect
+                                        title={"Type of Exemption"}
+                                        name={"typeofExemption"}
+                                        selectopts={commonfilterOpts.typeOfExemptionOpts}
+                                        handleChange={onSearchFilterSelect}
+                                        value={formfield.typeofExemption}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
+                                <div className="frm-filter col-md-3">
+                                    <FrmInputAutocomplete
+                                        title={"Individual Granted Empowerment"}
+                                        name={"individualGrantedEmpowerment"}
+                                        type={"input"}
+                                        handleChange={onSearchFilterInputAutocomplete}
+                                        value={formfield.individualGrantedEmpowerment}
+                                        options={
+                                            commonfilterOpts.individualGrantedEmpowermentOpts
+                                        }
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
+                                <div className="frm-filter col-md-3">
+                                    <FrmInputAutocomplete
+                                        title={"Approver"}
+                                        name={"approver"}
+                                        type={"input"}
+                                        handleChange={onSearchFilterInputAutocomplete}
+                                        value={formfield.approver}
+                                        options={commonfilterOpts.approverOpts}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
+                                <div className="frm-filter col-md-3">
+                                    <FrmSelect
+                                        title={"Role"}
+                                        name={"role"}
+                                        selectopts={commonfilterOpts.rolesFilterOpts}
+                                        handleChange={onSearchFilterSelect}
+                                        value={formfield.role}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
                             </div>
-                            <div className="col-md-3">
-                                <FrmMultiselect
-                                    title={"Country"}
-                                    name={"countryId"}
-                                    selectopts={countryFilterOpts}
-                                    handleChange={handleMultiSelectChange}
-                                    value={formfield.countryId || []}
-                                    isAllOptNotRequired={true}
-                                />
-                            </div>
-                            <div className="col-md-3">
-                                <FrmSelect
-                                    title={"LoB Chapter"}
-                                    name={"LOBChapter"}
-                                    selectopts={lobChapterFilterOpts}
-                                    handleChange={onSearchFilterSelect}
-                                    value={formfield.LOBChapter}
-                                />
-                            </div>
-                            <div className="col-md-3">
-                                <FrmSelect
-                                    title={"Type of Exemption"}
-                                    name={"typeOfExemption"}
-                                    selectopts={commonfilterOpts.typeOfExemptionOpts}
-                                    handleChange={onSearchFilterSelect}
-                                    value={formfield.typeOfExemption}
-                                />
-                            </div>
-                            <div className="col-md-3">
-                                <FrmInputAutocomplete
-                                    title={"Individual Granted Empowerment"}
-                                    name={"individualGrantedEmpowerment"}
-                                    type={"input"}
-                                    handleChange={onSearchFilterInputAutocomplete}
-                                    value={formfield.individualGrantedEmpowerment}
-                                    options={
-                                        commonfilterOpts.individualGrantedEmpowermentOpts
-                                    }
-                                />
-                            </div>
-                            <div className="col-md-3">
-                                <FrmInputAutocomplete
-                                    title={"Approver"}
-                                    name={"approver"}
-                                    type={"input"}
-                                    handleChange={onSearchFilterInputAutocomplete}
-                                    value={formfield.approver}
-                                    options={commonfilterOpts.approverOpts}
-                                />
-                            </div>
-                            <div className="col-md-3">
-                                <FrmSelect
-                                    title={"Role"}
-                                    name={"role"}
-                                    selectopts={commonfilterOpts.rolesFilterOpts}
-                                    handleChange={onSearchFilterSelect}
-                                    value={formfield.role}
-                                />
-                            </div>
-                            <div className="col-md-3">
-                                <FrmSelect
-                                    title={"Status"}
-                                    name={"status"}
-                                    selectopts={commonfilterOpts.ZUGstatusFilterOpts}
-                                    handleChange={onSearchFilterSelect}
-                                    value={formfield.status}
-                                />
+                            <div className="row">
+                                <div className="frm-filter col-md-3">
+                                    <FrmSelect
+                                        title={"Status"}
+                                        name={"status"}
+                                        selectopts={
+                                            selectedExemptionLog === "zug"
+                                                ? commonfilterOpts.ZUGstatusFilterOpts
+                                                : commonfilterOpts.URPMstatusFilterOpts
+                                        }
+                                        handleChange={onSearchFilterSelect}
+                                        value={formfield.status}
+                                        isReadMode={isReadMode}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="advance-filter-btn-container">
+                    <div className="user-view-advance-filter-btn-container">
                         <div
-                            className={`advance-filter-btn`}
+                            className={`user-view-advance-filter-btn`}
+                        // onClick={handlesetAdvSearch}
                         >
                             Advance Search
                         </div>
                     </div>
-                    <div className="filter-advance">
-                        <div className="">
-                            <div className="row">
-                                <div className="col-md-3">
-                                    <FrmInput
-                                        title={"ZUG Chapter Version"}
-                                        name={"zugChapterVersion"}
-                                        type={"input"}
-                                        handleChange={onSearchFilterInput}
-                                        value={formfield.zugChapterVersion}
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <FrmInputAutocomplete
-                                        title={"Empowerment Requested By"}
-                                        name={"empowermentRequestedBy"}
-                                        type={"input"}
-                                        handleChange={onSearchFilterInputAutocomplete}
-                                        value={formfield.empowermentRequestedBy}
-                                        options={
-                                            commonfilterOpts.empowermentRequestedByOpts
-                                        }
-                                    />
-                                </div>
-                                <div className="col-md-6 filter-date-container">
-                                    <div className="frm-filter">
-                                        <FrmDatePicker
-                                            title={"Created Date"}
-                                            name={"createdFromDate"}
-                                            value={formfield.createdFromDate}
-                                            type={"date"}
-                                            handleChange={handleDateSelectChange}
+                    {isAdvfilterApplied ? (
+                        <div className="filter-advance">
+                            <div className="filter-container">
+                                <div className="row">
+                                    {selectedExemptionLog === "zug" && (
+                                        <div className="frm-filter col-md-3">
+                                            <FrmInput
+                                                title={"ZUG Chapter Version"}
+                                                name={"zugChapterVersion"}
+                                                type={"input"}
+                                                handleChange={onSearchFilterInput}
+                                                value={formfield.zugChapterVersion}
+                                                isReadMode={isReadMode}
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="frm-filter col-md-3">
+                                        <FrmInputAutocomplete
+                                            title={"Empowerment Requested By"}
+                                            name={"empowermentRequestedBy"}
+                                            type={"input"}
+                                            handleChange={onSearchFilterInputAutocomplete}
+                                            value={formfield.empowermentRequestedBy}
+                                            options={
+                                                commonfilterOpts.empowermentRequestedByOpts
+                                            }
+                                            isReadMode={isReadMode}
                                         />
                                     </div>
+                                    <div className="col-md-6 filter-date-container">
+                                        <div className="frm-filter">
+                                            <FrmDatePicker
+                                                title={"Created Date"}
+                                                name={"createdDateFrom"}
+                                                value={formfield.createdDateFrom}
+                                                type={"date"}
+                                                handleChange={handleDateSelectChange}
+                                                isReadMode={isReadMode}
+                                            />
+                                        </div>
 
-                                    <div className="daterange-title">to</div>
+                                        <div className="daterange-title">to</div>
 
-                                    <div className="frm-filter">
-                                        <FrmDatePicker
-                                            title={""}
-                                            name={"createdToDate"}
-                                            value={formfield.createdToDate}
-                                            type={"date"}
-                                            handleChange={handleDateSelectChange}
-                                            minDate={moment(
-                                                formfield.createdFromDate
-                                            ).toDate()}
-                                        />
+                                        <div className="frm-filter">
+                                            <FrmDatePicker
+                                                title={""}
+                                                name={"createdDateTo"}
+                                                value={formfield.createdDateTo}
+                                                type={"date"}
+                                                handleChange={handleDateSelectChange}
+                                                minDate={moment(
+                                                    formfield.createdDateFrom
+                                                ).toDate()}
+                                                isReadMode={isReadMode}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="col-md-3">
-                                    <FrmInput
-                                        title={"Previous Exemption ID"}
-                                        name={"ciGuidlineId"}
-                                        type={"input"}
-                                        handleChange={onSearchFilterInput}
-                                        value={formfield.ciGuidlineId}
-                                    />
-                                </div>
-                                <div className="col-md-3 frm-filter">
-                                    <FrmSelect
-                                        title={"P&C URPM exemption required"}
-                                        name={"PC_URPMExemptionRequired"}
-                                        selectopts={yesnoopts}
-                                        handleChange={onSearchFilterSelect}
-                                        value={formfield.PC_URPMExemptionRequired}
-                                    />
+                                <div className="row">
+                                    {selectedExemptionLog === "zug" && (
+                                        <>
+                                            <div className="frm-filter col-md-3">
+                                                <FrmInput
+                                                    title={"Previous Exemption ID"}
+                                                    name={"previousExemptionID"}
+                                                    type={"input"}
+                                                    handleChange={onSearchFilterInput}
+                                                    value={formfield.previousExemptionID}
+                                                    isReadMode={isReadMode}
+                                                />
+                                            </div>
+                                            <div className="frm-filter col-md-3">
+                                                <FrmSelect
+                                                    title={"P&C URPM exemption required"}
+                                                    name={"pC_URPMExemptionRequired"}
+                                                    selectopts={yesnoopts}
+                                                    handleChange={onSearchFilterSelect}
+                                                    value={formfield.pC_URPMExemptionRequired}
+                                                    isReadMode={isReadMode}
+                                                />
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-                {!isReadMode ? (
-                    <div className="popup-footer-container">
-                        <div className="btn-container">
-                            <button
-                                className={`btn-blue`}
-                                type="submit"
-                                form="myForm"
-                            >
-                                Submit
-                            </button>
-                            <div className="btn-blue" onClick={() => hidePopup()}>
-                                Cancel
+                    ) : (
+                        ""
+                    )}
+                    {
+                        !isReadMode ? (
+                            <div className="popup-footer-container">
+                                <div className="btn-container">
+                                    <button
+                                        className={`btn-blue ${!isEmptyObjectKeys(formfield) ? "" : "disable"
+                                            }`}
+                                        type="submit"
+                                        onClick={handleFilterSearch}
+                                    >
+                                        Submit
+                                    </button>
+                                    <div className="btn-blue" onClick={() => hideAddPopup()}>
+                                        Cancel
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                ) : (
-                    ""
-                )}
+                        ) : (
+                            ""
+                        )
+                    }
+                </div>
+            )}
         </div>
     );
 }
@@ -739,14 +1196,32 @@ const mapStateToProp = (state) => {
     };
 };
 const mapActions = {
-    getAllUsers: userActions.getAllUsers,
+    getAll: exemptionlogActions.getAll,
+    getallZUGLogs: exemptionlogActions.getallZUGLogs,
+    getallZUGDeletedLogs: exemptionlogActions.getallZUGDeletedLogs,
+    getallURPMDeletedLogs: exemptionlogActions.getallURPMDeletedLogs,
+    getallZUGunderwriter: exemptionlogActions.getallZUGunderwriter,
+    getByIdZUG: exemptionlogActions.getByIdZUG,
+    postItemZUG: exemptionlogActions.postItemZUG,
+    deleteItemZUG: exemptionlogActions.deleteItemZUG,
+    getallURPMLogs: exemptionlogActions.getallURPMLogs,
+    getByIdURPM: exemptionlogActions.getByIdURPM,
+    postItemURPM: exemptionlogActions.postItemURPM,
+    exportReportZUGLogs: exemptionlogActions.exportReportZUGLogs,
+    exportReportURPMLogs: exemptionlogActions.exportReportURPMLogs,
+    getallZUGCount: exemptionlogActions.getallZUGCount,
+    getallURPMCount: exemptionlogActions.getallURPMCount,
     getAllCountry: countryActions.getAllCountry,
     getAllRegion: regionActions.getAllRegions,
-    getAllStatus: breachlogActions.getAllStatus,
-    getLookupByType: lookupActions.getLookupByType,
-    getAllEntryNumbers: commonActions.getAllEntryNumbers,
-    getLogUsers: commonActions.getLogUsers,
     getAlllobChapter: lobchapterActions.getAlllobChapter,
-    getExemptionUserView: commonActions.getExemptionUserView
+    getAlllob: lobActions.getAlllob,
+    getLookupByType: lookupActions.getLookupByType,
+    getDataVersion: commonActions.getDataVersion,
+    deleteLog: commonActions.deleteLog,
+    getLogUsers: commonActions.getLogUsers,
+    getAllEntryNumbers: commonActions.getAllEntryNumbers,
+    clearDashboardClick: dashboardActions.clearDashboardClick,
+    postItem: userViewActions.postItem,
 };
-export default connect(mapStateToProp, mapActions)(ExemptionAddEditForm);
+
+export default connect(mapStateToProp, mapActions)(Exemptionlog);

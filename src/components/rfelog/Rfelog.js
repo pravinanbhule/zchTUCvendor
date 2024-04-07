@@ -8,6 +8,7 @@ import {
   lobActions,
   commonActions,
   dashboardActions,
+  userViewActions,
 } from "../../actions";
 import Loading from "../common-components/Loading";
 import useSetNavMenu from "../../customhooks/useSetNavMenu";
@@ -81,6 +82,8 @@ function Rfelog({ ...props }) {
     getDataVersion,
     clearDashboardClick,
     exportReportLogs,
+    getViewsByUserId,
+    addEditUserView
   } = props;
   const [logstate, setlogstate] = useState({
     loading: true,
@@ -157,6 +160,7 @@ function Rfelog({ ...props }) {
     creatorFilterOpts: [],
     underwriterGrantingEmpowermentOpts: [],
     views: [{ label: "All", value: "gn" }],
+    userViews: [{ label: "All", value: null }],
   });
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
@@ -884,6 +888,7 @@ function Rfelog({ ...props }) {
       pageIndex = 1;
       pagesize = 10;
       totalLogCount = 0;
+      handleViews()
       getAllCountry();
       getAllRegion();
       getAlllob({ isActive: true });
@@ -949,6 +954,112 @@ function Rfelog({ ...props }) {
     localStorage.removeItem("status");
     localStorage.removeItem("in-app");
   }, []);
+
+
+  
+  const [selectedUserView, setSelectedUserview] = useState(null);
+  const [viewData, setViewData] = useState([])
+
+  useEffect(()=>{
+    if (userProfile?.rfeViewsId && viewData.length !== 0) {
+      onUserViewFilterSelect( "", userProfile?.rfeViewsId)
+    }
+  },[viewData])
+
+  useEffect(() => {
+      handleFilterSearch();
+  }, [selectedUserView]);
+
+  const onUserViewFilterSelect = async(name, value) => {
+    let selectedViewData = viewData.filter((item, i) => {
+      if (item.rfeViewsId === value) {
+        return item
+      }
+    })
+    if (selectedViewData.length !== 0) {
+      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+      let countryArray = []
+      if (selectedCountryArray) {
+        selectedCountryArray.map((id, j) => {
+            countryState.countryItems.map((item, i) => {
+                if (id === item.countryID) {
+                    countryArray.push({
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                    })
+                }
+            })
+        })
+      }
+      let regionData = await getAllRegion();
+      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+      let regionArray = []
+      if (selectedRegionArray) {
+        selectedRegionArray.map((id, j) => {
+          regionData.map((item, i) => {
+                if (id === item.regionID) {
+                    regionArray.push({
+                        label: item.regionName.trim(),
+                        value: item.regionID,
+                    })
+                }
+            })
+        })
+      }
+
+      const FilterState = {
+        EntryNumber: selectedViewData[0]?.entryNumber,
+        AccountName: selectedViewData[0]?.accountName,
+        LOBId: selectedViewData[0]?.lobId,
+        CountryId: countryArray,
+        RegionId: regionArray,
+        Underwriter: selectedViewData[0]?.underwriter,
+        role: selectedViewData[0]?.roleData,
+        RequestForEmpowermentStatus: selectedViewData[0]?.requestForEmpowermentStatus,
+        OrganizationalAlignment: selectedViewData[0]?.organizationalAlignment,
+        RequestForEmpowermentReason: selectedViewData[0]?.requestForEmpowermentReason,
+        CHZ: selectedViewData[0]?.chz,
+        RequestForEmpowermentCC: selectedViewData[0]?.requestForEmpowermentCC,
+        UnderwriterGrantingEmpowerment: selectedViewData[0]?.underwriterGrantingEmpowerment,
+        CreatorName: selectedViewData[0]?.creatorName,
+        CreatedFromDate: selectedViewData[0]?.createdFromDate,
+        CreatedToDate: selectedViewData[0]?.createdToDate,
+        DurationofApproval: selectedViewData[0]?.durationofApproval,
+        ConditionApplicableTo: selectedViewData[0]?.conditionApplicableTo,
+      };
+      setselfilter(FilterState)
+      setSelectedUserview(value);
+    }
+    if (value === null) {
+      setSelectedUserview(value);
+      clearFilter()
+    }
+    await addEditUserView({LogType: 'rfelogs', UserId: userProfile.userId, ViewId: value})
+    let updatedUserProfileData = userProfile
+    updatedUserProfileData.rfeViewsId = value
+    localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+  };
+
+  const handleViews = async () => {
+    const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'rfelog' })
+    console.log("response>>>", response);
+    setViewData(response)
+    let viewFilterOpts = []
+    response.map((item,i) => {
+      viewFilterOpts.push({
+        label: item.viewName,
+        value: item.rfeViewsId
+      })
+    })
+    viewFilterOpts.sort(dynamicSort("label"));
+    console.log("viewFilterOpts>>", viewFilterOpts);
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      userViews: [{ label: "All", value: null }, ...viewFilterOpts],
+    }));
+  }
+
+
 
   const loadfilterdata = async () => {
     const lookupvalues = await Promise.all([
@@ -1833,11 +1944,21 @@ function Rfelog({ ...props }) {
       )}
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
-          <div className="container">
+          <div className="">
             <div className="row">
-              <div className="page-title col-md-9">RfE Log</div>
+              <div className="page-title col-md-4" style={{ marginLeft: '1.5%'}}>RfE Log</div>
+              <div className="col-md-3" style={{ marginTop: "8px", right: '-25%' }}>
+                <FrmSelect
+                    title={"Switch view"}
+                    name={"switchview"}
+                    selectopts={commonfilterOpts.userViews}
+                    handleChange={onUserViewFilterSelect}
+                    value={selectedUserView}
+                    inlinetitle={true}
+                />
+              </div>
               {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
-                <div className="col-md-3" style={{ marginTop: "8px" }}>
+                <div className="col-md-3" style={{ marginTop: "8px", right: '-15%' }}>
                   <FrmSelect
                     title={"Change view"}
                     name={"IncountryFlag"}
@@ -2253,6 +2374,8 @@ const mapActions = {
   getLogCount: commonActions.getLogCount,
   getLogFields: commonActions.getLogFields,
   clearDashboardClick: dashboardActions.clearDashboardClick,
+  getViewsByUserId: userViewActions.getViewsByUserId,
+  addEditUserView: commonActions.addEditUserView
 };
 
 export default connect(mapStateToProp, mapActions)(Rfelog);

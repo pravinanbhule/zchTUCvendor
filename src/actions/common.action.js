@@ -199,6 +199,16 @@ const getExemptionUserView = (requestParam) => {
     }
   };
 };
+const addEditUserView = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.addEditUserViewService(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 
 export const commonActions = {
   uploadFile,
@@ -219,7 +229,8 @@ export const commonActions = {
   getLogCount,
   getLogFields,
   getLanguageDetails,
-  getExemptionUserView
+  getExemptionUserView,
+  addEditUserView
 };
 const uploadFileService = async (requestParam) => {
   const response = await Axios.post(`common/uploadfile`, requestParam, {
@@ -320,6 +331,10 @@ const getAllExemptionUserViewList = async (requestParam) => {
   const response = await Axios.get(`exemptionviews/getallzugexemptionviewslist`, param);
   return response;
 };
+const addEditUserViewService = async (requestParam) => {
+  const response = await Axios.post(`common/addedituserview?LogType=${requestParam.LogType}&UserId=${requestParam.UserId}&ViewId=${requestParam.ViewId}`);
+  return response;
+};
 
 const commonService = {
   getAllExemptionUserViewList,
@@ -340,5 +355,6 @@ const commonService = {
   getLogCountService,
   getLogFieldsService,
   getLanguageDetailsService,
-  getMasterVersionService
+  getMasterVersionService,
+  addEditUserViewService
 };

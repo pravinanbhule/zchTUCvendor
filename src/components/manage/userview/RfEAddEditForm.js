@@ -15,7 +15,6 @@ import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmMultiselect from "../../common-components/frmmultiselect/FrmMultiselect";
 import FrmDatePicker from "../../common-components/frmdatepicker/FrmDatePicker";
 import moment from "moment";
-import Pagination from "../../common-components/pagination/Pagination";
 import {
     alertMessage,
     dynamicSort,
@@ -25,50 +24,37 @@ import {
     isNotEmptyValue,
 } from "../../../helpers";
 import {
-    SHAREPOINT_LINKS,
-    INCOUNTRY_FLAG,
-    INCOUNTRY_FLAG_OPTS,
-} from "../../../constants";
-import {
-    intialFilterState,
     filterfieldsmapping,
 } from "../../rfelog/Rfelogconstants";
 import FrmInput from "../../common-components/frminput/FrmInput";
 import FrmInputAutocomplete from "../../common-components/frminputautocomplete/FrmInputAutocomplete";
-import { RFE_LOG_STATUS } from "../../../constants"
-import { useHistory } from "react-router-dom";
 import FrmCheckbox from "../../common-components/frmcheckbox/FrmCheckbox";
 import FrmToggleSwitch from "../../common-components/frmtoggelswitch/FrmToggleSwitch";
-let pageIndex = 1;
-let pagesize = 10;
-let totalLogCount = 0;
+import Loading from "../../common-components/Loading";
+
 function RfelogAddEditForm({ ...props }) {
     const { rfelogState, regionState, countryState, lobState, dashboardState } =
         props.state;
     const {
-        getAll,
+        hideAddPopup,
         getallDeletedLogs,
         getallLogs,
-        getAllPolicy360Accounts,
         getallunderwriter,
         getAllEntryNumbers,
         getallCount,
-        getLogCount,
         getLogFields,
         getAllCountry,
         getAllRegion,
         getAlllob,
-        getById,
         getLookupByType,
-        checkIsInUse,
         postItem,
-        deleteItem,
-        deleteLog,
         getLogUsers,
         userProfile,
-        getDataVersion,
         clearDashboardClick,
-        exportReportLogs,
+        isEditMode,
+        isReadMode,
+        formIntialState,
+        handleEdit
     } = props;
     const [logstate, setlogstate] = useState({
         loading: true,
@@ -78,43 +64,7 @@ function RfelogAddEditForm({ ...props }) {
         loadedAll: false,
         isDataImported: false,
     });
-    const rfelog_status = {
-        Pending: RFE_LOG_STATUS.Pending,
-        More_information_needed: RFE_LOG_STATUS.More_information_needed,
-        Empowerment_granted: RFE_LOG_STATUS.Empowerment_granted,
-        Empowerment_granted_with_conditions:
-            RFE_LOG_STATUS.Empowerment_granted_with_conditions,
-        Empowerment_not_granted: RFE_LOG_STATUS.Empowerment_not_granted,
-        Withdrawn: RFE_LOG_STATUS.Withdrawn,
-    };
-    const rfelogActiveSharePointLink = SHAREPOINT_LINKS.RFElogActive;
-    const rfelogArchiveSharePointLink = SHAREPOINT_LINKS.RFElogArchive;
-    const rfelogLATAMActiveSharePointLink = SHAREPOINT_LINKS.RFElogLATAMActive;
-    const rfelogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEUKlogActive;
-    const rfeARClogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEARCUKlogActive;
-    const rfelogNordicActiveSharePointLink = SHAREPOINT_LINKS.RFENordiclogActive;
-    const rfelogItalyActiveSharePointLink = SHAREPOINT_LINKS.RFEItalylogActive;
-    const rfelogGermanyActiveSharePointLink = SHAREPOINT_LINKS.RFEGermanylogActive;
-    const InCountryViewOpts = [
-        INCOUNTRY_FLAG_OPTS.Indonesia,
-        INCOUNTRY_FLAG_OPTS.UK,
-        INCOUNTRY_FLAG_OPTS.LATAM,
-        INCOUNTRY_FLAG_OPTS.SINGAPORE,
-        INCOUNTRY_FLAG_OPTS.ITALY,
-        INCOUNTRY_FLAG_OPTS.BENELUX,
-        INCOUNTRY_FLAG_OPTS.NORDIC,
-        INCOUNTRY_FLAG_OPTS.AUSTRALIA,
-        INCOUNTRY_FLAG_OPTS.CHINA,
-        INCOUNTRY_FLAG_OPTS.HONGKONG,
-        INCOUNTRY_FLAG_OPTS.MALAYSIA,
-        INCOUNTRY_FLAG_OPTS.FRANCE,
-        INCOUNTRY_FLAG_OPTS.MIDDLEEAST,
-        INCOUNTRY_FLAG_OPTS.GERMANY,
-        INCOUNTRY_FLAG_OPTS.SPAIN
-    ];
-    const [logsDraftData, setlogsDraftData] = useState([]);
     useSetNavMenu({ currentMenu: "Rfelog", isSubmenu: false }, props.menuClick);
-    const FileDownload = require("js-file-download");
     //initialize filter/search functionality
     const selectInitiVal = {
         label: "Select",
@@ -126,6 +76,7 @@ function RfelogAddEditForm({ ...props }) {
         underwriterFilterOpts: [],
         statusFilterOpts: [],
         rolesFilterOpts: [
+            selectInitiVal,
             { label: "All", value: "all" },
             { label: "Approver", value: "approver" },
             {
@@ -157,11 +108,11 @@ function RfelogAddEditForm({ ...props }) {
     const [accountOpts, setaccountOpts] = useState({});
     const [switchOpts, setSwitchOpts] = useState([
         {
-            label: "Private",
+            label: "Public",
             value: false,
         },
         {
-            label: "Public",
+            label: "Private",
             value: true,
         },
     ]);
@@ -174,110 +125,172 @@ function RfelogAddEditForm({ ...props }) {
     const [userRoles, setUserRoles] = useState([
         {
             label: "Super Admin",
-            name: "isSuperAdmin"
+            name: "isSuperAdmin",
+            filedValue: '1'
         },
         {
             label: "Global Admin",
-            name: "isGlobalAdmin"
+            name: "isGlobalAdmin",
+            filedValue: '2'
         },
         {
             label: "Region Admin",
-            name: "isRegionAdmin"
+            name: "isRegionAdmin",
+            filedValue: '3'
         },
         {
             label: "Country Admin",
-            name: "isCountryAdmin"
+            name: "isCountryAdmin",
+            filedValue: '4'
         },
         {
             label: "Normal User",
-            name: "isNormalUser"
+            name: "isNormalUser",
+            filedValue: '8'
+        },
+        {
+            label: "Country Super Admin",
+            name: "isCountrySuperAdmin",
+            filedValue: '9'
         },
     ])
 
-    const [selfilter, setselfilter] = useState(intialFilterState);
+    const [formfield, setformfield] = useState({
+        EntryNumber: "",
+        AccountName: "",
+        LOBId: "",
+        CountryId: [],
+        RegionId: [],
+        Underwriter: "",
+        role: "",
+        RequestForEmpowermentStatus: "",
+        OrganizationalAlignment: "",
+        RequestForEmpowermentReason: "",
+        CHZ: "",
+        RequestForEmpowermentCC: "",
+        UnderwriterGrantingEmpowerment: "",
+        CreatorName: "",
+        CreatedFromDate: "",
+        CreatedToDate: "",
+        DurationofApproval: "",
+        ConditionApplicableTo: "",
+        isPrivate: false
+    });
 
     const [filterdomfields, setfilterdomfields] = useState({
         common: [],
         advance: [],
     });
     const [filterfieldslist, setfilterfieldslist] = useState();
+    const [loading, setLoading] = useState(false)
+
+    useEffect(async () => {
+        if (isEditMode || isReadMode) {
+            setLoading(true)
+            let response = formIntialState
+
+            if (regionState?.regionItems && typeof response?.region === 'string' && response?.region !== null) {
+                let selectedRegionArray = response?.region?.split(',')
+                let regionArray = []
+                selectedRegionArray?.map((id, j) => {
+                    regionState.regionItems.map((item, i) => {
+                        if (id === item.regionID) {
+                            regionArray.push({
+                                label: item.regionName.trim(),
+                                value: item.regionID,
+                            })
+                        }
+                    })
+                })
+                response.RegionId = typeof response?.region === 'string' && regionArray.length === 0 ? response?.region : regionArray
+            } else {
+                response.RegionId = []
+            }
+            response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
+            response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
+            response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
+            response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
+            response.isNormalUser = response?.userRoles?.split(',').includes('8')
+            response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
+            response.CHZ = response?.chzSustainabilityDeskCHZGICreditRisk
+            response.CustomerSegment = response?.customerSegment
+            response.CreatedToDate = response?.createdDateTo
+            response.CreatedFromDate = response?.createdDateFrom
+            response.RequestForEmpowermentCC = response?.requestforempowermentCC
+            response.RequestForEmpowermentReason = response?.requestforempowermentreason
+            response.RequestForEmpowermentStatus = response?.requestforempowermentstatus
+            response.Underwriter = response?.underwriter
+            response.UnderwriterGrantingEmpowerment = response?.underwritergrantingempowerment
+            response.CreatorName = response?.creatorName
+            response.OrganizationalAlignment = response?.organizationalalignment
+            response.RoleData = response?.role
+            response.LOBId = response?.loB
+            response.AccountName = response?.accountName
+            response.EntryNumber = response?.entryNumber
+            let Roles = response?.userRoles?.split(",")
+            if (Roles?.length > 0) {
+                setSelectedUserRoles(Roles)
+            }
+            setTimeout(async () => {
+                if (typeof response?.country === 'string' && response?.country !== null) {
+                    let selectedCountryArray = response?.country.split(',')
+                    let countryArray = []
+                    selectedCountryArray.map((id, j) => {
+                        countryState.countryItems.map((item, i) => {
+                            if (id === item.countryID) {
+                                countryArray.push({
+                                    label: item.countryName.trim(),
+                                    value: item.countryID,
+                                })
+                            }
+                        })
+                    })
+                    response.CountryId = countryArray
+                } else {
+                    response.CountryId = []
+                }
+                setLoading(false)
+                setformfield(response)
+            }, 5000);
+        }
+    }, [regionState.regionItems])
 
     const onSearchFilterInput = (e) => {
         const { name, value } = e.target;
-        setselfilter({
-            ...selfilter,
+        setformfield({
+            ...formfield,
             [name]: value,
         });
     };
     const handleDateSelectChange = (name, value) => {
         let dateval = value ? moment(value).format("YYYY-MM-DD") : "";
-        setselfilter({
-            ...selfilter,
+        setformfield({
+            ...formfield,
             [name]: dateval,
         });
     };
     const onSearchFilterInputAutocomplete = (name, value) => {
-        //const { name, value } = e.target;
-        setselfilter({
-            ...selfilter,
+        setformfield({
+            ...formfield,
             [name]: value,
         });
     };
     const onSearchFilterSelect = (name, value) => {
-        // const { name, value } = e.target;
-        setselfilter({
-            ...selfilter,
+        setformfield({
+            ...formfield,
             [name]: value,
         });
         if (name === "role" && value === "underwriter") {
-            setselfilter({
-                ...selfilter,
+            setformfield({
+                ...formfield,
                 underwriter: "",
                 [name]: value,
             });
         }
-        /*if (name === "regionId" && value !== "") {
-          let countryopts = countryAllFilterOpts.filter(
-            (item) => item.regionId === value
-          );
-          setcountryFilterOpts([...countryopts]);
-          setselfilter({
-            ...selfilter,
-            [name]: value,
-            countryId: "",
-          });
-        } else if (name === "regionId" && value === "") {
-          setcountryFilterOpts([...countryAllFilterOpts]);
-          setregionFilterOpts([...regionOptsAll]);
-          setselfilter({
-            ...selfilter,
-            [name]: value,
-            countryId: "",
-          });
-        }
-        if (name === "countryId" && value !== "") {
-          let country = countryAllFilterOpts.filter((item) => item.value === value);
-          let regionOpts = regionOptsAll.filter(
-            (item) => item.value === country[0].regionId
-          );
-          setregionFilterOpts([selectInitiVal, ...regionOpts]);
-          setselfilter({
-            ...selfilter,
-            [name]: value,
-            regionId: regionOpts[0].value,
-          });
-        } else if (name === "countryId" && value === "") {
-          setregionFilterOpts([selectInitiVal, ...regionOptsAll]);
-          setselfilter({
-            ...selfilter,
-            [name]: value,
-            regionId: "",
-          });
-        }*/
     };
     const handleMultiSelectChange = (name, value) => {
         if (name === "RegionId") {
-            let countryopts = [...selfilter.CountryId];
+            let countryopts = [...formfield.CountryId];
             let regionopts = value;
             let removeValFromIndex = [];
             countryopts.forEach((countryitem, index) => {
@@ -294,8 +307,8 @@ function RfelogAddEditForm({ ...props }) {
             removeValFromIndex.forEach((item) => {
                 countryopts.splice(item, 1);
             });
-            setselfilter({
-                ...selfilter,
+            setformfield({
+                ...formfield,
                 [name]: value,
                 CountryId: countryopts,
             });
@@ -316,38 +329,13 @@ function RfelogAddEditForm({ ...props }) {
                 });
             });
             //setregionFilterOpts([...regionOpts]);
-            setselfilter({
-                ...selfilter,
+            setformfield({
+                ...formfield,
                 [name]: value,
                 RegionId: regionOpts,
             });
         }
     };
-    const handleFilterSearch = async () => {
-        let data = selfilter
-        if (!isEmptyObjectKeys(selfilter)) {
-            let tempFilterOpts = {};
-            for (let key in selfilter) {
-                if (selfilter[key]) {
-                    tempFilterOpts[key] = selfilter[key];
-                    let value = selfilter[key];
-                    if (key === "CountryId" || key === "RegionId") {
-                        const tmpval = value.map((item) => item.value);
-                        tempFilterOpts[key] = tmpval.join(",");
-                    }
-                }
-            }
-            data = {
-                ...data,
-                ...tempFilterOpts,
-                UserViewType: 'rfelog'
-            }
-            console.log("data", data);
-            let response = await postItem(data)
-            console.log('response', response);
-        }
-    };
-
 
     useEffect(() => {
         let tempfields = { common: [], advance: [] };
@@ -409,102 +397,19 @@ function RfelogAddEditForm({ ...props }) {
         setfilterdomfields(tempfields);
     }, [filterfieldslist]);
 
-    //code for changing view
-    const [selectedview, setselectedview] = useState("gn");
-    useEffect(() => {
-        const fnloadcountryview = async () => {
-            const tempfilterfields = await getLogFields({
-                IncountryFlag: selectedview === "gn" ? "" : selectedview,
-                FieldType: "Filter",
-            });
-            setfilterfieldslist(tempfilterfields);
-            pageIndex = 1;
-        };
-        if (!isLogInitcall) {
-            fnloadcountryview();
-            getallDraftItems();
-            getallDeletedItems();
-        }
-    }, [selectedview]);
 
     const [isPaginationSort, setisPaginationSort] = useState(false);
     const [selSortFiled, setselSortFiled] = useState({
         name: "ModifiedDate",
         order: "desc",
     });
-    useEffect(() => {
-        if (isPaginationSort) {
-            pageIndex = 1;
-        }
-    }, [isPaginationSort]);
     const [paginationdata, setpaginationdata] = useState([]);
     const [logTypes, setlogTypes] = useState([]);
     const [sellogTabType, setsellogTabType] = useState("");
     const [logItmes, setlogItmes] = useState([]);
     const [alllogsloaded, setalllogsloaded] = useState(false);
     const [isLoadingStarted, setisLoadingStarted] = useState(false);
-    const getAllLogsInRecurssion = async () => {
-        if (!sellogTabType) {
-            return;
-        }
-        let reqParam = {
-            RequesterUserId: userProfile.userId,
-            PageIndex: pageIndex,
-            PageSize: pagesize,
-            IncountryFlag: selectedview === "gn" ? "" : selectedview,
-            UserRole:
-                userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
-        };
-        setisLoadingStarted(true);
-        if (sellogTabType === "draft") {
-            reqParam = {
-                ...reqParam,
-                IsSubmit: false,
-            };
-        } else if (sellogTabType === "all") {
-            reqParam = {
-                ...reqParam,
-                IsSubmit: true,
-            };
-        }
-        if (!isEmptyObjectKeys(selfilter)) {
-            let tempFilterOpts = {};
-            for (let key in selfilter) {
-                if (selfilter[key]) {
-                    tempFilterOpts[key] = selfilter[key];
-                    let value = selfilter[key];
-                    if (key === "CountryId" || key === "RegionId") {
-                        const tmpval = value.map((item) => item.value);
-                        tempFilterOpts[key] = tmpval.join(",");
-                    }
-                }
-            }
-            reqParam = {
-                ...reqParam,
-                ...tempFilterOpts,
-                sortExp: selSortFiled.name + " " + selSortFiled.order,
-            };
-        } else {
-            reqParam = {
-                ...reqParam,
-                sortExp: selSortFiled.name + " " + selSortFiled.order,
-            };
-        }
-        try {
-            const dbvalues = await Promise.all([
-                sellogTabType === "delete"
-                    ? getallCount({ ...reqParam, IsDelete: true })
-                    : getallCount(reqParam),
-                sellogTabType === "delete"
-                    ? getallDeletedLogs(reqParam)
-                    : getallLogs(reqParam),
-            ]);
-            totalLogCount = dbvalues[0];
-            setlogItmes(dbvalues[1]);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+
     useEffect(() => {
         if (isLoadingStarted && logItmes) {
             setlogstate({
@@ -529,67 +434,17 @@ function RfelogAddEditForm({ ...props }) {
     const [showDeletedLogs, setshowDeletedLogs] = useState(false);
     useEffect(() => {
         let tempStatus = [{ label: "All", value: "all" }];
-        if (showDraft) {
-            tempStatus.push({
-                label: "Draft",
-                value: "draft",
-            });
-        }
-        if (showDeletedLogs) {
-            tempStatus.push({
-                label: "Deleted",
-                value: "delete",
-            });
-        }
         setlogTypes(tempStatus);
     }, [showDraft, showDeletedLogs]);
 
-    const getallDraftItems = async () => {
-        let tempdraftItems = await getallCount({
-            RequesterUserId: userProfile.userId,
-            isSubmit: false,
-            UserEmail: userProfile.emailAddress,
-            IncountryFlag: selectedview === "gn" ? "" : selectedview,
-            UserRole:
-                userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
-        });
-        if (tempdraftItems) {
-            setshowDraft(true);
-        } else {
-            setshowDraft(false);
-        }
-    };
-    const getallDeletedItems = async () => {
-        let tempItems = await getallCount({
-            RequesterUserId: userProfile.userId,
-            IsDelete: true,
-            UserEmail: userProfile.emailAddress,
-            IncountryFlag: selectedview === "gn" ? "" : selectedview,
-            UserRole:
-                userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
-        });
-        if (tempItems) {
-            setshowDeletedLogs(true);
-        } else {
-            setshowDeletedLogs(false);
-        }
-    };
     const openlogTab = (type) => {
         if (!isLoadingStarted) {
             setsellogTabType(type);
         }
     };
-    useEffect(() => {
-        if (sellogTabType && !dashboardState.status) {
-            pageIndex = 1;
-        }
-    }, [sellogTabType]);
 
     useEffect(() => {
         const fnOnInit = async () => {
-            pageIndex = 1;
-            pagesize = 10;
-            totalLogCount = 0;
             getAllCountry();
             getAllRegion();
             getAlllob({ isActive: true });
@@ -597,54 +452,7 @@ function RfelogAddEditForm({ ...props }) {
             loadUnderwriterUsers();
             loadCCUsers();
             loadApproverUsers();
-            //uncomment below code to work on zurich env
-            // getAllPolicy360Accounts();
             loadfilterdata();
-            getallDraftItems();
-            let incountryopts = [];
-            if (userProfile.isAdminGroup) {
-                const UserRole = userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole
-                if (userProfile.isGlobalAdmin || UserRole === "GlobalUW") {
-                    setIsViewHide(true)
-                } else {
-                    InCountryViewOpts.forEach((item) => {
-                        if (userProfile.isSuperAdmin || userProfile.isGlobalAdmin) {
-                            incountryopts.push(item);
-                        } else if (userProfile.isRegionAdmin) {
-                            let ispresent = false;
-                            item.id.split(",").forEach((countryid) => {
-                                if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
-                                    ispresent = true;
-                                }
-                            });
-                            if (
-                                userProfile.regionId.indexOf(item.id) !== -1 ||
-                                (userProfile.scopeCountryList && ispresent)
-                            )
-                                incountryopts.push(item);
-                        } else if (userProfile.isCountryAdmin) {
-                            let ispresent = false;
-                            item.id.split(",").forEach((countryid) => {
-                                if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
-                                    ispresent = true;
-                                }
-                                if (userProfile.regionId === countryid) {
-                                    incountryopts.push(item);
-                                }
-                            });
-                            if (userProfile.scopeCountryList && ispresent) {
-                                incountryopts.push(item);
-                            }
-                        }
-                    });
-                    incountryopts.sort(dynamicSort("label"));
-                    setcommonfilterOpts((prevstate) => ({
-                        ...prevstate,
-                        views: [{ label: "All", value: "gn" }, ...incountryopts],
-                    }));
-                }
-            }
-            getallDeletedItems();
             let tempStatus = [{ label: "All", value: "all" }];
             setlogTypes(tempStatus);
             setsellogTabType(tempStatus[0].value);
@@ -734,7 +542,7 @@ function RfelogAddEditForm({ ...props }) {
         });
         setfilterfieldslist(tempfilterfields);
         if (dashboardState.status) {
-            setselfilter((prevfilter) => ({
+            setformfield((prevfilter) => ({
                 ...prevfilter,
                 requestForEmpowermentStatus: dashboardState.status,
             }));
@@ -933,8 +741,9 @@ function RfelogAddEditForm({ ...props }) {
                         name={obj.name}
                         type={"input"}
                         handleChange={eval(obj.eventhandler)}
-                        value={selfilter[obj.name]}
+                        value={formfield[obj.name]}
                         titlelinespace={obj.titlelinespace ? true : false}
+                        isReadMode={isReadMode}
                     />
                 );
             case "FrmInputAutocomplete":
@@ -950,9 +759,10 @@ function RfelogAddEditForm({ ...props }) {
                         name={obj.name}
                         type={"input"}
                         handleChange={eval(obj.eventhandler)}
-                        value={selfilter[obj.name]}
+                        value={formfield[obj.name]}
                         options={eval(obj.options)}
                         titlelinespace={obj.titlelinespace ? true : false}
+                        isReadMode={isReadMode}
                     />
                 );
             case "FrmSelect":
@@ -966,10 +776,11 @@ function RfelogAddEditForm({ ...props }) {
                             )
                         }
                         name={obj.name}
-                        value={selfilter[obj.name]}
+                        value={formfield[obj.name] || []}
                         handleChange={eval(obj.eventhandler)}
                         selectopts={eval(obj.options)}
                         titlelinespace={obj.titlelinespace ? true : false}
+                        isReadMode={isReadMode}
                     />
                 );
             case "FrmMultiselect":
@@ -983,10 +794,11 @@ function RfelogAddEditForm({ ...props }) {
                             )
                         }
                         name={obj.name}
-                        value={selfilter[obj.name]}
+                        value={formfield[obj.name] || []}
                         handleChange={eval(obj.eventhandler)}
                         selectopts={eval(obj.options)}
                         titlelinespace={obj.titlelinespace ? true : false}
+                        isReadMode={isReadMode}
                     />
                 );
             case "FrmDatePicker":
@@ -996,9 +808,10 @@ function RfelogAddEditForm({ ...props }) {
                             <FrmDatePicker
                                 title={obj.title}
                                 name={obj.datefieldfrom.fieldname}
-                                value={selfilter[obj.datefieldfrom.fieldname]}
+                                value={formfield[obj.datefieldfrom.fieldname]}
                                 type={"date"}
                                 handleChange={handleDateSelectChange}
+                                isReadMode={isReadMode}
                             />
                         </div>
 
@@ -1008,12 +821,13 @@ function RfelogAddEditForm({ ...props }) {
                             <FrmDatePicker
                                 title={""}
                                 name={obj.datefieldto.fieldname}
-                                value={selfilter[obj.datefieldto.fieldname]}
+                                value={formfield[obj.datefieldto.fieldname]}
                                 type={"date"}
                                 handleChange={handleDateSelectChange}
                                 minDate={moment(
-                                    selfilter[obj.datefieldfrom.fieldname]
+                                    formfield[obj.datefieldfrom.fieldname]
                                 ).toDate()}
+                                isReadMode={isReadMode}
                             />
                         </div>
                     </div>
@@ -1025,145 +839,247 @@ function RfelogAddEditForm({ ...props }) {
 
     const handleChange = (e) => {
         let { name, value } = e.target;
-        console.log(name, value);
         if (e.target.type === "checkbox") {
             value = e.target.checked;
+            let selectedValue = selectedUserRoles
+            userRoles.map((item, i) => {
+                if (value === true && item.name === name) {
+                    selectedValue.push(item.filedValue)
+                }
+                if (value === false && item.name === name) {
+                    selectedValue = selectedUserRoles.filter((num, j) => {
+                        return num !== item.filedValue
+                    })
+                }
+            })
+            setSelectedUserRoles(selectedValue)
         }
-        setselfilter({
-            ...selfilter,
+        setformfield({
+            ...formfield,
             [name]: value
         });
     }
 
     const handleSelectChange = (name, value) => {
-        setselfilter({
-            ...selfilter,
+        setformfield({
+            ...formfield,
             [name]: value,
         });
     };
 
+    const [selectedUserRoles, setSelectedUserRoles] = useState([])
+
+    const handleFilterSearch = async () => {
+        let data = formfield
+        if (!isEmptyObjectKeys(formfield)) {
+            let tempFilterOpts = {};
+            for (let key in formfield) {
+                if (formfield[key]) {
+                    tempFilterOpts[key] = formfield[key];
+                    let value = formfield[key];
+                    if (key === "CountryId" || key === "RegionId") {
+                        const tmpval = value.map((item) => item.value);
+                        tempFilterOpts[key] = tmpval.join(",");
+                    }
+                }
+            }
+            data = {
+                ...data,
+                ...tempFilterOpts,
+                userRoles: selectedUserRoles.toString(),
+                UserViewType: 'rfelog'
+            }
+            data.chzSustainabilityDeskCHZGICreditRisk = data?.CHZ
+            data.customerSegment = data?.CustomerSegment
+            data.createdDateTo = data?.CreatedToDate
+            data.createdDateFrom = data?.CreatedFromDate
+            data.requestforempowermentCC = data?.RequestForEmpowermentCC
+            data.requestforempowermentreason = data?.RequestForEmpowermentReason
+            data.requestforempowermentstatus = data?.RequestForEmpowermentStatus
+            data.underwriter = data?.Underwriter
+            data.underwritergrantingempowerment = data?.UnderwriterGrantingEmpowerment
+            data.creatorName = data?.CreatorName
+            data.organizationalalignment = data?.OrganizationalAlignment
+            data.role = data?.RoleData
+            data.loB = data?.LOBId
+            data.accountName = data?.AccountName
+            data.entryNumber = data?.EntryNumber
+            data.country = data?.CountryId
+            data.region = data?.RegionId
+            delete data?.CHZ
+            delete data?.CustomerSegment
+            delete data?.CreatedToDate
+            delete data?.CreatedFromDate
+            delete data?.RequestForEmpowermentCC
+            delete data?.RequestForEmpowermentReason
+            delete data?.RequestForEmpowermentStatus
+            delete data?.Underwriter
+            delete data?.UnderwriterGrantingEmpowerment
+            delete data?.CreatorName
+            delete data?.OrganizationalAlignment
+            delete data?.RoleData
+            delete data?.LOBId
+            delete data?.AccountName
+            delete data?.EntryNumber
+            delete data?.CountryId
+            delete data?.RegionId
+            let response = await postItem(data)
+            if (response) {
+                alert(alertMessage.userview.add);
+                hideAddPopup()
+                console.log('response', response);
+            }
+        }
+    };
+
     return (
-        <>
-            <>
-                <div className="container">
+        <div className="addedit-logs-container">
+            <div className="addedit-header-container">
+                <div className="addedit-header-title">New View for RfE Log</div>
+                <div className="header-btn-container">
+                    {isReadMode &&
+                        <div className="addedit-close btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
+                            Edit
+                        </div>
+                    }
+                    <div className="addedit-close btn-blue" onClick={() => hideAddPopup()}>
+                        Back
+                    </div>
+                </div>
+            </div>
+            {loading ? (
+                <Loading />
+            ) : (
+                <div className="popup-formitems logs-form">
                     <div className="row">
-                        <div className="page-title col-md-9">RfE Log</div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-3">
-                        <FrmInput
-                            title={"View Name"}
-                            name={"viewName"}
-                            value={selfilter?.viewName}
-                            type={"text"}
-                            handleChange={handleChange}
-                            isRequired={false}
+                        <div className="col-md-3">
+                            <FrmInput
+                                title={"View Name"}
+                                name={"viewName"}
+                                value={formfield?.viewName}
+                                type={"text"}
+                                handleChange={handleChange}
+                                isRequired={false}
+                                isReadMode={isReadMode}
                             // issubmitted={issubmitted}
-                        />
+                            />
+                        </div>
+                        <div className="col-md-3">
+                            <FrmToggleSwitch
+                                title={''}
+                                name={"isPrivate"}
+                                value={formfield.isPrivate}
+                                handleChange={handleSelectChange}
+                                isRequired={false}
+                                isReadMode={isReadMode}
+                                selectopts={switchOpts}
+                            />
+                        </div>
                     </div>
-                    <div className="col-md-3">
-                        <FrmToggleSwitch
-                            title={''}
-                            name={"switch"}
-                            value={selfilter.switch}
-                            handleChange={handleSelectChange}
-                            isRequired={false}
-                            // issubmitted={issubmitted}
-                            selectopts={switchOpts}
-                        />
+                    <div className="border-top font-weight-bold frm-container-bgwhite">
+                        <div className="mb-4"> User Roles</div>
                     </div>
-                </div>
-                <div className="border-top font-weight-bold frm-container-bgwhite">
-                    <div className="mb-4"> User Roles</div>
-                </div>
-                <div className="border-bottom border-top frm-container-bggray">
-                    <div className="row m-1 mt-4">
-                        {userRoles.map((item, i) => {
-                            return (
-                                <div className="col-md-2">
-                                    <FrmCheckbox
-                                        title={item.label}
-                                        name={item.name}
-                                        value={selfilter[item.name]}
-                                        handleChange={handleChange}
-                                        isRequired={false}
-                                        // issubmitted={issubmitted}
-                                        selectopts={accessBreachLogOpts}
-                                        inlinetitle={true}
-                                        aftercheckbox={true}
-                                    />
-                                </div>
-                            )
-                        })}
+                    <div className="border-bottom border-top frm-container-bggray">
+                        <div className="row m-1 mt-4">
+                            {isReadMode &&
+                                userRoles.map((item, i) => {
+                                    return (
+                                        formfield[item.name] &&
+                                        <div className="col-md-2">
+                                            {item.label}
+                                        </div>
+                                    )
+                                })
+                            }
+                            {!isReadMode && userRoles.map((item, i) => {
+                                return (
+                                    <div className="col-md-2">
+                                        <FrmCheckbox
+                                            title={item.label}
+                                            name={item.name}
+                                            value={formfield[item.name]}
+                                            handleChange={handleChange}
+                                            isRequired={false}
+                                            selectopts={accessBreachLogOpts}
+                                            inlinetitle={true}
+                                            aftercheckbox={true}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </div>
-                </div>
-                <div className="page-filter-outercontainer">
-                    <div className="page-filter-positioncontainer">
-                        <div className="page-filter collapsable">
-                            <div className="filter-normal">
-                                <div className="filter-container container">
-                                    <div className="row">
-                                        {filterdomfields.common.length
-                                            ? filterdomfields.common.map((item) => (
+                    <div className="filter-normal">
+                        <div className="filter-container">
+                            <div className="row">
+                                {filterdomfields.common.length
+                                    ? filterdomfields.common.map((item) => (
+                                        <div
+                                            className={`frm-filter col-md-${item.colspan}`}
+                                        >
+                                            {Filterdomobj(item)}
+                                        </div>
+                                    ))
+                                    : "Loading..."}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="user-view-advance-filter-btn-container">
+                        <div
+                            className={`user-view-advance-filter-btn`}
+                        // onClick={handlesetAdvSearch}
+                        >
+                            Advance Search
+                        </div>
+                    </div>
+                    {isAdvfilterApplied ? (
+                        <div className="filter-advance">
+                            <div className="filter-container">
+                                <div className="row">
+                                    {filterdomfields.advance.length
+                                        ? filterdomfields.advance.map((item) =>
+                                            item.componenttype === "FrmDatePicker" ? (
+                                                Filterdomobj(item)
+                                            ) : (
                                                 <div
                                                     className={`frm-filter col-md-${item.colspan}`}
                                                 >
                                                     {Filterdomobj(item)}
                                                 </div>
-                                            ))
-                                            : "Loading..."}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="advance-filter-btn-container">
-                                <div
-                                    className={`advance-filter-btn selected`}
-                                // onClick={handlesetAdvSearch}
-                                >
-                                    Advance Search
-                                </div>
-                            </div>
-                            {isAdvfilterApplied ? (
-                                <div className="filter-advance">
-                                    <div className="filter-container container">
-                                        <div className="row">
-                                            {filterdomfields.advance.length
-                                                ? filterdomfields.advance.map((item) =>
-                                                    item.componenttype === "FrmDatePicker" ? (
-                                                        Filterdomobj(item)
-                                                    ) : (
-                                                        <div
-                                                            className={`frm-filter col-md-${item.colspan}`}
-                                                        >
-                                                            {Filterdomobj(item)}
-                                                        </div>
-                                                    )
-                                                )
-                                                : "Loading..."}
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                ""
-                            )}
-                            <div className="btn-container">
-                                <div
-                                    className={`btn-blue ${!isEmptyObjectKeys(selfilter) ? "" : "disable"
-                                        }`}
-                                    onClick={handleFilterSearch}
-                                >
-                                    Search
-                                </div>
-                                <div className="btn-blue">
-                                    Clear
+                                            )
+                                        )
+                                        : "Loading..."}
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        ""
+                    )}
+                    {
+                        !isReadMode ? (
+                            <div className="popup-footer-container">
+                                <div className="btn-container">
+                                    <button
+                                        className={`btn-blue ${!isEmptyObjectKeys(formfield) ? "" : "disable"
+                                            }`}
+                                        type="submit"
+                                        onClick={handleFilterSearch}
+                                    >
+                                        Submit
+                                    </button>
+                                    <div className="btn-blue" onClick={() => hideAddPopup()}>
+                                        Cancel
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            ""
+                        )
+                    }
                 </div>
-            </>
-        </>
+            )}
+        </div>
     );
 }
 const mapStateToProp = (state) => {

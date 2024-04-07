@@ -8,16 +8,32 @@ import './Style.css'
 import ExemptionAddEditForm from "./ExemptionAddEditForm";
 import { USER_ROLE } from "../../../constants";
 import RfEAddEditForm from "./RfEAddEditForm";
+import { alertMessage } from "../../../helpers";
+import FrmRadio from "../../common-components/frmradio/FrmRadio";
 function UserView({ ...props }) {
 
   const {
     userProfile,
-    getAll
+    getAll,
+    deleteItem
   } = props;
 
   const [selectedTab, setSelectedTab] = useState("breachlog")
   const [selectedRow, setSelectedRow] = useState({})
   const [isshowAddPopup, setIsshowAddPopup] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [isReadMode, setIsReadmode] = useState(false)
+  const [selectedExemptionLog, setselectedExemptionLog] = useState("zug");
+  const [exemptionlogsType, setexemptionlogsType] = useState([
+    {
+      label: "ZUG",
+      value: "zug",
+    },
+    {
+      label: "URPM",
+      value: "urpm",
+    },
+  ]);
   const [paginationdata, setpaginationdata] = useState([
     {
       userviewId: "1",
@@ -36,16 +52,25 @@ function UserView({ ...props }) {
     },
   ]);
 
-  useEffect(async () => {
-    let response = await getAll({ UserViewType: selectedTab })
+  useEffect(() => {
+    handleGetAll()
+  }, [selectedTab, selectedExemptionLog])
+
+  const handleGetAll = async () => {
+    let response = await getAll({ UserViewType: selectedTab, exemptiontype: selectedTab === 'exemptionlog' ? selectedExemptionLog : '' })
     let roleNames = []
+
     response.map((item, i) => {
       if (selectedTab === 'breachlog') {
         item.userviewId = item.breachViewsId
       } else if (selectedTab === 'rfelog') {
         item.userviewId = item.rfeViewsId
       } else if (selectedTab === 'exemptionlog') {
-        item.userviewId = item.exemptionViewsId
+        if (selectedExemptionLog === 'zug') {
+          item.userviewId = item.zugExemptionViewsId
+        } else if (selectedExemptionLog === 'urpm') {
+          item.userviewId = item.urpmExemptionViewsId
+        }
       }
       if (item.userRoles) {
         let rolesArray = item.userRoles.split(",")
@@ -64,7 +89,7 @@ function UserView({ ...props }) {
       }
     })
     setpaginationdata(response)
-  }, [selectedTab])
+  }
 
   const handleCheckRoleName = (role) => {
     let roleName = ""
@@ -100,6 +125,8 @@ function UserView({ ...props }) {
   };
   const hideAddPopup = () => {
     setIsshowAddPopup(false)
+    setSelectedRow({})
+    handleGetAll()
   }
 
   const handleSelectTab = (value) => {
@@ -114,7 +141,7 @@ function UserView({ ...props }) {
         return (
           <div
             className="edit-icon"
-            onClick={() => handleEdit(row)}
+            onClick={() => handleEdit(row, 'edit')}
             rowid={row.userviewId}
           ></div>
         );
@@ -134,7 +161,7 @@ function UserView({ ...props }) {
         return (
           <div
             className="view-icon"
-            // onClick={handleEdit}
+            onClick={() => handleEdit(row, 'view')}
             rowid={row.userviewId}
             mode={"view"}
           ></div>
@@ -147,6 +174,27 @@ function UserView({ ...props }) {
           textAlign: "center",
         };
       },
+    },
+    {
+      dataField: "deleteaction",
+      text: "Delete",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="delete-icon"
+            onClick={handleDelete}
+            rowid={row.userviewId}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "70px",
+          textAlign: "center",
+        };
+      },
+      align: "center",
     },
     {
       dataField: "viewName",
@@ -169,10 +217,53 @@ function UserView({ ...props }) {
     },
   ];
 
-  const handleEdit = (row) => {
-    console.log(row);
+  const handleEdit = (row, type) => {
+    if (selectedTab === 'exemptionlog') {
+      row.pC_URPMExemptionRequired = row.pC_URPMExemptionRequired === true ? '1' : '0'
+    }
+    if (type === 'view') {
+      setIsReadmode(true)
+      setIsEditMode(false)
+    } else if (type === 'edit') {
+      setIsEditMode(true)
+      setIsReadmode(false)
+    }
+    setIsshowAddPopup(true)
     setSelectedRow(row)
   }
+
+  const handleDelete = async (e) => {
+    let itemid = e.target.getAttribute("rowid");
+    if (!window.confirm(alertMessage.userview.deleteConfirm)) {
+      return;
+    }
+    let params = {
+      UserViewType: selectedTab
+    }
+    if (selectedTab === 'breachlog') {
+      params.BreachViewsId = itemid
+    } else if (selectedTab === 'rfelog') {
+      params.RFEViewsId = itemid
+    } else if (selectedTab === 'exemptionlog') {
+      if (selectedExemptionLog === 'zug') {
+        params.ZUGExemptionViewsId = itemid
+        params.exemptiontype = 'zug'
+      } else if (selectedExemptionLog === 'urpm') {
+        params.URPMExemptionViewsId = itemid
+        params.exemptiontype = 'urpm'
+      }
+    }
+    let resonse = await deleteItem(params);
+    if (resonse) {
+      handleGetAll()
+      alert(alertMessage.userview.delete);
+    }
+  };
+
+  const onExemptionlogSelection = (e) => {
+    let { name, value } = e.target;
+    setselectedExemptionLog(value)
+  };
 
   return (
     <>
@@ -192,6 +283,17 @@ function UserView({ ...props }) {
               </li>
             </ul>
           </div>
+          {selectedTab === 'exemptionlog' &&
+            <div style={{ paddingLeft: "20px" }} className=" mt-4">
+              <FrmRadio
+                title={"Exemption Log Type"}
+                name={"exemptionLogType"}
+                selectopts={exemptionlogsType}
+                handleChange={onExemptionlogSelection}
+                value={selectedExemptionLog}
+              />
+            </div>
+          }
           <PaginationData
             id={"userviewId"}
             column={columns}
@@ -211,13 +313,21 @@ function UserView({ ...props }) {
               hideAddPopup={hideAddPopup}
               userProfile={userProfile}
               formIntialState={selectedRow}
+              isEditMode={isEditMode}
+              isReadMode={isReadMode}
+              handleEdit={handleEdit}
             ></BreachAddEditForm>
           )}
           {selectedTab === 'exemptionlog' && (
             <ExemptionAddEditForm
               title={"Add/Edit Exemption Log"}
               hideAddPopup={hideAddPopup}
+              formIntialState={selectedRow}
               userProfile={userProfile}
+              isEditMode={isEditMode}
+              isReadMode={isReadMode}
+              handleEdit={handleEdit}
+              exemptionType={selectedExemptionLog}
             ></ExemptionAddEditForm>
           )}
           {selectedTab === 'rfelog' && (
@@ -225,6 +335,10 @@ function UserView({ ...props }) {
               title={"Add/Edit Exemption Log"}
               hideAddPopup={hideAddPopup}
               userProfile={userProfile}
+              formIntialState={selectedRow}
+              isEditMode={isEditMode}
+              isReadMode={isReadMode}
+              handleEdit={handleEdit}
             ></RfEAddEditForm>
           )}
         </>
@@ -239,6 +353,7 @@ const mapStateToProp = (state) => {
 };
 const mapActions = {
   getAll: userViewActions.getAll,
+  deleteItem: userViewActions.deleteItem
 };
 
 export default connect(mapStateToProp, mapActions)(UserView);
