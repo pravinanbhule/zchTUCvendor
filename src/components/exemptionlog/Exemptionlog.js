@@ -3196,7 +3196,7 @@ function Exemptionlog({ ...props }) {
             <div className="row">
               <div className="page-title col-md-6" style={{ marginLeft: '1.5%'}}>Exemption Log</div>
               {/* <div className="page-title col-md-9">RfE Log</div> */}
-              <div className="col-md-3" style={{ marginTop: "8px", right: '-24%' }}>
+              <div className="col-md-3 title-dropdown" style={{ marginTop: "8px", right: '-24%' }}>
                 <FrmSelect
                   title={"Switch view"}
                   name={"switchview"}

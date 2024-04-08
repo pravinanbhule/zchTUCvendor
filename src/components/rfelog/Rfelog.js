@@ -2121,29 +2121,31 @@ function Rfelog({ ...props }) {
         <>
           <div className="">
             <div className="row">
-              <div className="page-title col-md-4" style={{ marginLeft: '1.5%'}}>RfE Log</div>
-              <div className="col-md-3" style={{ marginTop: "8px", right: '-25%' }}>
-                <FrmSelect
-                    title={"Switch view"}
-                    name={"switchview"}
-                    selectopts={commonfilterOpts.userViews}
-                    handleChange={onUserViewFilterSelect}
-                    value={selectedUserView}
-                    inlinetitle={true}
-                />
-              </div>
-              {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
-                <div className="col-md-3" style={{ marginTop: "8px", right: '-15%' }}>
+              <div className="page-title col-md-6" style={{ marginLeft: '1.5%'}}>RfE Log</div>
+              <div className="col-md-6 row">
+                <div className="col-md-6 title-dropdown" style={{ marginTop: "8px"}}>
                   <FrmSelect
-                    title={"Change view"}
-                    name={"IncountryFlag"}
-                    selectopts={commonfilterOpts.views}
-                    handleChange={onViewFilterSelect}
-                    value={selectedview}
-                    inlinetitle={true}
+                      title={"Switch view"}
+                      name={"switchview"}
+                      selectopts={commonfilterOpts.userViews}
+                      handleChange={onUserViewFilterSelect}
+                      value={selectedUserView}
+                      inlinetitle={true}
                   />
                 </div>
-              )}
+                {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
+                  <div className="col-md-6 title-dropdown" style={{ marginTop: "8px"}}>
+                    <FrmSelect
+                      title={"Change view"}
+                      name={"IncountryFlag"}
+                      selectopts={commonfilterOpts.views}
+                      handleChange={onViewFilterSelect}
+                      value={selectedview}
+                      inlinetitle={true}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="page-filter-outercontainer">

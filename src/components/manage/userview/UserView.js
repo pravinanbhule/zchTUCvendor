@@ -271,7 +271,7 @@ function UserView({ ...props }) {
     <>
       {!isshowAddPopup && (
         <>
-          <div className="page-title border-bottom-class">Manage User View</div>
+          <div className="page-title border-bottom">Manage User View</div>
           <div className="userview-class">
             <ul className="nav nav-tabs">
               <li className="nav-item" onClick={() => handleSelectTab("breachlog")}>
@@ -286,7 +286,7 @@ function UserView({ ...props }) {
             </ul>
           </div>
           {selectedTab === 'exemptionlog' &&
-            <div style={{ paddingLeft: "20px" }} className=" mt-4">
+            <div style={{ paddingLeft: "20px" }} className="border-bottom mt-4">
               <FrmRadio
                 title={"Exemption Log Type"}
                 name={"exemptionLogType"}
