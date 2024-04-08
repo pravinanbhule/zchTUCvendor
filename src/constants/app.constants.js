@@ -19,12 +19,13 @@ export const INCOUNTRTY_IDS = {
   NORDICSWEDEN: "COU6B2673050740442E8401297310CAED34",
   NORDICFINALAND: "COU7F1D0D18F6844FBBBA5FF3802BBA0E38",
   NORDICDENMARK: "COU95BF84CB938240FE944EE3D8BF66A99B",
-  AUSTRALIA : "COU000002",
-  CHINA : "COU000007",
-  HONGKONG : "COU000014",
+  AUSTRALIA: "COU000002",
+  CHINA: "COU000007",
+  HONGKONG: "COU000014",
   FRANCE: "COU000012",
   MIDDLEEAST: "COU000022",
-  GERMANY: "COU000013"
+  GERMANY: "COU000013",
+  INDIA: "COU630B72A0CC50400886209AE0344752E7",
 };
 export const BREACH_LOG_STATUS = {
   Pending: "ECA8E493-1750-4546-9BC1-A1E8DA8A1B58",
@@ -56,7 +57,7 @@ export const USER_ROLE = {
   normalUser: "8",
   countrySuperAdmin: "9",
   auditor: "10",
-  lobAdmin: "12"
+  lobAdmin: "12",
 };
 export const SUPER_ADMIN_ROLE_ID = "1";
 export const COUNTRY_ADMIN_ROLE_ID = "4";
@@ -78,17 +79,18 @@ export const INCOUNTRY_FLAG = {
   UK: "UK001",
   LATAM: "LM001",
   SINGAPORE: "SG001",
+  INDIA: "IN001",
   ITALY: "IT001",
   BENELUX: "BE001",
   NORDIC: "NR001",
-  AUSTRALIA : "AU001",
-  CHINA : "CN001",
-  HONGKONG : "HK001",
-  MALAYSIA : "MY001",
+  AUSTRALIA: "AU001",
+  CHINA: "CN001",
+  HONGKONG: "HK001",
+  MALAYSIA: "MY001",
   FRANCE: "FR001",
   MIDDLEEAST: "ME001",
   SPAIN: "ES001",
-  GERMANY: "DE001"
+  GERMANY: "DE001",
 };
 export const INCOUNTRY_FLAG_OPTS = {
   Indonesia: {
@@ -106,15 +108,20 @@ export const INCOUNTRY_FLAG_OPTS = {
     value: INCOUNTRY_FLAG.LATAM,
     id: INCOUNTRTY_IDS.LATAM,
   },
-  MALAYSIA: { 
+  MALAYSIA: {
     label: "Malaysia",
     value: INCOUNTRY_FLAG.MALAYSIA,
-    id: INCOUNTRTY_IDS.MALAYSIA 
+    id: INCOUNTRTY_IDS.MALAYSIA,
   },
   SINGAPORE: {
     label: "Singapore",
     value: INCOUNTRY_FLAG.SINGAPORE,
     id: INCOUNTRTY_IDS.SINGAPORE,
+  },
+  INDIA: {
+    label: "India",
+    value: INCOUNTRY_FLAG.INDIA,
+    id: INCOUNTRTY_IDS.INDIA,
   },
   ITALY: {
     label: "Italy",
@@ -177,15 +184,15 @@ export const SHAREPOINT_LINKS = {
   RFElogLATAMActive:
     "https://zurichinsurance.sharepoint.com/sites/001295/Lists/LatAM%20Request%20for%20Empowerment%20log/DispForm.aspx",
   RFEUKlogActive:
-      "https://zurichinsurance.sharepoint.com/sites/001403/Lists/UK%20Commercial%20Insurance%20Referral%20Log%2020/DispForm.aspx",
+    "https://zurichinsurance.sharepoint.com/sites/001403/Lists/UK%20Commercial%20Insurance%20Referral%20Log%2020/DispForm.aspx",
   RFEARCUKlogActive:
-      "https://zurichinsurance.sharepoint.com/sites/001403/Lists/UK%20Commercial%20Broker%20Referral%20Log/DispForm.aspx",
+    "https://zurichinsurance.sharepoint.com/sites/001403/Lists/UK%20Commercial%20Broker%20Referral%20Log/DispForm.aspx",
   RFENordiclogActive:
-      "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Nordic/DispForm.aspx",
+    "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Nordic/DispForm.aspx",
   RFEItalylogActive:
-      "https://zurichinsurance.sharepoint.com/sites/001295/Lists/Italy%20Request%20for%20Empowerment%20Log/DispForm.aspx",
+    "https://zurichinsurance.sharepoint.com/sites/001295/Lists/Italy%20Request%20for%20Empowerment%20Log/DispForm.aspx",
   RFEGermanylogActive:
-      "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Germany/DispForm.aspx",
+    "https://zurichinsurance.sharepoint.com/sites/001295/Lists/GC%20Germany/DispForm.aspx",
   ZUGlog:
     "https://zurichinsurance.sharepoint.com/sites/CIExemptionLog/Lists/CI%20Guideline%20Feedback%20and%20Exemption%20Log/DispForm.aspx",
   URPM: "https://zurichinsurance.sharepoint.com/sites/globuz20app/01/Lists/exlog/DispForm.aspx",

@@ -59,13 +59,17 @@ let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
 function Rfelog({ ...props }) {
-  const { 
-    rfelogState, regionState, 
-    countryState, lobState, 
-    dashboardState, currencyState,
-    branchState, sublobState,
-    segmentState } =
-    props.state;
+  const {
+    rfelogState,
+    regionState,
+    countryState,
+    lobState,
+    dashboardState,
+    currencyState,
+    branchState,
+    sublobState,
+    segmentState,
+  } = props.state;
   const {
     getAll,
     getallDeletedLogs,
@@ -119,12 +123,14 @@ function Rfelog({ ...props }) {
   const rfeARClogUKActiveSharePointLink = SHAREPOINT_LINKS.RFEARCUKlogActive;
   const rfelogNordicActiveSharePointLink = SHAREPOINT_LINKS.RFENordiclogActive;
   const rfelogItalyActiveSharePointLink = SHAREPOINT_LINKS.RFEItalylogActive;
-  const rfelogGermanyActiveSharePointLink = SHAREPOINT_LINKS.RFEGermanylogActive;
+  const rfelogGermanyActiveSharePointLink =
+    SHAREPOINT_LINKS.RFEGermanylogActive;
   const InCountryViewOpts = [
     INCOUNTRY_FLAG_OPTS.Indonesia,
     INCOUNTRY_FLAG_OPTS.UK,
     INCOUNTRY_FLAG_OPTS.LATAM,
     INCOUNTRY_FLAG_OPTS.SINGAPORE,
+    INCOUNTRY_FLAG_OPTS.INDIA,
     INCOUNTRY_FLAG_OPTS.ITALY,
     INCOUNTRY_FLAG_OPTS.BENELUX,
     INCOUNTRY_FLAG_OPTS.NORDIC,
@@ -135,7 +141,7 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.FRANCE,
     INCOUNTRY_FLAG_OPTS.MIDDLEEAST,
     INCOUNTRY_FLAG_OPTS.GERMANY,
-    INCOUNTRY_FLAG_OPTS.SPAIN
+    INCOUNTRY_FLAG_OPTS.SPAIN,
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);
   useSetNavMenu({ currentMenu: "Rfelog", isSubmenu: false }, props.menuClick);
@@ -146,7 +152,7 @@ function Rfelog({ ...props }) {
     value: "",
   };
   const [isLogInitcall, setisLogInitcall] = useState(true);
-  const [isViewHide, setIsViewHide] = useState(false)
+  const [isViewHide, setIsViewHide] = useState(false);
   const [commonfilterOpts, setcommonfilterOpts] = useState({
     underwriterFilterOpts: [],
     statusFilterOpts: [],
@@ -176,12 +182,12 @@ function Rfelog({ ...props }) {
     newRenewalOpts: [],
     customerSegmentOpts: [],
     conditionApplicableToOpts: [],
-
   });
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
-  const [isInCountryfilterApplied, setisInCountryfilterApplied] = useState(false);
+  const [isInCountryfilterApplied, setisInCountryfilterApplied] =
+    useState(false);
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
@@ -196,7 +202,7 @@ function Rfelog({ ...props }) {
   const [filterdomfields, setfilterdomfields] = useState({
     common: [],
     advance: [],
-    Incountry: []
+    Incountry: [],
   });
   const [filterfieldslist, setfilterfieldslist] = useState();
 
@@ -237,7 +243,7 @@ function Rfelog({ ...props }) {
     if (name === "LOBId") {
       if (value === "") {
         setsublobFilterOpts(allsublobFilterOpts);
-      } else{
+      } else {
         let sublobopts = allsublobFilterOpts.filter(
           (item) => item.lob === selfilter.LOBId
         );
@@ -341,7 +347,7 @@ function Rfelog({ ...props }) {
       setisfilterApplied(true);
       setfilterbox(false);
       setisAdvfilterApplied(false);
-      setisInCountryfilterApplied(false)
+      setisInCountryfilterApplied(false);
       pageIndex = 1;
       loadAPIData();
     }
@@ -411,7 +417,7 @@ function Rfelog({ ...props }) {
           }
           if (tempfilterobj["filtertype"] === "common") {
             tempfields.common.push(tempobj);
-          } else if(tempfilterobj["filtertype"] === "advance") {
+          } else if (tempfilterobj["filtertype"] === "advance") {
             tempfields.advance.push(tempobj);
           } else if (tempfilterobj["filtertype"] === "Incountry") {
             tempfields.Incountry.push(tempobj);
@@ -501,7 +507,13 @@ function Rfelog({ ...props }) {
           ? {
               dataField: "editaction",
               text: "Edit",
-              hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
+              hidden:
+                handlePermission(
+                  window.location.pathname.slice(1),
+                  "isEdit"
+                ) === true
+                  ? false
+                  : true,
               formatter: (cell, row, rowIndex, formatExtraData) => {
                 let isedit = fnIsEditAccess(row);
 
@@ -528,7 +540,13 @@ function Rfelog({ ...props }) {
           : {
               dataField: "editaction",
               text: "Restore",
-              hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
+              hidden:
+                handlePermission(
+                  window.location.pathname.slice(1),
+                  "isEdit"
+                ) === true
+                  ? false
+                  : true,
               formatter: (cell, row, rowIndex, formatExtraData) => {
                 return (
                   <div
@@ -687,7 +705,7 @@ function Rfelog({ ...props }) {
               headerobj = {
                 ...headerobj,
                 formatter: (cell, row, rowIndex, formatExtraData) => {
-                  return row.IsArchived && !row.EntryNumber.includes("POL_")  ? (
+                  return row.IsArchived && !row.EntryNumber.includes("POL_") ? (
                     <span
                       className="link"
                       onClick={() => handleOpenSharePointLink(row.EntryNumber)}
@@ -943,9 +961,11 @@ function Rfelog({ ...props }) {
       getallDraftItems();
       let incountryopts = [];
       if (userProfile.isAdminGroup) {
-        const UserRole = userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole
-        if(userProfile.isGlobalAdmin || UserRole === "GlobalUW"){
-          setIsViewHide(true)
+        const UserRole =
+          userProfile?.userRoles[userProfile?.userRoles?.length - 1]
+            .displayRole;
+        if (userProfile.isGlobalAdmin || UserRole === "GlobalUW") {
+          setIsViewHide(true);
         } else {
           InCountryViewOpts.forEach((item) => {
             if (userProfile.isSuperAdmin || userProfile.isGlobalAdmin) {
@@ -967,8 +987,8 @@ function Rfelog({ ...props }) {
               item.id.split(",").forEach((countryid) => {
                 if (userProfile.scopeCountryList.indexOf(countryid) !== -1) {
                   ispresent = true;
-                } 
-                if (userProfile.regionId === countryid){
+                }
+                if (userProfile.regionId === countryid) {
                   incountryopts.push(item);
                 }
               });
@@ -978,10 +998,10 @@ function Rfelog({ ...props }) {
             }
           });
           incountryopts.sort(dynamicSort("label"));
-            setcommonfilterOpts((prevstate) => ({
-              ...prevstate,
-              views: [{ label: "All", value: "gn" }, ...incountryopts],
-            }));
+          setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            views: [{ label: "All", value: "gn" }, ...incountryopts],
+          }));
         }
       }
       getallDeletedItems();
@@ -1010,14 +1030,14 @@ function Rfelog({ ...props }) {
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
       }),
-      getLookupByType({ 
-        LookupType: "DurationofApproval" 
+      getLookupByType({
+        LookupType: "DurationofApproval",
       }),
-      getLookupByType({ 
-        LookupType: "RFELogNewRenewal" 
+      getLookupByType({
+        LookupType: "RFELogNewRenewal",
       }),
-      getLookupByType({ 
-        LookupType: "ConditionApplicableTo" 
+      getLookupByType({
+        LookupType: "ConditionApplicableTo",
       }),
     ]);
 
@@ -1118,7 +1138,7 @@ function Rfelog({ ...props }) {
       chzOpts: [...temprfechz],
       durationofApprovalOpts: [...tempDurationOfApproval],
       newRenewalOpts: [...tempNewRenewal],
-      conditionApplicableToOpts: [...tempCondition]
+      conditionApplicableToOpts: [...tempCondition],
     }));
     const tempfilterfields = await getLogFields({
       IncountryFlag: "",
@@ -1223,9 +1243,9 @@ function Rfelog({ ...props }) {
   useEffect(() => {
     setqueryparamloaded(true);
     if (queryparam.id) {
-      history.push("/rfelogs/create-rfelog")
+      history.push("/rfelogs/create-rfelog");
       localStorage.setItem("id", queryparam.id);
-      localStorage.setItem("status", "view")
+      localStorage.setItem("status", "view");
     }
   }, [queryparam]);
 
@@ -1347,7 +1367,7 @@ function Rfelog({ ...props }) {
       customerSegmentOpts: [...tempopts],
     }));
   }, [segmentState.segmentItems]);
-  
+
   useEffect(() => {
     let tempopts = [];
     sublobState.sublobitems.forEach((item) => {
@@ -1361,12 +1381,10 @@ function Rfelog({ ...props }) {
       }
     });
     tempopts.sort(dynamicSort("label"));
-    setallsublobFilterOpts(tempopts)
+    setallsublobFilterOpts(tempopts);
     setsublobFilterOpts(tempopts);
     if (selfilter.LOBId) {
-      let sublobopts = tempopts.filter(
-        (item) => item.lob === selfilter.LOBId
-      );
+      let sublobopts = tempopts.filter((item) => item.lob === selfilter.LOBId);
       setsublobFilterOpts([...sublobopts]);
     }
   }, [sublobState.sublobitems]);
@@ -1412,11 +1430,11 @@ function Rfelog({ ...props }) {
   const [isshowAddPopup, setshowAddPopup] = useState(false);
   const [isshowImportLogsPopup, setshowImportLogsPopup] = useState(false);
   const [isDataImported, setisDataImported] = useState(false);
-  const history = useHistory()
+  const history = useHistory();
   const showAddPopup = () => {
     localStorage.setItem("in-app", true);
-    history.push("/rfelogs/create-rfelog")
-        // setshowAddPopup(true);
+    history.push("/rfelogs/create-rfelog");
+    // setshowAddPopup(true);
   };
   const hideAddPopup = () => {
     setshowAddPopup(false);
@@ -1424,15 +1442,15 @@ function Rfelog({ ...props }) {
     setisEditMode(false);
     setisReadMode(false);
     if (window.location.search) {
-      removeQueryParams()
+      removeQueryParams();
     }
   };
 
   const removeQueryParams = () => {
     history.replace({
-        pathname: window.location.pathname,
-        search: '',
-    })
+      pathname: window.location.pathname,
+      search: "",
+    });
   };
 
   const showImportLogsPopup = () => {
@@ -1503,7 +1521,7 @@ function Rfelog({ ...props }) {
     UnderwriterGrantingEmpowermentComments: "",
     FullFilePath: "",
     IsSubmit: false,
-    RFELogEmailLink: window.location.origin + '/rfelogs',
+    RFELogEmailLink: window.location.origin + "/rfelogs",
     isdirty: false,
     IsArchived: false,
     ConditionApplicableTo: "",
@@ -1521,7 +1539,7 @@ function Rfelog({ ...props }) {
     SUBLOBID: "",
     mappedLOBs: "",
     PolicyTermId: "",
-    invokedAPIFrom:""
+    invokedAPIFrom: "",
   };
   const [formIntialState, setformIntialState] = useState(formInitialValue);
 
@@ -1544,54 +1562,54 @@ function Rfelog({ ...props }) {
     localStorage.setItem("in-app", true);
     showAddPopup();
     // let response = await getById({
-      //   rfeLogId: itemid,
+    //   rfeLogId: itemid,
     // });
     // if (response.FieldValues) {
-      //   response = response.FieldValues;
-      //   response.UnderwriterName = response.UnderwriterAD
-        //     ? response.UnderwriterAD.userName
-        //     : "";
+    //   response = response.FieldValues;
+    //   response.UnderwriterName = response.UnderwriterAD
+    //     ? response.UnderwriterAD.userName
+    //     : "";
 
-      //   if (
-        //     response.RequestForEmpowermentCCAD &&
-        //     response.RequestForEmpowermentCCAD.length
-      //   ) {
-        //     let users = "";
-        //     users = response.RequestForEmpowermentCCAD.map((item) => item.userName);
-        //     response.RequestForEmpowermentCCName = users.join(",");
-      //   }
     //   if (
-        //     response.UnderwriterGrantingEmpowermentAD &&
-        //     response.UnderwriterGrantingEmpowermentAD.length
-      //   ) {
-        //     let users = "";
-        //     users = response.UnderwriterGrantingEmpowermentAD.map(
-          //       (item) => item.userName
-        //     );
-        //     response.UnderwriterGrantingEmpowermentName = users.join(",");
-      //   }
+    //     response.RequestForEmpowermentCCAD &&
+    //     response.RequestForEmpowermentCCAD.length
+    //   ) {
+    //     let users = "";
+    //     users = response.RequestForEmpowermentCCAD.map((item) => item.userName);
+    //     response.RequestForEmpowermentCCName = users.join(",");
+    //   }
+    //   if (
+    //     response.UnderwriterGrantingEmpowermentAD &&
+    //     response.UnderwriterGrantingEmpowermentAD.length
+    //   ) {
+    //     let users = "";
+    //     users = response.UnderwriterGrantingEmpowermentAD.map(
+    //       (item) => item.userName
+    //     );
+    //     response.UnderwriterGrantingEmpowermentName = users.join(",");
+    //   }
     //   let countryList = response.CountryList;
-      //   countryList = countryList.map((country) => ({
-        //     label: country.countryName,
-        //     value: country.countryID,
-        //     regionId: country.regionID,
-      //   }));
-      //   response["CountryList"] = [...countryList];
-      //   if (mode === "edit" && response.IsSubmit) {
-        //     setisEditMode(true);
-      //   }
+    //   countryList = countryList.map((country) => ({
+    //     label: country.countryName,
+    //     value: country.countryID,
+    //     regionId: country.regionID,
+    //   }));
+    //   response["CountryList"] = [...countryList];
+    //   if (mode === "edit" && response.IsSubmit) {
+    //     setisEditMode(true);
+    //   }
     //   if (mode === "view") {
-        //     setisReadMode(true);
-      //   }
+    //     setisReadMode(true);
+    //   }
     //   if (queryparam.status) {
-        //     //uncomment below line if status need to set according to query param
-        //     //response.requestForEmpowermentStatus = queryparam.status;
-      //   }
+    //     //uncomment below line if status need to set according to query param
+    //     //response.requestForEmpowermentStatus = queryparam.status;
+    //   }
     //   setformIntialState({
-        //     ...response,
-        //     isdirty: false,
-      //   });
-      //   showAddPopup();
+    //     ...response,
+    //     isdirty: false,
+    //   });
+    //   showAddPopup();
     // }
   };
 
@@ -1606,6 +1624,7 @@ function Rfelog({ ...props }) {
       item.ConditionApplicableTo = "";
     }
     //item.RFELogEmailLink = window.location.href + "?id=" + item.rfeLogId;
+    debugger;
     let response = await postItem({
       ...item,
       ModifiedByID: userProfile.userId,
@@ -1676,7 +1695,7 @@ function Rfelog({ ...props }) {
   const handleFilterBoxState = () => {
     setfilterbox(!filterbox);
     setisAdvfilterApplied(false);
-    setisInCountryfilterApplied(false)
+    setisInCountryfilterApplied(false);
   };
   const handlesetAdvSearch = (e) => {
     setisAdvfilterApplied(!isAdvfilterApplied);
@@ -2014,18 +2033,20 @@ function Rfelog({ ...props }) {
           <div className="container">
             <div className="row">
               <div className="page-title col-md-9">RfE Log</div>
-              {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
-                <div className="col-md-3" style={{ marginTop: "8px" }}>
-                  <FrmSelect
-                    title={"Change view"}
-                    name={"IncountryFlag"}
-                    selectopts={commonfilterOpts.views}
-                    handleChange={onViewFilterSelect}
-                    value={selectedview}
-                    inlinetitle={true}
-                  />
-                </div>
-              )}
+              {userProfile.isAdminGroup &&
+                !isViewHide &&
+                commonfilterOpts.views.length > 1 && (
+                  <div className="col-md-3" style={{ marginTop: "8px" }}>
+                    <FrmSelect
+                      title={"Change view"}
+                      name={"IncountryFlag"}
+                      selectopts={commonfilterOpts.views}
+                      handleChange={onViewFilterSelect}
+                      value={selectedview}
+                      inlinetitle={true}
+                    />
+                  </div>
+                )}
             </div>
           </div>
           <div className="page-filter-outercontainer">
