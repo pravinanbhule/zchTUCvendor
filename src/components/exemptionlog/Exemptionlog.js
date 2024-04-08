@@ -2000,23 +2000,24 @@ function Exemptionlog({ ...props }) {
       })
       selectedViewData[0].regionId = regionArray
       setselfilter(selectedViewData[0])
-      console.log(value);
       setselectedview(value);
     }
     if (value === null) {
       setselectedview(value);
       clearFilter()
     }
-    // await addEditUserView({LogType: 'exemptionlogs', UserId: userProfile.userId, ViewId: value})
-    // let updatedUserProfileData = userProfile
-    // updatedUserProfileData.breachViewsId = value
-    // localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+    await addEditUserView({LogType: selectedExemptionLog ? selectedExemptionLog : 'zug', UserId: userProfile.userId, ViewId: value})
+    let updatedUserProfileData = userProfile
+    if (selectedExemptionLog === 'urpm') {
+      updatedUserProfileData.urpmExemptionViewsId = value
+    } else {
+      updatedUserProfileData.zugExemptionViewsId = value
+    }
+    localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
   };
 
   const handleViews = async () => {
     const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'exemptionlog', exemptiontype: selectedExemptionLog ? selectedExemptionLog : 'zug'  })
-    // 
-    console.log("response>>", response);
     setViewData(response)
     let viewFilterOpts = []
     response.map((item,i) => {
@@ -2025,7 +2026,6 @@ function Exemptionlog({ ...props }) {
         value: item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId 
       })
     })
-    console.log("viewFilterOpts>>", viewFilterOpts);
     viewFilterOpts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,

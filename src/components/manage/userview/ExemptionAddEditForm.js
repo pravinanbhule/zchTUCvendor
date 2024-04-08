@@ -400,7 +400,11 @@ function Exemptionlog({ ...props }) {
             tempFilterOpts.region = tempFilterOpts?.regionId
             let response = await postItem(tempFilterOpts)
             if (response) {
-                alert(alertMessage.userview.add);
+                if (tempFilterOpts.zugExemptionViewsId || tempFilterOpts.urpmExemptionViewsId) {
+                    alert(alertMessage.userview.update);
+                } else {
+                    alert(alertMessage.userview.add);
+                }
                 hideAddPopup()
             }
         }

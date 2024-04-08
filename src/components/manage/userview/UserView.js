@@ -127,6 +127,8 @@ function UserView({ ...props }) {
     setIsshowAddPopup(false)
     setSelectedRow({})
     handleGetAll()
+    setIsReadmode(false)
+    setIsEditMode(false)
   }
 
   const handleSelectTab = (value) => {

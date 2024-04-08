@@ -849,9 +849,12 @@ function BreachAddEditForm(props) {
         // delete tempFilterOpts.switch
         let response = await postItem(tempFilterOpts)
         if (response) {
-            alert(alertMessage.userview.add);
+            if (tempFilterOpts.breachViewsId) {
+                alert(alertMessage.userview.update);
+            } else {
+                alert(alertMessage.userview.add);
+            }
             hideAddPopup()
-            console.log("response>>>", tempFilterOpts);
         }
         // hideAddPopup()
     }

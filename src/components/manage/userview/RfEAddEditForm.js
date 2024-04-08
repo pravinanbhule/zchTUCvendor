@@ -9,6 +9,10 @@ import {
     commonActions,
     dashboardActions,
     userViewActions,
+    currencyActions,
+    branchActions,
+    sublobActions,
+    segmentActions,
 } from "../../../actions";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
@@ -25,6 +29,7 @@ import {
 } from "../../../helpers";
 import {
     filterfieldsmapping,
+    intialFilterState,
 } from "../../rfelog/Rfelogconstants";
 import FrmInput from "../../common-components/frminput/FrmInput";
 import FrmInputAutocomplete from "../../common-components/frminputautocomplete/FrmInputAutocomplete";
@@ -33,7 +38,8 @@ import FrmToggleSwitch from "../../common-components/frmtoggelswitch/FrmToggleSw
 import Loading from "../../common-components/Loading";
 
 function RfelogAddEditForm({ ...props }) {
-    const { rfelogState, regionState, countryState, lobState, dashboardState } =
+    const { rfelogState, regionState, countryState, lobState, dashboardState, currencyState, branchState, sublobState,
+        segmentState } =
         props.state;
     const {
         hideAddPopup,
@@ -54,7 +60,11 @@ function RfelogAddEditForm({ ...props }) {
         isEditMode,
         isReadMode,
         formIntialState,
-        handleEdit
+        handleEdit,
+        getAllCurrency,
+        getAllBranch,
+        getAllSublob,
+        getAllSegment,
     } = props;
     const [logstate, setlogstate] = useState({
         loading: true,
@@ -96,15 +106,24 @@ function RfelogAddEditForm({ ...props }) {
         creatorFilterOpts: [],
         underwriterGrantingEmpowermentOpts: [],
         views: [{ label: "All", value: "gn" }],
+        currencyOpts: [],
+        branchOpts: [],
+        durationofApprovalOpts: [],
+        newRenewalOpts: [],
+        customerSegmentOpts: [],
+        conditionApplicableToOpts: [],
     });
     const [isfilterApplied, setisfilterApplied] = useState();
     const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
     const [isAdvfilterApplied, setisAdvfilterApplied] = useState(true);
+    const [isInCountryfilterApplied, setisInCountryfilterApplied] = useState(true);
     const [countryFilterOpts, setcountryFilterOpts] = useState([]);
     const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
     const [regionFilterOpts, setregionFilterOpts] = useState([]);
     const [regionOptsAll, setregionOptsAll] = useState([]);
     const [lobFilterOpts, setlobFilterOpts] = useState([]);
+    const [sublobFilterOpts, setsublobFilterOpts] = useState([]);
+    const [allsublobFilterOpts, setallsublobFilterOpts] = useState([]);
     const [accountOpts, setaccountOpts] = useState({});
     const [switchOpts, setSwitchOpts] = useState([
         {
@@ -155,31 +174,12 @@ function RfelogAddEditForm({ ...props }) {
         },
     ])
 
-    const [formfield, setformfield] = useState({
-        EntryNumber: "",
-        AccountName: "",
-        LOBId: "",
-        CountryId: [],
-        RegionId: [],
-        Underwriter: "",
-        role: "",
-        RequestForEmpowermentStatus: "",
-        OrganizationalAlignment: "",
-        RequestForEmpowermentReason: "",
-        CHZ: "",
-        RequestForEmpowermentCC: "",
-        UnderwriterGrantingEmpowerment: "",
-        CreatorName: "",
-        CreatedFromDate: "",
-        CreatedToDate: "",
-        DurationofApproval: "",
-        ConditionApplicableTo: "",
-        isPrivate: false
-    });
+    const [formfield, setformfield] = useState(intialFilterState);
 
     const [filterdomfields, setfilterdomfields] = useState({
         common: [],
         advance: [],
+        Incountry: []
     });
     const [filterfieldslist, setfilterfieldslist] = useState();
     const [loading, setLoading] = useState(false)
@@ -227,6 +227,19 @@ function RfelogAddEditForm({ ...props }) {
             response.LOBId = response?.loB
             response.AccountName = response?.accountName
             response.EntryNumber = response?.entryNumber
+
+            response.ZurichShare = response?.zurichShare
+            response.Currency = response?.currency
+            response.Branch = response?.branch
+            response.DurationofApproval = response?.durationofApproval
+            response.NewRenewal = response?.newRenewal
+            response.Limit = response?.limit
+            response.AccountNumber = response?.accountNumber
+            response.PolicyPeriod = response?.policyPeriod
+            response.ConditionApplicableTo = response?.conditionApplicableTo
+            response.SUBLOBID = response?.sublobid
+            response.GWP = response?.gwp
+
             let Roles = response?.userRoles?.split(",")
             if (Roles?.length > 0) {
                 setSelectedUserRoles(Roles)
@@ -287,6 +300,21 @@ function RfelogAddEditForm({ ...props }) {
                 [name]: value,
             });
         }
+        if (name === "LOBId") {
+            if (value === "") {
+                setsublobFilterOpts(allsublobFilterOpts);
+            } else {
+                let sublobopts = allsublobFilterOpts.filter(
+                    (item) => item.lob === formfield.LOBId
+                );
+                setsublobFilterOpts([...sublobopts]);
+            }
+            setformfield({
+                ...formfield,
+                SUBLOBID: "",
+                [name]: value,
+            });
+        }
     };
     const handleMultiSelectChange = (name, value) => {
         if (name === "RegionId") {
@@ -338,7 +366,7 @@ function RfelogAddEditForm({ ...props }) {
     };
 
     useEffect(() => {
-        let tempfields = { common: [], advance: [] };
+        let tempfields = { common: [], advance: [], Incountry: [] };
         filterfieldslist?.forEach((item) => {
             if (item.isActive) {
                 let tempfilterobj = filterfieldsmapping[item.fieldName];
@@ -388,8 +416,10 @@ function RfelogAddEditForm({ ...props }) {
                     }
                     if (tempfilterobj["filtertype"] === "common") {
                         tempfields.common.push(tempobj);
-                    } else {
+                    } else if (tempfilterobj["filtertype"] === "advance") {
                         tempfields.advance.push(tempobj);
+                    } else if (tempfilterobj["filtertype"] === "Incountry") {
+                        tempfields.Incountry.push(tempobj);
                     }
                 }
             }
@@ -447,6 +477,10 @@ function RfelogAddEditForm({ ...props }) {
         const fnOnInit = async () => {
             getAllCountry();
             getAllRegion();
+            getAllCurrency();
+            getAllBranch();
+            getAllSublob();
+            getAllSegment({ logType: "rfelogs" });
             getAlllob({ isActive: true });
             loadCreatorUsers();
             loadUnderwriterUsers();
@@ -475,12 +509,24 @@ function RfelogAddEditForm({ ...props }) {
             getLookupByType({
                 LookupType: "RFEEmpowermentReasonRequest",
             }),
+            getLookupByType({
+                LookupType: "DurationofApproval"
+            }),
+            getLookupByType({
+                LookupType: "RFELogNewRenewal"
+            }),
+            getLookupByType({
+                LookupType: "ConditionApplicableTo"
+            }),
         ]);
 
         let tempStatus = lookupvalues[0];
         let temporgnizationalalignment = lookupvalues[1];
         let temprfechz = lookupvalues[2];
         let temprfeempourment = lookupvalues[3];
+        let tempDurationOfApproval = lookupvalues[4];
+        let tempNewRenewal = lookupvalues[5];
+        let tempCondition = lookupvalues[6];
 
         let tempopts = [];
         tempStatus.forEach((item) => {
@@ -525,16 +571,53 @@ function RfelogAddEditForm({ ...props }) {
         });
         temprfeempourment = [...tempopts];
         tempopts = [];
+        tempDurationOfApproval.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        tempDurationOfApproval = [...tempopts];
+        tempopts = [];
+        tempNewRenewal.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        tempNewRenewal = [...tempopts];
+        tempopts = [];
+        tempCondition.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        tempCondition = [...tempopts];
+        tempopts = [];
+
         tempStatus.sort(dynamicSort("label"));
         temporgnizationalalignment.sort(dynamicSort("label"));
         temprfechz.sort(dynamicSort("label"));
         temprfeempourment.sort(dynamicSort("label"));
+        tempDurationOfApproval.sort(dynamicSort("label"));
+        tempNewRenewal.sort(dynamicSort("label"));
+        tempCondition.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
             statusFilterOpts: [selectInitiVal, ...tempStatus],
-            organizationalAlignmentOpts: [...temporgnizationalalignment],
-            requestForEmpowermentReasonOpts: [...temprfeempourment],
-            chzOpts: [...temprfechz],
+            organizationalAlignmentOpts: [selectInitiVal, ...temporgnizationalalignment],
+            requestForEmpowermentReasonOpts: [selectInitiVal, ...temprfeempourment],
+            chzOpts: [selectInitiVal, ...temprfechz],
+            durationofApprovalOpts: [selectInitiVal, ...tempDurationOfApproval],
+            newRenewalOpts: [selectInitiVal, ...tempNewRenewal],
+            conditionApplicableToOpts: [selectInitiVal, ...tempCondition]
         }));
         const tempfilterfields = await getLogFields({
             IncountryFlag: "",
@@ -687,6 +770,85 @@ function RfelogAddEditForm({ ...props }) {
             setaccountOpts({ ...tempAccObj });
         }
     }, [rfelogState.accounts]);
+
+    useEffect(() => {
+        let tempopts = [];
+        currencyState.currencyItems.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    ...item,
+                    label: item.currencyName,
+                    value: item.currencyID,
+                });
+            }
+        });
+        setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            currencyOpts: [selectInitiVal, ...tempopts],
+        }));
+    }, [currencyState.currencyItems]);
+
+    useEffect(() => {
+        if (branchState.branchItems.length) {
+            let tempopts = [];
+            branchState.branchItems.forEach((item) => {
+                if (item.isActive) {
+                    tempopts.push({
+                        ...item,
+                        label: item.branchName,
+                        value: item.branchId,
+                    });
+                }
+            });
+            tempopts.sort(dynamicSort("label"));
+            setcommonfilterOpts((prevstate) => ({
+                ...prevstate,
+                branchOpts: [selectInitiVal, ...tempopts],
+            }));
+        }
+    }, [branchState.branchItems]);
+
+    useEffect(() => {
+        let tempopts = [];
+        segmentState.segmentItems.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    ...item,
+                    label: item.segmentName,
+                    value: item.segmentID,
+                    country: item.countryList,
+                });
+            }
+        });
+        tempopts.sort(dynamicSort("label"));
+        setcommonfilterOpts((prevstate) => ({
+            ...prevstate,
+            customerSegmentOpts: [selectInitiVal, ...tempopts],
+        }));
+    }, [segmentState.segmentItems]);
+
+    useEffect(() => {
+        let tempopts = [];
+        sublobState.sublobitems.forEach((item) => {
+            if (item.isActive) {
+                tempopts.push({
+                    ...item,
+                    label: item.subLOBName,
+                    value: item.subLOBID,
+                    lob: item.lobid,
+                });
+            }
+        });
+        tempopts.sort(dynamicSort("label"));
+        setallsublobFilterOpts(tempopts)
+        setsublobFilterOpts(tempopts);
+        if (formfield.LOBId) {
+            let sublobopts = tempopts.filter(
+                (item) => item.lob === formfield.LOBId
+            );
+            setsublobFilterOpts([selectInitiVal, ...sublobopts]);
+        }
+    }, [sublobState.sublobitems]);
 
     const fnsetPaginationData = (data) => {
         //if (data.length) {
@@ -906,6 +1068,17 @@ function RfelogAddEditForm({ ...props }) {
             data.entryNumber = data?.EntryNumber
             data.country = data?.CountryId
             data.region = data?.RegionId
+            data.zurichShare = data?.ZurichShare
+            data.currency = data?.Currency
+            data.branch = data?.Branch
+            data.durationofApproval = data?.DurationofApproval
+            data.newRenewal = data?.NewRenewal
+            data.limit = data?.Limit
+            data.accountNumber = data?.AccountNumber
+            data.policyPeriod = data?.PolicyPeriod
+            data.conditionApplicableTo = data?.ConditionApplicableTo
+            data.sublobid = data?.SUBLOBID
+            data.gwp = data?.GWP
             delete data?.CHZ
             delete data?.CustomerSegment
             delete data?.CreatedToDate
@@ -923,11 +1096,25 @@ function RfelogAddEditForm({ ...props }) {
             delete data?.EntryNumber
             delete data?.CountryId
             delete data?.RegionId
+            delete data?.ZurichShare
+            delete data?.Currency
+            delete data?.Branch
+            delete data?.DurationofApproval
+            delete data?.NewRenewal
+            delete data?.Limit
+            delete data?.AccountNumber
+            delete data?.PolicyPeriod
+            delete data?.ConditionApplicableTo
+            delete data?.SUBLOBID
+            delete data?.GWP
             let response = await postItem(data)
             if (response) {
-                alert(alertMessage.userview.add);
+                if (data.rfeViewsId) {
+                    alert(alertMessage.userview.update);
+                } else {
+                    alert(alertMessage.userview.add);
+                }
                 hideAddPopup()
-                console.log('response', response);
             }
         }
     };
@@ -1056,6 +1243,36 @@ function RfelogAddEditForm({ ...props }) {
                     ) : (
                         ""
                     )}
+                    <div className="user-view-advance-filter-btn-container mt-5">
+                        <div
+                            className={`user-view-advance-filter-btn`}
+                        >
+                            Incountry Search
+                        </div>
+                    </div>
+                    {isInCountryfilterApplied ? (
+                        <div className="filter-advance">
+                            <div className="filter-container">
+                                <div className="row">
+                                    {filterdomfields?.Incountry?.length
+                                        ? filterdomfields.Incountry.map((item) =>
+                                            item.componenttype === "FrmDatePicker" ? (
+                                                Filterdomobj(item)
+                                            ) : (
+                                                <div
+                                                    className={`frm-filter col-md-${item.colspan}`}
+                                                >
+                                                    {Filterdomobj(item)}
+                                                </div>
+                                            )
+                                        )
+                                        : "Loading..."}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        ""
+                    )}
                     {
                         !isReadMode ? (
                             <div className="popup-footer-container">
@@ -1108,6 +1325,10 @@ const mapActions = {
     getLogCount: commonActions.getLogCount,
     getLogFields: commonActions.getLogFields,
     clearDashboardClick: dashboardActions.clearDashboardClick,
+    getAllCurrency: currencyActions.getAllCurrency,
+    getAllBranch: branchActions.getAllBranch,
+    getAllSublob: sublobActions.getAllSublob,
+    getAllSegment: segmentActions.getAllSegment,
 };
 
 export default connect(mapStateToProp, mapActions)(RfelogAddEditForm);
