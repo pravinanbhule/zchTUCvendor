@@ -225,7 +225,6 @@ function AddEditForm(props) {
   const [reasonOtherValue, setReasonOtherValue] = useState(
     "others(indiesemfallbitteimkommentardenrfegrundeingeben)"
   );
-  const [dualRoleType, setDualRoleType] = useState("")
   const [selectedApprover, setSelectedApprover] = useState('')
 
   useEffect(async () => {
@@ -2051,15 +2050,9 @@ function AddEditForm(props) {
       [adfield]: selvalue,
     });
   };
-  const setUserApproverRole = async(userRole, userInfo) => {
+  const setUserApproverRole = (userRole, userInfo) => {
     console.log("userRole>>", userInfo);
     setSelectedApprover(userInfo)
-    let dualRoleList = await getLookupByType({ LookupType: "DualRole" })
-    dualRoleList.map((item, i) => {
-      if (item.lookupID === userInfo.dualRole) {
-        setDualRoleType(item.lookUpValue)
-      }
-    })
     if (userRole.roleId === USER_ROLE.superAdmin) {
       setapproverRole({ ...approverIntialRole, isSuperAdmin: true });
     } else if (userRole.roleId === USER_ROLE.globalAdmin) {
@@ -2099,13 +2092,20 @@ function AddEditForm(props) {
       let isAustraliacountry = true;
       let isIndonesiacountry = true;
       let isLatamregion = true;
+      // let isEMEAregion = true;
       let isIncountryselected = true;
+      // let isEMEA = true
       frmselectedRegion.forEach((item) => {
         if (item === regions.latam) {
           isLatamregion = isLatamregion ? true : false;
         } else {
           isLatamregion = false;
         }
+        // if (item === regions.emea) {
+        //   isEMEAregion = isEMEAregion ? true : false;
+        // } else {
+        //   isEMEAregion = false;
+        // }
       });
 
       formfield.CountryList.forEach((item) => {
@@ -2209,8 +2209,6 @@ function AddEditForm(props) {
         }
       });
 
-      console.log("isUKcountry<<>>>", isUKcountry);
-
       if (isLatamregion) {
         if (approverRole.isRegionAdmin) {
           setformfield({
@@ -2238,9 +2236,7 @@ function AddEditForm(props) {
           approverRole.isNormalUser ||
           approverRole.isDualRole)
       ) {
-        console.log("calllll");
         if (approverRole.isDualRole) {
-          console.log(">>>>>>", approverRole.isDualRole);
           let countryArray = [IncountryIds.UK, IncountryIds.IRELANDFOS, IncountryIds.SPAINFOS]
           countryArray.map((item, i) => {
             handleAlignmentForDualRole(item)
@@ -2258,7 +2254,8 @@ function AddEditForm(props) {
         isSingaporecountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.SINGAPORE]
@@ -2278,7 +2275,8 @@ function AddEditForm(props) {
         isIndiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.INDIA]
@@ -2298,7 +2296,8 @@ function AddEditForm(props) {
         isChinacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.CHINA]
@@ -2318,7 +2317,8 @@ function AddEditForm(props) {
         isHongKongcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.HONGKONG]
@@ -2338,7 +2338,8 @@ function AddEditForm(props) {
         isMalaysiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.MALAYSIA]
@@ -2358,7 +2359,8 @@ function AddEditForm(props) {
         isFrancecountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.FRANCE]
@@ -2378,7 +2380,8 @@ function AddEditForm(props) {
         isMiddleEastcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.MIDDLEEAST]
@@ -2398,7 +2401,8 @@ function AddEditForm(props) {
         isGermanycountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.GERMANY]
@@ -2418,7 +2422,8 @@ function AddEditForm(props) {
         isSpaincountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.SPAIN]
@@ -2438,7 +2443,8 @@ function AddEditForm(props) {
         isItalycountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.ITALY]
@@ -2458,7 +2464,8 @@ function AddEditForm(props) {
         isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.BENELUX, IncountryIds.BENELUXBELGIUM, IncountryIds.BENELUXLUXEMBOURG, IncountryIds.BENELUXNETHERLANDS]
@@ -2478,7 +2485,8 @@ function AddEditForm(props) {
         isNordiccountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.NORDIC, IncountryIds.NORDICDENMARK, IncountryIds.NORDICFINALAND, IncountryIds.NORDICSWEDEN]
@@ -2498,7 +2506,8 @@ function AddEditForm(props) {
         isAustraliacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.AUSTRALIA]
@@ -2518,7 +2527,8 @@ function AddEditForm(props) {
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
         if (approverRole.isDualRole) {
           let countryArray = [IncountryIds.INDONESIA]
@@ -2563,20 +2573,26 @@ function AddEditForm(props) {
     formfield?.CountryList,
   ]);
 
-  const handleAlignmentForDualRole = (countryCode) => {
+  const handleAlignmentForDualRole = async(countryCode) => {
     let dualRoleCountryList = selectedApprover?.dualRoleCountry?.split(',')
-    console.log("dualRoleCountryList>", dualRoleCountryList);
-    console.log("countryCode>>",countryCode);
-    if (dualRoleType === 'Global-Country' && dualRoleCountryList.includes(countryCode)) {
+    let dualRoleList = await getLookupByType({ LookupType: "DualRole" })
+    let dualRoleType = dualRoleList.map((item, i) => {
+      if (item.lookupID === selectedApprover.dualRole) {
+        return item.lookUpValue
+      }
+    })
+    if (dualRoleType[0] === 'Global-Country' && dualRoleCountryList.includes(countryCode)) {
       setformfield({
         ...formfield,
         OrganizationalAlignment: OrganizationalAlignment.country,
       });  
-    } else {
-      setformfield({
-        ...formfield,
-        OrganizationalAlignment: OrganizationalAlignment.global,
-      });  
+    }
+    if (dualRoleType[0] === 'Global-Regional' && dualRoleCountryList.includes(countryCode)) {
+      console.log("fdsdfdf");
+      // setformfield({
+      //   ...formfield,
+      //   OrganizationalAlignment: OrganizationalAlignment.country,
+      // });  
     }
   }
 

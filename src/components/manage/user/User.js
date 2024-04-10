@@ -577,7 +577,6 @@ function User({ ...props }) {
       response.isAccessDeleteLog
         ? true
         : false;
-    console.log("countryList>>", countryList);
     setformIntialState({
       ...response,
       user: user,

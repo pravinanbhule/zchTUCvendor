@@ -60,7 +60,6 @@ function AddEditForm(props) {
 
   const fnOnInit = () => {
     let tempopts = [];
-    console.log("formIntialState>>>>>>", formIntialState);
     let selectedlist = formIntialState.regionList;
     frmRegionSelectOpts.forEach((item) => {
       if (isEditMode) {
@@ -289,7 +288,10 @@ function AddEditForm(props) {
     });
     countryopts.sort(dynamicSort("label"));
     setcountryopts([...countryopts]);
-    setformfield({ ...formfield, countryList: [...selExistsCountry] });
+    if (frmuserTypeObj[formfield.userType] === "DualRole" && selecteddualRoleLabel === 'Global-Country') {
+    } else {
+      setformfield({ ...formfield, countryList: [...selExistsCountry] });
+    }
   };
   const handleApproverChange = (name, value) => {
     setformfield({ ...formfield, [name]: value });
@@ -531,9 +533,9 @@ function AddEditForm(props) {
                     value={formfield.countryList || []}
                     handleChange={handleMultiSelectChange}
                     isRequired={true}
-                    validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={allCountryOpts}
+                    isAllOptNotRequired={true}
                   />
                 </div>
               ) : (
