@@ -1972,7 +1972,7 @@ function Exemptionlog({ ...props }) {
       }
     })
     if (selectedViewData.length !== 0) {
-      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+      let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
       let countryArray = []
       selectedCountryArray?.map((id, j) => {
           countryState.countryItems.map((item, i) => {
