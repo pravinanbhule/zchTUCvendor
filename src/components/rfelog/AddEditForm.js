@@ -161,7 +161,8 @@ function AddEditForm(props) {
     isRegionAdmin: false,
     isCountryAdmin: false,
     isNormalUser: false,
-    isCountrySuperAdmin: false
+    isCountrySuperAdmin: false,
+    isDualRole: false
   };
 
   const [approverRole, setapproverRole] = useState(approverIntialRole);
@@ -224,6 +225,8 @@ function AddEditForm(props) {
   const [reasonOtherValue, setReasonOtherValue] = useState(
     "others(indiesemfallbitteimkommentardenrfegrundeingeben)"
   );
+  const [dualRoleType, setDualRoleType] = useState("")
+  const [selectedApprover, setSelectedApprover] = useState('')
 
   useEffect(async () => {
     const language = await getLanguageDetails();
@@ -699,7 +702,7 @@ function AddEditForm(props) {
         EmailAddress: formIntialState.UnderwriterGrantingEmpowerment,
       });
       if (tmpapprover) {
-        setUserApproverRole(tmpapprover?.userRoles[0]);
+        setUserApproverRole(tmpapprover?.userRoles[0], tmpapprover);
       } else {
         setapproverRole({ ...approverIntialRole });
       }
@@ -2027,7 +2030,7 @@ function AddEditForm(props) {
         EmailAddress: email.join(","),
       });
       if (tmpapprover) {
-        setUserApproverRole(tmpapprover?.userRoles[0]);
+        setUserApproverRole(tmpapprover?.userRoles[0], tmpapprover);
       } else {
         setapproverRole({ ...approverIntialRole });
       }
@@ -2048,7 +2051,15 @@ function AddEditForm(props) {
       [adfield]: selvalue,
     });
   };
-  const setUserApproverRole = (userRole) => {
+  const setUserApproverRole = async(userRole, userInfo) => {
+    console.log("userRole>>", userInfo);
+    setSelectedApprover(userInfo)
+    let dualRoleList = await getLookupByType({ LookupType: "DualRole" })
+    dualRoleList.map((item, i) => {
+      if (item.lookupID === userInfo.dualRole) {
+        setDualRoleType(item.lookUpValue)
+      }
+    })
     if (userRole.roleId === USER_ROLE.superAdmin) {
       setapproverRole({ ...approverIntialRole, isSuperAdmin: true });
     } else if (userRole.roleId === USER_ROLE.globalAdmin) {
@@ -2061,6 +2072,8 @@ function AddEditForm(props) {
       setapproverRole({ ...approverIntialRole, isNormalUser: true });
     } else if (userRole.roleId === USER_ROLE.countrySuperAdmin) {
       setapproverRole({ ...approverIntialRole, isCountrySuperAdmin: true });
+    } else if (userRole.roleId === USER_ROLE.dualRole) {
+      setapproverRole({ ...approverIntialRole, isDualRole: true });
     }
   };
   useEffect(() => {
@@ -2069,6 +2082,7 @@ function AddEditForm(props) {
       frmselectedRegion?.length &&
       formfield?.CountryList?.length
     ) {
+      console.log("sdgshdsgdsahdjsghadjsa jsgjhsgdjsgh sdgjsghdjshagdj");
       let isUKcountry = true;
       let isSingaporecountry = true;
       let isIndiacountry = true;
@@ -2195,6 +2209,8 @@ function AddEditForm(props) {
         }
       });
 
+      console.log("isUKcountry<<>>>", isUKcountry);
+
       if (isLatamregion) {
         if (approverRole.isRegionAdmin) {
           setformfield({
@@ -2219,14 +2235,24 @@ function AddEditForm(props) {
         isUKcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        console.log("calllll");
+        if (approverRole.isDualRole) {
+          console.log(">>>>>>", approverRole.isDualRole);
+          let countryArray = [IncountryIds.UK, IncountryIds.IRELANDFOS, IncountryIds.SPAINFOS]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.UK);
       } else if (
         isSingaporecountry &&
@@ -2234,12 +2260,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.SINGAPORE]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       } else if (
         isIndiacountry &&
@@ -2247,12 +2280,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.INDIA]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.INDIA);
       } else if (
         isChinacountry &&
@@ -2260,12 +2300,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.CHINA]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.CHINA);
       } else if (
         isHongKongcountry &&
@@ -2273,12 +2320,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.HONGKONG]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.HONGKONG);
       } else if (
         isMalaysiacountry &&
@@ -2286,12 +2340,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.MALAYSIA]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.MALAYSIA);
       } else if (
         isFrancecountry &&
@@ -2299,12 +2360,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.FRANCE]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.FRANCE);
       } else if (
         isMiddleEastcountry &&
@@ -2312,12 +2380,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.MIDDLEEAST]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
       } else if (
         isGermanycountry &&
@@ -2325,12 +2400,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.GERMANY]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.GERMANY);
       } else if (
         isSpaincountry &&
@@ -2338,12 +2420,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.SPAIN]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.SPAIN);
       } else if (
         isItalycountry &&
@@ -2351,12 +2440,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.ITALY]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.ITALY);
       } else if (
         isBeneluxcountry &&
@@ -2364,12 +2460,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.BENELUX, IncountryIds.BENELUXBELGIUM, IncountryIds.BENELUXLUXEMBOURG, IncountryIds.BENELUXNETHERLANDS]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.BENELUX);
       } else if (
         isNordiccountry &&
@@ -2377,12 +2480,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.NORDIC, IncountryIds.NORDICDENMARK, IncountryIds.NORDICFINALAND, IncountryIds.NORDICSWEDEN]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.NORDIC);
       } else if (
         isAustraliacountry &&
@@ -2390,12 +2500,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.AUSTRALIA]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.AUSTRALIA);
       } else if (
         isIndonesiacountry &&
@@ -2403,12 +2520,19 @@ function AddEditForm(props) {
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
-            ? OrganizationalAlignment.region
-            : OrganizationalAlignment.country,
-        });
+        if (approverRole.isDualRole) {
+          let countryArray = [IncountryIds.INDONESIA]
+          countryArray.map((item, i) => {
+            handleAlignmentForDualRole(item)
+          })
+        } else {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+              ? OrganizationalAlignment.region
+              : OrganizationalAlignment.country,
+          });
+        }
         setIncountryFlag(IncountryFlagConst.INDONESIA);
       } else {
         setformfield({
@@ -2438,6 +2562,23 @@ function AddEditForm(props) {
     frmselectedRegion,
     formfield?.CountryList,
   ]);
+
+  const handleAlignmentForDualRole = (countryCode) => {
+    let dualRoleCountryList = selectedApprover?.dualRoleCountry?.split(',')
+    console.log("dualRoleCountryList>", dualRoleCountryList);
+    console.log("countryCode>>",countryCode);
+    if (dualRoleType === 'Global-Country' && dualRoleCountryList.includes(countryCode)) {
+      setformfield({
+        ...formfield,
+        OrganizationalAlignment: OrganizationalAlignment.country,
+      });  
+    } else {
+      setformfield({
+        ...formfield,
+        OrganizationalAlignment: OrganizationalAlignment.global,
+      });  
+    }
+  }
 
   /*useEffect(() => {
     if (

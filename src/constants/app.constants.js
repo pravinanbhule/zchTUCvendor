@@ -57,6 +57,7 @@ export const USER_ROLE = {
   normalUser: "8",
   countrySuperAdmin: "9",
   auditor: "10",
+  dualRole: "11",
   lobAdmin: "12",
 };
 export const SUPER_ADMIN_ROLE_ID = "1";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions, lobActions } from "../../../actions";
+import { userActions, countryActions, regionActions, lobActions, lookupActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
@@ -29,6 +29,7 @@ function User({ ...props }) {
     deleteItem,
     userProfile,
     getAlllob,
+    getLookupByType
   } = props;
 
   useSetNavMenu({ currentMenu: "User", isSubmenu: true }, props.menuClick);
@@ -40,6 +41,7 @@ function User({ ...props }) {
   const [userTypeFilterOpts, setuserTypeFilterOpts] = useState([]);
   const [unathorizedRegions, setunathorizedRegions] = useState([]);
   const [unauthorizedCountries, setunauthorizedCountries] = useState([]);
+  const [dualRoleOpts, setDualRoleOpts] = useState([])
   const intialFilterState = {
     username: "",
     email: "",
@@ -292,12 +294,19 @@ function User({ ...props }) {
     },
   ];
 
-  useEffect(() => {
+  useEffect(async() => {
     getAll({ RequesterUserId: userProfile.userId });
     getAllCountry({ IsLog: true });
     getAllRegion({ IsLog: true });
     getAllUsersRoles({ RequesterUserId: userProfile.userId });
     getAlllob({ isActive: true });
+    let dualRoleList = await getLookupByType({ LookupType: "DualRole" })
+    dualRoleList = dualRoleList.map((item) => ({
+      label: item.lookUpValue,
+      value: item.lookupID,
+    }));
+    dualRoleList.sort(dynamicSort("label"));
+    setDualRoleOpts(dualRoleList)
   }, []);
   useEffect(() => {
     let tempdata = [];
@@ -497,7 +506,8 @@ function User({ ...props }) {
     let lobList = [];
     let tempunauthorizedRegions = [];
     let tempunauthorizedCountries = [];
-    response.regionDataList.forEach((item) => {
+    let regionUserList = response.roleId === '11' ? response.dualRoleRegionDataList : response.regionDataList
+    regionUserList.forEach((item) => {
       let isPresent = false;
       userRegions.forEach((region) => {
         if (region.regionID === item.regionID.trim()) {
@@ -516,7 +526,8 @@ function User({ ...props }) {
         });
       }
     });
-    response.countryDataList.forEach((item) => {
+    let countryUserList = response.roleId === '11' ? response.dualRoleCountryDataList : response.countryDataList
+    countryUserList.forEach((item) => {
       let isPresent = false;
       userCountry.forEach((country) => {
         if (country.countryID === item.countryID.trim()) {
@@ -549,6 +560,14 @@ function User({ ...props }) {
         });
       }
     });
+    let selectedDualRole = ""
+    if (response?.dualRole) {
+      dualRoleOpts.map((item, i) => {
+        if (item.value === response.dualRole) {
+          selectedDualRole = item.label
+        }
+      })
+    }
     setisEditMode(true);
     let isSuperAdmin = response.userType === "SuperAdmin" ? true : false;
     let isAccessDeleteLog =
@@ -558,7 +577,7 @@ function User({ ...props }) {
       response.isAccessDeleteLog
         ? true
         : false;
-
+    console.log("countryList>>", countryList);
     setformIntialState({
       ...response,
       user: user,
@@ -570,6 +589,7 @@ function User({ ...props }) {
       isAccessBreachLog: response.isAccessBreachLog,
       isSuperAdmin: isSuperAdmin,
       isAccessDeleteLog: isAccessDeleteLog,
+      selectedDualRole: selectedDualRole
     });
     setunathorizedRegions([...tempunauthorizedRegions]);
     setunauthorizedCountries([...tempunauthorizedCountries]);
@@ -605,6 +625,17 @@ function User({ ...props }) {
     if (item.isGeneralUser) {
       item.userType = USER_ROLE.normalUser;
     }
+
+    if (item.userType === USER_ROLE.dualRole) {
+      item.countryList = "";
+      item.regionList = "";
+      item.dualRoleCountry = tempcountryList;
+      item.dualRoleRegion = tempregionList
+    } else {
+      item.countryList = tempcountryList;
+      item.regionList = tempregionList
+    }
+
     let response = await postItem({
       ...item,
       userId: userId,
@@ -612,8 +643,6 @@ function User({ ...props }) {
       lastName: lastName,
       emailAddress: emailAddress,
       RoleID: item.userType,
-      regionList: tempregionList,
-      countryList: tempcountryList,
       lobList: templobList,
       isAccessBreachLog: item.isAccessBreachLog,
       requesterUserId: userProfile.userId,
@@ -650,6 +679,17 @@ function User({ ...props }) {
     if (item.isGeneralUser) {
       item.userType = USER_ROLE.normalUser;
     }
+
+    if (item.userType === USER_ROLE.dualRole) {
+      item.countryList = "";
+      item.regionList = "";
+      item.dualRoleCountry = tempcountryList;
+      item.dualRoleRegion = tempregionList
+    } else {
+      item.countryList = tempcountryList;
+      item.regionList = tempregionList
+    }
+
     if (!response) {
       response = await postItem({
         ...item,
@@ -658,8 +698,6 @@ function User({ ...props }) {
         emailAddress: emailAddress,
         RoleID: item.userType,
         PreviousRoleID: "",
-        regionList: tempregionList,
-        countryList: tempcountryList,
         lobList: templobList,
         isAccessBreachLog: item.isAccessBreachLog,
         requesterUserId: userProfile.userId,
@@ -812,6 +850,7 @@ function User({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
           userroles={userroles}
+          dualRoleOpts={dualRoleOpts}
         ></AddEditForm>
       ) : (
         ""
@@ -839,6 +878,7 @@ const mapActions = {
   postItem: userActions.postItem,
   deleteItem: userActions.deleteItem,
   getAlllob: lobActions.getAlllob,
+  getLookupByType: lookupActions.getLookupByType,
 };
 
 export default connect(mapStateToProp, mapActions)(User);

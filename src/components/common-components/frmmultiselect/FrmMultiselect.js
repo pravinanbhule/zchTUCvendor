@@ -19,6 +19,7 @@ function FrmMultiselect(props) {
   } = props;
   const [selectedItems, setselectedItems] = useState(value);
   useEffect(() => {
+    console.log("value>>", value);
     setselectedItems(value);
   }, [value]);
   const onSelect = (selectedList, selectedItem) => {

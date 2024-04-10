@@ -1043,6 +1043,8 @@ function RfelogAddEditForm({ ...props }) {
                         const tmpval = value.map((item) => item.value);
                         tempFilterOpts[key] = tmpval.join(",");
                     }
+                } else {
+                    delete formfield[key]
                 }
             }
             data = {

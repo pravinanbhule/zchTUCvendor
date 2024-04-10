@@ -38,7 +38,7 @@ const AppWithRouterAccess = ({ state, menuClick }) => {
       restoreOriginalUri={restoreOriginalUri}
     >
       <Header></Header>
-      {state.userprofileState.isUnAuthenticated && <UnauthorizedSiteAccess />}
+      {/* {state.userprofileState.isUnAuthenticated && <UnauthorizedSiteAccess />} */}
       <Switch>
         <Route path="/login/callback" exact={true} component={LoginCallback} />
 
