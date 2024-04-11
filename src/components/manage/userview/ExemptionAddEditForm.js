@@ -246,9 +246,13 @@ function Exemptionlog({ ...props }) {
             response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
             response.isNormalUser = response?.userRoles?.split(',').includes('8')
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
-            let Roles = response?.userRoles?.split(",")
-            if (Roles?.length > 0) {
-                setSelectedUserRoles(Roles)
+            if (response.isPrivate === true) {
+                setShowUserRoles(false)
+            } else {
+                let Roles = response?.userRoles?.split(",")
+                if (Roles?.length > 0) {
+                    setSelectedUserRoles(Roles)
+                }
             }
             setTimeout(async () => {
                 if (response.country && typeof response.country === 'string') {
@@ -568,7 +572,6 @@ function Exemptionlog({ ...props }) {
 
     useEffect(() => {
         if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
-            debugger;
             pageIndex = 1;
             loadAPIData();
         }
@@ -882,11 +885,11 @@ function Exemptionlog({ ...props }) {
                 <div className="addedit-header-title">New View for Exemption Log</div>
                 <div className="header-btn-container">
                     {isReadMode &&
-                        <div className="addedit-close btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
+                        <div className="addedit-close-view btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
                             Edit
                         </div>
                     }
-                    <div className="addedit-close btn-blue" onClick={() => hideAddPopup()}>
+                    <div className="addedit-close-view btn-blue" onClick={() => hideAddPopup()}>
                         Back
                     </div>
                 </div>

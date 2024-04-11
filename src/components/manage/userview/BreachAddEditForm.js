@@ -246,17 +246,23 @@ function BreachAddEditForm(props) {
                 })
                 response.region = typeof response.region === 'string' && regionArray.length === 0 ? response.region : regionArray
             }
-            response.isSuperAdmin = response.userRoles.split(',').includes('1')
-            response.isGlobalAdmin = response.userRoles.split(',').includes('2')
-            response.isRegionAdmin = response.userRoles.split(',').includes('3')
-            response.isCountryAdmin = response.userRoles.split(',').includes('4')
-            response.isNormalUser = response.userRoles.split(',').includes('8')
-            response.isCountrySuperAdmin = response.userRoles.split(',').includes('9')
+            response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
+            response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
+            response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
+            response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
+            response.isNormalUser = response?.userRoles?.split(',').includes('8')
+            response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
             // response.switch = response.isPrivate === true ? false : true
             response.materialBreach = response.materialBreach === true ? '1' : '0'
             // delete response.isPrivate
-            let Roles = response?.userRoles?.split(",")
-            setSelectedUserRoles(Roles)
+            if (response.isPrivate === true) {
+                setShowUserRoles(false)
+            } else {
+                let Roles = response?.userRoles?.split(",")
+                if (Roles?.length > 0) {
+                    setSelectedUserRoles(Roles)
+                }
+            }
             setTimeout(async () => {
                 if (typeof response.country === 'string') {
                     let selectedCountryArray = response.country.split(',')
@@ -883,11 +889,11 @@ function BreachAddEditForm(props) {
                 <div className="addedit-header-title">New View for Breach Log</div>
                 <div className="header-btn-container">
                     {isReadMode &&
-                        <div className="addedit-close btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
+                        <div className="addedit-close-view btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
                             Edit
                         </div>
                     }
-                    <div className="addedit-close btn-blue" onClick={() => hidePopup()}>
+                    <div className="addedit-close-view btn-blue" onClick={() => hidePopup()}>
                         Back
                     </div>
                 </div>
@@ -922,9 +928,6 @@ function BreachAddEditForm(props) {
                                     isReadMode={isReadMode}
                                 />
                             </div>
-                        </div>
-                        <div className="border-top font-weight-bold frm-container-bgwhite">
-                            <div className="mb-4"> User Roles</div>
                         </div>
                         {showUserRoles &&
                             <>

@@ -2140,10 +2140,10 @@ function Rfelog({ ...props }) {
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
           <div className="">
-            <div className="row">
-              <div className="page-title col-md-6" style={{ marginLeft: '1.5%'}}>RfE Log</div>
-              <div className="col-md-6 row">
-                <div className="col-md-6 title-dropdown" style={{ marginTop: "8px"}}>
+            <div className="title-rfe">
+              <div className="page-title-rfe">RfE Log</div>
+              <div className="" style={{display:'flex'}}>
+                <div className="title-dropdown-rfe">
                   <FrmSelect
                       title={"Switch view"}
                       name={"switchview"}
@@ -2154,7 +2154,7 @@ function Rfelog({ ...props }) {
                   />
                 </div>
                 {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
-                  <div className="col-md-6 title-dropdown" style={{ marginTop: "8px"}}>
+                  <div className="title-dropdown-rfe">
                     <FrmSelect
                       title={"Change view"}
                       name={"IncountryFlag"}

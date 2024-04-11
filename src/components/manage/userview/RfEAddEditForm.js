@@ -240,9 +240,13 @@ function RfelogAddEditForm({ ...props }) {
             response.SUBLOBID = response?.sublobid
             response.GWP = response?.gwp
 
-            let Roles = response?.userRoles?.split(",")
-            if (Roles?.length > 0) {
-                setSelectedUserRoles(Roles)
+            if (response.isPrivate === true) {
+                setShowUserRoles(false)
+            } else {
+                let Roles = response?.userRoles?.split(",")
+                if (Roles?.length > 0) {
+                    setSelectedUserRoles(Roles)
+                }
             }
             setTimeout(async () => {
                 if (typeof response?.country === 'string' && response?.country !== null) {
@@ -1139,22 +1143,17 @@ function RfelogAddEditForm({ ...props }) {
         }
     };
 
-    useEffect(() => {
-        console.log("formfield.isPrivate>>", formfield.isPrivate);
-
-    }, [formfield.isPrivate || formIntialState?.isPrivate])
-
     return (
         <div className="addedit-logs-container">
             <div className="addedit-header-container">
                 <div className="addedit-header-title">New View for RfE Log</div>
                 <div className="header-btn-container">
                     {isReadMode &&
-                        <div className="addedit-close btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
+                        <div className="addedit-close-view btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
                             Edit
                         </div>
                     }
-                    <div className="addedit-close btn-blue" onClick={() => hideAddPopup()}>
+                    <div className="addedit-close-view btn-blue" onClick={() => hideAddPopup()}>
                         Back
                     </div>
                 </div>
