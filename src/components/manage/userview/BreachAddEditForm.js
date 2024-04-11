@@ -255,7 +255,7 @@ function BreachAddEditForm(props) {
             // response.switch = response.isPrivate === true ? false : true
             response.materialBreach = response.materialBreach === true ? '1' : '0'
             // delete response.isPrivate
-            let Roles = response?.userRoles?.split(",") 
+            let Roles = response?.userRoles?.split(",")
             setSelectedUserRoles(Roles)
             setTimeout(async () => {
                 if (typeof response.country === 'string') {
@@ -700,11 +700,29 @@ function BreachAddEditForm(props) {
         setformfield({ ...formfield, [name]: value });
     }
 
+    const [showUserRoles, setShowUserRoles] = useState(true)
+
     const handleSelectChange = (name, value) => {
-        setformfield({
-            ...formfield,
-            [name]: value,
-        });
+        if (name === "isPrivate" && value === true) {
+            setSelectedUserRoles([])
+            setformfield({
+                ...formfield,
+                [name]: value,
+                isSuperAdmin: false,
+                isGlobalAdmin: false,
+                isRegionAdmin: false,
+                isCountryAdmin: false,
+                isNormalUser: false,
+                isCountrySuperAdmin: false,
+            })
+            setShowUserRoles(false)
+        } else {
+            setformfield({
+                ...formfield,
+                [name]: value,
+            });
+            setShowUserRoles(true)
+        }
     };
 
     const handleMultiSelectChange = (name, value) => {
@@ -908,38 +926,44 @@ function BreachAddEditForm(props) {
                         <div className="border-top font-weight-bold frm-container-bgwhite">
                             <div className="mb-4"> User Roles</div>
                         </div>
-                        <div className="border-bottom border-top frm-container-bggray">
-                            <div className="row m-1 mt-4">
-                                {isReadMode &&
-                                    userRoles.map((item, i) => {
-                                        return (
-                                            formfield[item.name] &&
-                                            <div className="col-md-2">
-                                                {item.label}
-                                            </div>
-                                        )
-                                    })
-                                }
-                                {!isReadMode && userRoles.map((item, i) => {
-                                    return (
-                                        <div className="col-md-2">
-                                            <FrmCheckbox
-                                                title={item.label}
-                                                name={item.name}
-                                                value={formfield[item.name]}
-                                                handleChange={handleChange}
-                                                isRequired={false}
-                                                issubmitted={issubmitted}
-                                                selectopts={accessBreachLogOpts}
-                                                inlinetitle={true}
-                                                aftercheckbox={true}
-                                                isReadMode={isReadMode}
-                                            />
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
+                        {showUserRoles &&
+                            <>
+                                <div className="border-top font-weight-bold frm-container-bgwhite">
+                                    <div className="mb-4"> User Roles</div>
+                                </div>
+                                <div className="border-bottom border-top frm-container-bggray">
+                                    <div className="row m-1 mt-4">
+                                        {isReadMode &&
+                                            userRoles.map((item, i) => {
+                                                return (
+                                                    formfield[item.name] &&
+                                                    <div className="col-md-2">
+                                                        {item.label}
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                        {!isReadMode && userRoles.map((item, i) => {
+                                            return (
+                                                <div className="col-md-2">
+                                                    <FrmCheckbox
+                                                        title={item.label}
+                                                        name={item.name}
+                                                        value={formfield[item.name]}
+                                                        handleChange={handleChange}
+                                                        isRequired={false}
+                                                        selectopts={accessBreachLogOpts}
+                                                        inlinetitle={true}
+                                                        aftercheckbox={true}
+                                                        isReadMode={isReadMode}
+                                                    />
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            </>
+                        }
                         <div className="frm-container-bgwhite">
                             <div className="row">
                                 <div className="col-md-3">

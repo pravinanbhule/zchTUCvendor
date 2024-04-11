@@ -246,7 +246,7 @@ function Exemptionlog({ ...props }) {
             response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
             response.isNormalUser = response?.userRoles?.split(',').includes('8')
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
-            let Roles = response?.userRoles?.split(",") 
+            let Roles = response?.userRoles?.split(",")
             if (Roles?.length > 0) {
                 setSelectedUserRoles(Roles)
             }
@@ -851,11 +851,29 @@ function Exemptionlog({ ...props }) {
         });
     }
 
+    const [showUserRoles, setShowUserRoles] = useState(true)
+
     const handleSelectChange = (name, value) => {
-        setformfield({
-            ...formfield,
-            [name]: value,
-        });
+        if (name === "isPrivate" && value === true) {
+            setSelectedUserRoles([])
+            setformfield({
+                ...formfield,
+                [name]: value,
+                isSuperAdmin: false,
+                isGlobalAdmin: false,
+                isRegionAdmin: false,
+                isCountryAdmin: false,
+                isNormalUser: false,
+                isCountrySuperAdmin: false,
+            })
+            setShowUserRoles(false)
+        } else {
+            setformfield({
+                ...formfield,
+                [name]: value,
+            });
+            setShowUserRoles(true)
+        }
     };
 
     return (
@@ -913,40 +931,44 @@ function Exemptionlog({ ...props }) {
                             />
                         </div> */}
                     </div>
-                    <div className="border-top font-weight-bold frm-container-bgwhite">
-                        <div className="mb-4"> User Roles</div>
-                    </div>
-                    <div className="border-bottom border-top frm-container-bggray">
-                        <div className="row m-1 mt-4">
-                            {isReadMode &&
-                                userRoles.map((item, i) => {
-                                    return (
-                                        formfield[item.name] &&
-                                        <div className="col-md-2">
-                                            {item.label}
-                                        </div>
-                                    )
-                                })
-                            }
-                            {!isReadMode && userRoles.map((item, i) => {
-                                return (
-                                    <div className="col-md-2">
-                                        <FrmCheckbox
-                                            title={item.label}
-                                            name={item.name}
-                                            value={formfield[item.name]}
-                                            handleChange={handleChange}
-                                            isRequired={false}
-                                            selectopts={accessBreachLogOpts}
-                                            inlinetitle={true}
-                                            aftercheckbox={true}
-                                            isReadMode={isReadMode}
-                                        />
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
+                    {showUserRoles &&
+                        <>
+                            <div className="border-top font-weight-bold frm-container-bgwhite">
+                                <div className="mb-4"> User Roles</div>
+                            </div>
+                            <div className="border-bottom border-top frm-container-bggray">
+                                <div className="row m-1 mt-4">
+                                    {isReadMode &&
+                                        userRoles.map((item, i) => {
+                                            return (
+                                                formfield[item.name] &&
+                                                <div className="col-md-2">
+                                                    {item.label}
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                    {!isReadMode && userRoles.map((item, i) => {
+                                        return (
+                                            <div className="col-md-2">
+                                                <FrmCheckbox
+                                                    title={item.label}
+                                                    name={item.name}
+                                                    value={formfield[item.name]}
+                                                    handleChange={handleChange}
+                                                    isRequired={false}
+                                                    selectopts={accessBreachLogOpts}
+                                                    inlinetitle={true}
+                                                    aftercheckbox={true}
+                                                    isReadMode={isReadMode}
+                                                />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </>
+                    }
                     <div className="filter-normal">
                         <div className="filter-container">
                             <div className="row">

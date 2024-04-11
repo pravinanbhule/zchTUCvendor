@@ -625,15 +625,15 @@ function User({ ...props }) {
       item.userType = USER_ROLE.normalUser;
     }
 
-    if (item.userType === USER_ROLE.dualRole) {
-      item.countryList = "";
-      item.regionList = "";
-      item.dualRoleCountry = tempcountryList;
-      item.dualRoleRegion = tempregionList
-    } else {
-      item.countryList = tempcountryList;
-      item.regionList = tempregionList
-    }
+    // if (item.userType === USER_ROLE.dualRole) {
+    //   item.countryList = "";
+    //   item.regionList = "";
+    //   item.dualRoleCountry = tempcountryList;
+    //   item.dualRoleRegion = tempregionList
+    // } else {
+    //   item.countryList = tempcountryList;
+    //   item.regionList = tempregionList
+    // }
 
     let response = await postItem({
       ...item,
@@ -647,6 +647,10 @@ function User({ ...props }) {
       requesterUserId: userProfile.userId,
       PreviousRoleID: item.PreviousRoleID,
       profileCountry: item.user[0].profileCountry,
+      countryList: item.userType === USER_ROLE.dualRole ? "" : tempcountryList,
+      regionList: item.userType === USER_ROLE.dualRole ? "" : tempregionList,
+      dualRoleCountry: item.userType === USER_ROLE.dualRole ? tempcountryList : "",
+      dualRoleRegion: item.userType === USER_ROLE.dualRole ? tempregionList : "",
     });
     if (response) {
       //setselfilter(intialFilterState);
@@ -679,15 +683,15 @@ function User({ ...props }) {
       item.userType = USER_ROLE.normalUser;
     }
 
-    if (item.userType === USER_ROLE.dualRole) {
-      item.countryList = "";
-      item.regionList = "";
-      item.dualRoleCountry = tempcountryList;
-      item.dualRoleRegion = tempregionList
-    } else {
-      item.countryList = tempcountryList;
-      item.regionList = tempregionList
-    }
+    // if (item.userType === USER_ROLE.dualRole) {
+    //   item.countryList = "";
+    //   item.regionList = "";
+    //   item.dualRoleCountry = tempcountryList;
+    //   item.dualRoleRegion = tempregionList
+    // } else {
+    //   item.countryList = tempcountryList;
+    //   item.regionList = tempregionList
+    // }
 
     if (!response) {
       response = await postItem({
@@ -701,6 +705,10 @@ function User({ ...props }) {
         isAccessBreachLog: item.isAccessBreachLog,
         requesterUserId: userProfile.userId,
         profileCountry: item.user[0].profileCountry,
+        countryList: item.userType === USER_ROLE.dualRole ? "" : tempcountryList,
+        regionList: item.userType === USER_ROLE.dualRole ? "" : tempregionList,
+        dualRoleCountry: item.userType === USER_ROLE.dualRole ? tempcountryList : "",
+        dualRoleRegion: item.userType === USER_ROLE.dualRole ? tempregionList : "",
       });
 
       if (response) {
