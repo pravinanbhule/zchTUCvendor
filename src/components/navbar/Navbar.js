@@ -32,6 +32,12 @@ function Navbar({ ...props }) {
                   <div className="menu-item">Manage</div>
                 </Link>
             )}
+            {/* {userProfile &&
+              handlePermission("Navbar", "userviewmanage") && (
+                <Link to="/userview">
+                  <div className="menu-item">Manage</div>
+                </Link>
+            )} */}
             {appmenu.isSubmenu ? (
               <div className="submenu-container">
                 {userProfile && handlePermission("Navbar", "region") && (
