@@ -81,9 +81,29 @@ function UserView({ ...props }) {
           rolesArray.map((role, j) => {
             const name = handleCheckRoleName(role)
             if (name !== '') {
-              roleNames.push(name)
+              if (name === 'Super Admin') {
+                roleNames[1] = name
+              } else if (name === 'Global Admin') {
+                roleNames[2] = name
+              } else if (name === 'Region Admin') {
+                roleNames[3] = name
+              } else if (name === 'Country Super Admin') {
+                roleNames[4] = name
+              } else if (name === 'Country Admin') {
+                roleNames[5] = name
+              } else if (name === 'Normal User') {
+                roleNames[6] = name
+              } else if (name === 'Auditor') {
+                roleNames[7] = name
+              } else if (name === 'LoB Admin') {
+                roleNames[8] = name
+              }
             }
           })
+          roleNames = roleNames.filter(function (element) {
+            return element !== undefined;
+          });
+
           item.userRoleNames = roleNames.toString()
           roleNames = []
         }
