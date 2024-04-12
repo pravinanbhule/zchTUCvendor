@@ -1682,7 +1682,7 @@ function Breachlog({ ...props }) {
     if (selectedViewData.length !== 0) {
       selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
       delete selectedViewData[0]?.entryNumber
-      let selectedCountryArray = selectedViewData[0]?.countryId.split(',')
+      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
       let countryArray = []
       selectedCountryArray.map((id, j) => {
           countryState.countryItems.map((item, i) => {
@@ -1696,7 +1696,7 @@ function Breachlog({ ...props }) {
       })
       selectedViewData[0].countryId = countryArray
 
-      let selectedRegionArray = selectedViewData[0]?.regionId.split(',')
+      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
       let regionArray = []
       selectedRegionArray.map((id, j) => {
           regionState.regionItems.map((item, i) => {

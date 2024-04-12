@@ -73,7 +73,7 @@ function UserView({ ...props }) {
         }
       }
       if (item.userRoles) {
-        let rolesArray = item.userRoles.split(",")
+        let rolesArray = item?.userRoles?.split(",")
         if (rolesArray?.length === 1) {
           item.userRoleNames = handleCheckRoleName(rolesArray[0])
         }
@@ -85,6 +85,7 @@ function UserView({ ...props }) {
             }
           })
           item.userRoleNames = roleNames.toString()
+          roleNames = []
         }
       }
     })
