@@ -935,7 +935,7 @@ function BreachAddEditForm(props) {
                                     <div className="mb-4"> User Roles</div>
                                 </div>
                                 <div className="border-bottom border-top frm-container-bggray">
-                                    <div className="row m-1 mt-4">
+                                    <div className="m-1 mt-4" style={{display: 'flex'}}>
                                         {isReadMode &&
                                             userRoles.map((item, i) => {
                                                 return (
@@ -948,7 +948,7 @@ function BreachAddEditForm(props) {
                                         }
                                         {!isReadMode && userRoles.map((item, i) => {
                                             return (
-                                                <div className="col-md-2">
+                                                <div className="" style={{marginRight: "4%"}}>
                                                     <FrmCheckbox
                                                         title={item.label}
                                                         name={item.name}
