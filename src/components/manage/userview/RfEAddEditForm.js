@@ -158,6 +158,11 @@ function RfelogAddEditForm({ ...props }) {
             filedValue: '3'
         },
         {
+            label: "Country Super Admin",
+            name: "isCountrySuperAdmin",
+            filedValue: '9'
+        },
+        {
             label: "Country Admin",
             name: "isCountryAdmin",
             filedValue: '4'
@@ -166,11 +171,6 @@ function RfelogAddEditForm({ ...props }) {
             label: "Normal User",
             name: "isNormalUser",
             filedValue: '8'
-        },
-        {
-            label: "Country Super Admin",
-            name: "isCountrySuperAdmin",
-            filedValue: '9'
         },
     ])
 
@@ -1130,23 +1130,22 @@ function RfelogAddEditForm({ ...props }) {
             delete data?.ConditionApplicableTo
             delete data?.SUBLOBID
             delete data?.GWP
-            console.log("data>>", data);
-            // let response = await postItem(data)
-            // if (response) {
-            //     if (data.rfeViewsId) {
-            //         alert(alertMessage.userview.update);
-            //     } else {
-            //         alert(alertMessage.userview.add);
-            //     }
-            //     hideAddPopup()
-            // }
+            let response = await postItem(data)
+            if (response) {
+                if (data.rfeViewsId) {
+                    alert(alertMessage.userview.update);
+                } else {
+                    alert(alertMessage.userview.add);
+                }
+                hideAddPopup()
+            }
         }
     };
 
     return (
         <div className="addedit-logs-container">
             <div className="addedit-header-container">
-                <div className="addedit-header-title">New View for RfE Log</div>
+                <div className="addedit-header-title">New/Edit View for RfE Log</div>
                 <div className="header-btn-container">
                     {isReadMode &&
                         <div className="addedit-close-view btn-blue" onClick={() => handleEdit(formfield, 'edit')}>

@@ -167,6 +167,11 @@ function BreachAddEditForm(props) {
             filedValue: '3'
         },
         {
+            label: "Country Super Admin",
+            name: "isCountrySuperAdmin",
+            filedValue: '9'
+        },
+        {
             label: "Country Admin",
             name: "isCountryAdmin",
             filedValue: '4'
@@ -175,11 +180,6 @@ function BreachAddEditForm(props) {
             label: "Normal User",
             name: "isNormalUser",
             filedValue: '8'
-        },
-        {
-            label: "Country Super Admin",
-            name: "isCountrySuperAdmin",
-            filedValue: '9'
         },
     ])
 
@@ -886,7 +886,7 @@ function BreachAddEditForm(props) {
     return (
         <div className="addedit-logs-container">
             <div className="addedit-header-container">
-                <div className="addedit-header-title">New View for Breach Log</div>
+                <div className="addedit-header-title">New/Edit View for Breach Log</div>
                 <div className="header-btn-container">
                     {isReadMode &&
                         <div className="addedit-close-view btn-blue" onClick={() => handleEdit(formfield, 'edit')}>

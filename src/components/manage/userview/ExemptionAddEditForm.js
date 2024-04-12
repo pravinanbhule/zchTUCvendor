@@ -179,6 +179,11 @@ function Exemptionlog({ ...props }) {
             filedValue: '3'
         },
         {
+            label: "Country Super Admin",
+            name: "isCountrySuperAdmin",
+            filedValue: '9'
+        },
+        {
             label: "Country Admin",
             name: "isCountryAdmin",
             filedValue: '4'
@@ -187,11 +192,6 @@ function Exemptionlog({ ...props }) {
             label: "Normal User",
             name: "isNormalUser",
             filedValue: '8'
-        },
-        {
-            label: "Country Super Admin",
-            name: "isCountrySuperAdmin",
-            filedValue: '9'
         },
     ])
     const [switchOpts, setSwitchOpts] = useState([
@@ -882,7 +882,7 @@ function Exemptionlog({ ...props }) {
     return (
         <div className="addedit-logs-container">
             <div className="addedit-header-container">
-                <div className="addedit-header-title">New View for Exemption Log</div>
+                <div className="addedit-header-title">New/Edit View for Exemption Log</div>
                 <div className="header-btn-container">
                     {isReadMode &&
                         <div className="addedit-close-view btn-blue" onClick={() => handleEdit(formfield, 'edit')}>
