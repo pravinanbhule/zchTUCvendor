@@ -937,7 +937,7 @@ function Rfelog({ ...props }) {
     }
   };
   useEffect(() => {
-    if (sellogTabType && !dashboardState.status) {
+    if (sellogTabType && !dashboardState.status && !userProfile?.rfeViewsId) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1033,8 +1033,10 @@ function Rfelog({ ...props }) {
   },[viewData])
 
   useEffect(() => {
+    if (selectedUserView && sellogTabType) {
       handleFilterSearch();
-  }, [selectedUserView]);
+    }
+  }, [selectedUserView, sellogTabType]);
 
   const onUserViewFilterSelect = async(name, value) => {
     let selectedViewData = viewData.filter((item, i) => {

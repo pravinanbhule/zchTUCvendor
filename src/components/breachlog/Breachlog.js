@@ -1544,7 +1544,7 @@ function Breachlog({ ...props }) {
       }
     }*/
 
-    if (sellogTabType && !dashboardState.status) {
+    if (sellogTabType && !dashboardState.status && !userProfile?.breachViewsId) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1670,8 +1670,10 @@ function Breachlog({ ...props }) {
   },[viewData])
 
   useEffect(() => {
+    if (selectedview && sellogTabType) {
       handleFilterSearch();
-  }, [selectedview]);
+    }
+  }, [selectedview, sellogTabType]);
 
   const onViewFilterSelect = async(name, value) => {
     let selectedViewData = viewData.filter((item, i) => {
