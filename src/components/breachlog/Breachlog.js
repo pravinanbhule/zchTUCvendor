@@ -1684,32 +1684,39 @@ function Breachlog({ ...props }) {
     if (selectedViewData.length !== 0) {
       selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
       delete selectedViewData[0]?.entryNumber
-      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
       let countryArray = []
-      selectedCountryArray.map((id, j) => {
-          countryState.countryItems.map((item, i) => {
-              if (id === item.countryID) {
-                  countryArray.push({
-                      label: item.countryName.trim(),
-                      value: item.countryID,
-                  })
-              }
-          })
-      })
+      if (selectedViewData[0]?.countryId?.length !== 0) {
+        let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+        selectedCountryArray.map((id, j) => {
+            countryState.countryItems.map((item, i) => {
+                if (id === item.countryID) {
+                    countryArray.push({
+                        ...item,
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                    })
+                }
+            })
+        })
+      }
       selectedViewData[0].countryId = countryArray
 
-      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
       let regionArray = []
-      selectedRegionArray.map((id, j) => {
-          regionState.regionItems.map((item, i) => {
-              if (id === item.regionID) {
-                  regionArray.push({
-                      label: item.regionName.trim(),
-                      value: item.regionID,
-                  })
-              }
-          })
-      })
+      if (selectedViewData[0]?.regionId?.length !== 0) {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        selectedRegionArray.map((id, j) => {
+            regionState.regionItems.map((item, i) => {
+                if (id === item.regionID) {
+                    regionArray.push({
+                        ...item,
+                        label: item.regionName.trim(),
+                        value: item.regionID,
+                    })
+                }
+            })
+        })
+      }
       selectedViewData[0].regionId = regionArray
       selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : '0'
       setselfilter(selectedViewData[0])

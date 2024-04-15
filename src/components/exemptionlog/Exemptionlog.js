@@ -1982,8 +1982,10 @@ function Exemptionlog({ ...props }) {
             countryState.countryItems.map((item, i) => {
                 if (id === item.countryID) {
                     countryArray.push({
+                        ...item,
                         label: item.countryName.trim(),
                         value: item.countryID,
+                        regionId: item.regionID,
                     })
                 }
             })
@@ -1998,6 +2000,7 @@ function Exemptionlog({ ...props }) {
             regionState.regionItems.map((item, i) => {
                 if (id === item.regionID) {
                     regionArray.push({
+                        ...item,
                         label: item.regionName.trim(),
                         value: item.regionID,
                     })

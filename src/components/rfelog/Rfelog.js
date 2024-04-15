@@ -299,6 +299,7 @@ function Rfelog({ ...props }) {
     }*/
   };
   const handleMultiSelectChange = (name, value) => {
+    console.log("name>>", name);
     if (name === "RegionId") {
       let countryopts = [...selfilter.CountryId];
       let regionopts = value;
@@ -1039,40 +1040,48 @@ function Rfelog({ ...props }) {
   }, [selectedUserView, sellogTabType]);
 
   const onUserViewFilterSelect = async(name, value) => {
+    setselfilter(intialFilterState);
     let selectedViewData = viewData.filter((item, i) => {
       if (item.rfeViewsId === value) {
         return item
       }
     })
     if (selectedViewData.length !== 0) {
-      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
       let countryArray = []
-      if (selectedCountryArray) {
-        selectedCountryArray.map((id, j) => {
-            countryState.countryItems.map((item, i) => {
-                if (id === item.countryID) {
-                    countryArray.push({
-                        label: item.countryName.trim(),
-                        value: item.countryID,
-                    })
-                }
-            })
-        })
+      if (selectedViewData[0]?.countryId?.length !== 0) {
+        let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+        if (selectedCountryArray) {
+          selectedCountryArray.map((id, j) => {
+              countryState.countryItems.map((item, i) => {
+                  if (id === item.countryID) {
+                      countryArray.push({
+                          ...item,
+                          label: item.countryName.trim(),
+                          value: item.countryID,
+                          regionId: item.regionID,
+                      })
+                  }
+              })
+          })
+        }
       }
-      let regionData = await getAllRegion();
-      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
       let regionArray = []
-      if (selectedRegionArray) {
-        selectedRegionArray.map((id, j) => {
-          regionData.map((item, i) => {
-                if (id === item.regionID) {
-                    regionArray.push({
-                        label: item.regionName.trim(),
-                        value: item.regionID,
-                    })
-                }
-            })
-        })
+      if (selectedViewData[0]?.regionId?.length !== 0) {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        let regionData = await getAllRegion();
+        if (selectedRegionArray) {
+          selectedRegionArray.map((id, j) => {
+            regionData.map((item, i) => {
+                  if (id === item.regionID) {
+                      regionArray.push({
+                          ...item,
+                          label: item.regionName.trim(),
+                          value: item.regionID,
+                      })
+                  }
+              })
+          })
+        }
       }
 
       const FilterState = {
