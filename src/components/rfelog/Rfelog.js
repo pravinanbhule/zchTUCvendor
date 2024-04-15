@@ -1092,8 +1092,18 @@ function Rfelog({ ...props }) {
         CreatorName: selectedViewData[0]?.creatorName,
         CreatedFromDate: selectedViewData[0]?.createdFromDate,
         CreatedToDate: selectedViewData[0]?.createdToDate,
+        Currency: selectedViewData[0]?.currency,
+        Branch: selectedViewData[0]?.branch,
         DurationofApproval: selectedViewData[0]?.durationofApproval,
+        NewRenewal: selectedViewData[0]?.newRenewal,
+        Limit: selectedViewData[0]?.limit,
+        ZurichShare: selectedViewData[0]?.zurichShare,
+        AccountNumber: selectedViewData[0]?.accountNumber,
+        CustomerSegment: selectedViewData[0]?.customerSegment,
+        PolicyPeriod: selectedViewData[0]?.policyPeriod,
         ConditionApplicableTo: selectedViewData[0]?.conditionApplicableTo,
+        GWP: selectedViewData[0]?.gwp,
+        SUBLOBID: selectedViewData[0]?.sublobid
       };
       setselfilter(FilterState)
       setSelectedUserview(value);
