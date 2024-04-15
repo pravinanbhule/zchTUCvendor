@@ -9,6 +9,8 @@ import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import { handlePermission } from "../../../permissions/Permission";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/sublob.constants";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 function Sublob({ ...props }) {
   const { sublobState, lobState } = props.state;
   const {
@@ -21,6 +23,7 @@ function Sublob({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
+    getMasterVersion
   } = props;
   useSetNavMenu({ currentMenu: "Sublob", isSubmenu: true }, props.menuClick);
   const [frmLobSelectOpts, setfrmLobSelectOpts] = useState([]);
@@ -153,6 +156,26 @@ function Sublob({ ...props }) {
         };
       },
       align: "center",
+    },
+    {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.subLOBID)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
     },
     {
       dataField: "subLOBName",
@@ -428,6 +451,23 @@ function Sublob({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "sublob",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
@@ -547,6 +587,18 @@ function Sublob({ ...props }) {
       ) : (
         ""
       )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
@@ -564,5 +616,6 @@ const mapActions = {
   postItem: sublobActions.postItem,
   deleteItem: sublobActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
 };
 export default connect(mapStateToProp, mapActions)(Sublob);

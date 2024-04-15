@@ -5,3 +5,19 @@ export const currencyConstants = {
   GETALLCURRENCY_SUCCESS: "GETALLCURRENCY_SUCCESS",
   GETALLCURRENCY_FAILURE: "GETALLCURRENCY_FAILURE",
 };
+
+export const versionHistoryexportFieldTitles = {
+  CurrencyDescription: "Description",
+  CurrencyName: "Name",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const versionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const versionHistoryexportDateFields = {};
+export const versionHistoryexportHtmlFields = [];

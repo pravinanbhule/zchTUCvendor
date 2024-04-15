@@ -10,6 +10,8 @@ import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { BranchVersionHistoryExcludeFields, BranchVersionHistoryexportDateFields, BranchVersionHistoryexportFieldTitles, BranchVersionHistoryexportHtmlFields } from "../../../constants";
 function Branch({ ...props }) {
   const { branchState, countryState } = props.state;
   const {
@@ -22,6 +24,7 @@ function Branch({ ...props }) {
     checkIsInUse,
     userProfile,
     setMasterdataActive,
+    getMasterVersion
   } = props;
   useSetNavMenu({ currentMenu: "Branch", isSubmenu: true }, props.menuClick);
   console.log(branchState);
@@ -131,6 +134,26 @@ function Branch({ ...props }) {
         return { width: "70px", textAlign: "center" };
       },
       align: "center",
+    },
+    {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.branchId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
     },
     {
       dataField: "branchId",
@@ -350,6 +373,23 @@ function Branch({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "branch",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
@@ -466,6 +506,18 @@ function Branch({ ...props }) {
       ) : (
         ""
       )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={BranchVersionHistoryexportFieldTitles}
+          exportDateFields={BranchVersionHistoryexportDateFields}
+          exportHtmlFields={BranchVersionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={BranchVersionHistoryExcludeFields}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
@@ -483,5 +535,6 @@ const mapActions = {
   checkNameExist: branchActions.checkNameExist,
   checkIsInUse: branchActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
 };
 export default connect(mapStateToProp, mapActions)(Branch);
