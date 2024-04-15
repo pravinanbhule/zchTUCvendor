@@ -87,26 +87,26 @@ function Co({ ...props }) {
         };
       }
     },
-    // {
-    //   dataField: "DataVersion",
-    //   text: "Data Version",
-    //   formatter: (cell, row, rowIndex, formatExtraData) => {
-    //     return (
-    //       <div
-    //         className="versionhistory-icon"
-    //         onClick={() => handleDataVersion(row.coId)}
-    //         mode={"view"}
-    //       ></div>
-    //     );
-    //   },
-    //   sort: false,
-    //   headerStyle: (colum, colIndex) => {
-    //     return {
-    //       width: "100px",
-    //       textAlign: "center",
-    //     };
-    //   },
-    // },
+    {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.coId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
     {
       dataField: "coName",
       text: "CO Name",

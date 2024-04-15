@@ -10,7 +10,7 @@ import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import { handlePermission } from "../../../permissions/Permission";
 function ZNAOrgnization2({ ...props }) {
@@ -196,6 +196,25 @@ function ZNAOrgnization2({ ...props }) {
       text: "Description",
       sort: false,
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {

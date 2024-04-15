@@ -8,7 +8,7 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import AddEditForm from "./AddEditForm";
 import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import { handlePermission } from "../../../permissions/Permission";
 function Branch({ ...props }) {
   const { branchState, countryState } = props.state;
@@ -169,7 +169,29 @@ function Branch({ ...props }) {
       dataField: "branchDescription",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {

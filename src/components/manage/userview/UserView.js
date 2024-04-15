@@ -8,7 +8,7 @@ import './Style.css'
 import ExemptionAddEditForm from "./ExemptionAddEditForm";
 import { USER_ROLE } from "../../../constants";
 import RfEAddEditForm from "./RfEAddEditForm";
-import { alertMessage } from "../../../helpers";
+import { alertMessage, formatDate } from "../../../helpers";
 import FrmRadio from "../../common-components/frmradio/FrmRadio";
 function UserView({ ...props }) {
 
@@ -231,6 +231,25 @@ function UserView({ ...props }) {
       dataField: "userRoleNames",
       text: "Role",
       sort: false,
+    },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
     }
   ];
   const defaultSorted = [
