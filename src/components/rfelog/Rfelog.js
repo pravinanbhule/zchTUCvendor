@@ -950,7 +950,6 @@ function Rfelog({ ...props }) {
       pagesize = 10;
       totalLogCount = 0;
       handleViews()
-      getAllCountry();
       getAllRegion();
       getAllCurrency();
       getAllBranch();
@@ -1270,8 +1269,27 @@ function Rfelog({ ...props }) {
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
     }));
+    let IncountryFlag = ''
+    let CountryList = await getAllCountry();
+    if (userProfile?.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+      let userInCountryFlag = []
+      userProfile?.scopeCountryList?.split(",")?.map((userCountry) => {
+        CountryList.map((country, i) => {
+            if (country.countryID === userCountry) {
+              userInCountryFlag.push(country.incountryFlag)
+            }
+        })
+      })
+      userInCountryFlag = userInCountryFlag.filter((item,
+        index) => userInCountryFlag.indexOf(item) === index && item !== null)
+      if (userInCountryFlag?.length === 1) {
+        console.log("userInCountryFlag>>", userInCountryFlag);
+        getAllSegment({ logType: "rfelogsGermany" });
+      }
+      IncountryFlag = userInCountryFlag?.toString()
+    }
     const tempfilterfields = await getLogFields({
-      IncountryFlag: "",
+      IncountryFlag: IncountryFlag,
       FieldType: "Filter",
     });
     setfilterfieldslist(tempfilterfields);
