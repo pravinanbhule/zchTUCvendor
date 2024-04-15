@@ -292,7 +292,7 @@ function Exemptionlog({ ...props }) {
       value: "urpm",
     },
   ]);
-  const [selectedExemptionLog, setselectedExemptionLog] = useState("");
+  const [selectedExemptionLog, setselectedExemptionLog] = useState("zug");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
@@ -1795,8 +1795,9 @@ function Exemptionlog({ ...props }) {
   }, [selectedExemptionLog]);
 
   useEffect(() => {
-    if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
-      debugger;
+    if ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null')) {
+      return
+    } else if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1961,8 +1962,10 @@ function Exemptionlog({ ...props }) {
   },[viewData])
 
   useEffect(() => {
+    if (selectedview && sellogTabType) {
       handleFilterSearch();
-  }, [selectedview]);
+    }
+  }, [selectedview, sellogTabType]);
 
   const onViewFilterSelect = async(name, value) => {
     let selectedViewData = viewData?.filter((item, i) => {
@@ -1972,33 +1975,38 @@ function Exemptionlog({ ...props }) {
       }
     })
     if (selectedViewData.length !== 0) {
-      let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
       let countryArray = []
-      selectedCountryArray?.map((id, j) => {
-          countryState.countryItems.map((item, i) => {
-              if (id === item.countryID) {
-                  countryArray.push({
-                      label: item.countryName.trim(),
-                      value: item.countryID,
-                  })
-              }
-          })
-      })
+      if (selectedViewData[0]?.countryID?.length !== 0) {
+        let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
+        selectedCountryArray?.map((id, j) => {
+            countryState.countryItems.map((item, i) => {
+                if (id === item.countryID) {
+                    countryArray.push({
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                    })
+                }
+            })
+        })
+      }
       selectedViewData[0].countryID = countryArray
 
-      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
       let regionArray = []
-      selectedRegionArray?.map((id, j) => {
-          regionState.regionItems.map((item, i) => {
-              if (id === item.regionID) {
-                  regionArray.push({
-                      label: item.regionName.trim(),
-                      value: item.regionID,
-                  })
-              }
-          })
-      })
+      if (selectedViewData[0]?.regionId?.length !== 0) {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        selectedRegionArray?.map((id, j) => {
+            regionState.regionItems.map((item, i) => {
+                if (id === item.regionID) {
+                    regionArray.push({
+                        label: item.regionName.trim(),
+                        value: item.regionID,
+                    })
+                }
+            })
+        })
+      }
       selectedViewData[0].regionId = regionArray
+
       setselfilter(selectedViewData[0])
       setselectedview(value);
     }

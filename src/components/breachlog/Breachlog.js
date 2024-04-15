@@ -1544,7 +1544,7 @@ function Breachlog({ ...props }) {
       }
     }*/
 
-    if (sellogTabType && !dashboardState.status && !userProfile?.breachViewsId) {
+    if (sellogTabType && !dashboardState.status && (!userProfile?.breachViewsId || userProfile?.breachViewsId === 'null')) {
       pageIndex = 1;
       loadAPIData();
     }

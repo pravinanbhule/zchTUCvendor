@@ -937,7 +937,7 @@ function Rfelog({ ...props }) {
     }
   };
   useEffect(() => {
-    if (sellogTabType && !dashboardState.status && !userProfile?.rfeViewsId) {
+    if (sellogTabType && !dashboardState.status && (!userProfile?.rfeViewsId || userProfile?.rfeViewsId === 'null')) {
       pageIndex = 1;
       loadAPIData();
     }
