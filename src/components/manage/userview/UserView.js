@@ -58,7 +58,6 @@ function UserView({ ...props }) {
 
   const handleGetAll = async () => {
     let response = await getAll({ UserViewType: selectedTab, exemptiontype: selectedTab === 'exemptionlog' ? selectedExemptionLog : '' })
-    console.log("response>>>>>>>>>>>>>", response);
     let roleNames = []
 
     response.map((item, i) => {
@@ -242,6 +241,11 @@ function UserView({ ...props }) {
   ];
 
   const handleEdit = (row, type) => {
+    let selctedData = paginationdata.filter((item, i) => {
+      if (row.userviewId === item.userviewId) {
+        return item
+      }
+    })
     if (selectedTab === 'exemptionlog') {
       row.pC_URPMExemptionRequired = row.pC_URPMExemptionRequired === true ? '1' : '0'
     }
@@ -253,7 +257,7 @@ function UserView({ ...props }) {
       setIsReadmode(false)
     }
     setIsshowAddPopup(true)
-    setSelectedRow(row)
+    setSelectedRow(selctedData[0])
   }
 
   const handleDelete = async (e) => {
