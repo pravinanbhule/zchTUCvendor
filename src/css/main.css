@@ -1173,3 +1173,22 @@ button:not(:last-child) {
 .title-dropdown div label {
   margin-right: 12px !important;
 }
+
+.title-rfe{
+  display: flex;
+  justify-content: space-between;
+}
+.page-title-rfe{
+    font-size: 20px;
+    font-weight: 600;
+    padding: 10px 15px;
+    color: #243e6f;
+    margin-left: 1.5%;
+}
+.title-dropdown-rfe{
+  margin-top: 8px;
+  margin-right: 30px;
+}
+.title-dropdown-rfe div label {
+  margin-right: 12px !important;
+}

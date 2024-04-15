@@ -230,6 +230,7 @@ function BreachAddEditForm(props) {
         if (isEditMode || isReadMode) {
             setLoading(true)
             let response = formIntialState
+            console.log("response>>>", response);
 
             if (regionState.regionItems && typeof response.region === 'string') {
                 let selectedRegionArray = response.region.split(',')
@@ -253,7 +254,7 @@ function BreachAddEditForm(props) {
             response.isNormalUser = response?.userRoles?.split(',').includes('8')
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
             // response.switch = response.isPrivate === true ? false : true
-            response.materialBreach = response.materialBreach === true ? '1' : '0'
+            response.materialBreach = response.materialBreach === true ? '1' : response.materialBreach === false ? '0' : ''
             // delete response.isPrivate
             if (response.isPrivate === true) {
                 setShowUserRoles(false)
@@ -935,7 +936,7 @@ function BreachAddEditForm(props) {
                                     <div className="mb-4"> User Roles</div>
                                 </div>
                                 <div className="border-bottom border-top frm-container-bggray">
-                                    <div className="m-1 mt-4" style={{display: 'flex'}}>
+                                    <div className="m-1 mt-4" style={{display: 'flex', justifyContent: 'space-between'}}>
                                         {isReadMode &&
                                             userRoles.map((item, i) => {
                                                 return (
@@ -948,7 +949,7 @@ function BreachAddEditForm(props) {
                                         }
                                         {!isReadMode && userRoles.map((item, i) => {
                                             return (
-                                                <div className="" style={{marginRight: "4%"}}>
+                                                <div className="">
                                                     <FrmCheckbox
                                                         title={item.label}
                                                         name={item.name}

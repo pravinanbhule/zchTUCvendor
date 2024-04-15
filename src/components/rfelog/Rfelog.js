@@ -2005,8 +2005,13 @@ function Rfelog({ ...props }) {
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
+        let value = selfilter[key];
         if (selfilter[key]) {
           tempFilterOpts[key] = selfilter[key];
+        }
+        if (key === "CountryId" || key === "RegionId") {
+          const tmpval = value.map((item) => item.value);
+          tempFilterOpts[key] = tmpval.join(",");
         }
       }
       reqParam = {

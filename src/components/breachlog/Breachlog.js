@@ -1718,7 +1718,7 @@ function Breachlog({ ...props }) {
         })
       }
       selectedViewData[0].regionId = regionArray
-      selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : '0'
+      selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
       setselfilter(selectedViewData[0])
       setselectedview(value);
     }
@@ -2596,6 +2596,10 @@ function Breachlog({ ...props }) {
           if (key === "materialBreach") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
+          if (key === "countryId" || key === "regionId") {
+            const tmpval = value.map((item) => item.value);
+            tempFilterOpts[key] = tmpval.join(",");
+          }
         }
       }
       reqParam = {
@@ -2646,10 +2650,9 @@ function Breachlog({ ...props }) {
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
           <div className="">
-            <div className="row">
-              <div className="page-title col-md-6" style={{ marginLeft: '1.5%'}}>Breach Log</div>
-              {/* <div className="page-title col-md-9">RfE Log</div> */}
-              <div className="col-md-3 title-dropdown" style={{ marginTop: "8px", right: '-24%' }}>
+            <div className="title-rfe">
+              <div className="page-title-rfe">Breach Log</div>
+              <div className="title-dropdown-rfe">
                 <FrmSelect
                   title={"Switch view"}
                   name={"switchview"}

@@ -58,6 +58,7 @@ function UserView({ ...props }) {
 
   const handleGetAll = async () => {
     let response = await getAll({ UserViewType: selectedTab, exemptiontype: selectedTab === 'exemptionlog' ? selectedExemptionLog : '' })
+    console.log("response>>>>>>>>>>>>>", response);
     let roleNames = []
 
     response.map((item, i) => {
