@@ -1193,7 +1193,7 @@ function RfelogAddEditForm({ ...props }) {
                                 <div className="mb-4"> User Roles</div>
                             </div>
                             <div className="border-bottom border-top frm-container-bggray">
-                                <div className="m-1 mt-4" style={{display: 'flex'}}>
+                                <div className="m-1 mt-4" style={{display: 'flex', justifyContent: 'space-between'}}>
                                     {isReadMode &&
                                         userRoles.map((item, i) => {
                                             return (
@@ -1206,7 +1206,7 @@ function RfelogAddEditForm({ ...props }) {
                                     }
                                     {!isReadMode && userRoles.map((item, i) => {
                                         return (
-                                            <div className="" style={{marginRight: '4%'}}>
+                                            <div className="">
                                                 <FrmCheckbox
                                                     title={item.label}
                                                     name={item.name}

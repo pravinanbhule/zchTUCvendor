@@ -299,6 +299,7 @@ function Rfelog({ ...props }) {
     }*/
   };
   const handleMultiSelectChange = (name, value) => {
+    console.log("name>>", name);
     if (name === "RegionId") {
       let countryopts = [...selfilter.CountryId];
       let regionopts = value;
@@ -445,6 +446,11 @@ function Rfelog({ ...props }) {
         IncountryFlag: selectedview === "gn" ? "" : selectedview,
         FieldType: "Filter",
       });
+      if (selectedview === 'DE001') {
+        getAllSegment({ logType: "rfelogsGermany" });
+      } else {
+        getAllSegment({ logType: "rfelogs" });
+      }
       setfilterfieldslist(tempfilterfields);
       pageIndex = 1;
       loadAPIData();
@@ -762,6 +768,12 @@ function Rfelog({ ...props }) {
         userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
     };
     setisLoadingStarted(true);
+    // if (userProfile.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+    //   reqParam = {
+    //     ...reqParam,
+    //     IncountryFlag: await handleUserIncountryFlag()
+    //   }
+    // }
     if (sellogTabType === "draft") {
       reqParam = {
         ...reqParam,
@@ -949,7 +961,6 @@ function Rfelog({ ...props }) {
       pagesize = 10;
       totalLogCount = 0;
       handleViews()
-      getAllCountry();
       getAllRegion();
       getAllCurrency();
       getAllBranch();
@@ -1039,40 +1050,48 @@ function Rfelog({ ...props }) {
   }, [selectedUserView, sellogTabType]);
 
   const onUserViewFilterSelect = async(name, value) => {
+    setselfilter(intialFilterState);
     let selectedViewData = viewData.filter((item, i) => {
       if (item.rfeViewsId === value) {
         return item
       }
     })
     if (selectedViewData.length !== 0) {
-      let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
       let countryArray = []
-      if (selectedCountryArray) {
-        selectedCountryArray.map((id, j) => {
-            countryState.countryItems.map((item, i) => {
-                if (id === item.countryID) {
-                    countryArray.push({
-                        label: item.countryName.trim(),
-                        value: item.countryID,
-                    })
-                }
-            })
-        })
+      if (selectedViewData[0]?.countryId?.length !== 0) {
+        let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+        if (selectedCountryArray) {
+          selectedCountryArray.map((id, j) => {
+              countryState.countryItems.map((item, i) => {
+                  if (id === item.countryID) {
+                      countryArray.push({
+                          ...item,
+                          label: item.countryName.trim(),
+                          value: item.countryID,
+                          regionId: item.regionID,
+                      })
+                  }
+              })
+          })
+        }
       }
-      let regionData = await getAllRegion();
-      let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
       let regionArray = []
-      if (selectedRegionArray) {
-        selectedRegionArray.map((id, j) => {
-          regionData.map((item, i) => {
-                if (id === item.regionID) {
-                    regionArray.push({
-                        label: item.regionName.trim(),
-                        value: item.regionID,
-                    })
-                }
-            })
-        })
+      if (selectedViewData[0]?.regionId?.length !== 0) {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        let regionData = await getAllRegion();
+        if (selectedRegionArray) {
+          selectedRegionArray.map((id, j) => {
+            regionData.map((item, i) => {
+                  if (id === item.regionID) {
+                      regionArray.push({
+                          ...item,
+                          label: item.regionName.trim(),
+                          value: item.regionID,
+                      })
+                  }
+              })
+          })
+        }
       }
 
       const FilterState = {
@@ -1261,8 +1280,10 @@ function Rfelog({ ...props }) {
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
     }));
+   
+    let Flag = await handleUserIncountryFlag()
     const tempfilterfields = await getLogFields({
-      IncountryFlag: "",
+      IncountryFlag: Flag,
       FieldType: "Filter",
     });
     setfilterfieldslist(tempfilterfields);
@@ -1276,6 +1297,33 @@ function Rfelog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  const handleUserIncountryFlag = async() => {
+    let IncountryFlag = '';
+    let CountryList = []
+    if (countryState?.countryItems?.length !== 0) {
+      CountryList = countryState.countryItems;
+    } else {
+      CountryList = await getAllCountry();
+    }
+    if (userProfile?.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+      let userInCountryFlag = []
+      userProfile?.scopeCountryList?.split(",")?.map((userCountry) => {
+        CountryList.map((country, i) => {
+            if (country.countryID === userCountry) {
+              userInCountryFlag.push(country.incountryFlag)
+            }
+        })
+      })
+      userInCountryFlag = userInCountryFlag.filter((item,
+        index) => userInCountryFlag.indexOf(item) === index && item !== null)
+      if (userInCountryFlag?.length === 1 && userInCountryFlag[0] === 'DE001') {
+        getAllSegment({ logType: "rfelogsGermany" });
+      }
+      IncountryFlag = userInCountryFlag?.toString()
+    }
+    return IncountryFlag
+  }
 
   const loadCreatorUsers = async () => {
     let tempCreator = await getLogUsers({
@@ -1996,8 +2044,13 @@ function Rfelog({ ...props }) {
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
+        let value = selfilter[key];
         if (selfilter[key]) {
           tempFilterOpts[key] = selfilter[key];
+        }
+        if (key === "CountryId" || key === "RegionId") {
+          const tmpval = value.map((item) => item.value);
+          tempFilterOpts[key] = tmpval.join(",");
         }
       }
       reqParam = {
