@@ -13,6 +13,8 @@ import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/znaorgnization2.constants";
 function ZNAOrgnization2({ ...props }) {
   const { znaorgnization1State, znaorgnization2State } = props.state;
   const {
@@ -25,6 +27,7 @@ function ZNAOrgnization2({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
+    getMasterVersion
   } = props;
   useSetNavMenu(
     {
@@ -166,6 +169,26 @@ function ZNAOrgnization2({ ...props }) {
         };
       },
       align: "center",
+    },
+    {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.znasbuId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
     },
     {
       dataField: "sbuName",
@@ -402,6 +425,23 @@ function ZNAOrgnization2({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "ZNAOrganization2",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
@@ -432,7 +472,7 @@ function ZNAOrgnization2({ ...props }) {
   const setMasterdataActiveState = async (state) => {
     let response = await setMasterdataActive({
       TempId: selItemsList.join(","),
-      MasterType: "znaorg2",
+      MasterType: "ZNAOrganization2",
       IsActive: state,
     });
     if (response) {
@@ -522,6 +562,18 @@ function ZNAOrgnization2({ ...props }) {
       ) : (
         ""
       )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
@@ -539,5 +591,6 @@ const mapActions = {
   deleteItem: znaorgnization2Actions.deleteItem,
   getAllOrgnization1: znaorgnization1Actions.getAllOrgnization,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
 };
 export default connect(mapStateToProp, mapActions)(ZNAOrgnization2);

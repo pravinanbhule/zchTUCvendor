@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions, lobActions, lookupActions } from "../../../actions";
+import { userActions, countryActions, regionActions, lobActions, lookupActions, commonActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
@@ -11,6 +11,8 @@ import UserProfile from "../../common-components/UserProfile";
 import FrmInput from "../../common-components/frminput/FrmInput";
 import { USER_ROLE } from "../../../constants";
 import { handlePermission } from "../../../permissions/Permission";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/user.constants";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 function User({ ...props }) {
   const { userState, countryState, regionState, lobState } = props.state;
   const {
@@ -29,7 +31,8 @@ function User({ ...props }) {
     deleteItem,
     userProfile,
     getAlllob,
-    getLookupByType
+    getLookupByType,
+    getMasterVersion
   } = props;
 
   useSetNavMenu({ currentMenu: "User", isSubmenu: true }, props.menuClick);
@@ -232,6 +235,26 @@ function User({ ...props }) {
         };
       },
       align: "center",
+    },
+    {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.userId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
     },
     {
       dataField: "emailAddress",
@@ -763,6 +786,23 @@ function User({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+  
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+  
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "user",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   /* search Input functionality */
   const [searchOptions, setsearchOptions] = useState([]);
   useEffect(() => {
@@ -884,6 +924,18 @@ function User({ ...props }) {
       ) : (
         ""
       )}
+        {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
@@ -908,6 +960,7 @@ const mapActions = {
   deleteItem: userActions.deleteItem,
   getAlllob: lobActions.getAlllob,
   getLookupByType: lookupActions.getLookupByType,
+  getMasterVersion: commonActions.getMasterVersion,
 };
 
 export default connect(mapStateToProp, mapActions)(User);

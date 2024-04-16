@@ -7,11 +7,9 @@ export const sublobConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  Country: "Country",
-  DurationofApproval: "Duration of the approval",
-  LOBApprover: "Approval",
-  LOBDescription: "Description",
-  LOBName: "Name",
+  LOB: "LoB Name",
+  SubLOBDescription: "Description",
+  SubLOB: "Sub-LoB Name",
   IsActive: "Active",
   CreatedDate: "Created Date",
   ModifiedDate: "Modified Date",

@@ -5,3 +5,19 @@ export const znaorgnization1Constants = {
   GETALLORGNIZATION_SUCCESS: "GETALLORGNIZATION_SUCCESS",
   GETALLORGNIZATION_FAILURE: "GETALLORGNIZATION_FAILURE",
 };
+
+export const versionHistoryexportFieldTitles = {
+  ZNASegmentName: "Name",
+  Description: "Description",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const versionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const versionHistoryexportDateFields = {};
+export const versionHistoryexportHtmlFields = [];

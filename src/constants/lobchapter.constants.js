@@ -5,3 +5,21 @@ export const lobchapterConstants = {
   GETALLLOBCHAPTER_SUCCESS: "GETALLLOBCHAPTER_SUCCESS",
   GETALLLOBCHAPTER_FAILURE: "GETALLLOBCHAPTER_FAILURE",
 };
+
+export const versionHistoryexportFieldTitles = {
+  LOBChapterName: "Name",
+  LOB: "LoB Name",
+  LOBApprover: "LOB Approver",
+  LOBChapterDescription: "Description",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const versionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const versionHistoryexportDateFields = {};
+export const versionHistoryexportHtmlFields = [];

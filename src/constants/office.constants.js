@@ -5,3 +5,19 @@ export const officeConstants = {
   GETALLOFFICE_SUCCESS: "GETALLOFFICE_SUCCESS",
   GETALLOFFICE_FAILURE: "GETALLOFFICE_FAILURE",
 };
+
+export const versionHistoryexportFieldTitles = {
+  OfficeName: "Name",
+  OfficeDescription: "Description",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const versionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const versionHistoryexportDateFields = {};
+export const versionHistoryexportHtmlFields = [];

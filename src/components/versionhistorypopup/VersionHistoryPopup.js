@@ -95,8 +95,8 @@ function VersionHistoryPopup(props) {
                                   : ""}
                               </td>
                               <td>
-                                {item["LastModifiorName"]
-                                  ? item["LastModifiorName"]
+                                {item["LastModifiorName"] || item["ModifiedBy"]
+                                  ? item["LastModifiorName"] || item["ModifiedBy"]
                                   : ""}
                               </td>
                             </tr>

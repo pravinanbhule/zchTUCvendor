@@ -10,7 +10,7 @@ import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import { handlePermission } from "../../../permissions/Permission";
 import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
-import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/country.constants";
 function Country({ ...props }) {
   const { countryState, regionState } = props.state;
   const {
