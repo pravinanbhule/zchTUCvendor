@@ -763,6 +763,12 @@ function Rfelog({ ...props }) {
         userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
     };
     setisLoadingStarted(true);
+    if (userProfile.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+      reqParam = {
+        ...reqParam,
+        IncountryFlag: await handleUserIncountryFlag()
+      }
+    }
     if (sellogTabType === "draft") {
       reqParam = {
         ...reqParam,
@@ -1269,27 +1275,10 @@ function Rfelog({ ...props }) {
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
     }));
-    let IncountryFlag = ''
-    let CountryList = await getAllCountry();
-    if (userProfile?.isSuperAdmin === false && userProfile.isGeneralUser === false) {
-      let userInCountryFlag = []
-      userProfile?.scopeCountryList?.split(",")?.map((userCountry) => {
-        CountryList.map((country, i) => {
-            if (country.countryID === userCountry) {
-              userInCountryFlag.push(country.incountryFlag)
-            }
-        })
-      })
-      userInCountryFlag = userInCountryFlag.filter((item,
-        index) => userInCountryFlag.indexOf(item) === index && item !== null)
-      if (userInCountryFlag?.length === 1) {
-        console.log("userInCountryFlag>>", userInCountryFlag);
-        getAllSegment({ logType: "rfelogsGermany" });
-      }
-      IncountryFlag = userInCountryFlag?.toString()
-    }
+   
+    let Flag = await handleUserIncountryFlag()
     const tempfilterfields = await getLogFields({
-      IncountryFlag: IncountryFlag,
+      IncountryFlag: Flag,
       FieldType: "Filter",
     });
     setfilterfieldslist(tempfilterfields);
@@ -1303,6 +1292,33 @@ function Rfelog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  const handleUserIncountryFlag = async() => {
+    let IncountryFlag = '';
+    let CountryList = []
+    if (countryState?.countryItems?.length !== 0) {
+      CountryList = countryState.countryItems;
+    } else {
+      CountryList = await getAllCountry();
+    }
+    if (userProfile?.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+      let userInCountryFlag = []
+      userProfile?.scopeCountryList?.split(",")?.map((userCountry) => {
+        CountryList.map((country, i) => {
+            if (country.countryID === userCountry) {
+              userInCountryFlag.push(country.incountryFlag)
+            }
+        })
+      })
+      userInCountryFlag = userInCountryFlag.filter((item,
+        index) => userInCountryFlag.indexOf(item) === index && item !== null)
+      if (userInCountryFlag?.length === 1 && userInCountryFlag[0] === 'DE001') {
+        getAllSegment({ logType: "rfelogsGermany" });
+      }
+      IncountryFlag = userInCountryFlag?.toString()
+    }
+    return IncountryFlag
+  }
 
   const loadCreatorUsers = async () => {
     let tempCreator = await getLogUsers({
