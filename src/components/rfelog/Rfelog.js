@@ -435,6 +435,11 @@ function Rfelog({ ...props }) {
         IncountryFlag: selectedview === "gn" ? "" : selectedview,
         FieldType: "Filter",
       });
+      if (selectedview === 'DE001') {
+        getAllSegment({ logType: "rfelogsGermany" });
+      } else {
+        getAllSegment({ logType: "rfelogs" });
+      }
       setfilterfieldslist(tempfilterfields);
       pageIndex = 1;
       loadAPIData();
@@ -1120,8 +1125,9 @@ function Rfelog({ ...props }) {
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition]
     }));
+    let Flag = await handleUserIncountryFlag()
     const tempfilterfields = await getLogFields({
-      IncountryFlag: "",
+      IncountryFlag: Flag,
       FieldType: "Filter",
     });
     setfilterfieldslist(tempfilterfields);
@@ -1135,6 +1141,33 @@ function Rfelog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  const handleUserIncountryFlag = async() => {
+    let IncountryFlag = '';
+    let CountryList = []
+    if (countryState?.countryItems?.length !== 0) {
+      CountryList = countryState.countryItems;
+    } else {
+      CountryList = await getAllCountry();
+    }
+    if (userProfile?.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+      let userInCountryFlag = []
+      userProfile?.scopeCountryList?.split(",")?.map((userCountry) => {
+        CountryList.map((country, i) => {
+            if (country.countryID === userCountry) {
+              userInCountryFlag.push(country.incountryFlag)
+            }
+        })
+      })
+      userInCountryFlag = userInCountryFlag.filter((item,
+        index) => userInCountryFlag.indexOf(item) === index && item !== null)
+      if (userInCountryFlag?.length === 1 && userInCountryFlag[0] === 'DE001') {
+        getAllSegment({ logType: "rfelogsGermany" });
+      }
+      IncountryFlag = userInCountryFlag?.toString()
+    }
+    return IncountryFlag
+  }
 
   const loadCreatorUsers = async () => {
     let tempCreator = await getLogUsers({
@@ -1856,8 +1889,13 @@ function Rfelog({ ...props }) {
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
+        let value = selfilter[key];
         if (selfilter[key]) {
           tempFilterOpts[key] = selfilter[key];
+        }
+        if (key === "CountryId" || key === "RegionId") {
+          const tmpval = value.map((item) => item.value);
+          tempFilterOpts[key] = tmpval.join(",");
         }
       }
       reqParam = {
