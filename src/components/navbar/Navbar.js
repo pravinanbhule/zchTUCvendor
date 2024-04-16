@@ -209,7 +209,7 @@ function Navbar({ ...props }) {
                   <Link to="/userview">
                     <div
                       className={`menu-item ${
-                        location.pathname === "/co" && "active"
+                        location.pathname === "/userview" && "active"
                       }`}
                     >
                       User View

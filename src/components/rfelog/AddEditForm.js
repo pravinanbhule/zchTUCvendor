@@ -2467,7 +2467,6 @@ function AddEditForm(props) {
     let selectedCountryList = []
     let selctedCountryRegionList = ""
     let isOneRegion = true
-    console.log("formfield?.CountryList>>", formfield?.CountryList);
     formfield?.CountryList.map((item, i) => {
       selectedCountryList.push(item.value)
       if (selctedCountryRegionList) {

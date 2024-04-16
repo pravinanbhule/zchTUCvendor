@@ -10,6 +10,7 @@ import { USER_ROLE } from "../../../constants";
 import RfEAddEditForm from "./RfEAddEditForm";
 import { alertMessage, formatDate } from "../../../helpers";
 import FrmRadio from "../../common-components/frmradio/FrmRadio";
+import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 function UserView({ ...props }) {
 
   const {
@@ -17,6 +18,14 @@ function UserView({ ...props }) {
     getAll,
     deleteItem
   } = props;
+
+  useSetNavMenu(
+    {
+      currentMenu: "userview",
+      isSubmenu: true,
+    },
+    props.menuClick
+  );
 
   const [selectedTab, setSelectedTab] = useState("breachlog")
   const [selectedRow, setSelectedRow] = useState({})

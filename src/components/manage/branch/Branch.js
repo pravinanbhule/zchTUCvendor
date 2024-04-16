@@ -211,6 +211,9 @@ function Branch({ ...props }) {
       dataField: "modifiedDate",
       text: "Modified Date",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
       },

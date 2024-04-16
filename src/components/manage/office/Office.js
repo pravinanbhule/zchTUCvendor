@@ -161,6 +161,9 @@ function Office({ ...props }) {
       dataField: "officeDescription",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
     {
       dataField: "createdDate",
