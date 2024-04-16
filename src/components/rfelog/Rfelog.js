@@ -446,6 +446,11 @@ function Rfelog({ ...props }) {
         IncountryFlag: selectedview === "gn" ? "" : selectedview,
         FieldType: "Filter",
       });
+      if (selectedview === 'DE001') {
+        getAllSegment({ logType: "rfelogsGermany" });
+      } else {
+        getAllSegment({ logType: "rfelogs" });
+      }
       setfilterfieldslist(tempfilterfields);
       pageIndex = 1;
       loadAPIData();
@@ -763,12 +768,12 @@ function Rfelog({ ...props }) {
         userProfile?.userRoles[userProfile?.userRoles?.length - 1].displayRole,
     };
     setisLoadingStarted(true);
-    if (userProfile.isSuperAdmin === false && userProfile.isGeneralUser === false) {
-      reqParam = {
-        ...reqParam,
-        IncountryFlag: await handleUserIncountryFlag()
-      }
-    }
+    // if (userProfile.isSuperAdmin === false && userProfile.isGeneralUser === false) {
+    //   reqParam = {
+    //     ...reqParam,
+    //     IncountryFlag: await handleUserIncountryFlag()
+    //   }
+    // }
     if (sellogTabType === "draft") {
       reqParam = {
         ...reqParam,
