@@ -9,8 +9,16 @@ export const userConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  OfficeName: "Name",
-  OfficeDescription: "Description",
+  UserName: "User Name",
+  UserType: "User Type",
+  RegionNameList: "Region",
+  CountryNameList: "Country",
+  DualRoleCountry: "DualRole Country",
+  DualRoleRegion: "DualRole Region",
+  LOBNameList: "LoB",
+  IsAccessBreachLog: "Access Breach Log",
+  IsAccessDeleteLog: "Access Delete Log",
+  IsGeneralUser: "General User",
   IsActive: "Active",
   CreatedDate: "Created Date",
   ModifiedDate: "Modified Date",

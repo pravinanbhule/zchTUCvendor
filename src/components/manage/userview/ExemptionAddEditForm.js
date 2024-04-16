@@ -402,6 +402,7 @@ function Exemptionlog({ ...props }) {
             tempFilterOpts.exemptiontype = selectedExemptionLog
             tempFilterOpts.country = tempFilterOpts?.countryID
             tempFilterOpts.region = tempFilterOpts?.regionId
+            tempFilterOpts.requesterUserId = userProfile.userId
             let response = await postItem(tempFilterOpts)
             if (response) {
                 if (tempFilterOpts.zugExemptionViewsId || tempFilterOpts.urpmExemptionViewsId) {

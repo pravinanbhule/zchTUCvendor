@@ -379,9 +379,7 @@ function Country({ ...props }) {
     if (!response) {
       response = await postItem({
         ...item,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);

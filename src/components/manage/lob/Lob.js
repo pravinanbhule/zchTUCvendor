@@ -446,9 +446,7 @@ function Lob({ ...props }) {
         aproverList: item.lobApproverList,
         countryList: tempcountryList,
         lobApproverList: templobApproverList,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);

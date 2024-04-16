@@ -1072,6 +1072,7 @@ function RfelogAddEditForm({ ...props }) {
                 ...data,
                 ...tempFilterOpts,
                 userRoles: selectedUserRoles.toString(),
+                requesterUserId: userProfile.userId,
                 UserViewType: 'rfelog'
             }
             data.chzSustainabilityDeskCHZGICreditRisk = data?.CHZ

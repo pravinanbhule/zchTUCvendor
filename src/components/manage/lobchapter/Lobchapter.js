@@ -441,9 +441,7 @@ function Lobchapter({ ...props }) {
       response = await postItem({
         ...item,
         lobList: templobList,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
         approverList: templobChapterApproverList,
       });
       if (response) {

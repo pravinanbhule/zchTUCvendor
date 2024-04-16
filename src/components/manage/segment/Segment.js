@@ -383,9 +383,7 @@ function Segment({ ...props }) {
       response = await postItem({
         ...item,
         countryList: tempcountryList,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         getAll();

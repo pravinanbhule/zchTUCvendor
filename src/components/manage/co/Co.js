@@ -224,6 +224,7 @@ function Co({ ...props }) {
     if (!response) {
       response = await putItem({
         ...item,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         getAll();
@@ -240,7 +241,8 @@ function Co({ ...props }) {
     let response = await checkNameExist({ COName: item.coName });
     if (!response) {
       response = await postItem({
-        ...item
+        ...item,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         getAll();

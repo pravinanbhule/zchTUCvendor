@@ -368,6 +368,7 @@ function ZNAOrgnization2({ ...props }) {
       response = await postItem({
         ...item,
         createdById: item.createdById ? item.createdById : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);
@@ -391,6 +392,7 @@ function ZNAOrgnization2({ ...props }) {
       response = await postItem({
         ...item,
         createdById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);

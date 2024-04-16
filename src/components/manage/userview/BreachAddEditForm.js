@@ -51,7 +51,8 @@ function BreachAddEditForm(props) {
         formIntialState,
         isEditMode,
         postItem,
-        handleEdit
+        handleEdit,
+        userProfile
     } = props;
 
     const [formfield, setformfield] = useState({
@@ -870,6 +871,8 @@ function BreachAddEditForm(props) {
         // tempFilterOpts.isPrivate = tempFilterOpts.switch || tempFilterOpts.switch === true ? false : true;
         tempFilterOpts.userRoles = selectedUserRoles.toString()
         tempFilterOpts.UserViewType = 'breachlog'
+        tempFilterOpts.requesterUserId = userProfile.userId
+
         // delete tempFilterOpts.switch
         let response = await postItem(tempFilterOpts)
         if (response) {
