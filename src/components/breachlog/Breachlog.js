@@ -948,7 +948,7 @@ function Breachlog({ ...props }) {
                   handleShareItem={openShareItem}
                   handleDeleteItem={openDeleteItem}
                   userProfile={userProfile}
-                  isDelete={userProfile?.isAdminGroup ? true : false}
+                  isDelete={userProfile?.isAdminGroup && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                 ></MoreActions>
               </>
             );

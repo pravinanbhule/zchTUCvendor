@@ -631,7 +631,7 @@ function Rfelog({ ...props }) {
                       handleShareItem={openShareItem}
                       handleDeleteItem={openDeleteItem}
                       userProfile={userProfile}
-                      isDelete={fnIsEditAccess(row) ? true : false}
+                      isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                     ></MoreActions>
                   </>
                 );
