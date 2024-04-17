@@ -1040,6 +1040,9 @@ function Rfelog({ ...props }) {
   useEffect(()=>{
     if (userProfile?.rfeViewsId && viewData.length !== 0) {
       onUserViewFilterSelect( "", userProfile?.rfeViewsId)
+    } else {
+      pageIndex = 1;
+      loadAPIData();
     }
   },[viewData])
 
@@ -1126,6 +1129,10 @@ function Rfelog({ ...props }) {
       };
       setselfilter(FilterState)
       setSelectedUserview(value);
+    } else {
+      value = null;
+      pageIndex = 1;
+      loadAPIData();
     }
     if (value === null) {
       setSelectedUserview(value);
@@ -2208,16 +2215,18 @@ function Rfelog({ ...props }) {
             <div className="title-rfe">
               <div className="page-title-rfe">RfE Log</div>
               <div className="" style={{display:'flex'}}>
-                <div className="title-dropdown-rfe">
-                  <FrmSelect
+                {commonfilterOpts.userViews.length > 1 && (
+                  <div className="title-dropdown-rfe">
+                    <FrmSelect
                       title={"Switch view"}
                       name={"switchview"}
                       selectopts={commonfilterOpts.userViews}
                       handleChange={onUserViewFilterSelect}
                       value={selectedUserView}
                       inlinetitle={true}
-                  />
-                </div>
+                      />
+                  </div>
+                )}
                 {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
                   <div className="title-dropdown-rfe">
                     <FrmSelect

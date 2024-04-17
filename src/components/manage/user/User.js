@@ -253,6 +253,14 @@ function User({ ...props }) {
       },
     },
     {
+      dataField: "dualRoleTypeName",
+      text: "Dual Role Type",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "250px" };
+      },
+    },
+    {
       dataField: "regionList",
       text: "Region",
       sort: false,

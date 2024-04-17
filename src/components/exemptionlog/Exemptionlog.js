@@ -1958,6 +1958,9 @@ function Exemptionlog({ ...props }) {
       onViewFilterSelect( "", userProfile?.zugExemptionViewsId)
     } else if (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && viewData?.length !== 0) {
       onViewFilterSelect( "", userProfile?.urpmExemptionViewsId)
+    } else {
+      pageIndex = 1;
+      loadAPIData();
     }
   },[viewData])
 
@@ -2012,6 +2015,10 @@ function Exemptionlog({ ...props }) {
 
       setselfilter(selectedViewData[0])
       setselectedview(value);
+    } else {
+      value = null;
+      pageIndex = 1;
+      loadAPIData();
     }
     if (value === null) {
       setselectedview(value);
@@ -3206,17 +3213,18 @@ function Exemptionlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Exemption Log</div>
-              {/* <div className="page-title col-md-9">RfE Log</div> */}
-              <div className="title-dropdown-rfe">
-                <FrmSelect
-                  title={"Switch view"}
-                  name={"switchview"}
-                  selectopts={commonfilterOpts.views}
-                  handleChange={onViewFilterSelect}
-                  value={selectedview}
-                  inlinetitle={true}
-                />
-              </div>
+              {commonfilterOpts.views.length > 1 && (
+                <div className="title-dropdown-rfe">
+                  <FrmSelect
+                    title={"Switch view"}
+                    name={"switchview"}
+                    selectopts={commonfilterOpts.views}
+                    handleChange={onViewFilterSelect}
+                    value={selectedview}
+                    inlinetitle={true}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="page-filter-outercontainer">
