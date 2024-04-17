@@ -290,6 +290,9 @@ function User({ ...props }) {
       headerStyle: (colum, colIndex) => {
         return { width: "250px" };
       },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? cell : row?.dualRoleRegion ? row?.dualRoleRegion : "-"}</span>;
+      },
     },
     {
       dataField: "countryList",
@@ -299,7 +302,7 @@ function User({ ...props }) {
         return { width: "250px" };
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
-        return <span>{cell ? cell : "-"}</span>;
+        return <span>{cell ? cell : row?.dualRoleCountry ? row?.dualRoleCountry : "-"}</span>;
       },
     },
     {
