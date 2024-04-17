@@ -90,6 +90,7 @@ function LoggedInUser({ ...props }) {
             localStorage.setItem("Role", "NormalUser")
           }
           if (userRoles.roleId === USER_ROLE.dualRole) {
+            userprofile.isAdminGroup = true;
             localStorage.setItem("Role", "DualRole")
           }
           localStorage.setItem("UserProfile", JSON.stringify(userprofile))
