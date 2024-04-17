@@ -2051,7 +2051,6 @@ function AddEditForm(props) {
     });
   };
   const setUserApproverRole = (userRole, userInfo) => {
-    console.log("userRole>>", userInfo);
     setSelectedApprover(userInfo)
     if (userRole.roleId === USER_ROLE.superAdmin) {
       setapproverRole({ ...approverIntialRole, isSuperAdmin: true });
@@ -2225,196 +2224,271 @@ function AddEditForm(props) {
         isUKcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.UK);
       } else if (
         isSingaporecountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.SINGAPORE);
       } else if (
         isIndiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.INDIA);
       } else if (
         isChinacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.CHINA);
       } else if (
         isHongKongcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.HONGKONG);
       } else if (
         isMalaysiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.MALAYSIA);
       } else if (
         isFrancecountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.FRANCE);
       } else if (
         isMiddleEastcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.MIDDLEEAST);
       } else if (
         isGermanycountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.GERMANY);
       } else if (
         isSpaincountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.SPAIN);
       } else if (
         isItalycountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.ITALY);
       } else if (
         isBeneluxcountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.BENELUX);
       } else if (
         isNordiccountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.NORDIC);
       } else if (
         isAustraliacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.AUSTRALIA);
       } else if (
         isIndonesiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser)
+          approverRole.isNormalUser ||
+          approverRole.isDualRole)
       ) {
-        setformfield({
-          ...formfield,
-          OrganizationalAlignment: approverRole.isRegionAdmin
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
             ? OrganizationalAlignment.region
             : OrganizationalAlignment.country,
-        });
+          });
+        }
         setIncountryFlag(IncountryFlagConst.INDONESIA);
       } else {
         setformfield({
