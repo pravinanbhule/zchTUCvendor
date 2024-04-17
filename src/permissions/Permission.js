@@ -636,55 +636,55 @@ export function handlePermission(page, name) {
                 isDelete: true
             }
         },
-        // DualRole: {
-        //     Navbar: {
-        //         "": true,
-        //         regionmanage: false,
-        //         usermanage: false,
-        //         region: false,
-        //         country: false,
-        //         segment: false,
-        //         lob: false,
-        //         sublob: false,
-        //         lobchapter: false,
-        //         token: false,
-        //         znaorganization1: false,
-        //         znaorganization2: false,
-        //         znaorganization3: false,
-        //         znaorganization4: false,
-        //         office: false,
-        //         branch: false,
-        //         currency: false,
-        //         co: false,
-        //         userview: false,
-        //         user: false,
-        //         lookup: false,
-        //         breachlogs: true,
-        //         rfelogs: true,
-        //         exemptionlogs: true
-        //     },
-        //     breachlogs: {
-        //         isAdd: true,
-        //         isEdit: true,
-        //         isExport: true,
-        //         isImport: true,
-        //         isDelete: true
-        //     },
-        //     rfelogs: {
-        //         isAdd: true,
-        //         isEdit: true,
-        //         isExport: true,
-        //         isImport: true,
-        //         isDelete: true
-        //     },
-        //     exemptionlogs: {
-        //         isAdd: true,
-        //         isEdit: true,
-        //         isExport: true,
-        //         isImport: true,
-        //         isDelete: true
-        //     }
-        // },
+        DualRole: {
+            Navbar: {
+                "": true,
+                regionmanage: false,
+                usermanage: false,
+                region: false,
+                country: false,
+                segment: false,
+                lob: false,
+                sublob: false,
+                lobchapter: false,
+                token: false,
+                znaorganization1: false,
+                znaorganization2: false,
+                znaorganization3: false,
+                znaorganization4: false,
+                office: false,
+                branch: false,
+                currency: false,
+                co: false,
+                userview: false,
+                user: false,
+                lookup: false,
+                breachlogs: true,
+                rfelogs: true,
+                exemptionlogs: true
+            },
+            breachlogs: {
+                isAdd: true,
+                isEdit: true,
+                isExport: true,
+                isImport: true,
+                isDelete: true
+            },
+            rfelogs: {
+                isAdd: true,
+                isEdit: true,
+                isExport: true,
+                isImport: true,
+                isDelete: true
+            },
+            exemptionlogs: {
+                isAdd: true,
+                isEdit: true,
+                isExport: true,
+                isImport: true,
+                isDelete: true
+            }
+        },
     }
     let response = false
     response = Permission?.[role]?.[page]?.[name]

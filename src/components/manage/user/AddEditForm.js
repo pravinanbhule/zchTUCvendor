@@ -179,6 +179,7 @@ function AddEditForm(props) {
         regionList: [],
         countryList: [],
         lobList: [],
+        dualRole: null,
         userType: "Super Admin",
         isAccessBreachLog: false,
         isAccessDeleteLog: true,
@@ -200,6 +201,7 @@ function AddEditForm(props) {
         countryList: [],
         lobList: [],
         userType: "",
+        dualRole: null,
         isAccessBreachLog: false,
         isGeneralUser: true,
         isAccessDeleteLog: true,
@@ -211,6 +213,7 @@ function AddEditForm(props) {
         countryList: [],
         lobList: [],
         userType: "",
+        dualRole: null,
         isAccessBreachLog: false,
         isGeneralUser: false,
         isAccessDeleteLog: false,
@@ -224,6 +227,9 @@ function AddEditForm(props) {
     );
     if (frmuserTypeObj[formfield.userType] !== "LoBAdmin") {
       setformfield({ ...formfield, lobList: [] });
+    }
+    if (frmuserTypeObj[formfield.userType] !== "DualRole") {
+      setformfield({ ...formfield, dualRole: null });
     }
     if (frmuserTypeObj[formfield.userType] === "Global") {
       setformfield({ ...formfield, regionList: [] });
@@ -361,7 +367,6 @@ function AddEditForm(props) {
   };
 
   const handleSelectChange = (name, value, _, label) => {
-    console.log("label>>", label);
     setSelecteddualRoleLabel(label)
     if (frmuserTypeObj[formfield.userType] === "DualRole") {
       setformfield({ ...formfield, countryList: [], regionList: [], [name]: value });
