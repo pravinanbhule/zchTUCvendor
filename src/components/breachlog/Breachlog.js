@@ -1666,6 +1666,9 @@ function Breachlog({ ...props }) {
   useEffect(()=>{
     if (userProfile?.breachViewsId && viewData.length !== 0) {
       onViewFilterSelect( "", userProfile?.breachViewsId)
+    } else {
+      pageIndex = 1;
+      loadAPIData();
     }
   },[viewData])
 
@@ -1721,6 +1724,10 @@ function Breachlog({ ...props }) {
       selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
       setselfilter(selectedViewData[0])
       setselectedview(value);
+    } else {
+      value = null;
+      pageIndex = 1;
+      loadAPIData();
     }
     if (value === null) {
       setselectedview(value);
@@ -2652,16 +2659,18 @@ function Breachlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Breach Log</div>
-              <div className="title-dropdown-rfe">
-                <FrmSelect
-                  title={"Switch view"}
-                  name={"switchview"}
-                  selectopts={commonfilterOpts.views}
-                  handleChange={onViewFilterSelect}
-                  value={selectedview}
-                  inlinetitle={true}
-                />
-              </div>
+              {commonfilterOpts.views.length > 1 && (
+                <div className="title-dropdown-rfe">
+                  <FrmSelect
+                    title={"Switch view"}
+                    name={"switchview"}
+                    selectopts={commonfilterOpts.views}
+                    handleChange={onViewFilterSelect}
+                    value={selectedview}
+                    inlinetitle={true}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="page-filter-outercontainer">
