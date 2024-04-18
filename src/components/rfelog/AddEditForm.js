@@ -2051,7 +2051,6 @@ function AddEditForm(props) {
     });
   };
   const setUserApproverRole = (userRole, userInfo) => {
-    console.log("userInfo>>", userInfo);
     setSelectedApprover(userInfo)
     if (userRole.roleId === USER_ROLE.superAdmin) {
       setapproverRole({ ...approverIntialRole, isSuperAdmin: true });
@@ -2214,6 +2213,8 @@ function AddEditForm(props) {
             OrganizationalAlignment: OrganizationalAlignment.country,
           });
           setIncountryFlag(IncountryFlagConst.LATAM);
+        } else if (approverRole.isDualRole) {
+          handleAlignmentForDualRole(IncountryFlagConst.LATAM)
         } else {
           setformfield({
             ...formfield,
@@ -2522,7 +2523,9 @@ function AddEditForm(props) {
           handleAlignmentForDualRole(IncountryFlagConst.INDONESIA)
         }
       } else {
-        console.log("approverRole>>>", approverRole);
+        if (approverRole.isDualRole) {
+          handleAlignmentForDualRole("")
+        }
         setformfield({
           ...formfield,
           OrganizationalAlignment: OrganizationalAlignment.global,
