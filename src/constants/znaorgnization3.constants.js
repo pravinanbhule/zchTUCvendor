@@ -8,6 +8,8 @@ export const znaorgnization3Constants = {
 
 export const versionHistoryexportFieldTitles = {
   MarketBasketName: "ZNA Organization 3 Name",
+  SBUName: "ZNA Organization 2 Name",
+  ZNASegmentName: "ZNA Organization 1 Name",
   Description: "Description",
   IsActive: "Active",
   CreatedDate: "Created Date",

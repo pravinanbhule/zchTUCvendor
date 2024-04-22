@@ -8,7 +8,7 @@ export const branchConstants = {
 
 
 export const BranchVersionHistoryexportFieldTitles = {
-  BranchName: "Branch Name",
+  BranchName: "Branch",
   CountryName: "Country",
   BranchDescription: "Description",
   IsActive: "Active",
