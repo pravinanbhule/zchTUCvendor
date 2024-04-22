@@ -24,8 +24,11 @@ function Branch({ ...props }) {
     checkIsInUse,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Branch.xlsx";
   useSetNavMenu({ currentMenu: "Branch", isSubmenu: true }, props.menuClick);
   console.log(branchState);
   //initialize filter/search functionality
@@ -399,6 +402,7 @@ function Branch({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -437,6 +441,21 @@ function Branch({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      branchId: "",
+      countryID: "",
+    }
+    if (isfilterApplied) {
+        response.branchId = selfilter.branch
+        response.countryID = selfilter.country
+    }
+    const responsedata = await downloadExcel({
+      BranchId: response?.branchId,
+      CountryID: response.countryID
+    }, "Branch");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Branch</div>
@@ -496,6 +515,9 @@ function Branch({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -541,5 +563,6 @@ const mapActions = {
   checkIsInUse: branchActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Branch);

@@ -23,7 +23,10 @@ function ZNAOrgnization4({ ...props }) {
     userProfile,
     setMasterdataActive,
     getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "znaorganization4.xlsx";
   useSetNavMenu(
     {
       currentMenu: "znaorganization4",
@@ -373,6 +376,7 @@ function ZNAOrgnization4({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -415,6 +419,18 @@ function ZNAOrgnization4({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      znaProductsId: "",
+    }
+    if (isfilterApplied && selItemsList.length === 0) {
+      response.znaProductsId = selfilter?.znaProductsId
+    }
+    const responsedata = await downloadExcel({
+      ZNAProductsId: response?.znaProductsId,
+    }, "ZNAOrganization4");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage ZNA Organization 4</div>
@@ -463,6 +479,9 @@ function ZNAOrgnization4({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -507,5 +526,6 @@ const mapActions = {
   deleteItem: znaorgnization4Actions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(ZNAOrgnization4);

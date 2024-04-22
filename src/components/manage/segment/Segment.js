@@ -27,8 +27,11 @@ function Segment({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Segment.xlsx";
   useSetNavMenu({ currentMenu: "Segment", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -263,6 +266,7 @@ function Segment({ ...props }) {
       if (coutrylist) {
         coutrylist = coutrylist.split(",");
         coutrylist.forEach((countryItem) => {
+          console.log("coutrylist>>", coutrylist);
           let tempItem = countryItem.trim();
           if (!tempCountryObj[tempItem]) {
             tempCountryFilterOpts.push({
@@ -467,6 +471,7 @@ function Segment({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -508,6 +513,26 @@ function Segment({ ...props }) {
       }
     }
   };
+
+  const handleDownload = async() =>{
+    let response = {
+      segmentID: "",
+      countryList: "",
+    }
+    if (isfilterApplied) {
+      if (selfilter.country !== "") {
+        let countryId = frmCountrySelectOpts.filter((item) => item.countryName === selfilter.country)
+        response.countryList = countryId?.[0]?.countryID
+      }
+      response.segmentID = selfilter.segment 
+    }
+    const responsedata = await downloadExcel({
+      SegmentID: response?.segmentID,
+      CountryID: response.countryList,
+    }, "Segment");
+    FileDownload(responsedata, templateName);
+  }
+
   return (
     <>
       <div className="page-title">Manage Segment</div>
@@ -567,6 +592,9 @@ function Segment({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -613,5 +641,6 @@ const mapActions = {
   deleteItem: segmentActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Segment);

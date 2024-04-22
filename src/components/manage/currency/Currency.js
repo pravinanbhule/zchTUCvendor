@@ -23,8 +23,11 @@ function Currency({ ...props }) {
     checkIsInUse,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Currency.xlsx";
   useSetNavMenu({ currentMenu: "Currency", isSubmenu: true }, props.menuClick);
   console.log(currencyState);
   //initialize filter/search functionality
@@ -343,6 +346,7 @@ function Currency({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -381,6 +385,18 @@ function Currency({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      CurrencyID: "",
+    }
+    if (isfilterApplied) {
+      response.CurrencyID = selfilter.currency
+    }
+    const responsedata = await downloadExcel({
+      CurrencyID: response.CurrencyID,
+    }, "Currency");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Currency</div>
@@ -427,6 +443,9 @@ function Currency({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -470,5 +489,6 @@ const mapActions = {
   checkIsInUse: currencyActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Currency);

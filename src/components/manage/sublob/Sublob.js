@@ -23,8 +23,11 @@ function Sublob({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "SubLoB.xlsx";
   useSetNavMenu({ currentMenu: "Sublob", isSubmenu: true }, props.menuClick);
   const [frmLobSelectOpts, setfrmLobSelectOpts] = useState([]);
   const [frmLobSelectOptsObj, setfrmLobSelectOptsObj] = useState([]);
@@ -476,6 +479,7 @@ function Sublob({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -517,6 +521,21 @@ function Sublob({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      subLOBID: "",
+      lobid: "",
+    }
+    if (isfilterApplied) {
+        response.subLOBID = selfilter.sublob
+        response.lobid = selfilter.lob
+    }
+    const responsedata = await downloadExcel({
+      SubLOBID: response?.subLOBID,
+      LOBID: response.lobid,
+    }, "SubLoB");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Sub-LoB</div>
@@ -575,6 +594,9 @@ function Sublob({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -621,5 +643,6 @@ const mapActions = {
   deleteItem: sublobActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Sublob);

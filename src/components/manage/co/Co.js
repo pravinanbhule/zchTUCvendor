@@ -21,9 +21,9 @@ function Co({ ...props }) {
     setMasterdataActive,
     checkIsInUse,
     checkNameExist,
-    downloadCO,
     getById,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "COs.xlsx";
@@ -307,11 +307,6 @@ function Co({ ...props }) {
         selectedItems.splice(index, 1);
       }
     }
-    if (selectedItems.length > 1) {
-      setisDownloadEnable(false)
-    } else {
-      setisDownloadEnable(true)
-    }
     if (selectedItems.length) {
       setisActiveEnable(true);
       setselItemsList([...selectedItems]);
@@ -343,10 +338,7 @@ function Co({ ...props }) {
       coName: "",
       coDescription: ""
     }
-    if (selItemsList && selItemsList.length === 1) {
-      response = await getById({ COId: selItemsList[0] });
-    }
-    const responsedata = await downloadCO({COName: response.coName , coDescription: response.coDescription});
+    const responsedata = await downloadExcel({COName: response.coName , coDescription: response.coDescription}, "CO");
     FileDownload(responsedata, templateName);
   }
 
@@ -371,8 +363,8 @@ function Co({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
-            // isShowDownloadBtn={true}
-            // DownloadBtnState={isDownloadEnable}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
             handleDownload={handleDownload}
           />
         )}
@@ -418,7 +410,7 @@ const mapActions = {
   checkIsInUse: coActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
   checkNameExist: coActions.checkNameExist,
-  downloadCO: coActions.downloadCO,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel,
 };
 export default connect(mapStateToProp, mapActions)(Co);

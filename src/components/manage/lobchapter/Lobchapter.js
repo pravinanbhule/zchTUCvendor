@@ -24,8 +24,11 @@ function Lobchapter({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "LoBChapter.xlsx";
   useSetNavMenu(
     {
       currentMenu: "Lobchapter",
@@ -528,6 +531,7 @@ function Lobchapter({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -569,6 +573,24 @@ function Lobchapter({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      lobChapterID: "",
+      lobList: "",
+    }
+    if (isfilterApplied) {
+      if (selfilter.lob !== "") {
+        let LoBID = frmLobSelectOpts.filter((item) => item.label === selfilter.lob)
+        response.lobList = LoBID[0].lobid
+      }
+      response.lobChapterID = selfilter.lobchapter
+    }
+    const responsedata = await downloadExcel({
+      LOBChapterID: response?.lobChapterID,
+      LOBID: response.lobList,
+    }, "LoBChapter");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage LoB Chapter</div>
@@ -628,6 +650,9 @@ function Lobchapter({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -674,5 +699,6 @@ const mapActions = {
   deleteItem: lobchapterActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Lobchapter);

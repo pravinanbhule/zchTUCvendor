@@ -22,8 +22,11 @@ function Lookup({ ...props }) {
     userProfile,
     setMasterdataActive,
     getAllCountry,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "LookUp.xlsx";
   useSetNavMenu({ currentMenu: "Lookup", isSubmenu: true }, props.menuClick);
   const [logtypeFilterOpts, setlogtypeFilterOpts] = useState([]);
   const intialfilterval = {
@@ -348,6 +351,17 @@ function Lookup({ ...props }) {
     }
   };
 
+  const handleDownload = async() =>{
+    let response = {
+      LogType: selfilter.logtype,
+    }
+
+    const responsedata = await downloadExcel({
+      LogType: response.LogType,
+    }, "Lookup");
+    FileDownload(responsedata, templateName);
+  }
+
   //version history
   const [showVersionHistory, setshowVersionHistory] = useState(false);
   const [versionHistoryData, setversionHistoryData] = useState([]);
@@ -429,6 +443,12 @@ function Lookup({ ...props }) {
                                 onClick={() => setMasterdataActiveState(false)}
                               >
                                 Inactive
+                              </div>
+                              <div
+                                className={`btn-blue download-icon`}
+                                onClick={() => handleDownload()}
+                              >
+                                Download
                               </div>
                             </>
                           )}
@@ -646,5 +666,6 @@ const mapActions = {
   setMasterdataActive: commonActions.setMasterdataActive,
   getAllCountry: countryActions.getAllCountry,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Lookup);

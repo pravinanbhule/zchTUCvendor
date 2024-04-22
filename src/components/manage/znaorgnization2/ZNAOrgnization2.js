@@ -27,8 +27,11 @@ function ZNAOrgnization2({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "znaorganization2.xlsx";
   useSetNavMenu(
     {
       currentMenu: "znaorganization2",
@@ -454,6 +457,7 @@ function ZNAOrgnization2({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -495,6 +499,21 @@ function ZNAOrgnization2({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      znasbuId: "",
+      znaSegmentId: "",
+    }
+    if (isfilterApplied) {
+      response.znasbuId = selfilter.znasbuId
+      response.znaSegmentId = selfilter.znaSegmentId
+    }
+    const responsedata = await downloadExcel({
+      ZNASBUId: response?.znasbuId,
+      ZNASegmentId: response.znaSegmentId,
+    }, "ZNAOrganization2");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage ZNA Organization 2</div>
@@ -554,6 +573,9 @@ function ZNAOrgnization2({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -600,5 +622,6 @@ const mapActions = {
   getAllOrgnization1: znaorgnization1Actions.getAllOrgnization,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(ZNAOrgnization2);

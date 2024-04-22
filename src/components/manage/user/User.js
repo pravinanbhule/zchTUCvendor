@@ -13,6 +13,7 @@ import { USER_ROLE } from "../../../constants";
 import { handlePermission } from "../../../permissions/Permission";
 import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/user.constants";
 import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 function User({ ...props }) {
   const { userState, countryState, regionState, lobState } = props.state;
   const {
@@ -32,9 +33,11 @@ function User({ ...props }) {
     userProfile,
     getAlllob,
     getLookupByType,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
-
+  const FileDownload = require("js-file-download");
+  const templateName = "User.xlsx";
   useSetNavMenu({ currentMenu: "User", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -820,6 +823,40 @@ function User({ ...props }) {
     setsearchOptions(userState.approverUsers);
   }, [userState.approverUsers]);
 
+
+  const handleDownload = async() =>{
+    let response = {
+      RegionId: "",
+      CountryId: "",
+      UserType: "",
+      UserName: "",
+      EmailAddress: "",
+    }
+
+    if (isfilterApplied) {
+      if (selfilter.region !== "") {
+        let regionId = frmRegionSelectOpts.filter((item, i) => item.label === selfilter.region)
+        response.RegionId = regionId?.[0]?.value
+      }
+      if (selfilter.country !== "") {
+        let countryId = frmCountrySelectOpts.filter((item, i) => item.label === selfilter.country)
+        response.CountryId = countryId?.[0]?.value
+      }
+      response.UserName = selfilter.username
+      response.EmailAddress = selfilter.email
+      response.UserType = selfilter.usertype
+    }
+    
+    const responsedata = await downloadExcel({
+      UserName: response.UserName,
+      EmailAddress: response.EmailAddress,
+      RegionId: response.RegionId,
+      CountryId: response.CountryId,
+      UserType: response.UserType,
+    }, "User");
+    FileDownload(responsedata, templateName);
+  }
+
   return (
     <>
       <div className="page-title">Manage User</div>
@@ -909,6 +946,9 @@ function User({ ...props }) {
             defaultSorted={defaultSorted}
             buttonTitle={"New User"}
             hidesearch={true}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -972,6 +1012,7 @@ const mapActions = {
   getAlllob: lobActions.getAlllob,
   getLookupByType: lookupActions.getLookupByType,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 
 export default connect(mapStateToProp, mapActions)(User);

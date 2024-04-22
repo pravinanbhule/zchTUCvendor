@@ -23,8 +23,11 @@ function Country({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Country.xlsx";
   useSetNavMenu({ currentMenu: "Country", isSubmenu: true }, props.menuClick);
 
   const [frmRegionSelectOpts, setfrmRegionSelectOpts] = useState([]);
@@ -456,6 +459,7 @@ function Country({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -494,6 +498,22 @@ function Country({ ...props }) {
       }
     }
   };
+
+  const handleDownload = async() =>{
+    let response = {
+      countryID: "",
+      regionID: "",
+    }
+    if (isfilterApplied) {
+      response.countryID = selfilter.country 
+      response.regionID = selfilter.region 
+    }
+    const responsedata = await downloadExcel({
+      CountryID: response?.countryID,
+      RegionID: response.regionID,
+    }, "Country");
+    FileDownload(responsedata, templateName);
+  }
 
   return (
     <>
@@ -554,6 +574,9 @@ function Country({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -600,5 +623,6 @@ const mapActions = {
   deleteItem: countryActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Country);

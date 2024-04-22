@@ -23,10 +23,12 @@ function Office({ ...props }) {
     checkIsInUse,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Office.xlsx";
   useSetNavMenu({ currentMenu: "Office", isSubmenu: true }, props.menuClick);
-  console.log(officeState);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [officeFilterOpts, setofficeFilterOpts] = useState([]);
@@ -344,6 +346,7 @@ function Office({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -382,6 +385,18 @@ function Office({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      officeId: "",
+    }
+    if (isfilterApplied && selItemsList.length === 0) {
+      response.officeId = selfilter.office
+    }
+    const responsedata = await downloadExcel({
+      OfficeId: response?.officeId,
+    }, "Office");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Office</div>
@@ -428,6 +443,9 @@ function Office({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -471,5 +489,6 @@ const mapActions = {
   checkIsInUse: officeActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Office);

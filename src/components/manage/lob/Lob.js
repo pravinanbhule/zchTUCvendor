@@ -26,9 +26,11 @@ function Lob({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
-
+  const FileDownload = require("js-file-download");
+  const templateName = "LoB.xlsx";
   useSetNavMenu({ currentMenu: "Lob", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -531,6 +533,7 @@ function Lob({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -572,6 +575,24 @@ function Lob({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      lobid: "",
+      countryList: "",
+    }
+    if (isfilterApplied) {
+      if (selfilter.country !== "") {
+        let countryId = frmCountrySelectOpts.filter((item) => item.countryName === selfilter.country)
+        response.countryList = countryId?.[0]?.countryID
+      }
+      response.lobid = selfilter.lob 
+    }
+    const responsedata = await downloadExcel({
+      LOBID: response?.lobid,
+      CountryID: response.countryList,
+    }, "LoB");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage LoB</div>
@@ -629,6 +650,9 @@ function Lob({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -676,6 +700,7 @@ const mapActions = {
   deleteItem: lobActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 
 export default connect(mapStateToProp, mapActions)(Lob);

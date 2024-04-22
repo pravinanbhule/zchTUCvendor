@@ -30,8 +30,11 @@ function ZNAOrgnization3({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "znaorganization3.xlsx";
   useSetNavMenu(
     {
       currentMenu: "znaorganization3",
@@ -529,6 +532,7 @@ function ZNAOrgnization3({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -570,6 +574,21 @@ function ZNAOrgnization3({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      marketBasketId: "",
+      znasbuId: "",
+    }
+    if (isfilterApplied) {
+      response.marketBasketId = selfilter.marketBasketId
+      response.znasbuId = selfilter.znasbuId
+    }
+    const responsedata = await downloadExcel({
+      MarketBasketId: response?.marketBasketId,
+      ZNASBUId: response.znasbuId,
+    }, "ZNAOrganization3");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage ZNA Organization 3</div>
@@ -640,6 +659,9 @@ function ZNAOrgnization3({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -688,5 +710,6 @@ const mapActions = {
   getAllOrgnization2: znaorgnization2Actions.getAllOrgnization,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(ZNAOrgnization3);

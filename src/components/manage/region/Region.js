@@ -23,8 +23,11 @@ function Region({ ...props }) {
     checkRegionInUse,
     userProfile,
     setMasterdataActive,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Regions.xlsx";
   useSetNavMenu({ currentMenu: "Region", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -336,6 +339,7 @@ function Region({ ...props }) {
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -374,6 +378,19 @@ function Region({ ...props }) {
       }
     }
   };
+
+  const handleDownload = async() =>{
+    let response = {
+      regionID: "",
+    }
+    if (isfilterApplied) {
+        response.regionID = selfilter.region
+    }
+    const responsedata = await downloadExcel({
+      RegionID: response?.regionID,
+    }, "Region");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Region</div>
@@ -422,6 +439,9 @@ function Region({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -465,5 +485,6 @@ const mapActions = {
   checkRegionInUse: regionActions.checkRegionInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel,
 };
 export default connect(mapStateToProp, mapActions)(Region);
