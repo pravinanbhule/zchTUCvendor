@@ -229,19 +229,19 @@ function AddEditForm(props) {
       setformfield({ ...formfield, lobList: [] });
     }
     if (frmuserTypeObj[formfield.userType] !== "DualRole") {
-      setformfield({ ...formfield, dualRole: null });
+      setformfield({ ...formfield, dualRole: null, countryList: [], regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Global") {
-      setformfield({ ...formfield, regionList: [] });
+      setformfield({ ...formfield, regionList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "Region") {
-      setformfield({ ...formfield, countryList: [] });
+      setformfield({ ...formfield, countryList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
-      setformfield({ ...formfield, countryList: [], regionList: [] });
+      setformfield({ ...formfield, countryList: [], regionList: [], dualRole: null });
     }
     if (frmuserTypeObj[formfield.userType] === "Auditor") {
-      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false });
+      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false, dualRole: null, });
     }
   }, [formfield.userType]);
   useEffect(() => {

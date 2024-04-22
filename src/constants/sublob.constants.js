@@ -7,9 +7,9 @@ export const sublobConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
+  SubLOB: "Sub-LoB Name",
   LOB: "LoB Name",
   SubLOBDescription: "Description",
-  SubLOB: "Sub-LoB Name",
   IsActive: "Active",
   CreatedDate: "Created Date",
   ModifiedDate: "Modified Date",

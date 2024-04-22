@@ -12,7 +12,7 @@ export const regionConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  RegionName: "Name",
+  RegionName: "Region Name",
   RegionDescription: "Description",
   IsActive: "Active",
   CreatedDate: "Created Date",

@@ -1,6 +1,6 @@
 export const versionHistoryexportFieldTitles = {
+    COName: "CO Name",
     CODescription: "Description",
-    COName: "Name",
     IsActive: "Active"
 };
 

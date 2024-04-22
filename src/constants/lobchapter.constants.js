@@ -7,7 +7,7 @@ export const lobchapterConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  LOBChapterName: "Name",
+  LOBChapterName: "LoB Chapter Name",
   LOB: "LoB Name",
   LOBApprover: "LOB Approver",
   LOBChapterDescription: "Description",

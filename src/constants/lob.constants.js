@@ -10,11 +10,11 @@ export const lobConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
+  LOBName: "LoB Name",
+  LOBDescription: "Description",
+  LOBApprover: "LoB Approval",
   Country: "Country",
   DurationofApproval: "Duration of the approval",
-  LOBApprover: "Approval",
-  LOBDescription: "Description",
-  LOBName: "Name",
   IsActive: "Active",
   CreatedDate: "Created Date",
   ModifiedDate: "Modified Date",

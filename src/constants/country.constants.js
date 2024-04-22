@@ -7,8 +7,8 @@ export const countryConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
+  CountryName: "Country Name",
   CountryDescription: "Description",
-  CountryName: "Name",
   RegionName: "Region Name",
   IsActive: "Active",
   CreatedDate: "Created Date",
