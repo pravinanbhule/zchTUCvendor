@@ -7,7 +7,7 @@ export const segmentConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  SegmentName: "Name",
+  SegmentName: "Segment Name",
   CountryList: "Country",
   SegmentDescription: "Description",
   SubLOB: "Sub-LoB Name",

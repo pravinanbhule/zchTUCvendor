@@ -229,7 +229,7 @@ function AddEditForm(props) {
       setformfield({ ...formfield, lobList: [] });
     }
     if (frmuserTypeObj[formfield.userType] !== "DualRole") {
-      setformfield({ ...formfield, dualRole: null });
+      setformfield({ ...formfield, dualRole: null, countryList: [], regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Global") {
       setformfield({ ...formfield, regionList: [] });

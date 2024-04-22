@@ -8,8 +8,8 @@ export const lookupConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  LookUpName: "Name",
-  LookUpType: "Type",
+  LookUpName: "Lookup Name",
+  LookUpType: "Lookup Type",
   LookUpTypeName: "LookUp Type Name",
   IsActive: "Active",
   CreatedDate: "Created Date",

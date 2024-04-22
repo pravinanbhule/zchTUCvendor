@@ -7,7 +7,7 @@ export const officeConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  OfficeName: "Name",
+  OfficeName: "Office Name",
   OfficeDescription: "Description",
   IsActive: "Active",
   CreatedDate: "Created Date",

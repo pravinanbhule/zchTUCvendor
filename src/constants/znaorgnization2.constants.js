@@ -7,7 +7,7 @@ export const znaorgnization2Constants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  SBUName: "Name",
+  SBUName: "ZNA Organization 2 Name",
   Description: "Description",
   IsActive: "Active",
   CreatedDate: "Created Date",

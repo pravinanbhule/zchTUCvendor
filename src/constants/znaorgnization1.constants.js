@@ -7,7 +7,7 @@ export const znaorgnization1Constants = {
 };
 
 export const versionHistoryexportFieldTitles = {
-  ZNASegmentName: "Name",
+  ZNASegmentName: "ZNA Organization 1 Name",
   Description: "Description",
   IsActive: "Active",
   CreatedDate: "Created Date",

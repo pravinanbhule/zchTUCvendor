@@ -7,8 +7,8 @@ export const currencyConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
+  CurrencyName: "Currency",
   CurrencyDescription: "Description",
-  CurrencyName: "Name",
   IsActive: "Active",
   CreatedDate: "Created Date",
   ModifiedDate: "Modified Date",
