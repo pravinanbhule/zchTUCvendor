@@ -13,6 +13,7 @@ export const versionHistoryexportFieldTitles = {
   UserType: "User Type",
   RegionNameList: "Region",
   CountryNameList: "Country",
+  DualRoleTypeName: "DualRole Type Name",
   DualRoleCountry: "DualRole Country",
   DualRoleRegion: "DualRole Region",
   LOBNameList: "LoB",
