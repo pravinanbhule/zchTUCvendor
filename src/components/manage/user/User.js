@@ -129,14 +129,17 @@ function User({ ...props }) {
         ) {
           isShow = false;
         }
+        let countryName = []
+        if (selfilter.country !== "") {
+          countryName = item.userType !== 'DualRole' ? item.countryList : item.dualRoleCountry
+          countryName = countryName?.replaceAll(" ", "")?.split(",")
+        }
         if (
-          (isShow &&
-            selfilter.country !== "" &&
-            item.countryList &&
-            !item.countryList.includes(selfilter.country)) ||
-          (isShow && selfilter.country !== "" && !item.countryList)
+          (isShow && 
+            selfilter.country !== "" && 
+            !countryName?.includes(selfilter.country.replaceAll(" ","")))
         ) {
-          isShow = false;
+            isShow = false;
         }
         if (
           (isShow &&
