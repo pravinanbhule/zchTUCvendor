@@ -359,7 +359,7 @@ function Lookup({ ...props }) {
     const responsedata = await downloadExcel({
       LogType: response.LogType,
     }, "Lookup");
-    FileDownload(responsedata, templateName);
+    FileDownload(responsedata, `${selfilter.logtype}.xlsx`);
   }
 
   //version history
@@ -375,7 +375,6 @@ function Lookup({ ...props }) {
       TempId: itemid,
       MasterType: "Lookup",
     });
-    console.log("versiondata>>>", versiondata);
     setversionHistoryData(versiondata ? versiondata : []);
     setshowVersionHistory(true);
   };
