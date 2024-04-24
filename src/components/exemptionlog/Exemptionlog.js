@@ -2425,6 +2425,7 @@ function Exemptionlog({ ...props }) {
     marketBasketList: [],
     znaProductsId: "",
     znaProductsList: [],
+    exemptionDetailForLocalAddendum: ""
   };
   const formInitialValueURPM = {
     countryID: "",
@@ -2468,6 +2469,7 @@ function Exemptionlog({ ...props }) {
     marketBasketList: [],
     znaProductsId: "",
     znaProductsList: [],
+    exemptionDetailForLocalAddendum: ""
   };
   const [formIntialState, setformIntialState] = useState(formInitialValueZUG);
 
@@ -2813,6 +2815,7 @@ function Exemptionlog({ ...props }) {
     MarketBasketName: "ZNA Market Basket",
     ZNAProductsName: "ZNA Products",
     ExemptionCCName: "Exemption CC",
+    ExemptionDetailForLocalAddendum : "Exemption Detail for local addendum",
   };
   const versionHistoryexportFieldTitlesURPM = {
     EntryNumber: "Entry Number",
@@ -2842,6 +2845,7 @@ function Exemptionlog({ ...props }) {
     MarketBasketName: "ZNA Market Basket",
     ZNAProductsName: "ZNA Products",
     ExemptionCCName: "Exemption CC",
+    ExemptionDetailForLocalAddendum : "Exemption Detail for local addendum",
   };
   const versionHistoryexportHtmlFields = [
     "EmpowermentAndFeedbackRequest",
