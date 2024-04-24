@@ -1106,6 +1106,14 @@ function Exemptionlog({ ...props }) {
       },
     },
     {
+      dataField: "exemptionDetailForLocalAddendum",
+      text: "Exemption Detail for local addendum",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
+      },
+    },
+    {
       dataField: "isArchived",
       text: "Link to SharePoint",
       sort: false,
@@ -1457,6 +1465,14 @@ function Exemptionlog({ ...props }) {
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "150px" };
+      },
+    },
+    {
+      dataField: "exemptionDetailForLocalAddendum",
+      text: "Exemption Detail for local addendum",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
       },
     },
     {
