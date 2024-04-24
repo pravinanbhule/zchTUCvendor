@@ -135,7 +135,7 @@ export const filterfieldsmapping = {
     componenttype: "FrmSelect",
     options: "commonfilterOpts.durationofApprovalOpts",
     eventhandler: "onSearchFilterSelect",
-    filtertype: "Incountry",
+    filtertype: "advance",
   },
   NewRenewal: {
     componenttype: "FrmSelect",
@@ -177,7 +177,7 @@ export const filterfieldsmapping = {
     componenttype: "FrmSelect",
     options: "commonfilterOpts.conditionApplicableToOpts",
     eventhandler: "onSearchFilterSelect",
-    filtertype: "Incountry",
+    filtertype: "advance",
   },
   GWP: {
     componenttype: "FrmInput",
