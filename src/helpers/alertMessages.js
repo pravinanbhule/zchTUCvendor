@@ -165,4 +165,20 @@ export const alertMessage = {
       "One or more entries have invalid data, please correct them and re-import file.",
     confirmImportDataMsg: "Are you sure you want to import this data?",
   },
+  token: {
+    add: "The new Token is successfully added.",
+    update: "The Token is successfully updated.",
+    delete: "The Token is deleted.",
+    deleteConfirm: "Are you sure you want to delete Token?",
+    isInUse: "You can not delete this Token as it is in use.",
+    nameExist: "The Token name already exists!",
+  },
+  co: {
+    add: "The new CO is successfully added.",
+    update: "The CO is successfully updated.",
+    delete: "The CO is deleted.",
+    deleteConfirm: "Are you sure you want to delete CO?",
+    isInUse: "You can not delete this CO as it is in use.",
+    nameExist: "The CO name already exists!",
+  },
 };

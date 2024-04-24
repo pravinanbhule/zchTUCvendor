@@ -61,6 +61,9 @@
     url("../fonts/ZurichSans-SemiBoldItalic.woff") format("woff"),
     url("../fonts/ZurichSans-SemiBoldItalic.ttf") format("truetype");
 }
+.react-tooltip-clickable-link {
+  pointer-events: auto !important
+}
 body {
   font-family: "ZurichSans", sans-serif, Segoe UI;
   font-size: 14px;
@@ -418,9 +421,11 @@ button:focus {
   display: inline-block;
 }
 .advance-filter-btn.normal{
+  background-position-x: 97%;
   background-image: url("../assets/Expand.png");
 }
 .advance-filter-btn.selected {
+  background-position-x: 97%;
   background-image: url("../assets/Colapse.png");
 }
 .advance-filter-btn:hover{
@@ -687,8 +692,8 @@ button:not(:last-child) {
 }
 .btn-blue.disable,
 .btn-blue.disable:hover {
-  background-color: #dee2e6;
-  cursor: default;
+  background-color: #dee2e6 !important;
+  cursor: default !important;
 }
 .btn-blue:hover {
   background-color: rgba(33, 103, 173, 0.7);

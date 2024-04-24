@@ -1,18 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import locationlogo from "../../assets/location.png";
 import TokenService from "../../services/Tokenservice";
-import { userprofileActions } from "../../actions";
+import { countryActions, userprofileActions } from "../../actions";
 import { connect } from "react-redux";
 import { useOktaAuth } from "@okta/okta-react";
-import { USER_ROLE } from "../../constants";
+import { REGION_LATAM, REGION_ZNA, USER_ROLE } from "../../constants";
 function LoggedInUser({ ...props }) {
-  const { userprofileState } = props.state;
+  const { userprofileState, countryState } = props.state;
   const {
     setOktaAuthenticated,
     setOktaUnAuthenticated,
     setOktaToken,
     setUserProfile,
     getUserProfile,
+    getAllCountry
   } = props;
   const { oktaAuth, authState } = useOktaAuth();
   const [userProfileLocal, setuserProfileLocal] = useState("");
@@ -28,9 +29,11 @@ function LoggedInUser({ ...props }) {
           isGlobalAdmin: false,
           isRegionAdmin: false,
           isCountryAdmin: false,
+          isCountrySuperAdmin: false
         };
         if (tempUserProfile) {
           //tempUserProfile.email = "paula.wolfenson@zurich.com";
+          let countryData = await getAllCountry()
           let userprofile = await getUserProfile({
             EmailAddress: tempUserProfile.email,
           });
@@ -39,21 +42,51 @@ function LoggedInUser({ ...props }) {
               ? userprofile.userRoles[0]
               : initialprofile;
           if (userRoles.roleId === USER_ROLE.superAdmin) {
+            localStorage.setItem("Role", "SuperAdmin")
             userprofile.isSuperAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.globalAdmin) {
+            localStorage.setItem("Role", "GlobalAdmin")
             userprofile.isGlobalAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.regionAdmin) {
+            localStorage.setItem("Role", "RegionAdmin")
             userprofile.isRegionAdmin = true;
             userprofile.isAdminGroup = true;
           }
           if (userRoles.roleId === USER_ROLE.countryAdmin) {
+            localStorage.setItem("Role", "CountryAdmin")
             userprofile.isCountryAdmin = true;
             userprofile.isAdminGroup = true;
           }
+          if (userRoles.roleId === USER_ROLE.countrySuperAdmin) {
+            localStorage.setItem("Role", "CountrySuperAdmin")
+            userprofile?.scopeCountryList?.split(",")?.map((userCountry) => {
+              countryData.map((country, i) => {
+                  if (country.countryID === userCountry && country.regionID == REGION_ZNA) {
+                      userprofile.isZNACountrySuperAdmin = true;
+                    }
+                    if (country.countryID === userCountry && country.regionID == REGION_LATAM) {
+                      userprofile.isLATAMCountrySuperAdmin = true;
+                  }
+              })
+            })
+            userprofile.isCountrySuperAdmin = true;
+            userprofile.isAdminGroup = true;
+          }
+          if (userRoles.roleId === USER_ROLE.auditor) {
+            localStorage.setItem("Role", "Auditor")
+            userprofile.isAuditor = true;
+            userprofile.isAdminGroup = true;
+          }
+          if (userRoles.roleId === USER_ROLE.lobAdmin) {
+            localStorage.setItem("Role", "LoBAdmin")
+            userprofile.isLoBAdmin = true;
+            userprofile.isAdminGroup = true;
+          }
+          localStorage.setItem("UserProfile", JSON.stringify(userprofile))
           tempUserProfile = {
             ...tempUserProfile,
             ...initialprofile,
@@ -160,5 +193,6 @@ const mapActions = {
   setUserProfile: userprofileActions.setUserProfile,
   setOktaToken: userprofileActions.setOktaToken,
   getUserProfile: userprofileActions.getUserProfile,
+  getAllCountry: countryActions.getAllCountry,
 };
 export default connect(mapStateToProp, mapActions)(LoggedInUser);

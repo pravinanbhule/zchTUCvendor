@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import FrmInput from "../common-components/frminput/FrmInput";
 import FrmDatePicker from "../common-components/frmdatepicker/FrmDatePicker";
@@ -44,6 +44,7 @@ import FrmRichTextEditor from "../common-components/frmrichtexteditor/FrmRichTex
 import { alertMessage, dynamicSort, formatDate } from "../../helpers";
 import PeoplePickerPopup from "./PeoplePickerPopup";
 import Rfelocallog from "./Rfelocallog";
+import { handlePermission } from "../../permissions/Permission";
 
 function AddEditForm(props) {
   const {
@@ -160,6 +161,7 @@ function AddEditForm(props) {
     isRegionAdmin: false,
     isCountryAdmin: false,
     isNormalUser: false,
+    isCountrySuperAdmin: false
   };
 
   const [approverRole, setapproverRole] = useState(approverIntialRole);
@@ -1237,20 +1239,20 @@ function AddEditForm(props) {
     if (e.target.type === "checkbox") {
       value = e.target.checked;
     }
-    if (
-      name === "OrganizationalAlignment" &&
-      value === OrganizationalAlignment.country
-    ) {
-      setisfrmdisabled(true);
-      showlogPopup();
-      alert(alertMessage.rfelog.orgalignmetmsg);
-    } else if (
-      name === "OrganizationalAlignment" &&
-      value !== OrganizationalAlignment.country
-    ) {
-      setisfrmdisabled(false);
-      hidelogPopup();
-    }
+    // if (
+    //   name === "OrganizationalAlignment" &&
+    //   value === OrganizationalAlignment.country
+    // ) {
+    //   setisfrmdisabled(true);
+    //   // showlogPopup();
+    //   // alert(alertMessage.rfelog.orgalignmetmsg);
+    // } else if (
+    //   name === "OrganizationalAlignment" &&
+    //   value !== OrganizationalAlignment.country
+    // ) {
+    //   setisfrmdisabled(false);
+    //   // hidelogPopup();
+    // }
     setformfield({ ...formfield, isdirty: true, [name]: value });
   };
 
@@ -1753,6 +1755,8 @@ function AddEditForm(props) {
       setapproverRole({ ...approverIntialRole, isCountryAdmin: true });
     } else if (userRole.roleId === USER_ROLE.normalUser) {
       setapproverRole({ ...approverIntialRole, isNormalUser: true });
+    } else if (userRole.roleId === USER_ROLE.countrySuperAdmin) {
+      setapproverRole({ ...approverIntialRole, isCountrySuperAdmin: true });
     }
   };
   useEffect(() => {
@@ -2212,6 +2216,7 @@ function AddEditForm(props) {
     // }
     // hideAddPopup();
   };
+  const history = useHistory()
   const hidePopup = () => {
     let isconfirmed = true;
     if (formfield.isdirty) {
@@ -2219,7 +2224,10 @@ function AddEditForm(props) {
     }
     if (isconfirmed) {
       if (queryparam.id) {
-        window.location = "/rfelogs";
+        localStorage.removeItem("id");
+        localStorage.removeItem("status");
+        localStorage.removeItem("in-app");
+        history.push("/rfelogs")
       } else {
         hideAddPopup();
       }
@@ -2441,6 +2449,7 @@ function AddEditForm(props) {
                 tooltipmsg={eval(obj.tooltipmsg)}
                 issubmitted={issubmitted}
                 selectopts={eval(obj.options)}
+                isclickDisable={true}
                 isdisabled={
                   (isfrmdisabled && isshowlocallink) ||
                   IncountryFlag === IncountryFlagConst.LATAM ||
@@ -2457,18 +2466,19 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.AUSTRALIA ||
                   IncountryFlag === IncountryFlagConst.BENELUX ||
                   IncountryFlag === IncountryFlagConst.NORDIC ||
-                  isorgalignmentdisabled
+                  isorgalignmentdisabled || 
+                  obj.name === "OrganizationalAlignment"
                 }
               />
             </div>
-            {formfield.OrganizationalAlignment ===
+            {/* {formfield.OrganizationalAlignment ===
               OrganizationalAlignment.country && !IncountryFlag ? (
               <div className="col-md-3 btn-blue" onClick={showlogPopup}>
                 Local country log
               </div>
             ) : (
               ""
-            )}
+            )} */}
           </>
         );
       case "FrmRichTextEditor":
@@ -2609,7 +2619,7 @@ function AddEditForm(props) {
               {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.versionhistory"]}
             </div>
           )}
-          {!isEditMode &&
+          {handlePermission("rfelogs", "isEdit") && !isEditMode &&
             isReadMode &&
             (!userroles.iscc || userroles.isadmin) && (
               <div
@@ -2619,7 +2629,7 @@ function AddEditForm(props) {
               >
                 {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.edit"]}
               </div>
-            )}
+          )}
           <div className="addedit-close btn-blue" style={{ marginRight: "10px" }} onClick={() => hidePopup()}>
             {AppLocale[selectedlanguage?.value ? selectedlanguage.value : 'EN001'].messages["button.back"]}
           </div>

@@ -9,6 +9,7 @@ import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, dynamicSort } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import UserProfile from "../../common-components/UserProfile";
+import { handlePermission } from "../../../permissions/Permission";
 function Lobchapter({ ...props }) {
   const { lobchapterState, lobState } = props.state;
   const {
@@ -88,6 +89,7 @@ function Lobchapter({ ...props }) {
     {
       dataField: "checkbox",
       text: "",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <FrmActiveCheckbox
@@ -106,6 +108,7 @@ function Lobchapter({ ...props }) {
     {
       dataField: "editaction",
       text: "Edit",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
@@ -126,6 +129,7 @@ function Lobchapter({ ...props }) {
     {
       dataField: "deleteaction",
       text: "Delete",
+      hidden: handlePermission(window.location.pathname.slice(1), "isDelete") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div

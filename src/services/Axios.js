@@ -29,6 +29,7 @@ const Axios = axios.create({
 Axios.interceptors.request.use(
   (config) => {
     //const token = TokenService.getLocalAccessToken();
+    config.baseURL = config.url.search('generateToken') !== -1 || config.url.search('getAllTokenDetails') !== -1 || config.url.search('deleteToken') !== -1  ? config.baseURL.replace('api/', '') : config.baseURL
     config.headers = authHeader();
     return config;
   },

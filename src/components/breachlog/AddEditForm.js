@@ -31,17 +31,20 @@ import {
   znaorgnization3Actions,
   officeActions,
   commonActions,
+  coActions,
 } from "../../actions";
 import FrmRadio from "../common-components/frmradio/FrmRadio";
 import FrmRichTextEditor from "../common-components/frmrichtexteditor/FrmRichTextEditor5";
 import { alertMessage, dynamicSort, formatDate } from "../../helpers";
 import PeoplePickerPopup from "./PeoplePickerPopup";
+import { handlePermission } from "../../permissions/Permission";
 
 function AddEditForm(props) {
   const {
     breachlogState,
     segmentState,
     lobState,
+    coState,
     sublobState,
     officeState,
     userState,
@@ -76,6 +79,7 @@ function AddEditForm(props) {
     userProfile,
     queryparam,
     handleDataVersion,
+    getAllCOList
   } = props;
 
   const selectInitiVal = { label: "Select", value: "" };
@@ -122,6 +126,7 @@ function AddEditForm(props) {
   const [frmHowDetected, setfrmHowDetected] = useState([]);
   const [frmOffice, setfrmOffice] = useState([]);
   const [frmBreachStatus, setfrmBreachStatus] = useState([]);
+  const [frmCoList, setfrmCoList] = useState([]);
   const [tooltip, settooltip] = useState({});
 
   const [commonMandatoryFields, setcommonMandatoryFields] = useState([
@@ -138,7 +143,7 @@ function AddEditForm(props) {
     "dueDate",
     "actionResponsibleName",
     "breachStatus",
-    "breachDetails",
+    "breachDetails"
   ]);
   const [znaMandotoryFields, setznaMandotoryFields] = useState([
     "znaSegmentId",
@@ -164,6 +169,7 @@ function AddEditForm(props) {
     getAllOffice();
     getAllSublob();
     getallZNASegments();
+    getAllCOList()
     if (formIntialState.znaSegmentId) {
       getallZNASBU({ znaSegmentId: formIntialState.znaSegmentId });
     }
@@ -504,6 +510,21 @@ function AddEditForm(props) {
     tempopts.sort(dynamicSort("label"));
     setfrmLoB([selectInitiVal, ...tempopts]);
   }, [lobState.lobItems]);
+
+  useEffect(() => {
+    let tempopts = [];
+    coState.items.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || item.coId === formIntialState.co) {
+          tempopts.push({ ...item, label: item.coName, value: item.coId });
+        }
+      } else if (item.isActive) {
+        tempopts.push({ ...item, label: item.coName, value: item.coId });
+      }
+    });
+    tempopts.sort(dynamicSort("label"));
+    setfrmCoList([selectInitiVal, ...tempopts]);
+  }, [coState.items]);
 
   useEffect(() => {
     let tempopts = [];
@@ -1192,7 +1213,7 @@ function AddEditForm(props) {
               Version History
             </div>
           )}
-          {!isEditMode && isReadMode && (
+          {handlePermission(window.location.pathname.slice(1), "isEdit") && !isEditMode && isReadMode && (
             <div
               className="btn-blue"
               onClick={() => setInEditMode()}
@@ -1569,6 +1590,21 @@ function AddEditForm(props) {
                   />
                 </div>
                 <div className="col-md-3">
+                  <FrmSelect
+                    title={"Breach CO"}
+                    titlelinespace={true}
+                    name={"co"}
+                    value={formfield.co}
+                    handleChange={handleSelectChange}
+                    isRequired={false}
+                    isReadMode={isReadMode}
+                    issubmitted={issubmitted}
+                    selectopts={frmCoList}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["CO"]}
+                  />
+                </div>
+                <div className="col-md-3">
                   {formfield.regionId?.indexOf(emeaRegionValue) !== -1 ? (
                     <FrmToggleSwitch
                       title={
@@ -1745,6 +1781,23 @@ function AddEditForm(props) {
                   />
                 </div>
                 <div className="col-md-3">
+                  <FrmInput
+                    title={"Breach CC"}
+                    name={"breachCCName"}
+                    value={formfield.breachCCName}
+                    type={"text"}
+                    handleChange={handleChange}
+                    handleClick={(e) => handleshowpeoplepicker("breachCC", e)}
+                    isRequired={false}
+                    isReadMode={isReadMode}
+                    validationmsg={"Mandatory field"}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["BreachCC"]}
+                    issubmitted={issubmitted}
+                    isdisabled={isfrmdisabled}
+                  />
+                </div>
+                <div className="col-md-3">
                   <FrmDatePicker
                     title={"Due Date"}
                     name={"dueDate"}
@@ -1799,25 +1852,6 @@ function AddEditForm(props) {
                       ? formatDate(formfield.originalDueDate)
                       : ""}
                   </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-3">
-                  <FrmInput
-                    title={"Breach CC"}
-                    name={"breachCCName"}
-                    value={formfield.breachCCName}
-                    type={"text"}
-                    handleChange={handleChange}
-                    handleClick={(e) => handleshowpeoplepicker("breachCC", e)}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["BreachCC"]}
-                    issubmitted={issubmitted}
-                    isdisabled={isfrmdisabled}
-                  />
                 </div>
               </div>
               <div className="row border-bottom">
@@ -2051,5 +2085,6 @@ const mapActions = {
   getallZNASegments: znaorgnization1Actions.getAllOrgnization,
   getallZNASBU: znaorgnization2Actions.getAllOrgnization,
   getallZNAMarketBasket: znaorgnization3Actions.getAllOrgnization,
+  getAllCOList: coActions.getAll
 };
 export default connect(mapStateToProp, mapActions)(AddEditForm);

@@ -51,6 +51,7 @@ import MoreActions from "../common-components/moreactions/MoreActions";
 import ShareItem from "../common-components/shareitem/ShareItem";
 import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
+import { handlePermission } from "../../permissions/Permission";
 
 let pageIndex = 1;
 let pagesize = 10;
@@ -844,6 +845,7 @@ function Breachlog({ ...props }) {
         };
       },
     },
+    handlePermission(window.location.pathname.slice(1), "isEdit") &&
     sellogTabType !== "delete"
       ? {
           dataField: "editaction",
@@ -866,7 +868,7 @@ function Breachlog({ ...props }) {
             };
           },
         }
-      : {
+      : handlePermission(window.location.pathname.slice(1), "isEdit") && {
           dataField: "editaction",
           text: "Restore",
           formatter: (cell, row, rowIndex, formatExtraData) => {
@@ -2308,6 +2310,7 @@ function Breachlog({ ...props }) {
     BreachLogEmailLink: "Link",
     ImportedBy: "Imported By",
     BreachCCName: "Breach CC",
+    COValue: "CO"
   };
   const versionHistoryexportDateFields = {
     DateBreachOccurred: "dateBreachOccurred",

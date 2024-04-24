@@ -34,6 +34,9 @@ import Exemptionlog from "./components/exemptionlog/Exemptionlog";
 import Unauthorized from "./components/unauthorized/Unauthorized";
 import PrivateRoute from "./components/privateroute/PrivateRoute";
 import Loader from "./components/common-components/Loading";
+import Token from "./components/manage/token/Token";
+import { handlePermission } from "./permissions/Permission";
+import Co from "./components/manage/co/Co";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -47,6 +50,17 @@ function App({ state, menuClick }) {
   } else {
     //userProfile = TokenService.getUser();
     userProfile = {};
+  }
+
+  if (window.location.pathname !== "/rfelogs/create-rfelog" && handlePermission("Navbar", window.location.pathname.slice(1)) === false) {
+    console.log("come First");
+    state.userprofileState.isAuthenticated = false
+    state.userprofileState.isUnAuthenticated = true
+  }
+  if(window.location.pathname === "/rfelogs/create-rfelog" && handlePermission("Navbar", "rfelogs") === false){
+    console.log("come Second");
+    state.userprofileState.isAuthenticated = false
+    state.userprofileState.isUnAuthenticated = true
   }
 
   return (
@@ -85,6 +99,11 @@ function App({ state, menuClick }) {
                       <PrivateRoute
                         path="/country"
                         component={Country}
+                        menuClick={menuClick}
+                      />
+                      <PrivateRoute
+                        path="/token"
+                        component={Token}
                         menuClick={menuClick}
                       />
                       <PrivateRoute
@@ -152,6 +171,11 @@ function App({ state, menuClick }) {
                         component={Lookup}
                         menuClick={menuClick}
                       />
+                       <PrivateRoute
+                        path="/co"
+                        component={Co}
+                        menuClick={menuClick}
+                      />
 
                       <PrivateRoute
                         path="/breachlogs"
@@ -160,6 +184,7 @@ function App({ state, menuClick }) {
                       />
                       <PrivateRoute
                         path="/rfelogs"
+                        exact
                         component={Rfelog}
                         menuClick={menuClick}
                       />

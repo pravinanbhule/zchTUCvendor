@@ -8,6 +8,7 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import PaginationData from "../../common-components/PaginationData";
 import { alertMessage, dynamicSort } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
+import { handlePermission } from "../../../permissions/Permission";
 function Sublob({ ...props }) {
   const { sublobState, lobState } = props.state;
   const {
@@ -94,6 +95,7 @@ function Sublob({ ...props }) {
     {
       dataField: "checkbox",
       text: "",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <FrmActiveCheckbox
@@ -112,6 +114,7 @@ function Sublob({ ...props }) {
     {
       dataField: "editaction",
       text: "Edit",
+      hidden: handlePermission(window.location.pathname.slice(1), "isEdit") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
@@ -132,6 +135,7 @@ function Sublob({ ...props }) {
     {
       dataField: "deleteaction",
       text: "Delete",
+      hidden: handlePermission(window.location.pathname.slice(1), "isDelete") === true ? false : true,
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return (
           <div
