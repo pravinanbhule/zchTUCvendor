@@ -190,8 +190,7 @@ function Rfelog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
-  const [isInCountryfilterApplied, setisInCountryfilterApplied] =
-    useState(false);
+  const [isInCountryfilterApplied, setisInCountryfilterApplied] =useState(false);
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
@@ -2478,39 +2477,45 @@ function Rfelog({ ...props }) {
                   ) : (
                     ""
                   )}
-                  <div className="advance-filter-btn-container mt-5">
-                    <div
-                      className={`advance-filter-btn ${
-                        isInCountryfilterApplied ? "selected" : "normal"
-                      }`}
-                      onClick={handlesetInCountrySearch}
-                    >
-                      Incountry Search
-                    </div>
-                  </div>
-                  {isInCountryfilterApplied ? (
-                    <div className="filter-advance">
-                      <div className="filter-container container">
-                        <div className="row">
-                          {filterdomfields.Incountry.length
-                            ? filterdomfields.Incountry.map((item) =>
-                                item.componenttype === "FrmDatePicker" ? (
-                                  Filterdomobj(item)
-                                ) : (
-                                  <div
-                                    className={`frm-filter col-md-${item.colspan}`}
-                                  >
-                                    {Filterdomobj(item)}
-                                  </div>
-                                )
-                              )
-                            : "Loading..."}
+                  {filterdomfields.common.length > 0 && filterdomfields.Incountry.length === 0 ?
+                    "" 
+                    :
+                    <>
+                      <div className="advance-filter-btn-container mt-5">
+                        <div
+                          className={`advance-filter-btn ${
+                            isInCountryfilterApplied ? "selected" : "normal"
+                          }`}
+                          onClick={handlesetInCountrySearch}
+                        >
+                          Incountry Search
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    ""
-                  )}
+                      {isInCountryfilterApplied ? (
+                        <div className="filter-advance">
+                          <div className="filter-container container">
+                            <div className="row">
+                              {filterdomfields.Incountry.length
+                                ? filterdomfields.Incountry.map((item) =>
+                                    item.componenttype === "FrmDatePicker" ? (
+                                      Filterdomobj(item)
+                                    ) : (
+                                      <div
+                                        className={`frm-filter col-md-${item.colspan}`}
+                                      >
+                                        {Filterdomobj(item)}
+                                        </div>
+                                    )
+                                  )
+                                : filterdomfields.common.length > 0 && filterdomfields.Incountry.length === 0 ? "" : "Loading..."}
+                            </div>
+                          </div>
+                          </div>
+                      ) : (
+                        ""
+                      )}
+                    </>
+                  }
                   <div className="btn-container">
                     <div
                       className={`btn-blue ${
