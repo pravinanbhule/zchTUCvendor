@@ -1097,6 +1097,14 @@ function Breachlog({ ...props }) {
       },
     },
     {
+      dataField: "materialBreachCategoryValue",
+      text: "Material Breach category",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
+      },
+    },
+    {
       dataField: "howDetectedValue",
       text: "How detected",
       sort: false,
@@ -2168,6 +2176,7 @@ function Breachlog({ ...props }) {
     sbuName: "",
     isdirty: false,
     BreachLogEmailLink: window.location.href,
+    materialBreachCategory: ""
   };
 
   const [formIntialState, setformIntialState] = useState(formInitialValue);
