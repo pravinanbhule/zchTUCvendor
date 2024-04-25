@@ -1670,7 +1670,7 @@ function Breachlog({ ...props }) {
       pageIndex = 1;
       loadAPIData();
     }
-  },[viewData])
+  },[viewData, sellogTabType])
 
   useEffect(() => {
     if (selectedview && sellogTabType) {

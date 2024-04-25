@@ -1040,10 +1040,11 @@ function Rfelog({ ...props }) {
     if (userProfile?.rfeViewsId && viewData.length !== 0) {
       onUserViewFilterSelect( "", userProfile?.rfeViewsId)
     } else {
+      console.log("Called>>>", "called");
       pageIndex = 1;
       loadAPIData();
     }
-  },[viewData])
+  },[viewData, sellogTabType])
 
   useEffect(() => {
     if (selectedUserView && sellogTabType) {
