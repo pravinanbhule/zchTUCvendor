@@ -740,7 +740,7 @@ function AddImportLogs(props) {
   const [isLoadingValidation, setisLoadingValidation] = useState(false);
   const [isDataImport, setisDataImport] = useState(false);
   const maxCount = 52;
-  const fieldCount = 38;
+  const fieldCount = 39;
   const validateExcelData = async (excelData) => {
     let excelReportData = [];
     let logData = [];
