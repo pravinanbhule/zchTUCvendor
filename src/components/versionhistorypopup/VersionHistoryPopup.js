@@ -103,6 +103,7 @@ function VersionHistoryPopup(props) {
                             {Object.keys(exportFieldTitles).map((key, i) => {
                               if (
                                 item[key] !== undefined &&
+                                item[key] !== null &&
                                 !versionHistoryExcludeFields[key]
                               ) {
                                 return (

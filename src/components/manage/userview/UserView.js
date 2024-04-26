@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions, userViewActions } from "../../../actions";
+import { userActions, countryActions, regionActions, userViewActions, commonActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
 import BreachAddEditForm from "./BreachAddEditForm";
@@ -11,12 +11,14 @@ import RfEAddEditForm from "./RfEAddEditForm";
 import { alertMessage, formatDate } from "../../../helpers";
 import FrmRadio from "../../common-components/frmradio/FrmRadio";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 function UserView({ ...props }) {
 
   const {
     userProfile,
     getAll,
-    deleteItem
+    deleteItem,
+    getMasterVersion
   } = props;
 
   useSetNavMenu(
@@ -26,6 +28,139 @@ function UserView({ ...props }) {
     },
     props.menuClick
   );
+
+  const versionHistoryexportFieldTitlesBreach = {
+    ViewName: "View Name",
+    IsPrivate: "Private",
+    UserRoles: "User Roles",
+    EntryNumber: "Entry Number",
+    Title: "Title",
+    Region: "Region Name",
+    Country: "Country Name",
+    Status: "Status",
+    ActionResponsible: "Action Responsible",
+    LoB: "LoB",
+    SubLoB: "Sub-LoB",
+    TypeofBreach: "Type of Breach",
+    Classification: "Classification",
+    MaterialBreach: "Material Breach",
+    CustomerSegment: "Customer Segment",
+    Natureofbreach: "Nature of Breach",
+    Howdetected: "How Detected",
+    RootCauseOfTheBreach: "Root Cause Of The Breach",
+    RangeOfFinancialimpact: "Range Of Financial Impact",
+    Creator: "Creator",
+    DateBreachOccurredFrom: "Date Breach Occurred From",
+    DateBreachOccurredTo: "Date Breach Occurred To",
+    DueDateFrom: "Due Date From",
+    DueDateTo: "Due Date To",
+    DateActionClosedFrom: "Date Action Closed From",
+    DateActionClosedTo: "Date Action Closed To",
+    CreatedDateFrom: "Created Date From",
+    CreatedDateTo: "Created Date To",
+    IsActive: "Active",
+    CreatedDate: "Created Date",
+    ModifiedDate: "Modified Date",
+  };
+
+  const versionHistoryexportFieldTitlesRfE = {
+    ViewName: "View Name",
+    IsPrivate: "Private",
+    UserRoles: "User Roles",
+    EntryNumber: "Entry Number",
+    AccountName: "Entry Name",
+    Region: "Region Name",
+    Country: "Country Name",
+    LoB: "LoB",
+    SubLoB: "Sub-LoB",
+    Role: "Role",
+    Underwriter: "Underwriter",
+    Underwritergrantingempowerment: "Underwriter granting empowerment",
+    Requestforempowermentstatus: "Request for empowerment status",
+    Organizationalalignment: "Organizational Alignment",
+    Requestforempowermentreason: "Request for empowerment reason",
+    CHZSustainabilityDeskCHZGICreditRisk: "CHZ Sustainability Desk / CHZ GI Credit Risk",
+    RequestforempowermentCC: "Request for empowerment CC",
+    CreatedDateFrom: "Created Date From",
+    CreatedDateTo: "Created Date To",
+    DurationofApproval: "Duration of Approval",
+    ConditionApplicableTo: "Condition Applicable To",
+    Currency: "Currency",
+    Branch: "Branch",
+    NewRenewal: "New/Renewal",
+    Limit: "Limit",
+    ZurichShare: "Zurich Share",
+    AccountNumber: "Account Number",
+    CustomerSegment: "Customer Segment",
+    PolicyPeriod: "Policy Period",
+    GWP: "GWP",
+    IsActive: "Active",
+    CreatedDate: "Created Date",
+    ModifiedDate: "Modified Date",
+  };
+
+  const versionHistoryexportFieldTitlesExemptionZUG = {
+    ViewName: "View Name",
+    IsPrivate: "Private",
+    UserRoles: "User Roles",
+    EntryNumber: "Entry Number",
+    Region: "Region Name",
+    Country: "Country Name",
+    LoBChapter: "LoB Chapter",
+    TypeofExemption: "Type of Exemption",
+    IndividualGrantedEmpowerment: "Individual Granted Empowerment",
+    Approver: "Approver",
+    Role: "Role",
+    Status: "Status",
+    ZUGChapterVersion: "ZUG ChapterVersion",
+    EmpowermentRequestedBy: "Empowerment Requested By",
+    CreatedDateFrom: "Created Date From",
+    CreatedDateTo: "Created Date To",
+    PreviousExemptionID: "Previous Exemption ID",
+    PC_URPMExemptionRequired: "P&C URPM exemption required",
+    IsActive: "Active",
+    CreatedDate: "Created Date",
+    ModifiedDate: "Modified Date",
+  };
+
+  const versionHistoryexportFieldTitlesExemptionURPM = {
+    ViewName: "View Name",
+    IsPrivate: "Private",
+    UserRoles: "User Roles",
+    EntryNumber: "Entry Number",
+    Region: "Region Name",
+    Country: "Country Name",
+    Section: "Section",
+    TypeofExemption: "Type of Exemption",
+    IndividualGrantedEmpowerment: "Individual Granted Empowerment",
+    Approver: "Approver",
+    Role: "Role",
+    Status: "Status",
+    EmpowermentRequestedBy: "Empowerment Requested By",
+    CreatedDateFrom: "Created Date From",
+    CreatedDateTo: "Created Date To",
+    IsActive: "Active",
+    CreatedDate: "Created Date",
+    ModifiedDate: "Modified Date",
+  };
+  
+  const versionHistoryExcludeFields = {
+    CreatedDate: "createdDate",
+    ModifiedDate: "modifiedDate",
+  };
+  
+  const versionHistoryexportDateFields = {
+    DateBreachOccurredFrom: "dateBreachOccurredFrom",
+    DateBreachOccurredTo: "dateBreachOccurredTo",
+    DueDateFrom: "dueDateFrom",
+    DueDateTo: "dueDateTo",
+    DateActionClosedFrom: "dateActionClosedFrom",
+    DateActionClosedTo: "dateActionClosedTo",
+    CreatedDateFrom: "createdDateFrom",
+    CreatedDateTo: "createdDateTo",
+    CreatedDate: "createdDate",
+  };
+  const versionHistoryexportHtmlFields = [];
 
   const [selectedTab, setSelectedTab] = useState("breachlog")
   const [selectedRow, setSelectedRow] = useState({})
@@ -208,6 +343,26 @@ function UserView({ ...props }) {
       },
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.userviewId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "deleteaction",
       text: "Delete",
       formatter: (cell, row, rowIndex, formatExtraData) => {
@@ -267,6 +422,36 @@ function UserView({ ...props }) {
       order: "asc",
     },
   ];
+
+  
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let MasterType = "BreachViews"
+    if (selectedTab === 'breachlog') {
+      MasterType = "BreachViews"
+    } else if (selectedTab === 'rfelog') {
+      MasterType = "RFEViews"
+    } else if (selectedTab === 'exemptionlog') {
+      if (selectedExemptionLog === 'zug') {
+        MasterType = "ZUGExemptionViews"
+      } else if (selectedExemptionLog === 'urpm') {
+        MasterType = "URPMExemptionViews"
+      }
+    }
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: MasterType,
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
 
   const handleEdit = (row, type) => {
     let selctedData = paginationdata.filter((item, i) => {
@@ -399,6 +584,23 @@ function UserView({ ...props }) {
           )}
         </>
       )}
+       {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={
+            selectedTab === 'breachlog' ? versionHistoryexportFieldTitlesBreach : 
+            selectedTab === 'rfelog' ? versionHistoryexportFieldTitlesRfE : 
+            selectedTab === 'exemptionlog' && selectedExemptionLog === 'zug' ? versionHistoryexportFieldTitlesExemptionZUG : 
+            selectedTab === 'exemptionlog' && selectedExemptionLog === 'urpm' ? versionHistoryexportFieldTitlesExemptionURPM : {}
+          }
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
@@ -409,7 +611,8 @@ const mapStateToProp = (state) => {
 };
 const mapActions = {
   getAll: userViewActions.getAll,
-  deleteItem: userViewActions.deleteItem
+  getMasterVersion: commonActions.getMasterVersion,
+  deleteItem: userViewActions.deleteItem,
 };
 
 export default connect(mapStateToProp, mapActions)(UserView);
