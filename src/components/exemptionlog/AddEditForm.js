@@ -1579,7 +1579,8 @@ function AddEditForm(props) {
                     isReadMode={isReadMode}
                     isRequired={false}
                     issubmitted={issubmitted}
-                    isToolTip={false}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["ExemptionDetailForLocalAddendum"]}
                   />
                 </div>
               </div>
