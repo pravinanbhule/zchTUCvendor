@@ -1963,22 +1963,24 @@ function Exemptionlog({ ...props }) {
   
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([])
+  const [viewResponse, setViewResponse] = useState(false)
 
   useEffect(()=>{
     handleViews()
     setselectedview(null)
+    setViewResponse(false)
   },[selectedExemptionLog])
 
   useEffect(()=>{
-    if (selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && viewData?.length !== 0) {
+    if (selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && viewResponse && viewData?.length !== 0) {
       onViewFilterSelect( "", userProfile?.zugExemptionViewsId)
-    } else if (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && viewData?.length !== 0) {
+    } else if (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && viewResponse && viewData?.length !== 0) {
       onViewFilterSelect( "", userProfile?.urpmExemptionViewsId)
-    } else {
+    } else if (viewResponse && ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null'))) {
       pageIndex = 1;
       loadAPIData();
     }
-  },[viewData, sellogTabType])
+  },[viewData, sellogTabType, viewResponse])
 
   useEffect(() => {
     if (selectedview && sellogTabType) {
@@ -1995,7 +1997,7 @@ function Exemptionlog({ ...props }) {
     })
     if (selectedViewData.length !== 0) {
       let countryArray = []
-      if (selectedViewData[0]?.countryID?.length !== 0) {
+      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0) {
         let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
         selectedCountryArray?.map((id, j) => {
             countryState.countryItems.map((item, i) => {
@@ -2013,7 +2015,7 @@ function Exemptionlog({ ...props }) {
       selectedViewData[0].countryID = countryArray
 
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         selectedRegionArray?.map((id, j) => {
             regionState.regionItems.map((item, i) => {
@@ -2034,11 +2036,10 @@ function Exemptionlog({ ...props }) {
     } else {
       value = null;
       pageIndex = 1;
-      loadAPIData();
+      clearFilter();
     }
     if (value === null) {
       setselectedview(value);
-      clearFilter()
     }
     await addEditUserView({LogType: selectedExemptionLog ? selectedExemptionLog : 'zug', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
@@ -2065,6 +2066,7 @@ function Exemptionlog({ ...props }) {
       ...prevstate,
       views: [{ label: "All", value: null }, ...viewFilterOpts],
     }));
+    setViewResponse(true)
   }
 
   useEffect(() => {

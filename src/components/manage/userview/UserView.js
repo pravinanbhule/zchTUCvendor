@@ -72,7 +72,7 @@ function UserView({ ...props }) {
     Region: "Region Name",
     Country: "Country Name",
     LoB: "LoB",
-    SubLoB: "Sub-LoB",
+    SUBLOBID: "Sub-LoB",
     Role: "Role",
     Underwriter: "Underwriter",
     Underwritergrantingempowerment: "Underwriter granting empowerment",

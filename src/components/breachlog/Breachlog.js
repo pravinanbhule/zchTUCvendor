@@ -1665,20 +1665,25 @@ function Breachlog({ ...props }) {
       clearDashboardClick();
       setdashboardStateApplied(true);
     }
-    handleViews();
   };
 
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([])
+  const [viewResponse, setViewResponse] = useState(false)
 
   useEffect(()=>{
-    if (userProfile?.breachViewsId && viewData.length !== 0) {
+    handleViews()
+    setselectedview(null)
+  },[])
+
+  useEffect(()=>{
+    if (userProfile?.breachViewsId && viewResponse && viewData.length !== 0) {
       onViewFilterSelect( "", userProfile?.breachViewsId)
-    } else {
+    } else if(viewResponse && (userProfile?.breachViewsId || userProfile?.breachViewsId !== 'null')){
       pageIndex = 1;
       loadAPIData();
     }
-  },[viewData, sellogTabType])
+  },[viewData, sellogTabType, viewResponse])
 
   useEffect(() => {
     if (selectedview && sellogTabType) {
@@ -1696,7 +1701,7 @@ function Breachlog({ ...props }) {
       selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
       delete selectedViewData[0]?.entryNumber
       let countryArray = []
-      if (selectedViewData[0]?.countryId?.length !== 0) {
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         selectedCountryArray.map((id, j) => {
             countryState.countryItems.map((item, i) => {
@@ -1714,7 +1719,7 @@ function Breachlog({ ...props }) {
       selectedViewData[0].countryId = countryArray
 
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         selectedRegionArray.map((id, j) => {
             regionState.regionItems.map((item, i) => {
@@ -1735,11 +1740,10 @@ function Breachlog({ ...props }) {
     } else {
       value = null;
       pageIndex = 1;
-      loadAPIData();
+      clearFilter();
     }
     if (value === null) {
       setselectedview(value);
-      clearFilter()
     }
     await addEditUserView({LogType: 'breachlogs', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
@@ -1762,6 +1766,7 @@ function Breachlog({ ...props }) {
       ...prevstate,
       views: [{ label: "All", value: null }, ...viewFilterOpts],
     }));
+    setViewResponse(true)
   }
 
   const loadCreatorUsers = async () => {
