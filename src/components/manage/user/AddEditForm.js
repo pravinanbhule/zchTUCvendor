@@ -232,16 +232,16 @@ function AddEditForm(props) {
       setformfield({ ...formfield, dualRole: null, countryList: [], regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Global") {
-      setformfield({ ...formfield, regionList: [], dualRole: null, });
+      setformfield({ ...formfield, regionList: [], lobList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "Region") {
-      setformfield({ ...formfield, countryList: [], dualRole: null, });
+      setformfield({ ...formfield, countryList: [], lobList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
-      setformfield({ ...formfield, countryList: [], regionList: [], dualRole: null });
+      setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], dualRole: null });
     }
     if (frmuserTypeObj[formfield.userType] === "Auditor") {
-      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false, dualRole: null, });
+      setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], isAccessDeleteLog: false, dualRole: null, });
     }
   }, [formfield.userType]);
   useEffect(() => {
@@ -494,6 +494,8 @@ function AddEditForm(props) {
               {frmuserTypeObj[formfield.userType] === "Region" ||
                 frmuserTypeObj[formfield.userType] === "Country" ||
                 frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ||
+                frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ||
                 (frmuserTypeObj[formfield.userType] === "DualRole" && selecteddualRoleLabel !== 'Global-Country') ? (
                 <FrmMultiselect
                   title={"Region"}
@@ -511,6 +513,8 @@ function AddEditForm(props) {
               )}
               {frmuserTypeObj[formfield.userType] === "Country" ||
                 frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ||
+                frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ||
                 (frmuserTypeObj[formfield.userType] === "DualRole" && 
                 selecteddualRoleLabel !== 'Global-Regional' && 
                 selecteddualRoleLabel !== 'Global-Country') ? (
@@ -547,7 +551,8 @@ function AddEditForm(props) {
                 ""
               )}
 
-              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ? (
+              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"LoB"}
