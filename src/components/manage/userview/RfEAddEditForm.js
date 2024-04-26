@@ -309,7 +309,7 @@ function RfelogAddEditForm({ ...props }) {
                 setsublobFilterOpts(allsublobFilterOpts);
             } else {
                 let sublobopts = allsublobFilterOpts.filter(
-                    (item) => item.lob === formfield.LOBId
+                    (item) => item.lob === value
                 );
                 setsublobFilterOpts([...sublobopts]);
             }

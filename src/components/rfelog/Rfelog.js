@@ -1034,20 +1034,21 @@ function Rfelog({ ...props }) {
 
   
   const [selectedUserView, setSelectedUserview] = useState(null);
-  const [viewData, setViewData] = useState([])
+  const [viewData, setViewData] = useState([]);
+  const [viewResponse, setViewResponse] = useState(false)
 
   useEffect(()=>{
-    if (userProfile?.rfeViewsId && viewData.length !== 0) {
+    if (userProfile?.rfeViewsId && viewResponse && viewData.length !== 0) {
       onUserViewFilterSelect( "", userProfile?.rfeViewsId)
-    } else {
-      console.log("Called>>>", "called");
+    } else if (viewResponse && (userProfile?.rfeViewsId || userProfile?.rfeViewsId !== 'null')) {
       pageIndex = 1;
       loadAPIData();
     }
-  },[viewData, sellogTabType])
+  },[viewData, sellogTabType, viewResponse])
 
   useEffect(() => {
     if (selectedUserView && sellogTabType) {
+      console.log("sdasdsds");
       handleFilterSearch();
     }
   }, [selectedUserView, sellogTabType]);
@@ -1061,7 +1062,7 @@ function Rfelog({ ...props }) {
     })
     if (selectedViewData.length !== 0) {
       let countryArray = []
-      if (selectedViewData[0]?.countryId?.length !== 0) {
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         if (selectedCountryArray) {
           selectedCountryArray.map((id, j) => {
@@ -1079,7 +1080,7 @@ function Rfelog({ ...props }) {
         }
       }
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         let regionData = await getAllRegion();
         if (selectedRegionArray) {
@@ -1132,11 +1133,10 @@ function Rfelog({ ...props }) {
     } else {
       value = null;
       pageIndex = 1;
-      loadAPIData();
+      clearFilter();
     }
     if (value === null) {
       setSelectedUserview(value);
-      clearFilter()
     }
     await addEditUserView({LogType: 'rfelogs', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
@@ -1159,6 +1159,7 @@ function Rfelog({ ...props }) {
       ...prevstate,
       userViews: [{ label: "All", value: null }, ...viewFilterOpts],
     }));
+    setViewResponse(true)
   }
 
 
@@ -2122,7 +2123,7 @@ function Rfelog({ ...props }) {
                 obj.title
               )
             }
-            name={obj.name}
+            name={obj.name === 'RoleData' ? 'Role' : obj.name}
             value={selfilter[obj.name]}
             handleChange={eval(obj.eventhandler)}
             selectopts={eval(obj.options)}
