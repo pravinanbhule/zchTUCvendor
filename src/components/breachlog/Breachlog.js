@@ -2395,6 +2395,7 @@ function Breachlog({ ...props }) {
     RootCauseOfTheBreachValue: "Root Cause of the Breach",
     NatureOfBreachValue: "Nature of Breach",
     MaterialBreach: "Material Breach",
+    MaterialBreachCategoryValue: "Material Breach category",
     DateBreachOccurred: "Date Breach Occurred",
     BreachDetails: "Breach Details",
     RangeOfFinancialImpactValue: "Range of financial impact",
