@@ -2501,6 +2501,10 @@ function Breachlog({ ...props }) {
           if (key === "materialBreach") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
+          if (key === "countryId" || key === "regionId") {
+            const tmpval = value.map((item) => item.value);
+            tempFilterOpts[key] = tmpval.join(",");
+          }
         }
       }
       reqParam = {
