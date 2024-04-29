@@ -81,6 +81,7 @@ function UserView({ ...props }) {
     Requestforempowermentreason: "Request for empowerment reason",
     CHZSustainabilityDeskCHZGICreditRisk: "CHZ Sustainability Desk / CHZ GI Credit Risk",
     RequestforempowermentCC: "Request for empowerment CC",
+    Creator: "Creator",
     CreatedDateFrom: "Created Date From",
     CreatedDateTo: "Created Date To",
     DurationofApproval: "Duration of Approval",

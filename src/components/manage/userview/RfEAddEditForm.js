@@ -221,9 +221,9 @@ function RfelogAddEditForm({ ...props }) {
             response.RequestForEmpowermentStatus = response?.requestforempowermentstatus
             response.Underwriter = response?.underwriter
             response.UnderwriterGrantingEmpowerment = response?.underwritergrantingempowerment
-            response.CreatorName = response?.creatorName
+            response.Creator = response?.creator
             response.OrganizationalAlignment = response?.organizationalalignment
-            response.RoleData = response?.role
+            response.Role = response?.role
             response.LOBId = response?.loB
             response.AccountName = response?.accountName
             response.EntryNumber = response?.entryNumber
@@ -1084,9 +1084,9 @@ function RfelogAddEditForm({ ...props }) {
             data.requestforempowermentstatus = data?.RequestForEmpowermentStatus
             data.underwriter = data?.Underwriter
             data.underwritergrantingempowerment = data?.UnderwriterGrantingEmpowerment
-            data.creatorName = data?.CreatorName
+            data.creator = data?.Creator
             data.organizationalalignment = data?.OrganizationalAlignment
-            data.role = data?.RoleData
+            data.role = data?.Role
             data.loB = data?.LOBId
             data.accountName = data?.AccountName
             data.entryNumber = data?.EntryNumber
@@ -1112,9 +1112,9 @@ function RfelogAddEditForm({ ...props }) {
             delete data?.RequestForEmpowermentStatus
             delete data?.Underwriter
             delete data?.UnderwriterGrantingEmpowerment
-            delete data?.CreatorName
+            delete data?.Creator
             delete data?.OrganizationalAlignment
-            delete data?.RoleData
+            delete data?.Role
             delete data?.LOBId
             delete data?.AccountName
             delete data?.EntryNumber
