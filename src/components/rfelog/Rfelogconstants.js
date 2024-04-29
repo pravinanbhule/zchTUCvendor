@@ -12,7 +12,7 @@ export const intialFilterState = {
   CHZ: "",
   RequestForEmpowermentCC: "",
   UnderwriterGrantingEmpowerment: "",
-  CreatorName: "",
+  Creator: "",
   CreatedFromDate: "",
   CreatedToDate: "",
   DurationofApproval: "",
@@ -37,7 +37,7 @@ export const filterfieldsmapping = {
     eventhandler: "onSearchFilterSelect",
     filtertype: "common",
   },
-  RoleData: {
+  Role: {
     componenttype: "FrmSelect",
     options: "commonfilterOpts.rolesFilterOpts",
     eventhandler: "onSearchFilterSelect",
@@ -101,7 +101,7 @@ export const filterfieldsmapping = {
     filtertype: "advance",
     titlelinespace: true,
   },
-  CreatorName: {
+  Creator: {
     componenttype: "FrmInputAutocomplete",
     options: "commonfilterOpts.creatorFilterOpts",
     eventhandler: "onSearchFilterInputAutocomplete",

@@ -1097,6 +1097,7 @@ function Rfelog({ ...props }) {
           })
         }
       }
+      console.log("selectedViewData???", selectedViewData);
 
       const FilterState = {
         EntryNumber: selectedViewData[0]?.entryNumber,
@@ -1105,14 +1106,14 @@ function Rfelog({ ...props }) {
         CountryId: countryArray,
         RegionId: regionArray,
         Underwriter: selectedViewData[0]?.underwriter,
-        role: selectedViewData[0]?.roleData,
+        Role: selectedViewData[0]?.role,
         RequestForEmpowermentStatus: selectedViewData[0]?.requestForEmpowermentStatus,
         OrganizationalAlignment: selectedViewData[0]?.organizationalAlignment,
         RequestForEmpowermentReason: selectedViewData[0]?.requestForEmpowermentReason,
         CHZ: selectedViewData[0]?.chz,
         RequestForEmpowermentCC: selectedViewData[0]?.requestForEmpowermentCC,
         UnderwriterGrantingEmpowerment: selectedViewData[0]?.underwriterGrantingEmpowerment,
-        CreatorName: selectedViewData[0]?.creatorName,
+        Creator: selectedViewData[0]?.creator,
         CreatedFromDate: selectedViewData[0]?.createdFromDate,
         CreatedToDate: selectedViewData[0]?.createdToDate,
         Currency: selectedViewData[0]?.currency,
@@ -2123,7 +2124,7 @@ function Rfelog({ ...props }) {
                 obj.title
               )
             }
-            name={obj.name === 'RoleData' ? 'Role' : obj.name}
+            name={obj.name}
             value={selfilter[obj.name]}
             handleChange={eval(obj.eventhandler)}
             selectopts={eval(obj.options)}
