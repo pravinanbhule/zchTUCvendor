@@ -172,7 +172,7 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: userProfile?.isAccessDeleteLog === true ? true : false === true ? true : false,
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             rfelogs: {
                 isAdd: true,
