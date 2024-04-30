@@ -134,6 +134,8 @@ function LoggedInUser({ ...props }) {
     setshowlogout(false);
     TokenService.removeUser();
     await oktaAuth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
     //window.location.reload(true);
   };
   const [showlogout, setshowlogout] = useState(false);
