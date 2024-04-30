@@ -6,10 +6,12 @@ import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import UserProfile from "../../common-components/UserProfile";
 import { handlePermission } from "../../../permissions/Permission";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/lobchapter.constants";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 function Lobchapter({ ...props }) {
   const { lobchapterState, lobState } = props.state;
   const {
@@ -22,7 +24,11 @@ function Lobchapter({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "LoBChapter.xlsx";
   useSetNavMenu(
     {
       currentMenu: "Lobchapter",
@@ -149,6 +155,26 @@ function Lobchapter({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.lobChapterID)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "lobChapterName",
       text: "LoB Chapter",
       sort: true,
@@ -195,6 +221,28 @@ function Lobchapter({ ...props }) {
         return { width: "250px" };
       },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const getApproverBlock = (cell, row) => {
     const approverList = row.lobChapterApproverList
@@ -396,9 +444,7 @@ function Lobchapter({ ...props }) {
       response = await postItem({
         ...item,
         lobList: templobList,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
         approverList: templobChapterApproverList,
       });
       if (response) {
@@ -464,10 +510,28 @@ function Lobchapter({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "lobchapter",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+  
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -509,6 +573,24 @@ function Lobchapter({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      lobChapterID: "",
+      lobList: "",
+    }
+    if (isfilterApplied) {
+      if (selfilter.lob !== "") {
+        let LoBID = frmLobSelectOpts.filter((item) => item.label === selfilter.lob)
+        response.lobList = LoBID[0].lobid
+      }
+      response.lobChapterID = selfilter.lobchapter
+    }
+    const responsedata = await downloadExcel({
+      LOBChapterID: response?.lobChapterID,
+      LOBID: response.lobList,
+    }, "LoBChapter");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage LoB Chapter</div>
@@ -568,6 +650,9 @@ function Lobchapter({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -581,6 +666,18 @@ function Lobchapter({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -601,5 +698,7 @@ const mapActions = {
   postItem: lobchapterActions.postItem,
   deleteItem: lobchapterActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Lobchapter);

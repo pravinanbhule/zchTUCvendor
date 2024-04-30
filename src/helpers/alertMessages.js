@@ -181,4 +181,12 @@ export const alertMessage = {
     isInUse: "You can not delete this CO as it is in use.",
     nameExist: "The CO name already exists!",
   },
+  userview: {
+    add: "The new View is successfully added.",
+    update: "The View is successfully updated.",
+    delete: "The UserView is deleted.",
+    deleteConfirm: "Are you sure you want to delete User View?",
+    isInUse: "You can not delete this User View as it is in use.",
+    nameExist: "The User View name already exists!",
+  },
 };

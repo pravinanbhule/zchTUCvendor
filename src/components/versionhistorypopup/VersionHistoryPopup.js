@@ -95,14 +95,15 @@ function VersionHistoryPopup(props) {
                                   : ""}
                               </td>
                               <td>
-                                {item["LastModifiorName"]
-                                  ? item["LastModifiorName"]
+                                {item["LastModifiorName"] || item["ModifiedBy"]
+                                  ? item["LastModifiorName"] || item["ModifiedBy"]
                                   : ""}
                               </td>
                             </tr>
                             {Object.keys(exportFieldTitles).map((key, i) => {
                               if (
                                 item[key] !== undefined &&
+                                item[key] !== null &&
                                 !versionHistoryExcludeFields[key]
                               ) {
                                 return (

@@ -8,6 +8,8 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import { alertMessage, dynamicSort } from "../../../helpers";
 import FrmInlineInput from "../../common-components/frminlineinput/FrmInlineInput";
 import { handlePermission } from "../../../permissions/Permission";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/lookup.constants";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 function Lookup({ ...props }) {
   const { lookupState, countryState } = props.state;
   const {
@@ -20,7 +22,11 @@ function Lookup({ ...props }) {
     userProfile,
     setMasterdataActive,
     getAllCountry,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "LookUp.xlsx";
   useSetNavMenu({ currentMenu: "Lookup", isSubmenu: true }, props.menuClick);
   const [logtypeFilterOpts, setlogtypeFilterOpts] = useState([]);
   const intialfilterval = {
@@ -344,6 +350,35 @@ function Lookup({ ...props }) {
       }
     }
   };
+
+  const handleDownload = async() =>{
+    let response = {
+      LogType: selfilter.logtype,
+    }
+
+    const responsedata = await downloadExcel({
+      LogType: response.LogType,
+    }, "Lookup");
+    FileDownload(responsedata, `${selfilter.logtype}.xlsx`);
+  }
+
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+  
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+  
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "Lookup",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   const pageFilterStyle = {
     justifyContent: "flex-start",
   };
@@ -408,6 +443,12 @@ function Lookup({ ...props }) {
                               >
                                 Inactive
                               </div>
+                              <div
+                                className={`btn-blue download-icon`}
+                                onClick={() => handleDownload()}
+                              >
+                                Download
+                              </div>
                             </>
                           )}
 
@@ -437,6 +478,7 @@ function Lookup({ ...props }) {
                             {handlePermission(window.location.pathname.slice(1), "isDelete") === true && (
                               <th style={tableiconclmStyle}>Delete</th>
                             )}
+                            <th style={{width: "100px", textAlign: 'center'}}>Data Version</th>
                             <th style={{ width: "250px" }}>Value</th>
                             <th>Active/Inactive</th>
                           </tr>
@@ -531,6 +573,14 @@ function Lookup({ ...props }) {
                                     rowid={item.lookupID}
                                   ></td>
                                 )}
+                                 <td
+                                    className="versionhistory-icon"
+                                    onClick={() =>
+                                      handleDataVersion(item.lookupID)
+                                    }
+                                    style={{width: '100px'}}
+                                    rowid={item.lookupID}
+                                  ></td>
                                 <td>
                                   {item.isEditMode ? (
                                     <FrmInlineInput
@@ -585,6 +635,18 @@ function Lookup({ ...props }) {
             ""
           )}
       </div>
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
@@ -602,5 +664,7 @@ const mapActions = {
   deleteItem: lookupActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getAllCountry: countryActions.getAllCountry,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Lookup);

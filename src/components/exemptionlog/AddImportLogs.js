@@ -469,6 +469,10 @@ function AddImportLogs(props) {
       fieldname: "znaProductsId",
       multival: true,
     },
+    "Exemption Detail For Local Addendum": {
+      lookupObj: "",
+      fieldname: "exemptionDetailForLocalAddendum",
+    },
     Creator: {
       lookupObj: "",
       fieldname: "createdByID",
@@ -590,6 +594,10 @@ function AddImportLogs(props) {
       fieldname: "znaProductsId",
       multival: true,
     },
+    "Exemption Detail For Local Addendum": {
+      lookupObj: "",
+      fieldname: "exemptionDetailForLocalAddendum",
+    },
     Creator: {
       lookupObj: "",
       fieldname: "createdByID",
@@ -620,7 +628,7 @@ function AddImportLogs(props) {
   const [isLoadingValidation, setisLoadingValidation] = useState(false);
   const [isDataImport, setisDataImport] = useState(false);
   const maxCount = 51;
-  const fieldCount = selectedExemptionLog === "zug" ? 28 : 24;
+  const fieldCount = selectedExemptionLog === "zug" ? 29 : 25;
   const validateExcelData = async (excelData) => {
     let excelReportData = [];
     let logData = [];
@@ -633,6 +641,7 @@ function AddImportLogs(props) {
       isExcelValid = false;
       return;
     }
+    console.log(excelData[0].length, fieldCount);
     if (excelData[0].length !== fieldCount) {
       alert(alertMessage.importlogs.fieldcounterror);
       isExcelValid = false;

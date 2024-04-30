@@ -10,6 +10,7 @@ import {
   lobActions,
   commonActions,
   dashboardActions,
+  userViewActions,
 } from "../../actions";
 import { SHAREPOINT_LINKS } from "../../constants";
 import Loading from "../common-components/Loading";
@@ -83,6 +84,8 @@ function Exemptionlog({ ...props }) {
     exportReportURPMLogs,
     getallZUGCount,
     getallURPMCount,
+    getViewsByUserId,
+    addEditUserView
   } = props;
 
   const [logstate, setlogstate] = useState({
@@ -277,6 +280,7 @@ function Exemptionlog({ ...props }) {
     approverOpts: [],
     zugChapterVersionOpts: [],
     empowermentRequestedByOpts: [],
+    views: [{ label: "All", value: null }],
   });
   const [exemptionlogsType, setexemptionlogsType] = useState([
     {
@@ -288,7 +292,7 @@ function Exemptionlog({ ...props }) {
       value: "urpm",
     },
   ]);
-  const [selectedExemptionLog, setselectedExemptionLog] = useState("");
+  const [selectedExemptionLog, setselectedExemptionLog] = useState("zug");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
@@ -340,6 +344,7 @@ function Exemptionlog({ ...props }) {
   };
   const onExemptionlogSelection = (e) => {
     let { name, value } = e.target;
+    setselectedview(null)
     if (
       (value === "zug" && !logstate.ZUGLoadedAll) ||
       (value === "urpm" && !logstate.URPMLoadedAll)
@@ -348,10 +353,7 @@ function Exemptionlog({ ...props }) {
       setlogstate({ ...logstate, loading: true });
     }
     setExemLogTypeFn(value);
-    setselfilter({
-      ...selfilter,
-      [name]: value,
-    });
+    clearFilter()
   };
   const onSearchFilterSelect = (name, value) => {
     //const { name, value } = e.target;
@@ -841,7 +843,7 @@ function Exemptionlog({ ...props }) {
                   handleShareItem={openShareItem}
                   handleDeleteItem={openDeleteItem}
                   userProfile={userProfile}
-                  isDelete={fnIsEditAccess(row) ? true : false}
+                  isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                 ></MoreActions>
               </>
             );
@@ -1104,6 +1106,14 @@ function Exemptionlog({ ...props }) {
       },
     },
     {
+      dataField: "exemptionDetailForLocalAddendum",
+      text: "Exemption Detail for local addendum",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
+      },
+    },
+    {
       dataField: "isArchived",
       text: "Link to SharePoint",
       sort: false,
@@ -1233,7 +1243,7 @@ function Exemptionlog({ ...props }) {
                   handleShareItem={openShareItem}
                   handleDeleteItem={openDeleteItem}
                   userProfile={userProfile}
-                  isDelete={fnIsEditAccess(row) ? true : false}
+                  isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                 ></MoreActions>
               </>
             );
@@ -1455,6 +1465,14 @@ function Exemptionlog({ ...props }) {
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "150px" };
+      },
+    },
+    {
+      dataField: "exemptionDetailForLocalAddendum",
+      text: "Exemption Detail for local addendum",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
       },
     },
     {
@@ -1793,8 +1811,9 @@ function Exemptionlog({ ...props }) {
   }, [selectedExemptionLog]);
 
   useEffect(() => {
-    if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
-      debugger;
+    if ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null')) {
+      return
+    } else if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1941,6 +1960,115 @@ function Exemptionlog({ ...props }) {
       setDashboardFilters();
     }
   };
+  
+  const [selectedview, setselectedview] = useState(null);
+  const [viewData, setViewData] = useState([])
+  const [viewResponse, setViewResponse] = useState(false)
+
+  useEffect(()=>{
+    handleViews()
+    setselectedview(null)
+    setViewResponse(false)
+  },[selectedExemptionLog])
+
+  useEffect(()=>{
+    if (selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && viewResponse && viewData?.length !== 0) {
+      onViewFilterSelect( "", userProfile?.zugExemptionViewsId)
+    } else if (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && viewResponse && viewData?.length !== 0) {
+      onViewFilterSelect( "", userProfile?.urpmExemptionViewsId)
+    } else if (viewResponse && ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null'))) {
+      pageIndex = 1;
+      loadAPIData();
+    }
+  },[viewData, sellogTabType, viewResponse])
+
+  useEffect(() => {
+    if (selectedview && sellogTabType) {
+      handleFilterSearch();
+    }
+  }, [selectedview, sellogTabType]);
+
+  const onViewFilterSelect = async(name, value) => {
+    let selectedViewData = viewData?.filter((item, i) => {
+      let id = item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId
+      if (id === value) {
+        return item
+      }
+    })
+    if (selectedViewData.length !== 0) {
+      let countryArray = []
+      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0) {
+        let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
+        selectedCountryArray?.map((id, j) => {
+            countryState.countryItems.map((item, i) => {
+                if (id === item.countryID) {
+                    countryArray.push({
+                        ...item,
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                    })
+                }
+            })
+        })
+      }
+      selectedViewData[0].countryID = countryArray
+
+      let regionArray = []
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        selectedRegionArray?.map((id, j) => {
+            regionState.regionItems.map((item, i) => {
+                if (id === item.regionID) {
+                    regionArray.push({
+                        ...item,
+                        label: item.regionName.trim(),
+                        value: item.regionID,
+                    })
+                }
+            })
+        })
+      }
+      selectedViewData[0].regionId = regionArray
+
+      setselfilter(selectedViewData[0])
+      setselectedview(value);
+    } else {
+      value = null;
+      pageIndex = 1;
+      clearFilter();
+    }
+    if (value === null) {
+      setselectedview(value);
+    }
+    await addEditUserView({LogType: selectedExemptionLog ? selectedExemptionLog : 'zug', UserId: userProfile.userId, ViewId: value})
+    let updatedUserProfileData = userProfile
+    if (selectedExemptionLog === 'urpm') {
+      updatedUserProfileData.urpmExemptionViewsId = value
+    } else {
+      updatedUserProfileData.zugExemptionViewsId = value
+    }
+    localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+  };
+
+  const handleViews = async () => {
+    const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'exemptionlog', exemptiontype: selectedExemptionLog ? selectedExemptionLog : 'zug'  })
+    setViewData(response)
+    let viewFilterOpts = []
+    response.map((item,i) => {
+      viewFilterOpts.push({
+        label: item.viewName,
+        value: item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId 
+      })
+    })
+    viewFilterOpts.sort(dynamicSort("label"));
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: [{ label: "All", value: null }, ...viewFilterOpts],
+    }));
+    setViewResponse(true)
+  }
+
   useEffect(() => {
     if (
       countryFilterOpts.length &&
@@ -2315,6 +2443,7 @@ function Exemptionlog({ ...props }) {
     marketBasketList: [],
     znaProductsId: "",
     znaProductsList: [],
+    exemptionDetailForLocalAddendum: ""
   };
   const formInitialValueURPM = {
     countryID: "",
@@ -2358,6 +2487,7 @@ function Exemptionlog({ ...props }) {
     marketBasketList: [],
     znaProductsId: "",
     znaProductsList: [],
+    exemptionDetailForLocalAddendum: ""
   };
   const [formIntialState, setformIntialState] = useState(formInitialValueZUG);
 
@@ -2703,6 +2833,7 @@ function Exemptionlog({ ...props }) {
     MarketBasketName: "ZNA Market Basket",
     ZNAProductsName: "ZNA Products",
     ExemptionCCName: "Exemption CC",
+    ExemptionDetailForLocalAddendum : "Exemption Detail for local addendum",
   };
   const versionHistoryexportFieldTitlesURPM = {
     EntryNumber: "Entry Number",
@@ -2732,6 +2863,7 @@ function Exemptionlog({ ...props }) {
     MarketBasketName: "ZNA Market Basket",
     ZNAProductsName: "ZNA Products",
     ExemptionCCName: "Exemption CC",
+    ExemptionDetailForLocalAddendum : "Exemption Detail for local addendum",
   };
   const versionHistoryexportHtmlFields = [
     "EmpowermentAndFeedbackRequest",
@@ -3099,7 +3231,24 @@ function Exemptionlog({ ...props }) {
       )}
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
-          <div className="page-title">Exemption Log</div>
+          {/* <div className="page-title">Exemption Log</div> */}
+          <div className="">
+            <div className="title-rfe">
+              <div className="page-title-rfe">Exemption Log</div>
+              {commonfilterOpts.views.length > 1 && (
+                <div className="title-dropdown-rfe">
+                  <FrmSelect
+                    title={"Switch view"}
+                    name={"switchview"}
+                    selectopts={commonfilterOpts.views}
+                    handleChange={onViewFilterSelect}
+                    value={selectedview}
+                    inlinetitle={true}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
               {filterbox ? (
@@ -3522,6 +3671,8 @@ const mapActions = {
   getLogUsers: commonActions.getLogUsers,
   getAllEntryNumbers: commonActions.getAllEntryNumbers,
   clearDashboardClick: dashboardActions.clearDashboardClick,
+  getViewsByUserId: userViewActions.getViewsByUserId,
+  addEditUserView: commonActions.addEditUserView
 };
 
 export default connect(mapStateToProp, mapActions)(Exemptionlog);

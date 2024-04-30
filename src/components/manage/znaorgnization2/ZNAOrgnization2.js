@@ -10,9 +10,11 @@ import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/znaorgnization2.constants";
 function ZNAOrgnization2({ ...props }) {
   const { znaorgnization1State, znaorgnization2State } = props.state;
   const {
@@ -25,7 +27,11 @@ function ZNAOrgnization2({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "znaorganization2.xlsx";
   useSetNavMenu(
     {
       currentMenu: "znaorganization2",
@@ -168,6 +174,26 @@ function ZNAOrgnization2({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.znasbuId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "sbuName",
       text: "ZNA Organization 2",
       sort: true,
@@ -195,7 +221,32 @@ function ZNAOrgnization2({ ...props }) {
       dataField: "description",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {
@@ -326,6 +377,7 @@ function ZNAOrgnization2({ ...props }) {
       response = await postItem({
         ...item,
         createdById: item.createdById ? item.createdById : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);
@@ -349,6 +401,7 @@ function ZNAOrgnization2({ ...props }) {
       response = await postItem({
         ...item,
         createdById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);
@@ -383,10 +436,28 @@ function ZNAOrgnization2({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "ZNAOrganization2",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -413,7 +484,7 @@ function ZNAOrgnization2({ ...props }) {
   const setMasterdataActiveState = async (state) => {
     let response = await setMasterdataActive({
       TempId: selItemsList.join(","),
-      MasterType: "znaorg2",
+      MasterType: "ZNAOrganization2",
       IsActive: state,
     });
     if (response) {
@@ -428,6 +499,21 @@ function ZNAOrgnization2({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      znasbuId: "",
+      znaSegmentId: "",
+    }
+    if (isfilterApplied) {
+      response.znasbuId = selfilter.znasbuId
+      response.znaSegmentId = selfilter.znaSegmentId
+    }
+    const responsedata = await downloadExcel({
+      ZNASBUId: response?.znasbuId,
+      ZNASegmentId: response.znaSegmentId,
+    }, "ZNAOrganization2");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage ZNA Organization 2</div>
@@ -487,6 +573,9 @@ function ZNAOrgnization2({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -500,6 +589,18 @@ function ZNAOrgnization2({ ...props }) {
           formIntialState={formIntialState}
           frmOrg1SelectOpts={frmOrg1SelectOpts}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -520,5 +621,7 @@ const mapActions = {
   deleteItem: znaorgnization2Actions.deleteItem,
   getAllOrgnization1: znaorgnization1Actions.getAllOrgnization,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(ZNAOrgnization2);

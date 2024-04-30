@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions, lobActions } from "../../../actions";
+import { userActions, countryActions, regionActions, lobActions, lookupActions, commonActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditForm";
 import UserProfile from "../../common-components/UserProfile";
 import FrmInput from "../../common-components/frminput/FrmInput";
 import { USER_ROLE } from "../../../constants";
 import { handlePermission } from "../../../permissions/Permission";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/user.constants";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 function User({ ...props }) {
   const { userState, countryState, regionState, lobState } = props.state;
   const {
@@ -29,8 +32,12 @@ function User({ ...props }) {
     deleteItem,
     userProfile,
     getAlllob,
+    getLookupByType,
+    getMasterVersion,
+    downloadExcel
   } = props;
-
+  const FileDownload = require("js-file-download");
+  const templateName = "User.xlsx";
   useSetNavMenu({ currentMenu: "User", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -40,6 +47,7 @@ function User({ ...props }) {
   const [userTypeFilterOpts, setuserTypeFilterOpts] = useState([]);
   const [unathorizedRegions, setunathorizedRegions] = useState([]);
   const [unauthorizedCountries, setunauthorizedCountries] = useState([]);
+  const [dualRoleOpts, setDualRoleOpts] = useState([])
   const intialFilterState = {
     username: "",
     email: "",
@@ -121,14 +129,17 @@ function User({ ...props }) {
         ) {
           isShow = false;
         }
+        let countryName = []
+        if (selfilter.country !== "") {
+          countryName = item.userType !== 'DualRole' ? item.countryList : item.dualRoleCountry
+          countryName = countryName?.replaceAll(" ", "")?.split(",")
+        }
         if (
-          (isShow &&
-            selfilter.country !== "" &&
-            item.countryList &&
-            !item.countryList.includes(selfilter.country)) ||
-          (isShow && selfilter.country !== "" && !item.countryList)
+          (isShow && 
+            selfilter.country !== "" && 
+            !countryName?.includes(selfilter.country.replaceAll(" ","")))
         ) {
-          isShow = false;
+            isShow = false;
         }
         if (
           (isShow &&
@@ -232,6 +243,26 @@ function User({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.userId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "emailAddress",
       text: "User Name",
       sort: true,
@@ -251,11 +282,22 @@ function User({ ...props }) {
       },
     },
     {
+      dataField: "dualRoleTypeName",
+      text: "Dual Role Type",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "250px" };
+      },
+    },
+    {
       dataField: "regionList",
       text: "Region",
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "250px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? cell : row?.dualRoleRegion ? row?.dualRoleRegion : "-"}</span>;
       },
     },
     {
@@ -266,9 +308,31 @@ function User({ ...props }) {
         return { width: "250px" };
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
-        return <span>{cell ? cell : "-"}</span>;
+        return <span>{cell ? cell : row?.dualRoleCountry ? row?.dualRoleCountry : "-"}</span>;
       },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const getUserBlock = (cell, row) => {
     const username = row.firstName + " " + row.lastName;
@@ -292,12 +356,19 @@ function User({ ...props }) {
     },
   ];
 
-  useEffect(() => {
+  useEffect(async() => {
     getAll({ RequesterUserId: userProfile.userId });
     getAllCountry({ IsLog: true });
     getAllRegion({ IsLog: true });
     getAllUsersRoles({ RequesterUserId: userProfile.userId });
     getAlllob({ isActive: true });
+    let dualRoleList = await getLookupByType({ LookupType: "DualRole" })
+    dualRoleList = dualRoleList.map((item) => ({
+      label: item.lookUpValue,
+      value: item.lookupID,
+    }));
+    dualRoleList.sort(dynamicSort("label"));
+    setDualRoleOpts(dualRoleList)
   }, []);
   useEffect(() => {
     let tempdata = [];
@@ -497,7 +568,8 @@ function User({ ...props }) {
     let lobList = [];
     let tempunauthorizedRegions = [];
     let tempunauthorizedCountries = [];
-    response.regionDataList.forEach((item) => {
+    let regionUserList = response.roleId === '11' ? response.dualRoleRegionDataList : response.regionDataList
+    regionUserList.forEach((item) => {
       let isPresent = false;
       userRegions.forEach((region) => {
         if (region.regionID === item.regionID.trim()) {
@@ -516,7 +588,8 @@ function User({ ...props }) {
         });
       }
     });
-    response.countryDataList.forEach((item) => {
+    let countryUserList = response.roleId === '11' ? response.dualRoleCountryDataList : response.countryDataList
+    countryUserList.forEach((item) => {
       let isPresent = false;
       userCountry.forEach((country) => {
         if (country.countryID === item.countryID.trim()) {
@@ -549,6 +622,14 @@ function User({ ...props }) {
         });
       }
     });
+    let selectedDualRole = ""
+    if (response?.dualRole) {
+      dualRoleOpts.map((item, i) => {
+        if (item.value === response.dualRole) {
+          selectedDualRole = item.label
+        }
+      })
+    }
     setisEditMode(true);
     let isSuperAdmin = response.userType === "SuperAdmin" ? true : false;
     let isAccessDeleteLog =
@@ -558,7 +639,6 @@ function User({ ...props }) {
       response.isAccessDeleteLog
         ? true
         : false;
-
     setformIntialState({
       ...response,
       user: user,
@@ -570,6 +650,7 @@ function User({ ...props }) {
       isAccessBreachLog: response.isAccessBreachLog,
       isSuperAdmin: isSuperAdmin,
       isAccessDeleteLog: isAccessDeleteLog,
+      selectedDualRole: selectedDualRole
     });
     setunathorizedRegions([...tempunauthorizedRegions]);
     setunauthorizedCountries([...tempunauthorizedCountries]);
@@ -605,6 +686,17 @@ function User({ ...props }) {
     if (item.isGeneralUser) {
       item.userType = USER_ROLE.normalUser;
     }
+
+    // if (item.userType === USER_ROLE.dualRole) {
+    //   item.countryList = "";
+    //   item.regionList = "";
+    //   item.dualRoleCountry = tempcountryList;
+    //   item.dualRoleRegion = tempregionList
+    // } else {
+    //   item.countryList = tempcountryList;
+    //   item.regionList = tempregionList
+    // }
+
     let response = await postItem({
       ...item,
       userId: userId,
@@ -612,13 +704,15 @@ function User({ ...props }) {
       lastName: lastName,
       emailAddress: emailAddress,
       RoleID: item.userType,
-      regionList: tempregionList,
-      countryList: tempcountryList,
       lobList: templobList,
       isAccessBreachLog: item.isAccessBreachLog,
       requesterUserId: userProfile.userId,
       PreviousRoleID: item.PreviousRoleID,
       profileCountry: item.user[0].profileCountry,
+      countryList: item.userType === USER_ROLE.dualRole ? "" : tempcountryList,
+      regionList: item.userType === USER_ROLE.dualRole ? "" : tempregionList,
+      dualRoleCountry: item.userType === USER_ROLE.dualRole ? tempcountryList : "",
+      dualRoleRegion: item.userType === USER_ROLE.dualRole ? tempregionList : "",
     });
     if (response) {
       //setselfilter(intialFilterState);
@@ -650,6 +744,17 @@ function User({ ...props }) {
     if (item.isGeneralUser) {
       item.userType = USER_ROLE.normalUser;
     }
+
+    // if (item.userType === USER_ROLE.dualRole) {
+    //   item.countryList = "";
+    //   item.regionList = "";
+    //   item.dualRoleCountry = tempcountryList;
+    //   item.dualRoleRegion = tempregionList
+    // } else {
+    //   item.countryList = tempcountryList;
+    //   item.regionList = tempregionList
+    // }
+
     if (!response) {
       response = await postItem({
         ...item,
@@ -658,12 +763,14 @@ function User({ ...props }) {
         emailAddress: emailAddress,
         RoleID: item.userType,
         PreviousRoleID: "",
-        regionList: tempregionList,
-        countryList: tempcountryList,
         lobList: templobList,
         isAccessBreachLog: item.isAccessBreachLog,
         requesterUserId: userProfile.userId,
         profileCountry: item.user[0].profileCountry,
+        countryList: item.userType === USER_ROLE.dualRole ? "" : tempcountryList,
+        regionList: item.userType === USER_ROLE.dualRole ? "" : tempregionList,
+        dualRoleCountry: item.userType === USER_ROLE.dualRole ? tempcountryList : "",
+        dualRoleRegion: item.userType === USER_ROLE.dualRole ? tempregionList : "",
       });
 
       if (response) {
@@ -696,11 +803,62 @@ function User({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+  
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+  
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "user",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   /* search Input functionality */
   const [searchOptions, setsearchOptions] = useState([]);
   useEffect(() => {
     setsearchOptions(userState.approverUsers);
   }, [userState.approverUsers]);
+
+
+  const handleDownload = async() =>{
+    let response = {
+      RegionId: "",
+      CountryId: "",
+      UserType: "",
+      UserName: "",
+      EmailAddress: "",
+    }
+
+    if (isfilterApplied) {
+      if (selfilter.region !== "") {
+        let regionId = frmRegionSelectOpts.filter((item, i) => item.label === selfilter.region)
+        response.RegionId = regionId?.[0]?.value
+      }
+      if (selfilter.country !== "") {
+        let countryId = frmCountrySelectOpts.filter((item, i) => item.label === selfilter.country)
+        response.CountryId = countryId?.[0]?.value
+      }
+      response.UserName = selfilter.username
+      response.EmailAddress = selfilter.email
+      response.UserType = selfilter.usertype
+    }
+    
+    const responsedata = await downloadExcel({
+      UserName: response.UserName,
+      EmailAddress: response.EmailAddress,
+      RegionId: response.RegionId,
+      CountryId: response.CountryId,
+      UserType: response.UserType,
+    }, "User");
+    FileDownload(responsedata, templateName);
+  }
 
   return (
     <>
@@ -791,6 +949,9 @@ function User({ ...props }) {
             defaultSorted={defaultSorted}
             buttonTitle={"New User"}
             hidesearch={true}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -812,7 +973,20 @@ function User({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
           userroles={userroles}
+          dualRoleOpts={dualRoleOpts}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+        {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -839,6 +1013,9 @@ const mapActions = {
   postItem: userActions.postItem,
   deleteItem: userActions.deleteItem,
   getAlllob: lobActions.getAlllob,
+  getLookupByType: lookupActions.getLookupByType,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 
 export default connect(mapStateToProp, mapActions)(User);

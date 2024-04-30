@@ -5,3 +5,20 @@ export const countryConstants = {
   GETALLCOUNTRY_SUCCESS: "GETALLCOUNTRY_SUCCESS",
   GETALLCOUNTRY_FAILURE: "GETALLCOUNTRY_FAILURE",
 };
+
+export const versionHistoryexportFieldTitles = {
+  CountryName: "Country Name",
+  CountryDescription: "Description",
+  RegionName: "Region Name",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const versionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const versionHistoryexportDateFields = {};
+export const versionHistoryexportHtmlFields = [];

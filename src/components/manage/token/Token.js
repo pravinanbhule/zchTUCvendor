@@ -172,6 +172,7 @@ function Token({ ...props }) {
   const putItemHandler = async (item) => {
     let response = await putItem({
       ...item,
+      requesterUserId: userProfile.userId,
     });
     if (response) {
       getAll();
@@ -183,7 +184,8 @@ function Token({ ...props }) {
   };
   const postItemHandler = async (item) => {
     let response = await postItem({
-      ...item
+      ...item,
+      requesterUserId: userProfile.userId,
     });
     if (response) {
       getAll();

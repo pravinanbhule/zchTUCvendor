@@ -1,0 +1,99 @@
+.userview-class {
+    margin-top: 1% !important;
+}
+
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+    font-weight: bold;
+    /* font-size: medium; */
+    color: #2167ad;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+    border-bottom: solid 2px #2167ad !important;
+}
+
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover {
+    cursor: pointer;
+    border-bottom: solid 2px #2167ad !important;
+    border-color: white white white;
+}
+
+.user-view-advance-filter-btn {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    width: 150px;
+    line-height: 29px;
+    height: 30px;
+    border-radius: 15px;
+    padding: 0 15px;
+    color: #2167ad;
+    font-weight: 600;
+    background-color: #ECEEEF;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    display: inline-block;
+}
+
+.user-view-advance-filter-btn-container::before {
+    content: '';
+    height: 1px;
+    width: 100%;
+    border-bottom: 1px solid #5495cf;
+    top: 50%;
+    display: block;
+}
+
+.user-view-advance-filter-btn-container {
+    position: relative;
+    width: 104%;
+    margin: 20px 0;
+    margin-left: -2%;
+    margin-bottom: 45px;
+}
+
+/* .userview-class hr{
+    margin-top: 0% !important;
+    margin-bottom: 1% !important;
+    border-top: solid 2px #2167ad !important;
+} 
+.userview-class, .btn-group, .btn.btn-primary.active {
+    font-weight: bold;
+    border-bottom: solid 2px black !important;
+    background-color: white !important;
+    color: #2167ad !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+}
+.userview-class, .btn-group, .btn.btn-primary {
+    background-color: white !important;
+    color: #2167ad !important;
+    border: none !important;
+    margin-bottom: 0px;
+}
+.userview-class, .btn-group, .btn.btn-primary:hover {
+    font-weight: bold;
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+}
+.userview-class, .btn-group, .btn.focus, .btn:focus{
+    outline: none !important;
+    box-shadow: none !important;
+} */
+
+.exemption-popup-formitems{
+    padding: 20px;
+    padding-bottom: 0px;
+    min-height: 750px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-size: 14px;
+}
+
+.addedit-close-view{
+    margin: 3px;
+}

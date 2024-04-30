@@ -1569,6 +1569,20 @@ function AddEditForm(props) {
                     downloadfile={downloadfile}
                   />
                 </div>
+                <div className="col-md-4">
+                  <FrmInput
+                    title={"Exemption Detail for local addendum"}
+                    name={"exemptionDetailForLocalAddendum"}
+                    value={formfield.exemptionDetailForLocalAddendum}
+                    type={"text"}
+                    handleChange={handleChange}
+                    isReadMode={isReadMode}
+                    isRequired={false}
+                    issubmitted={issubmitted}
+                    isToolTip={true}
+                    tooltipmsg={tooltip["ExemptionDetailForLocalAddendum"]}
+                  />
+                </div>
               </div>
             </div>
             {isEditMode || isReadMode ? (

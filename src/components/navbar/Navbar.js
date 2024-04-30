@@ -32,6 +32,12 @@ function Navbar({ ...props }) {
                   <div className="menu-item">Manage</div>
                 </Link>
             )}
+            {/* {userProfile &&
+              handlePermission("Navbar", "userviewmanage") && (
+                <Link to="/userview">
+                  <div className="menu-item">Manage</div>
+                </Link>
+            )} */}
             {appmenu.isSubmenu ? (
               <div className="submenu-container">
                 {userProfile && handlePermission("Navbar", "region") && (
@@ -196,6 +202,17 @@ function Navbar({ ...props }) {
                       }`}
                     >
                       CO
+                    </div>
+                  </Link>
+                )}
+                {userProfile && handlePermission("Navbar", "userview") && (
+                  <Link to="/userview">
+                    <div
+                      className={`menu-item ${
+                        location.pathname === "/userview" && "active"
+                      }`}
+                    >
+                      User View
                     </div>
                   </Link>
                 )}

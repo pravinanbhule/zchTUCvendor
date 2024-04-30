@@ -12,11 +12,15 @@ function FrmCheckbox(props) {
     issubmitted,
     selectopts,
     isdisabled,
+    inlinetitle,
+    aftercheckbox
   } = props;
 
   return (
-    <div className={`frm-field ${isRequired ? "mandatory" : ""}`}>
-      {title ? (
+    <div className={`frm-field ${isRequired ? "mandatory" : ""} ${
+      inlinetitle ? "inlinetitle" : ""
+    }`}>
+      {title && !aftercheckbox ? (
         <label htmlFor={name} className={`${isdisabled ? "disabled" : ""}`}>
           <div className="label">{title}</div>
         </label>
@@ -29,7 +33,9 @@ function FrmCheckbox(props) {
         <>
           <div className="frm-radiobtns-container">
             {selectopts.map((option, index) => (
-              <div className="radiobtn-container">
+              <div className={`radiobtn-container ${
+                aftercheckbox ? "radiobtn-container-aftertitle mr-2" : ""
+              }`}>
                 <input
                   type="checkbox"
                   id={`opt${name}`}
@@ -50,6 +56,13 @@ function FrmCheckbox(props) {
             ""
           )}
         </>
+      )}
+       {title && aftercheckbox ? (
+        <label htmlFor={name} className={`${isdisabled ? "disabled" : ""}`}>
+          <div className="label">{title}</div>
+        </label>
+      ) : (
+        ""
       )}
     </div>
   );

@@ -8,8 +8,10 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import AddEditForm from "./AddEditForm";
 import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { BranchVersionHistoryExcludeFields, BranchVersionHistoryexportDateFields, BranchVersionHistoryexportFieldTitles, BranchVersionHistoryexportHtmlFields } from "../../../constants";
 function Branch({ ...props }) {
   const { branchState, countryState } = props.state;
   const {
@@ -22,7 +24,11 @@ function Branch({ ...props }) {
     checkIsInUse,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Branch.xlsx";
   useSetNavMenu({ currentMenu: "Branch", isSubmenu: true }, props.menuClick);
   console.log(branchState);
   //initialize filter/search functionality
@@ -133,6 +139,26 @@ function Branch({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.branchId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "branchId",
       text: "branchId",
       sort: true,
@@ -169,7 +195,32 @@ function Branch({ ...props }) {
       dataField: "branchDescription",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {
@@ -278,6 +329,7 @@ function Branch({ ...props }) {
         ...item,
         CreatedById: userProfile.userId,
         ModifiedById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialFilterState);
@@ -298,6 +350,7 @@ function Branch({ ...props }) {
       response = await postItem({
         ...item,
         ModifiedById: userProfile.userId,
+        requesterUserId: userProfile.userId, 
       });
       if (response) {
         //setselfilter(intialFilterState);
@@ -328,10 +381,28 @@ function Branch({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "branch",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -370,6 +441,21 @@ function Branch({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      branchId: "",
+      countryID: "",
+    }
+    if (isfilterApplied) {
+        response.branchId = selfilter.branch
+        response.countryID = selfilter.country
+    }
+    const responsedata = await downloadExcel({
+      BranchId: response?.branchId,
+      CountryID: response.countryID
+    }, "Branch");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Branch</div>
@@ -429,6 +515,9 @@ function Branch({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -441,6 +530,18 @@ function Branch({ ...props }) {
           formIntialState={formIntialState}
           frmCountrySelectOpts={frmCountrySelectOpts}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={BranchVersionHistoryexportFieldTitles}
+          exportDateFields={BranchVersionHistoryexportDateFields}
+          exportHtmlFields={BranchVersionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={BranchVersionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -461,5 +562,7 @@ const mapActions = {
   checkNameExist: branchActions.checkNameExist,
   checkIsInUse: branchActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Branch);

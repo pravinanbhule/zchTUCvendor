@@ -15,6 +15,7 @@ import {
   znaorgnization1Actions,
   znaorgnization2Actions,
   znaorgnization3Actions,
+  userViewActions,
 } from "../../actions";
 import Loading from "../common-components/Loading";
 import useSetNavMenu from "../../customhooks/useSetNavMenu";
@@ -95,6 +96,8 @@ function Breachlog({ ...props }) {
     getallZNASBU,
     getallZNAMarketBasket,
     exportReportLogs,
+    getViewsByUserId,
+    addEditUserView
   } = props;
 
   useSetNavMenu(
@@ -249,6 +252,7 @@ function Breachlog({ ...props }) {
     ZNASegmentOpts: [],
     ZNASBUOpts: [],
     ZNAMarketBasketOpts: [],
+    views: [{ label: "All", value: null }],
   });
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -944,7 +948,7 @@ function Breachlog({ ...props }) {
                   handleShareItem={openShareItem}
                   handleDeleteItem={openDeleteItem}
                   userProfile={userProfile}
-                  isDelete={userProfile?.isAdminGroup ? true : false}
+                  isDelete={userProfile?.isAdminGroup && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                 ></MoreActions>
               </>
             );
@@ -1090,6 +1094,14 @@ function Breachlog({ ...props }) {
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{row.materialBreach ? "Yes" : "No"}</span>;
+      },
+    },
+    {
+      dataField: "materialBreachCategoryValue",
+      text: "Material Breach category",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
       },
     },
     {
@@ -1540,7 +1552,7 @@ function Breachlog({ ...props }) {
       }
     }*/
 
-    if (sellogTabType && !dashboardState.status) {
+    if (sellogTabType && !dashboardState.status && (!userProfile?.breachViewsId || userProfile?.breachViewsId === 'null')) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1654,6 +1666,109 @@ function Breachlog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  const [selectedview, setselectedview] = useState(null);
+  const [viewData, setViewData] = useState([])
+  const [viewResponse, setViewResponse] = useState(false)
+
+  useEffect(()=>{
+    handleViews()
+    setselectedview(null)
+  },[])
+
+  useEffect(()=>{
+    if (userProfile?.breachViewsId && viewResponse && viewData.length !== 0) {
+      onViewFilterSelect( "", userProfile?.breachViewsId)
+    } else if(viewResponse && (userProfile?.breachViewsId || userProfile?.breachViewsId !== 'null')){
+      pageIndex = 1;
+      loadAPIData();
+    }
+  },[viewData, sellogTabType, viewResponse])
+
+  useEffect(() => {
+    if (selectedview && sellogTabType) {
+      handleFilterSearch();
+    }
+  }, [selectedview, sellogTabType]);
+
+  const onViewFilterSelect = async(name, value) => {
+    let selectedViewData = viewData.filter((item, i) => {
+      if (item.breachViewsId === value) {
+        return item
+      }
+    })
+    if (selectedViewData.length !== 0) {
+      selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
+      delete selectedViewData[0]?.entryNumber
+      let countryArray = []
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
+        let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
+        selectedCountryArray.map((id, j) => {
+            countryState.countryItems.map((item, i) => {
+                if (id === item.countryID) {
+                    countryArray.push({
+                        ...item,
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                    })
+                }
+            })
+        })
+      }
+      selectedViewData[0].countryId = countryArray
+
+      let regionArray = []
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        selectedRegionArray.map((id, j) => {
+            regionState.regionItems.map((item, i) => {
+                if (id === item.regionID) {
+                    regionArray.push({
+                        ...item,
+                        label: item.regionName.trim(),
+                        value: item.regionID,
+                    })
+                }
+            })
+        })
+      }
+      selectedViewData[0].regionId = regionArray
+      selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
+      setselfilter(selectedViewData[0])
+      setselectedview(value);
+    } else {
+      value = null;
+      pageIndex = 1;
+      clearFilter();
+    }
+    if (value === null) {
+      setselectedview(value);
+    }
+    await addEditUserView({LogType: 'breachlogs', UserId: userProfile.userId, ViewId: value})
+    let updatedUserProfileData = userProfile
+    updatedUserProfileData.breachViewsId = value
+    localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+  };
+
+  const handleViews = async () => {
+    const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'breachlog' })
+    setViewData(response)
+    let viewFilterOpts = []
+    response.map((item,i) => {
+      viewFilterOpts.push({
+        label: item.viewName,
+        value: item.breachViewsId
+      })
+    })
+    viewFilterOpts.sort(dynamicSort("label"));
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: [{ label: "All", value: null }, ...viewFilterOpts],
+    }));
+    setViewResponse(true)
+  }
+
   const loadCreatorUsers = async () => {
     let tempCreator = await getLogUsers({
       LogType: "breachlogs",
@@ -2066,6 +2181,7 @@ function Breachlog({ ...props }) {
     sbuName: "",
     isdirty: false,
     BreachLogEmailLink: window.location.href,
+    materialBreachCategory: ""
   };
 
   const [formIntialState, setformIntialState] = useState(formInitialValue);
@@ -2284,6 +2400,7 @@ function Breachlog({ ...props }) {
     RootCauseOfTheBreachValue: "Root Cause of the Breach",
     NatureOfBreachValue: "Nature of Breach",
     MaterialBreach: "Material Breach",
+    MaterialBreachCategoryValue: "Material Breach category",
     DateBreachOccurred: "Date Breach Occurred",
     BreachDetails: "Breach Details",
     RangeOfFinancialImpactValue: "Range of financial impact",
@@ -2554,7 +2671,23 @@ function Breachlog({ ...props }) {
       )}
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
-          <div className="page-title">Breach Log</div>
+          <div className="">
+            <div className="title-rfe">
+              <div className="page-title-rfe">Breach Log</div>
+              {commonfilterOpts.views.length > 1 && (
+                <div className="title-dropdown-rfe">
+                  <FrmSelect
+                    title={"Switch view"}
+                    name={"switchview"}
+                    selectopts={commonfilterOpts.views}
+                    handleChange={onViewFilterSelect}
+                    value={selectedview}
+                    inlinetitle={true}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
               {filterbox ? (
@@ -3185,6 +3318,8 @@ const mapActions = {
   getallZNASegments: znaorgnization1Actions.getAllOrgnization,
   getallZNASBU: znaorgnization2Actions.getAllOrgnization,
   getallZNAMarketBasket: znaorgnization3Actions.getAllOrgnization,
+  getViewsByUserId: userViewActions.getViewsByUserId,
+  addEditUserView: commonActions.addEditUserView
 };
 
 export default connect(mapStateToProp, mapActions)(Breachlog);

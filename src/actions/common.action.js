@@ -189,7 +189,38 @@ const getLanguageDetails = (requestParam) => {
     }
   };
 };
-
+const getExemptionUserView = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.getAllExemptionUserViewList(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
+const addEditUserView = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.addEditUserViewService(requestParam);
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
+const downloadExcel = (requestParam, type) => {
+  return async (dispatch) => {
+    try {
+      const response = await commonService.downaloadExcelManage(
+        requestParam, type
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 export const commonActions = {
   uploadFile,
   deleteFile,
@@ -208,7 +239,10 @@ export const commonActions = {
   getAllEntryNumbers,
   getLogCount,
   getLogFields,
-  getLanguageDetails
+  getLanguageDetails,
+  getExemptionUserView,
+  addEditUserView,
+  downloadExcel
 };
 const uploadFileService = async (requestParam) => {
   const response = await Axios.post(`common/uploadfile`, requestParam, {
@@ -304,8 +338,77 @@ const getLanguageDetailsService = async (requestParam) => {
   const response = await Axios.get(`common/getLanguagedetails`, param);
   return response;
 };
+const getAllExemptionUserViewList = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`exemptionviews/getallzugexemptionviewslist`, param);
+  return response;
+};
+const addEditUserViewService = async (requestParam) => {
+  const response = await Axios.post(`common/addedituserview?LogType=${requestParam.LogType}&UserId=${requestParam.UserId}&ViewId=${requestParam.ViewId}`);
+  return response;
+};
+const downaloadExcelManage = async(requestParam, type) => {
+  const param = { params: requestParam, responseType: "blob" };
+  let response;
+  switch (type) {
+    case "Region":
+      response = await Axios.get(`region/getallregiondownload`, param);
+      return response;
+    case "Country":
+      response = await Axios.get(`country/getallcountrydownload`, param);
+      return response;
+    case "Segment":
+      response = await Axios.get(`segment/getallsegmentdownload`, param);
+      return response;
+    case "LoB":
+      response = await Axios.get(`lob/getalllobdownload`, param);
+      return response;
+    case "SubLoB":
+      response = await Axios.get(`sublob/getallsublobdownload`, param);
+      return response;
+    case "LoBChapter":
+      response = await Axios.get(`lobchapter/getalllobchapterdownload`, param);
+      return response;
+    case "ZNAOrganization1":
+      response = await Axios.get(`znaorganisation/getallznasegmentdownload`, param);
+      return response;
+    case "ZNAOrganization2":
+      response = await Axios.get(`znaorganisation/getallznasbudownload`, param);
+      return response;
+    case "ZNAOrganization3":
+      response = await Axios.get(`znaorganisation/getallmarketbasketdownload`, param);
+      return response;
+    case "ZNAOrganization4":
+      response = await Axios.get(`znaorganisation/getallznaproductsdownload`, param);
+      return response;
+    case "Office":
+      response = await Axios.get(`office/getallofficedownload`, param);
+      return response;
+    case "Branch":
+      response = await Axios.get(`branch/getallbranchdownload`, param);
+      return response;
+    case "Currency":
+      response = await Axios.get(`currency/getallcurrencydownload`, param);
+      return response;
+    case "CO":
+      response = await Axios.get(`co/getallcodownload`, param);
+      return response;
+    case "UserView":
+      response = await Axios.get(`userview/getalluserviewdownload`, param);
+      return response;
+    case "User":
+      response = await Axios.get(`user/getalluserdownload`, param);
+      return response;
+    case "Lookup":
+      response = await Axios.get(`lookup/getalllookupdownload`, param);
+      return response;
+    default:
+      break;
+  }
+}
 
 const commonService = {
+  getAllExemptionUserViewList,
   uploadFileService,
   deleteFileService,
   downloadFileService,
@@ -323,5 +426,7 @@ const commonService = {
   getLogCountService,
   getLogFieldsService,
   getLanguageDetailsService,
-  getMasterVersionService
+  getMasterVersionService,
+  addEditUserViewService,
+  downaloadExcelManage
 };
