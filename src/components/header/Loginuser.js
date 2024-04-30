@@ -86,6 +86,9 @@ function LoggedInUser({ ...props }) {
             userprofile.isLoBAdmin = true;
             userprofile.isAdminGroup = true;
           }
+          if (userRoles.roleId === USER_ROLE.normalUser) {
+            localStorage.setItem("Role", "NormalUser")
+          }
           localStorage.setItem("UserProfile", JSON.stringify(userprofile))
           tempUserProfile = {
             ...tempUserProfile,
@@ -127,6 +130,8 @@ function LoggedInUser({ ...props }) {
     setshowlogout(false);
     TokenService.removeUser();
     await oktaAuth.signOut();
+    localStorage.clear();
+    sessionStorage.clear();
     //window.location.reload(true);
   };
   const [showlogout, setshowlogout] = useState(false);
