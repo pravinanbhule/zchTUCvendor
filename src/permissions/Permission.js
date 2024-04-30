@@ -172,21 +172,21 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false === true ? true : false,
             },
             rfelogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             exemptionlogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             }
         },
         RegionAdmin: {
@@ -225,21 +225,21 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             rfelogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             exemptionlogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             }
         },
         CountryAdmin: {
@@ -273,21 +273,21 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             rfelogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             exemptionlogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             }
         },
         NormalUser: {
@@ -321,21 +321,21 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             rfelogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             exemptionlogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             }
         },
         CountrySuperAdmin: {
@@ -415,21 +415,21 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             rfelogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             exemptionlogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             }
         },
         Auditor: {
@@ -596,21 +596,21 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false, 
             },
             rfelogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             },
             exemptionlogs: {
                 isAdd: true,
                 isEdit: true,
                 isExport: true,
                 isImport: true,
-                isDelete: true
+                isDelete: userProfile?.isAccessDeleteLog === true ? true : false,
             }
         },
     }
