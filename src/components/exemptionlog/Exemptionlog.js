@@ -45,6 +45,8 @@ import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
 import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 import { handlePermission } from "../../permissions/Permission";
+import FrmCheckbox from "../common-components/frmcheckbox/FrmCheckbox";
+import FrmToggleSwitch from "../common-components/frmtoggelswitch/FrmToggleSwitch";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -292,6 +294,8 @@ function Exemptionlog({ ...props }) {
       value: "urpm",
     },
   ]);
+  const [nolonger, setnolonger] = useState(false);
+  const [ZUGnolonger, setZUGnolonger] = useState('');
   const [selectedExemptionLog, setselectedExemptionLog] = useState("zug");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -1564,6 +1568,14 @@ function Exemptionlog({ ...props }) {
         sortExp: selSortFiled.name + " " + selSortFiled.order,
       };
     }
+
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        status: ZUGnolonger,
+      }
+    }
+
     try {
       let tempItems = [];
       const dbvalues = await Promise.all([
@@ -1910,14 +1922,20 @@ function Exemptionlog({ ...props }) {
     let tempZUGStatus = lookupvalues[0];
     let tempURPMSection = lookupvalues[1];
     let tempTypeOfExemption = lookupvalues[2];
+    let nolongerZUG = [];
     tempZUGStatus.forEach((item) => {
       if (item.isActive) {
+        if (item.lookUpName !== 'Withdrawn' && item.lookUpName !== 'No Longer Required' ) {
+          nolongerZUG.push(item.lookupID)
+        }
         tempopts.push({
           label: item.lookUpValue,
           value: item.lookupID,
         });
       }
     });
+    nolongerZUG = nolongerZUG.toString();
+    setZUGnolonger(nolongerZUG)
     tempZUGStatus = [...tempopts];
     tempopts = [];
     tempURPMSection.forEach((item) => {
@@ -1960,6 +1978,14 @@ function Exemptionlog({ ...props }) {
       setDashboardFilters();
     }
   };
+
+  useEffect(()=>{
+    if (nolonger === true) {
+      loadAPIData();
+    } else {
+      loadAPIData();
+    }
+  },[nolonger])
   
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([])
@@ -3497,7 +3523,7 @@ function Exemptionlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          <div style={{ paddingLeft: "20px" }}>
+          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
             <div className="frm-filter">
               <FrmRadio
                 title={"Exemption Log Type"}
@@ -3507,6 +3533,17 @@ function Exemptionlog({ ...props }) {
                 value={selectedExemptionLog}
                 isdisabled={!alllogsloaded}
               />
+            </div>
+            <div className="frm-filter toggle-btn-header">
+                <FrmToggleSwitch
+                  title={"No Longer Required/Withdrawn"}
+                  name={"nolongerrequired"}
+                  value={nolonger}
+                  handleChange={(name, value)=>{setnolonger(value)}}
+                  isRequired={false}
+                  selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
+                  isdisabled={!alllogsloaded}
+                />
             </div>
           </div>
           <div className="tabs-container">

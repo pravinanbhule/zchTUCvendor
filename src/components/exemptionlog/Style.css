@@ -6,3 +6,9 @@
     margin-top:5px;
     width:80px;
 }
+
+.toggle-btn-header .toggle-switch-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
