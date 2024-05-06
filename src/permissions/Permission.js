@@ -568,21 +568,21 @@ export function handlePermission(page, name) {
             breachlogs: {
                 isAdd: false,
                 isEdit: false,
-                isExport: false,
+                isExport: true,
                 isImport: false,
                 isDelete: false
             },
             rfelogs: {
                 isAdd: false,
                 isEdit: false,
-                isExport: false,
+                isExport: true,
                 isImport: false,
                 isDelete: false
             },
             exemptionlogs: {
                 isAdd: false,
                 isEdit: false,
-                isExport: false,
+                isExport: true,
                 isImport: false,
                 isDelete: false
             }

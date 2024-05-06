@@ -658,21 +658,21 @@ function User({ ...props }) {
   };
   const putItemHandler = async (item) => {
     const { userId, firstName, lastName, emailAddress } = item.user[0];
-    let tempcountryList = item.countryList.map((item) => item.value);
+    let tempcountryList = item?.countryList.map((item) => item.value);
     let tempunauthorizedCountryList = unauthorizedCountries.map(
       (item) => item.value
     );
     tempcountryList = [...tempcountryList, ...tempunauthorizedCountryList].join(
       ","
     );
-    let tempregionList = item.regionList.map((item) => item.value);
+    let tempregionList = item?.regionList.map((item) => item.value);
     let tempunauthorizedRegionList = unathorizedRegions.map(
       (item) => item.value
     );
     tempregionList = [...tempregionList, ...tempunauthorizedRegionList].join(
       ","
     );
-    let templobList = item.lobList.map((item) => item.value);
+    let templobList = item?.lobList.map((item) => item.value);
     templobList = templobList.join(",")
   
     if (item.isSuperAdmin) {
