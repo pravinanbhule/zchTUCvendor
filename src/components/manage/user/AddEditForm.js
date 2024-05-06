@@ -344,6 +344,14 @@ function AddEditForm(props) {
       ) {
         return;
       }
+      if (
+        (frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+        frmuserTypeObj[formfield.userType] === "Auditor") &&
+        formfield.regionList.length > 0 && 
+        formfield.countryList.length === 0
+      ) {
+        return;
+      }
       if (isEditMode) {
         putItem(formfield);
       } else {
@@ -524,7 +532,7 @@ function AddEditForm(props) {
                     name={"countryList"}
                     value={formfield.countryList ? formfield.countryList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin" ? false : true}
+                    isRequired={(frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin") && formfield.regionList.length === 0 ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
