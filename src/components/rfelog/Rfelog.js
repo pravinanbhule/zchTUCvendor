@@ -1039,7 +1039,7 @@ function Rfelog({ ...props }) {
   useEffect(()=>{
     if (userProfile?.rfeViewsId && viewResponse && viewData.length !== 0) {
       onUserViewFilterSelect( "", userProfile?.rfeViewsId)
-    } else if (viewResponse && (userProfile?.rfeViewsId || userProfile?.rfeViewsId !== 'null')) {
+    } else if (viewResponse && (userProfile?.rfeViewsId && userProfile?.rfeViewsId !== 'null')) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1136,6 +1136,11 @@ function Rfelog({ ...props }) {
     if (value === null) {
       setSelectedUserview(value);
     }
+    let data = commonfilterOpts.userViews.filter((item) => item.label !== "All")
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      userViews: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+    }));
     await addEditUserView({LogType: 'rfelogs', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
     updatedUserProfileData.rfeViewsId = value
@@ -1155,7 +1160,7 @@ function Rfelog({ ...props }) {
     viewFilterOpts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      userViews: [{ label: "All", value: null }, ...viewFilterOpts],
+      userViews: userProfile?.rfeViewsId && userProfile?.rfeViewsId !== 'null' ? [{ label: "All", value: null }, ...viewFilterOpts] : [...viewFilterOpts],
     }));
     setViewResponse(true)
   }
@@ -1249,7 +1254,6 @@ function Rfelog({ ...props }) {
     let SingaporeOpts = [];
     let SpainOpts = [];
     let UKOpts = [];
-    console.log("temprfeempourment>>>", temprfeempourment);
     temprfeempourment.forEach((item) => {
         if (item.isActive) {
             if (item.lookUpType.includes("Australia")) {

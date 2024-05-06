@@ -2041,6 +2041,11 @@ function Exemptionlog({ ...props }) {
     if (value === null) {
       setselectedview(value);
     }
+    let data = commonfilterOpts.views.filter((item) => item.label !== "All")
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+    }));
     await addEditUserView({LogType: selectedExemptionLog ? selectedExemptionLog : 'zug', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
     if (selectedExemptionLog === 'urpm') {
@@ -2062,9 +2067,24 @@ function Exemptionlog({ ...props }) {
       })
     })
     viewFilterOpts.sort(dynamicSort("label"));
+    let view;
+    if (response[0].zugExemptionViewsId) {
+      if (userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") {
+        view = [{ label: "All", value: null }, ...viewFilterOpts]
+      } else {
+        view = [...viewFilterOpts]
+      }
+    }
+    if (response[0].urpmExemptionViewsId) {
+      if (userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== "null") {
+        view = [{ label: "All", value: null }, ...viewFilterOpts]
+      } else {
+        view = [...viewFilterOpts]
+      }
+    }
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      views: [{ label: "All", value: null }, ...viewFilterOpts],
+      views: view,
     }));
     setViewResponse(true)
   }
