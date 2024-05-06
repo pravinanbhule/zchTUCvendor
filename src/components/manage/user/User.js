@@ -488,6 +488,10 @@ function User({ ...props }) {
     userState.userRoles.forEach((item) => {
       if (
         (userroles.iscountryadmin && item.roleId === USER_ROLE.countryAdmin) ||
+        (userroles.iscountrysuperadmin && 
+          (item.roleId === USER_ROLE.countryAdmin ||
+            item.roleId === USER_ROLE.countrySuperAdmin ||
+            item.roleId === USER_ROLE.auditor)) ||
         (USER_ROLE.regionAdmin &&
           (item.roleId === USER_ROLE.countryAdmin ||
             item.roleId === USER_ROLE.regionAdmin ||
@@ -505,7 +509,7 @@ function User({ ...props }) {
             value: item.roleId,
           });
         }
-        if (userProfile.isCountrySuperAdmin && item.roleId === USER_ROLE.countryAdmin) {
+        if (userProfile.isCountrySuperAdmin && item.roleId !== USER_ROLE.normalUser && item.roleId !== USER_ROLE.regionAdmin) {
           tempuserroles.push({
             label: item.displayRole,
             value: item.roleId,
