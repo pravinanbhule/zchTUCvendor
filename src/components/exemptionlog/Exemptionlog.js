@@ -1962,8 +1962,8 @@ function Exemptionlog({ ...props }) {
   };
   
   const [selectedview, setselectedview] = useState(null);
-  const [viewData, setViewData] = useState([])
-  const [viewResponse, setViewResponse] = useState(false)
+  const [viewData, setViewData] = useState([]);
+  const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
     handleViews()
@@ -1997,7 +1997,7 @@ function Exemptionlog({ ...props }) {
     })
     if (selectedViewData.length !== 0) {
       let countryArray = []
-      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0) {
+      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0 && typeof selectedViewData[0]?.countryID === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
         selectedCountryArray?.map((id, j) => {
             countryState.countryItems.map((item, i) => {
@@ -2015,7 +2015,7 @@ function Exemptionlog({ ...props }) {
       selectedViewData[0].countryID = countryArray
 
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         selectedRegionArray?.map((id, j) => {
             regionState.regionItems.map((item, i) => {
@@ -3255,7 +3255,7 @@ function Exemptionlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Exemption Log</div>
-              {commonfilterOpts.views.length > 1 && (
+              {viewData.length > 1 && (
                 <div className="title-dropdown-rfe">
                   <FrmSelect
                     title={"Switch view"}
@@ -3264,6 +3264,7 @@ function Exemptionlog({ ...props }) {
                     handleChange={onViewFilterSelect}
                     value={selectedview}
                     inlinetitle={true}
+                    isdisabled={isLoadingStarted}
                   />
                 </div>
               )}

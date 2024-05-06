@@ -1034,7 +1034,7 @@ function Rfelog({ ...props }) {
   
   const [selectedUserView, setSelectedUserview] = useState(null);
   const [viewData, setViewData] = useState([]);
-  const [viewResponse, setViewResponse] = useState(false)
+  const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
     if (userProfile?.rfeViewsId && viewResponse && viewData.length !== 0) {
@@ -1060,7 +1060,7 @@ function Rfelog({ ...props }) {
     })
     if (selectedViewData.length !== 0) {
       let countryArray = []
-      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0 && typeof selectedViewData[0]?.countryId === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         if (selectedCountryArray) {
           selectedCountryArray.map((id, j) => {
@@ -1078,7 +1078,7 @@ function Rfelog({ ...props }) {
         }
       }
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         let regionData = await getAllRegion();
         if (selectedRegionArray) {
@@ -2332,7 +2332,7 @@ function Rfelog({ ...props }) {
             <div className="title-rfe">
               <div className="page-title-rfe">RfE Log</div>
               <div className="" style={{display:'flex'}}>
-                {commonfilterOpts.userViews.length > 1 && (
+                {viewData.length > 1 && (
                   <div className="title-dropdown-rfe">
                     <FrmSelect
                       title={"Switch view"}
@@ -2341,6 +2341,7 @@ function Rfelog({ ...props }) {
                       handleChange={onUserViewFilterSelect}
                       value={selectedUserView}
                       inlinetitle={true}
+                      isdisabled={isLoadingStarted}
                       />
                   </div>
                 )}

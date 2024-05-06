@@ -1668,8 +1668,8 @@ function Breachlog({ ...props }) {
   };
 
   const [selectedview, setselectedview] = useState(null);
-  const [viewData, setViewData] = useState([])
-  const [viewResponse, setViewResponse] = useState(false)
+  const [viewData, setViewData] = useState([]);
+  const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
     handleViews()
@@ -1701,7 +1701,7 @@ function Breachlog({ ...props }) {
       selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
       delete selectedViewData[0]?.entryNumber
       let countryArray = []
-      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0 && typeof selectedViewData[0]?.countryId === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         selectedCountryArray.map((id, j) => {
             countryState.countryItems.map((item, i) => {
@@ -1719,7 +1719,7 @@ function Breachlog({ ...props }) {
       selectedViewData[0].countryId = countryArray
 
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         selectedRegionArray.map((id, j) => {
             regionState.regionItems.map((item, i) => {
@@ -2679,7 +2679,7 @@ function Breachlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Breach Log</div>
-              {commonfilterOpts.views.length > 1 && (
+              {viewData.length > 1 &&   (
                 <div className="title-dropdown-rfe">
                   <FrmSelect
                     title={"Switch view"}
@@ -2688,6 +2688,7 @@ function Breachlog({ ...props }) {
                     handleChange={onViewFilterSelect}
                     value={selectedview}
                     inlinetitle={true}
+                    isdisabled={isLoadingStarted}
                   />
                 </div>
               )}
