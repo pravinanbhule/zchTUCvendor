@@ -320,15 +320,15 @@ function AddEditForm(props) {
       }
       if (
         frmuserTypeObj[formfield.userType] === "Country" &&
-        !formfield.regionList.length &&
-        !formfield.countryList.length
+        (!formfield.regionList.length ||
+        !formfield.countryList.length)
       ) {
         return;
       }
       if (
         frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
-        !formfield.regionList.length &&
-        !formfield.countryList.length
+        (!formfield.regionList.length ||
+        !formfield.countryList.length)
       ) {
         return;
       }
@@ -341,6 +341,14 @@ function AddEditForm(props) {
       if (
         frmuserTypeObj[formfield.userType] === "DualRole" &&
         !formfield.dualRole
+      ) {
+        return;
+      }
+      if (
+        (frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+        frmuserTypeObj[formfield.userType] === "Auditor") &&
+        formfield.regionList.length > 0 && 
+        formfield.countryList.length === 0
       ) {
         return;
       }
@@ -502,7 +510,7 @@ function AddEditForm(props) {
                   name={"regionList"}
                   value={formfield.regionList ? formfield.regionList : []}
                   handleChange={handleMultiSelectChange}
-                  isRequired={true}
+                  isRequired={frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin"  ? false : true}
                   validationmsg={"Mandatory field"}
                   issubmitted={issubmitted}
                   selectopts={regionopts}
@@ -524,7 +532,7 @@ function AddEditForm(props) {
                     name={"countryList"}
                     value={formfield.countryList ? formfield.countryList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={true}
+                    isRequired={(frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin") && formfield.regionList.length === 0 ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
@@ -559,7 +567,7 @@ function AddEditForm(props) {
                     name={"lobList"}
                     value={formfield.lobList ? formfield.lobList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={true}
+                    isRequired={frmuserTypeObj[formfield.userType] === "Auditor" ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={lobopts}

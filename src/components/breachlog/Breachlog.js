@@ -1698,8 +1698,8 @@ function Breachlog({ ...props }) {
   },[nolonger])
 
   const [selectedview, setselectedview] = useState(null);
-  const [viewData, setViewData] = useState([])
-  const [viewResponse, setViewResponse] = useState(false)
+  const [viewData, setViewData] = useState([]);
+  const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
     handleViews()
@@ -1709,7 +1709,7 @@ function Breachlog({ ...props }) {
   useEffect(()=>{
     if (userProfile?.breachViewsId && viewResponse && viewData.length !== 0) {
       onViewFilterSelect( "", userProfile?.breachViewsId)
-    } else if(viewResponse && (userProfile?.breachViewsId || userProfile?.breachViewsId !== 'null')){
+    } else if(viewResponse && (userProfile?.breachViewsId && userProfile?.breachViewsId !== 'null')){
       pageIndex = 1;
       loadAPIData();
     }
@@ -1731,7 +1731,7 @@ function Breachlog({ ...props }) {
       selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
       delete selectedViewData[0]?.entryNumber
       let countryArray = []
-      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0 && typeof selectedViewData[0]?.countryId === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         selectedCountryArray.map((id, j) => {
             countryState.countryItems.map((item, i) => {
@@ -1749,7 +1749,7 @@ function Breachlog({ ...props }) {
       selectedViewData[0].countryId = countryArray
 
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         selectedRegionArray.map((id, j) => {
             regionState.regionItems.map((item, i) => {
@@ -1775,6 +1775,11 @@ function Breachlog({ ...props }) {
     if (value === null) {
       setselectedview(value);
     }
+    let data = commonfilterOpts.views.filter((item) => item.label !== "All")
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+    }));
     await addEditUserView({LogType: 'breachlogs', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
     updatedUserProfileData.breachViewsId = value
@@ -1794,7 +1799,7 @@ function Breachlog({ ...props }) {
     viewFilterOpts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      views: [{ label: "All", value: null }, ...viewFilterOpts],
+      views: userProfile?.breachViewsId && userProfile?.breachViewsId !== 'null' ?  [{ label: "All", value: null }, ...viewFilterOpts] : [...viewFilterOpts] ,
     }));
     setViewResponse(true)
   }
@@ -2704,7 +2709,7 @@ function Breachlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Breach Log</div>
-              {commonfilterOpts.views.length > 1 && (
+              {viewData.length > 1 &&   (
                 <div className="title-dropdown-rfe">
                   <FrmSelect
                     title={"Switch view"}
@@ -2713,6 +2718,7 @@ function Breachlog({ ...props }) {
                     handleChange={onViewFilterSelect}
                     value={selectedview}
                     inlinetitle={true}
+                    isdisabled={isLoadingStarted}
                   />
                 </div>
               )}

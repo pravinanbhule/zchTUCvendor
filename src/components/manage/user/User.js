@@ -488,6 +488,10 @@ function User({ ...props }) {
     userState.userRoles.forEach((item) => {
       if (
         (userroles.iscountryadmin && item.roleId === USER_ROLE.countryAdmin) ||
+        (userroles.iscountrysuperadmin && 
+          (item.roleId === USER_ROLE.countryAdmin ||
+            item.roleId === USER_ROLE.countrySuperAdmin ||
+            item.roleId === USER_ROLE.auditor)) ||
         (USER_ROLE.regionAdmin &&
           (item.roleId === USER_ROLE.countryAdmin ||
             item.roleId === USER_ROLE.regionAdmin ||
@@ -505,7 +509,7 @@ function User({ ...props }) {
             value: item.roleId,
           });
         }
-        if (userProfile.isCountrySuperAdmin && item.roleId === USER_ROLE.countryAdmin) {
+        if (userProfile.isCountrySuperAdmin && item.roleId !== USER_ROLE.normalUser && item.roleId !== USER_ROLE.regionAdmin) {
           tempuserroles.push({
             label: item.displayRole,
             value: item.roleId,
@@ -658,21 +662,21 @@ function User({ ...props }) {
   };
   const putItemHandler = async (item) => {
     const { userId, firstName, lastName, emailAddress } = item.user[0];
-    let tempcountryList = item.countryList.map((item) => item.value);
+    let tempcountryList = item?.countryList.map((item) => item.value);
     let tempunauthorizedCountryList = unauthorizedCountries.map(
       (item) => item.value
     );
     tempcountryList = [...tempcountryList, ...tempunauthorizedCountryList].join(
       ","
     );
-    let tempregionList = item.regionList.map((item) => item.value);
+    let tempregionList = item?.regionList.map((item) => item.value);
     let tempunauthorizedRegionList = unathorizedRegions.map(
       (item) => item.value
     );
     tempregionList = [...tempregionList, ...tempunauthorizedRegionList].join(
       ","
     );
-    let templobList = item.lobList.map((item) => item.value);
+    let templobList = item?.lobList.map((item) => item.value);
     templobList = templobList.join(",")
   
     if (item.isSuperAdmin) {

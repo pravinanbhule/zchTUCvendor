@@ -64,7 +64,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 29px;
+  /* right: 29px; */
   border: 0 solid #bbb;
   border-radius: 15px;
   transition: all 0.3s ease-in 0s;

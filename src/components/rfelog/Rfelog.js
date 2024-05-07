@@ -1043,12 +1043,12 @@ function Rfelog({ ...props }) {
   
   const [selectedUserView, setSelectedUserview] = useState(null);
   const [viewData, setViewData] = useState([]);
-  const [viewResponse, setViewResponse] = useState(false)
+  const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
     if (userProfile?.rfeViewsId && viewResponse && viewData.length !== 0) {
       onUserViewFilterSelect( "", userProfile?.rfeViewsId)
-    } else if (viewResponse && (userProfile?.rfeViewsId || userProfile?.rfeViewsId !== 'null')) {
+    } else if (viewResponse && (userProfile?.rfeViewsId && userProfile?.rfeViewsId !== 'null')) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1069,7 +1069,7 @@ function Rfelog({ ...props }) {
     })
     if (selectedViewData.length !== 0) {
       let countryArray = []
-      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0) {
+      if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0 && typeof selectedViewData[0]?.countryId === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         if (selectedCountryArray) {
           selectedCountryArray.map((id, j) => {
@@ -1087,7 +1087,7 @@ function Rfelog({ ...props }) {
         }
       }
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         let regionData = await getAllRegion();
         if (selectedRegionArray) {
@@ -1145,6 +1145,11 @@ function Rfelog({ ...props }) {
     if (value === null) {
       setSelectedUserview(value);
     }
+    let data = commonfilterOpts.userViews.filter((item) => item.label !== "All")
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      userViews: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+    }));
     await addEditUserView({LogType: 'rfelogs', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
     updatedUserProfileData.rfeViewsId = value
@@ -1164,7 +1169,7 @@ function Rfelog({ ...props }) {
     viewFilterOpts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      userViews: [{ label: "All", value: null }, ...viewFilterOpts],
+      userViews: userProfile?.rfeViewsId && userProfile?.rfeViewsId !== 'null' ? [{ label: "All", value: null }, ...viewFilterOpts] : [...viewFilterOpts],
     }));
     setViewResponse(true)
   }
@@ -1264,7 +1269,6 @@ function Rfelog({ ...props }) {
     let SingaporeOpts = [];
     let SpainOpts = [];
     let UKOpts = [];
-    console.log("temprfeempourment>>>", temprfeempourment);
     temprfeempourment.forEach((item) => {
         if (item.isActive) {
             if (item.lookUpType.includes("Australia")) {
@@ -2351,7 +2355,7 @@ function Rfelog({ ...props }) {
             <div className="title-rfe">
               <div className="page-title-rfe">RfE Log</div>
               <div className="" style={{display:'flex'}}>
-                {commonfilterOpts.userViews.length > 1 && (
+                {viewData.length > 1 && (
                   <div className="title-dropdown-rfe">
                     <FrmSelect
                       title={"Switch view"}
@@ -2360,6 +2364,7 @@ function Rfelog({ ...props }) {
                       handleChange={onUserViewFilterSelect}
                       value={selectedUserView}
                       inlinetitle={true}
+                      isdisabled={isLoadingStarted}
                       />
                   </div>
                 )}
