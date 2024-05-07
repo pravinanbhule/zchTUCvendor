@@ -3555,17 +3555,19 @@ function Exemptionlog({ ...props }) {
                 isdisabled={!alllogsloaded}
               />
             </div>
-            <div className="frm-filter toggle-btn-header">
-                <FrmToggleSwitch
-                  title={"No Longer Required/Withdrawn"}
-                  name={"nolongerrequired"}
-                  value={nolonger}
-                  handleChange={(name, value)=>{setnolonger(value)}}
-                  isRequired={false}
-                  selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
-                  isdisabled={!alllogsloaded}
-                />
-            </div>
+            {sellogTabType === 'all' &&
+              <div className="frm-filter toggle-btn-header">
+                  <FrmToggleSwitch
+                    title={"No Longer Required/Withdrawn"}
+                    name={"nolongerrequired"}
+                    value={nolonger}
+                    handleChange={(name, value)=>{setnolonger(value)}}
+                    isRequired={false}
+                    selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
+                    isdisabled={!alllogsloaded}
+                    />
+              </div>
+            }
           </div>
           <div className="tabs-container">
             {logTypes.map((item) => (

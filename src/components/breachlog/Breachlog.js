@@ -3222,20 +3222,22 @@ function Breachlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
-            <div className="frm-filter">
+          {sellogTabType === 'all' &&
+            <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
+              <div className="frm-filter">
+              </div>
+              <div className="frm-filter toggle-btn-header">
+                  <FrmToggleSwitch
+                    title={"Closed"}
+                    name={"closed"}
+                    value={nolonger}
+                    handleChange={(name, value)=>{setnolonger(value)}}
+                    isRequired={false}
+                    selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
+                  />
+              </div>
             </div>
-            <div className="frm-filter toggle-btn-header">
-                <FrmToggleSwitch
-                  title={"Closed"}
-                  name={"closed"}
-                  value={nolonger}
-                  handleChange={(name, value)=>{setnolonger(value)}}
-                  isRequired={false}
-                  selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
-                />
-            </div>
-          </div>
+          }
           <div className="tabs-container">
             {logTypes.map((item) => (
               <div
