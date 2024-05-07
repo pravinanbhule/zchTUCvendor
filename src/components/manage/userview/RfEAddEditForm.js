@@ -484,7 +484,7 @@ function RfelogAddEditForm({ ...props }) {
             getAllCurrency();
             getAllBranch();
             getAllSublob();
-            getAllSegment({ logType: "rfelogs" });
+            getAllSegment({ logType: "rfelogsAll" });
             getAlllob({ isActive: true });
             loadCreatorUsers();
             loadUnderwriterUsers();
@@ -499,6 +499,13 @@ function RfelogAddEditForm({ ...props }) {
         fnOnInit();
     }, []);
 
+    const setOpts = (varValue, item) => {
+        varValue.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+        })
+    }
+
     const loadfilterdata = async () => {
         const lookupvalues = await Promise.all([
             getLookupByType({
@@ -511,7 +518,7 @@ function RfelogAddEditForm({ ...props }) {
                 LookupType: "RFECHZ",
             }),
             getLookupByType({
-                LookupType: "RFEEmpowermentReasonRequest",
+                LookupType: "RFEEmpowermentReasonRequestAll",
             }),
             getLookupByType({
                 LookupType: "DurationofApproval"
@@ -565,14 +572,93 @@ function RfelogAddEditForm({ ...props }) {
         });
         temprfechz = [...tempopts];
         tempopts = [];
+        let AustraliaOpts = [];
+        let BeneluxOpts = [];
+        let ChinaOpts = [];
+        let FranceOpts = [];
+        let GermanyOpts = [];
+        let HongKongOpts = [];
+        let IndiaOpts = [];
+        let IndonesiaOpts = [];
+        let ItalyOpts = [];
+        let LatAmOpts = [];
+        let MalaysiaOpts = [];
+        let MiddleEastOpts = [];
+        let NordicOpts = [];
+        let SingaporeOpts = [];
+        let SpainOpts = [];
+        let UKOpts = [];
         temprfeempourment.forEach((item) => {
             if (item.isActive) {
-                tempopts.push({
-                    label: item.lookUpValue,
-                    value: item.lookupID,
-                });
+                if (item.lookUpType.includes("Australia")) {
+                    setOpts(AustraliaOpts, item)
+                }
+                if (item.lookUpType.includes("Benelux")) {
+                    setOpts(BeneluxOpts, item)
+                }
+                if (item.lookUpType.includes("China")) {
+                    setOpts(ChinaOpts, item)
+                }
+                if (item.lookUpType.includes("France")) {
+                    setOpts(FranceOpts, item)
+                }
+                if (item.lookUpType.includes("Germany")) {
+                    setOpts(GermanyOpts, item)
+                }
+                if (item.lookUpType.includes("HongKong")) {
+                    setOpts(HongKongOpts, item)
+                }
+                if (item.lookUpType.includes("India")) {
+                    setOpts(IndiaOpts, item)
+                }
+                if (item.lookUpType.includes("Indonesia")) {
+                    setOpts(IndonesiaOpts, item)
+                }
+                if (item.lookUpType.includes("Italy")) {
+                    setOpts(ItalyOpts, item)
+                }
+                if (item.lookUpType.includes("LatAm")) {
+                    setOpts(LatAmOpts, item)
+                }
+                if (item.lookUpType.includes("Malaysia")) {
+                    setOpts(MalaysiaOpts, item)
+                }
+                if (item.lookUpType.includes("MiddleEast")) {
+                    setOpts(MiddleEastOpts, item)
+                }
+                if (item.lookUpType.includes("Nordic")) {
+                    setOpts(NordicOpts, item)
+                }
+                if (item.lookUpType.includes("Singapore")) {
+                    setOpts(SingaporeOpts, item)
+                }
+                if (item.lookUpType.includes("Spain")) {
+                    setOpts(SpainOpts, item)
+                }
+                if (item.lookUpType.includes("UK")) {
+                    setOpts(UKOpts, item)
+                }
+                if (item.lookUpType.length === 27) {
+                    setOpts(tempopts, item)
+                }
             }
         });
+        AustraliaOpts.sort(dynamicSort("label"));
+        BeneluxOpts.sort(dynamicSort("label"));
+        ChinaOpts.sort(dynamicSort("label"));
+        FranceOpts.sort(dynamicSort("label"));
+        GermanyOpts.sort(dynamicSort("label"));
+        HongKongOpts.sort(dynamicSort("label"));
+        IndiaOpts.sort(dynamicSort("label"));
+        IndonesiaOpts.sort(dynamicSort("label"));
+        ItalyOpts.sort(dynamicSort("label"));
+        LatAmOpts.sort(dynamicSort("label"));
+        MalaysiaOpts.sort(dynamicSort("label"));
+        MiddleEastOpts.sort(dynamicSort("label"));
+        NordicOpts.sort(dynamicSort("label"));
+        SingaporeOpts.sort(dynamicSort("label"));
+        SpainOpts.sort(dynamicSort("label"));
+        UKOpts.sort(dynamicSort("label"));
         temprfeempourment = [...tempopts];
         tempopts = [];
         tempDurationOfApproval.forEach((item) => {
@@ -610,6 +696,7 @@ function RfelogAddEditForm({ ...props }) {
         temporgnizationalalignment.sort(dynamicSort("label"));
         temprfechz.sort(dynamicSort("label"));
         temprfeempourment.sort(dynamicSort("label"));
+        console.log("temprfeempourment>>>", temprfeempourment);
         tempDurationOfApproval.sort(dynamicSort("label"));
         tempNewRenewal.sort(dynamicSort("label"));
         tempCondition.sort(dynamicSort("label"));
@@ -617,7 +704,26 @@ function RfelogAddEditForm({ ...props }) {
             ...prevstate,
             statusFilterOpts: [selectInitiVal, ...tempStatus],
             organizationalAlignmentOpts: [selectInitiVal, ...temporgnizationalalignment],
-            requestForEmpowermentReasonOpts: [selectInitiVal, ...temprfeempourment],
+            requestForEmpowermentReasonOpts: [
+                selectInitiVal, 
+                ...temprfeempourment,
+                {type: 'group', name: 'Australia', items: AustraliaOpts},
+                {type: 'group', name: 'Benelux', items: BeneluxOpts},
+                {type: 'group', name: 'China', items: ChinaOpts},
+                {type: 'group', name: 'France', items: FranceOpts},
+                {type: 'group', name: 'Germany', items: GermanyOpts},
+                {type: 'group', name: 'HongKong', items: HongKongOpts},
+                {type: 'group', name: 'India', items: IndiaOpts},
+                {type: 'group', name: 'Indonesia', items: IndonesiaOpts},
+                {type: 'group', name: 'Italy', items: ItalyOpts},
+                {type: 'group', name: 'Latam', items: LatAmOpts},
+                {type: 'group', name: 'Malaysia', items: MalaysiaOpts},
+                {type: 'group', name: 'MiddleEast', items: MiddleEastOpts},
+                {type: 'group', name: 'Nordic', items: NordicOpts},
+                {type: 'group', name: 'Singapore', items: SingaporeOpts},
+                {type: 'group', name: 'Spain', items: SpainOpts},
+                {type: 'group', name: 'UK', items: UKOpts},
+            ],
             chzOpts: [selectInitiVal, ...temprfechz],
             durationofApprovalOpts: [selectInitiVal, ...tempDurationOfApproval],
             newRenewalOpts: [selectInitiVal, ...tempNewRenewal],
@@ -814,20 +920,30 @@ function RfelogAddEditForm({ ...props }) {
 
     useEffect(() => {
         let tempopts = [];
+        let temGermany = [];
         segmentState.segmentItems.forEach((item) => {
             if (item.isActive) {
-                tempopts.push({
-                    ...item,
-                    label: item.segmentName,
-                    value: item.segmentID,
-                    country: item.countryList,
-                });
+                if (item.logType && item.logType === "rfelogsGermany") {
+                    temGermany.push({
+                        ...item,
+                        label: item.segmentName,
+                        value: item.segmentID,
+                        country: item.countryList,
+                    })
+                } else {
+                    tempopts.push({
+                        ...item,
+                        label: item.segmentName,
+                        value: item.segmentID,
+                        country: item.countryList,
+                    });
+                }
             }
         });
         tempopts.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            customerSegmentOpts: [selectInitiVal, ...tempopts],
+            customerSegmentOpts: [selectInitiVal, ...tempopts, {type: 'group', name: 'Germany', items: temGermany}],
         }));
     }, [segmentState.segmentItems]);
 

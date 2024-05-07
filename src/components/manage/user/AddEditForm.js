@@ -232,16 +232,16 @@ function AddEditForm(props) {
       setformfield({ ...formfield, dualRole: null, countryList: [], regionList: [] });
     }
     if (frmuserTypeObj[formfield.userType] === "Global") {
-      setformfield({ ...formfield, regionList: [], dualRole: null, });
+      setformfield({ ...formfield, regionList: [], lobList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "Region") {
-      setformfield({ ...formfield, countryList: [], dualRole: null, });
+      setformfield({ ...formfield, countryList: [], lobList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
-      setformfield({ ...formfield, countryList: [], regionList: [], dualRole: null });
+      setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], dualRole: null });
     }
     if (frmuserTypeObj[formfield.userType] === "Auditor") {
-      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false, dualRole: null, });
+      setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], isAccessDeleteLog: false, dualRole: null, });
     }
   }, [formfield.userType]);
   useEffect(() => {
@@ -320,15 +320,15 @@ function AddEditForm(props) {
       }
       if (
         frmuserTypeObj[formfield.userType] === "Country" &&
-        !formfield.regionList.length &&
-        !formfield.countryList.length
+        (!formfield.regionList.length ||
+        !formfield.countryList.length)
       ) {
         return;
       }
       if (
         frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
-        !formfield.regionList.length &&
-        !formfield.countryList.length
+        (!formfield.regionList.length ||
+        !formfield.countryList.length)
       ) {
         return;
       }
@@ -341,6 +341,14 @@ function AddEditForm(props) {
       if (
         frmuserTypeObj[formfield.userType] === "DualRole" &&
         !formfield.dualRole
+      ) {
+        return;
+      }
+      if (
+        (frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+        frmuserTypeObj[formfield.userType] === "Auditor") &&
+        formfield.regionList.length > 0 && 
+        formfield.countryList.length === 0
       ) {
         return;
       }
@@ -494,13 +502,15 @@ function AddEditForm(props) {
               {frmuserTypeObj[formfield.userType] === "Region" ||
                 frmuserTypeObj[formfield.userType] === "Country" ||
                 frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ||
+                frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ||
                 (frmuserTypeObj[formfield.userType] === "DualRole" && selecteddualRoleLabel !== 'Global-Country') ? (
                 <FrmMultiselect
                   title={"Region"}
                   name={"regionList"}
                   value={formfield.regionList ? formfield.regionList : []}
                   handleChange={handleMultiSelectChange}
-                  isRequired={true}
+                  isRequired={frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin"  ? false : true}
                   validationmsg={"Mandatory field"}
                   issubmitted={issubmitted}
                   selectopts={regionopts}
@@ -511,6 +521,8 @@ function AddEditForm(props) {
               )}
               {frmuserTypeObj[formfield.userType] === "Country" ||
                 frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ||
+                frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ||
                 (frmuserTypeObj[formfield.userType] === "DualRole" && 
                 selecteddualRoleLabel !== 'Global-Regional' && 
                 selecteddualRoleLabel !== 'Global-Country') ? (
@@ -520,7 +532,7 @@ function AddEditForm(props) {
                     name={"countryList"}
                     value={formfield.countryList ? formfield.countryList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={true}
+                    isRequired={(frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin") && formfield.regionList.length === 0 ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
@@ -547,14 +559,15 @@ function AddEditForm(props) {
                 ""
               )}
 
-              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ? (
+              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"LoB"}
                     name={"lobList"}
                     value={formfield.lobList ? formfield.lobList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={true}
+                    isRequired={frmuserTypeObj[formfield.userType] === "Auditor" ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={lobopts}

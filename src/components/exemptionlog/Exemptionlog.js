@@ -1962,8 +1962,8 @@ function Exemptionlog({ ...props }) {
   };
   
   const [selectedview, setselectedview] = useState(null);
-  const [viewData, setViewData] = useState([])
-  const [viewResponse, setViewResponse] = useState(false)
+  const [viewData, setViewData] = useState([]);
+  const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
     handleViews()
@@ -1997,7 +1997,7 @@ function Exemptionlog({ ...props }) {
     })
     if (selectedViewData.length !== 0) {
       let countryArray = []
-      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0) {
+      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0 && typeof selectedViewData[0]?.countryID === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
         selectedCountryArray?.map((id, j) => {
             countryState.countryItems.map((item, i) => {
@@ -2015,7 +2015,7 @@ function Exemptionlog({ ...props }) {
       selectedViewData[0].countryID = countryArray
 
       let regionArray = []
-      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0) {
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
         selectedRegionArray?.map((id, j) => {
             regionState.regionItems.map((item, i) => {
@@ -2041,6 +2041,11 @@ function Exemptionlog({ ...props }) {
     if (value === null) {
       setselectedview(value);
     }
+    let data = commonfilterOpts.views.filter((item) => item.label !== "All")
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+    }));
     await addEditUserView({LogType: selectedExemptionLog ? selectedExemptionLog : 'zug', UserId: userProfile.userId, ViewId: value})
     let updatedUserProfileData = userProfile
     if (selectedExemptionLog === 'urpm') {
@@ -2062,9 +2067,24 @@ function Exemptionlog({ ...props }) {
       })
     })
     viewFilterOpts.sort(dynamicSort("label"));
+    let view;
+    if (response[0].zugExemptionViewsId) {
+      if (userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") {
+        view = [{ label: "All", value: null }, ...viewFilterOpts]
+      } else {
+        view = [...viewFilterOpts]
+      }
+    }
+    if (response[0].urpmExemptionViewsId) {
+      if (userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== "null") {
+        view = [{ label: "All", value: null }, ...viewFilterOpts]
+      } else {
+        view = [...viewFilterOpts]
+      }
+    }
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      views: [{ label: "All", value: null }, ...viewFilterOpts],
+      views: view,
     }));
     setViewResponse(true)
   }
@@ -3235,7 +3255,7 @@ function Exemptionlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Exemption Log</div>
-              {commonfilterOpts.views.length > 1 && (
+              {viewData.length > 1 && (
                 <div className="title-dropdown-rfe">
                   <FrmSelect
                     title={"Switch view"}
@@ -3244,6 +3264,7 @@ function Exemptionlog({ ...props }) {
                     handleChange={onViewFilterSelect}
                     value={selectedview}
                     inlinetitle={true}
+                    isdisabled={isLoadingStarted}
                   />
                 </div>
               )}

@@ -358,6 +358,7 @@ function Lookup({ ...props }) {
 
     const responsedata = await downloadExcel({
       LogType: response.LogType,
+      ScopeCountryList: userProfile.isCountrySuperAdmin ? userProfile?.scopeCountryList : "",
     }, "Lookup");
     FileDownload(responsedata, `${selfilter.logtype}.xlsx`);
   }
