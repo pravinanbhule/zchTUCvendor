@@ -3255,7 +3255,7 @@ function Exemptionlog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">Exemption Log</div>
-              {viewData.length > 1 && (
+              {viewData.length > 0 && (
                 <div className="title-dropdown-rfe">
                   <FrmSelect
                     title={"Switch view"}
