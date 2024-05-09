@@ -95,6 +95,12 @@ export const alertMessage = {
     isInUse: "You can not delete this lookup value as it is in use.",
     nameExist: "Lookup value name is already exist!",
   },
+  notifications: {
+    add: "The new Notifications is successfully added.",
+    update: "The Notifications is successfully updated.",
+    delete: "The Notifications is deleted.",
+    deleteConfirm: "Are you sure you want to delete Notifications?",
+  },
   breachlog: {
     draft: "The draft of the Breach Log is added.",
     add: "The new Breach Log is successfully added.",
