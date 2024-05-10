@@ -179,7 +179,7 @@ function FrmFileUpload(props) {
                 </div>
                 {isShowDelete || item.isNew ? (
                   <div
-                    className="delete-icon"
+                    className="upload-delete-icon"
                     onClick={() => deleteAttachment(item.id, item.fileurl)}
                   ></div>
                 ) : (

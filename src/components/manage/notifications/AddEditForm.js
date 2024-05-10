@@ -21,17 +21,15 @@ function AddEditForm(props) {
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
 
-  useEffect(() => {
-    console.log("formIntialState>>>", formIntialState);
-  }, [])
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setissubmitted(true);
-    if (isEditMode) {
-      putItem(formfield);
-    } else {
-      postItem(formfield);
+    if (formfield.logType !== "" &&  formfield.logNotification.length !== 0 && formfield.countryId !== "" ) {
+      if (isEditMode) {
+        putItem(formfield);
+      } else {
+        postItem(formfield);
+      }
     }
   };
 
@@ -64,7 +62,8 @@ function AddEditForm(props) {
               name={"logType"}
               value={formfield.logType}
               handleChange={handleSelectChange}
-              isRequired={false}
+              isRequired={true}
+              validationmsg={"Mandatory field"}
               issubmitted={issubmitted}
               selectopts={logTypeOps}
             />
@@ -74,6 +73,8 @@ function AddEditForm(props) {
               name={"logNotification"}
               value={formfield.logNotification ? formfield.logNotification : []}
               handleChange={handleMultiSelectChange}
+              isRequired={true}
+              validationmsg={"Mandatory field"}
               issubmitted={issubmitted}
               selectopts={logNotificationOpts}
               isAllOptNotRequired={true}
@@ -84,7 +85,8 @@ function AddEditForm(props) {
               name={"countryId"}
               value={formfield.countryId}
               handleChange={handleSelectChange}
-              isRequired={false}
+              isRequired={true}
+              validationmsg={"Mandatory field"}
               issubmitted={issubmitted}
               selectopts={countryAllOpts}
             />
