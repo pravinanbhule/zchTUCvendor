@@ -2599,7 +2599,7 @@ function AddEditForm(props) {
         setIncountryFlag(flag)
       }
     }
-    if (dualRoleType === 'Global–Regional-Country' || dualRoleType === "Regional-Country") {
+    if (dualRoleType === 'Global-Regional-Country' || dualRoleType === "Regional-Country") {
       let countryselected = false
       if (isOneRegion) {
         dualRoleCountryList.map((item, i) => {
