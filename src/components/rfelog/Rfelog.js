@@ -2356,7 +2356,7 @@ function Rfelog({ ...props }) {
             <div className="title-rfe">
               <div className="page-title-rfe">RfE Log</div>
               <div className="" style={{display:'flex'}}>
-                {viewData.length > 1 && (
+                {viewData.length > 0 && (
                   <div className="title-dropdown-rfe">
                     <FrmSelect
                       title={"Switch view"}
