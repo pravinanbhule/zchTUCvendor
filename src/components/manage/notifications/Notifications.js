@@ -32,7 +32,24 @@ function Notifications({ ...props }) {
   useSetNavMenu({ currentMenu: "notifications", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
-  const [notificationsFilterOpts, setnotificationsFilterOpts] = useState([]);
+  const [notificationsFilterOpts, setnotificationsFilterOpts] = useState([
+    {
+      label: "Breach Logs",
+      value: "BreachLogs"
+    },
+    {
+      label: "RFE Logs",
+      value: "RFELogs"
+    },
+    {
+      label: "Exemption Logs / ZUG",
+      value: "ZUG"
+    },
+    {
+      label: "Exemption Logs / URPM",
+      value: "URPM"
+    },
+  ]);
   const intialFilterState = {
     notifications: "",
   };
@@ -200,10 +217,6 @@ function Notifications({ ...props }) {
     getAll();
     getLookupByType({ LookupType: "LogNotification" });
     getAllCountry({ IsLog: true });
-    getLogTypes({
-      LookupType: "logs",
-      RequesterUserId: userProfile.userId,
-    });
   }, []);
 
   useEffect(() => {
@@ -231,19 +244,6 @@ function Notifications({ ...props }) {
     });
     setcountryAllOpts([...selectOpts]);
   }, [countryState.countryItems]);
-
-  useEffect(() => {
-    let tempFilterOpts = [];
-    if (lookupState.logtyps.length) {
-      lookupState.logtyps.forEach((item) => {
-        tempFilterOpts.push({
-          label: item.lookUpName,
-          value: item.lookUpValue,
-        });
-      });
-      setnotificationsFilterOpts([...tempFilterOpts]);
-    }
-  }, [lookupState.logtyps]);
 
   useEffect(() => {
     let tempdata = [];
