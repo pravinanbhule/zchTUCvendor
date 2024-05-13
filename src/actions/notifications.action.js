@@ -1,6 +1,6 @@
 import { notificationsConstants } from "../constants";
 import Axios from "../services/Axios";
-const getAll = () => {
+const getAll = (requestParam) => {
   const request = () => {
     return { type: notificationsConstants.GETALL_REQUEST };
   };
@@ -10,12 +10,11 @@ const getAll = () => {
   const failure = (error) => {
     return { type: notificationsConstants.GETALL_FAILURE, payload: error };
   };
-  const requestParams = {};
 
   return async (dispatch) => {
     dispatch(request());
     try {
-      const response = await notificationsService.getAllService(requestParams);
+      const response = await notificationsService.getAllService(requestParam);
       dispatch(success(response.data));
     } catch (err) {
       dispatch(failure(err));

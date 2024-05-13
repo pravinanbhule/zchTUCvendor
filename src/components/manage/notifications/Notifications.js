@@ -35,23 +35,23 @@ function Notifications({ ...props }) {
   const [notificationsFilterOpts, setnotificationsFilterOpts] = useState([
     {
       label: "Breach Logs",
-      value: "BreachLogs"
+      value: "breachlogs"
     },
     {
       label: "RFE Logs",
-      value: "RFELogs"
+      value: "rfelogs"
     },
     {
       label: "Exemption Logs / ZUG",
-      value: "ZUG"
+      value: "zug"
     },
     {
       label: "Exemption Logs / URPM",
-      value: "URPM"
+      value: "urpm"
     },
   ]);
   const intialFilterState = {
-    notifications: "",
+    notifications: "breachlogs",
   };
   const [selfilter, setselfilter] = useState(intialFilterState);
   const [countryAllOpts, setcountryAllOpts] = useState([]);
@@ -163,14 +163,14 @@ function Notifications({ ...props }) {
         return { width: "150px", textAlign: "left" };
       },
     },
-    {
-      dataField: "logType",
-      text: "Log Type",
-      sort: true,
-      headerStyle: (colum, colIndex) => {
-        return { width: "180px" };
-      },
-    },
+    // {
+    //   dataField: "logType",
+    //   text: "Log Type",
+    //   sort: true,
+    //   headerStyle: (colum, colIndex) => {
+    //     return { width: "180px" };
+    //   },
+    // },
     {
       dataField: "logNotificationValue",
       text: "Log Notification",
@@ -213,9 +213,17 @@ function Notifications({ ...props }) {
       order: "asc",
     },
   ];
+
   useEffect(() => {
-    getAll();
-    getLookupByType({ LookupType: "LogNotification" });
+    getAll({
+      LogType: selfilter.notifications
+    });
+  }, [selfilter.notifications])
+
+  useEffect(() => {
+    getLookupByType({
+      LookupType: "LogNotification"
+    });
     getAllCountry({ IsLog: true });
   }, []);
 
@@ -326,7 +334,9 @@ function Notifications({ ...props }) {
     });
     if (response) {
       //setselfilter(intialFilterState);
-      getAll();
+      getAll({
+        LogType: selfilter.notifications
+      });
       hideAddPopup();
       alert(alertMessage.notifications.add);
     }
@@ -344,7 +354,9 @@ function Notifications({ ...props }) {
     });
     if (response) {
       //setselfilter(intialFilterState);
-      getAll();
+      getAll({
+        LogType: selfilter.notifications
+      });
       hideAddPopup();
       alert(alertMessage.notifications.update);
     }
@@ -358,7 +370,9 @@ function Notifications({ ...props }) {
     }
     let resonse = await deleteItem({ LogNotificationId: itemid });
     if (resonse) {
-      getAll();
+      getAll({
+        LogType: selfilter.notifications
+      });
       alert(alertMessage.notifications.delete);
     }
   };
@@ -450,17 +464,6 @@ function Notifications({ ...props }) {
                 value={selfilter.notifications}
               />
             </div>
-          </div>
-        </div>
-        <div className="btn-container">
-          <div
-            className={`btn-blue ${selfilter.notifications === "" ? "disable" : ""}`}
-            onClick={handleFilterSearch}
-          >
-            Search
-          </div>
-          <div className="btn-blue" onClick={clearFilter}>
-            Clear
           </div>
         </div>
       </div>
