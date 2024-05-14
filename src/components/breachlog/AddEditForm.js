@@ -1670,7 +1670,7 @@ function AddEditForm(props) {
                     <FrmToggleSwitch
                       title={
                         <>
-                          Near misses / OE <i>(Only EMEA)</i>
+                          Near miss / OE <i>(Only EMEA)</i>
                         </>
                       }
                       name={"nearMisses"}
