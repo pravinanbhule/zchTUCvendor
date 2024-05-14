@@ -3242,6 +3242,7 @@ function Exemptionlog({ ...props }) {
           formInitialValueZUG={formInitialValueZUG}
           formInitialValueURPM={formInitialValueURPM}
           handleDataVersion={handleDataVersion}
+          sellogTabType={sellogTabType}
         ></AddEditForm>
       )}
       {isshowImportLogsPopup && (

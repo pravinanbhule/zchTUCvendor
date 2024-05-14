@@ -951,7 +951,6 @@ function Rfelog({ ...props }) {
     }
   };
   const openlogTab = (type) => {
-    console.log("type>>", type);
     if (!isLoadingStarted) {
       setsellogTabType(type);
     }
@@ -1038,6 +1037,7 @@ function Rfelog({ ...props }) {
     localStorage.removeItem("id");
     localStorage.removeItem("status");
     localStorage.removeItem("in-app");
+    localStorage.removeItem("type");
   }, []);
 
 
@@ -1553,6 +1553,7 @@ function Rfelog({ ...props }) {
       history.push("/rfelogs/create-rfelog");
       localStorage.setItem("id", queryparam.id);
       localStorage.setItem("status", "view");
+      localStorage.setItem("type", sellogTabType);
     }
   }, [queryparam]);
 
@@ -1876,6 +1877,7 @@ function Rfelog({ ...props }) {
     }
     localStorage.setItem("id", itemid);
     localStorage.setItem("status", mode);
+    localStorage.setItem("type", sellogTabType);
     localStorage.setItem("in-app", true);
     showAddPopup();
     // let response = await getById({

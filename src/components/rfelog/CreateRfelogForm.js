@@ -112,6 +112,7 @@ function CreateRfelogForm(props) {
     const [versionHistoryData, setversionHistoryData] = useState([]);
     const [isDraftVersionHistory, setisDraftVersionHistory] = useState(false);
     const [showVersionHistory, setshowVersionHistory] = useState(false);
+    const [selLogType, setSelLogType] = useState(localStorage.getItem('type'))
     const [loading, setloading] = useState(true)
     const history = useHistory();
     const location = useLocation()
@@ -121,6 +122,7 @@ function CreateRfelogForm(props) {
             localStorage.removeItem("id");
             localStorage.removeItem("status");
             localStorage.removeItem("in-app");
+            localStorage.removeItem("type");
         };
 
         window.addEventListener('beforeunload', handleTabClose);
@@ -232,6 +234,7 @@ function CreateRfelogForm(props) {
         localStorage.removeItem("id");
         localStorage.removeItem("status");
         localStorage.removeItem("in-app");
+        localStorage.removeItem("type");
         history.push("/rfelogs");
     };
 
@@ -385,6 +388,7 @@ function CreateRfelogForm(props) {
                     queryparam={queryparam}
                     handleDataVersion={handleDataVersion}
                     isDraft={isDraft}
+                    sellogTabType={selLogType}
                 ></AddEditForm>
             }
             {showVersionHistory ? (
