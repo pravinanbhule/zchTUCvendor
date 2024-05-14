@@ -72,6 +72,7 @@ function AddEditForm(props) {
     formInitialValueURPM,
     formInitialValueZUG,
     handleDataVersion,
+    sellogTabType
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -1621,7 +1622,7 @@ function AddEditForm(props) {
       {!isReadMode ? (
         <div className="popup-footer-container">
           <div className="btn-container">
-            {!isEditMode ? (
+            {(!isEditMode || sellogTabType === 'draft') ? (
               <>
                 <button
                   className={`btn-blue ${isfrmdisabled && "disable"}`}
