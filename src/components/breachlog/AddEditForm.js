@@ -113,11 +113,11 @@ function AddEditForm(props) {
   ]);
   const [nearMissesEMEA, setNearMissesEMEA] = useState([
     {
-      label: "Near misses",
+      label: "Near miss",
       value: false,
     },
     {
-      label: "OE (Only EMEA)",
+      label: "Operational Event",
       value: true,
     },
   ])

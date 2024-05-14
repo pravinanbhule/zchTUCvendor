@@ -141,38 +141,7 @@ function RfelogAddEditForm({ ...props }) {
             value: true,
         },
     ]);
-    const [userRoles, setUserRoles] = useState([
-        {
-            label: "Super Admin",
-            name: "isSuperAdmin",
-            filedValue: '1'
-        },
-        {
-            label: "Global Admin",
-            name: "isGlobalAdmin",
-            filedValue: '2'
-        },
-        {
-            label: "Region Admin",
-            name: "isRegionAdmin",
-            filedValue: '3'
-        },
-        {
-            label: "Country Super Admin",
-            name: "isCountrySuperAdmin",
-            filedValue: '9'
-        },
-        {
-            label: "Country Admin",
-            name: "isCountryAdmin",
-            filedValue: '4'
-        },
-        {
-            label: "Normal User",
-            name: "isNormalUser",
-            filedValue: '8'
-        },
-    ])
+    const [userRoles, setUserRoles] = useState([])
 
     const [formfield, setformfield] = useState(intialFilterState);
 
@@ -495,6 +464,58 @@ function RfelogAddEditForm({ ...props }) {
             setlogTypes(tempStatus);
             setsellogTabType(tempStatus[0].value);
             setisLogInitcall(false);
+            if (userProfile.isCountrySuperAdmin) {
+                setUserRoles([
+                    {
+                        label: "Country Super Admin",
+                        name: "isCountrySuperAdmin",
+                        filedValue: '9'
+                    },
+                    {
+                        label: "Country Admin",
+                        name: "isCountryAdmin",
+                        filedValue: '4'
+                    },
+                    {
+                        label: "Normal User",
+                        name: "isNormalUser",
+                        filedValue: '8'
+                    },
+                ])
+            } else {
+                setUserRoles([
+                    {
+                        label: "Super Admin",
+                        name: "isSuperAdmin",
+                        filedValue: '1'
+                    },
+                    {
+                        label: "Global Admin",
+                        name: "isGlobalAdmin",
+                        filedValue: '2'
+                    },
+                    {
+                        label: "Region Admin",
+                        name: "isRegionAdmin",
+                        filedValue: '3'
+                    },
+                    {
+                        label: "Country Super Admin",
+                        name: "isCountrySuperAdmin",
+                        filedValue: '9'
+                    },
+                    {
+                        label: "Country Admin",
+                        name: "isCountryAdmin",
+                        filedValue: '4'
+                    },
+                    {
+                        label: "Normal User",
+                        name: "isNormalUser",
+                        filedValue: '8'
+                    },
+                ])
+            }
         };
         fnOnInit();
     }, []);
@@ -696,7 +717,6 @@ function RfelogAddEditForm({ ...props }) {
         temporgnizationalalignment.sort(dynamicSort("label"));
         temprfechz.sort(dynamicSort("label"));
         temprfeempourment.sort(dynamicSort("label"));
-        console.log("temprfeempourment>>>", temprfeempourment);
         tempDurationOfApproval.sort(dynamicSort("label"));
         tempNewRenewal.sort(dynamicSort("label"));
         tempCondition.sort(dynamicSort("label"));
@@ -1309,7 +1329,7 @@ function RfelogAddEditForm({ ...props }) {
                                 <div className="mb-4"> User Roles</div>
                             </div>
                             <div className="border-bottom border-top frm-container-bggray">
-                                <div className="m-1 mt-4" style={{display: 'flex', justifyContent: 'space-between'}}>
+                            <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : {justifyContent: 'space-between'}}>
                                     {isReadMode &&
                                         userRoles.map((item, i) => {
                                             return (
@@ -1322,7 +1342,7 @@ function RfelogAddEditForm({ ...props }) {
                                     }
                                     {!isReadMode && userRoles.map((item, i) => {
                                         return (
-                                            <div className="">
+                                            <div className="" style={userProfile.isCountrySuperAdmin ? {marginRight: '10%'} : {}}>
                                                 <FrmCheckbox
                                                     title={item.label}
                                                     name={item.name}
