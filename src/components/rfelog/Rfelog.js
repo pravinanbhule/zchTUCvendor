@@ -1000,6 +1000,7 @@ function Rfelog({ ...props }) {
     localStorage.removeItem("id");
     localStorage.removeItem("status");
     localStorage.removeItem("in-app");
+    localStorage.removeItem("type");
   }, []);
 
   const loadfilterdata = async () => {
@@ -2030,6 +2031,7 @@ function Rfelog({ ...props }) {
           setInEditMode={setInEditMode}
           queryparam={queryparam}
           handleDataVersion={handleDataVersion}
+          sellogTabType={sellogTabType}
         ></AddEditForm>
       )}
       {isshowImportLogsPopup && (

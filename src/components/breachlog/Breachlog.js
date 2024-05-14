@@ -2540,6 +2540,7 @@ function Breachlog({ ...props }) {
           userProfile={userProfile}
           queryparam={queryparam}
           handleDataVersion={handleDataVersion}
+          sellogTabType={sellogTabType}
         ></AddEditForm>
       )}
       {isshowImportLogsPopup && (
