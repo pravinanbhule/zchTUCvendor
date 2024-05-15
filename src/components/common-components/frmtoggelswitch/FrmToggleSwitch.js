@@ -66,7 +66,7 @@ function FrmToggleSwitch(props) {
             </div>
             <div className="option-title">{selectopts[1]["label"]}</div>
           </div>
-          {isRequired && issubmitted && !value ? (
+          {isRequired && issubmitted && (value !== false || value !== true) ? (
             <div className="validationError">{validationmsg}</div>
           ) : (
             ""
