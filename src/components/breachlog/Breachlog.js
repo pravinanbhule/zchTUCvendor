@@ -1658,9 +1658,6 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
-
-    console.log("tempStatus>>>", tempStatus);
-
     //tempClassification.sort(dynamicSort("label"));
     tempNatureOfBreach.sort(dynamicSort("label"));
     tempStatus.sort(dynamicSort("label"));
