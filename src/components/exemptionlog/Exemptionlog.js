@@ -3195,6 +3195,12 @@ function Exemptionlog({ ...props }) {
         ...tempFilterOpts,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        status: ZUGnolonger,
+      }
+    }
     try {
       alert(alertMessage.commonmsg.reportDownlaod);
       let responseblob;
@@ -3556,15 +3562,15 @@ function Exemptionlog({ ...props }) {
                 isdisabled={!alllogsloaded}
               />
             </div>
-            {sellogTabType === 'all' &&
+            {sellogTabType === 'all' && alllogsloaded &&
               <div className="frm-filter toggle-btn-header">
                   <FrmToggleSwitch
-                    title={"No Longer Required/Withdrawn"}
+                    title={"Hide No Longer Required/Withdrawn"}
                     name={"nolongerrequired"}
                     value={nolonger}
                     handleChange={(name, value)=>{setnolonger(value)}}
                     isRequired={false}
-                    selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
+                    selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
                     isdisabled={!alllogsloaded}
                     />
               </div>

@@ -2661,6 +2661,12 @@ function Breachlog({ ...props }) {
         ...tempFilterOpts,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        breachStatus: withoutClosed,
+      }
+    }
     try {
       alert(alertMessage.commonmsg.reportDownlaod);
       const responseblob = await exportReportLogs(reqParam);
@@ -3204,6 +3210,22 @@ function Breachlog({ ...props }) {
                 </div>
               </div>
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div style={{top: '12px', paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between', position:"absolute", right: '0'}}>
+                <div className="frm-filter">
+                </div>
+                <div className="frm-filter toggle-btn-header">
+                    <FrmToggleSwitch
+                      title={"Hide Closed"}
+                      name={"closed"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    />
+                </div>
+              </div>
+            }
           </div>
           {/*<div
             className="btn-blue"
@@ -3220,22 +3242,6 @@ function Breachlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          {sellogTabType === 'all' &&
-            <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
-              <div className="frm-filter">
-              </div>
-              <div className="frm-filter toggle-btn-header">
-                  <FrmToggleSwitch
-                    title={"Closed"}
-                    name={"closed"}
-                    value={nolonger}
-                    handleChange={(name, value)=>{setnolonger(value)}}
-                    isRequired={false}
-                    selectopts={[{label: "",value: "1",},{label: "",value: "0",}]}
-                  />
-              </div>
-            </div>
-          }
           <div className="tabs-container">
             {logTypes.map((item) => (
               <div
