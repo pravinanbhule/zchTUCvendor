@@ -377,7 +377,6 @@ function Breachlog({ ...props }) {
       });
     }*/
   };
-
   const handleMultiSelectChange = (name, value) => {
     if (name === "regionId") {
       let countryopts = [...selfilter.countryId];
@@ -426,27 +425,8 @@ function Breachlog({ ...props }) {
       });
     }
   };
-
-  const [isSelctedRegion, setIsSelectedRegion] = useState("");
-  useEffect(()=>{
-    let tempFilterOpts = {}
-    for (let key in selfilter) {
-      if (selfilter[key]) {
-        let value = selfilter[key];
-        tempFilterOpts[key] = value;
-        if (key === "regionId") {
-          const tmpval = value.map((item) => item.value);
-          tempFilterOpts[key] = tmpval.join(",");
-        }
-      }
-    }
-    setIsSelectedRegion(tempFilterOpts.regionId)
-    console.log("tempFilterOpts>>", tempFilterOpts);
-  },[selfilter.regionId])
-
   useEffect(() => {
-    if (isSelctedRegion.split(",").includes(REGION_ZNA) === false) {
-      console.log("come");
+    if (selfilter.regionId !== REGION_ZNA) {
       setselfilter((prevstate) => ({
         ...prevstate,
         UWRInvolvedName: "",
@@ -460,7 +440,7 @@ function Breachlog({ ...props }) {
         znasbuId: "",
         marketBasketId: "",
       }));
-    } else if (selfilter.customersegment && isSelctedRegion.split(",").includes(REGION_ZNA)) {
+    } else if (selfilter.customersegment && selfilter.regionId === REGION_ZNA) {
       setselfilter((prevstate) => ({
         ...prevstate,
         customersegment: "",
@@ -468,8 +448,8 @@ function Breachlog({ ...props }) {
     }
     if (
       isNotEmptyValue(selfilter.nearMisses) &&
-      isSelctedRegion.split(",").includes(REGION_EMEA) === false
-      ) {
+      selfilter.regionId !== REGION_EMEA
+    ) {
       setselfilter((prevstate) => ({
         ...prevstate,
         nearMisses: "",
@@ -2877,7 +2857,7 @@ function Breachlog({ ...props }) {
                               selectopts={yesnoopts}
                             />
                           </div>
-                          {isSelctedRegion.split(",").includes(REGION_ZNA) === false && (
+                          {selfilter.regionId !== REGION_ZNA && (
                             <div className="frm-filter col-md-3">
                               <FrmSelect
                                 title={"Customer Segment"}
@@ -2919,7 +2899,7 @@ function Breachlog({ ...props }) {
                               value={selfilter.rootCauseOfTheBreach}
                             />
                           </div>
-                          {isSelctedRegion.split(",").includes(REGION_EMEA) && (
+                          {selfilter.regionId === REGION_EMEA && (
                             <div className="frm-filter col-md-3">
                               <FrmSelect
                                 title={<>Near Misses</>}
@@ -3069,7 +3049,7 @@ function Breachlog({ ...props }) {
                             </div>
                           </div>
                         </div>
-                        {isSelctedRegion.split(",").includes(REGION_ZNA) && (
+                        {selfilter.regionId === REGION_ZNA && (
                           <>
                             <div className="row">
                               <div className="col-md-12">
