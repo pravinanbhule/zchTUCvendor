@@ -85,13 +85,13 @@ function BreachAddEditForm(props) {
         createdDateTo: "",
         dueDateFrom: "",
         dueDateTo: "",
-        UWRInvolvedName: "",
+        uwrInvolved: "",
         policyName: "",
         policyNumber: "",
         turNumber: "",
         office: "",
-        IdentifiedToDate: "",
-        IdentifiedFromDate: "",
+        identifiedToDate: "",
+        identifiedFromDate: "",
         znaSegmentId: "",
         znasbuId: "",
         marketBasketId: "",
@@ -200,7 +200,7 @@ function BreachAddEditForm(props) {
         if (isEditMode || isReadMode) {
             setLoading(true)
             let response = formIntialState
-            
+            console.log("response>>", response);
             if (regionState.regionItems && typeof response.region === 'string') {
                 let selectedRegionArray = response.region.split(',')
                 let regionArray = []
@@ -224,6 +224,9 @@ function BreachAddEditForm(props) {
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
             if (typeof response.materialBreach === 'boolean') {
                 response.materialBreach = response.materialBreach === true ? '1' : response.materialBreach === false ? '0' : response.materialBreach
+            }
+            if (typeof response.nearMisses === 'boolean') {
+                response.nearMisses = response.nearMisses === true ? '1' : response.nearMisses === false ? '0' : response.nearMisses
             }
             // response.switch = response.isPrivate === true ? false : true
             // delete response.isPrivate
@@ -448,16 +451,28 @@ function BreachAddEditForm(props) {
                     ...tempFilterOpts.sort(dynamicSort("label")),
                 ],
             }));
+            let isSelcted = tempFilterOpts.filter((item) => item.value === formIntialState.marketBasketId)
+            if (formIntialState.marketBasketId !== "" && isSelcted?.length > 0) {
+                setformfield({
+                    ...formfield,
+                    marketBasketId: formIntialState.marketBasketId,
+                });
+            } else {
+                setformfield({
+                    ...formfield,
+                    marketBasketId: "",
+                });
+            }
         } else {
             setcommonfilterOpts((prevstate) => ({
                 ...prevstate,
                 ZNAMarketBasketOpts: [selectInitiVal, ...org3FilterOptsAllOpts],
             }));
+            setformfield({
+                ...formfield,
+                marketBasketId: "",
+            });
         }
-        setformfield({
-            ...formfield,
-            marketBasketId: "",
-        });
     }, [formfield.znasbuId]);
 
     useEffect(() => {
@@ -804,11 +819,27 @@ function BreachAddEditForm(props) {
         }
     };
 
+    const [isSelctedRegion, setIsSelectedRegion] = useState("");
     useEffect(() => {
-        if (formfield.region !== REGION_ZNA) {
+        let tempFilterOpts = {}
+        for (let key in formfield) {
+            if (formfield[key]) {
+                let value = formfield[key];
+                tempFilterOpts[key] = value;
+                if (key === "region") {
+                    const tmpval = value.map((item) => item.value);
+                    tempFilterOpts[key] = tmpval.join(",");
+                }
+            }
+        }
+        setIsSelectedRegion(tempFilterOpts.region)
+    }, [formfield.region])
+
+    useEffect(() => {
+        if (isSelctedRegion.split(",").includes(REGION_ZNA) === false) {
             setformfield((prevstate) => ({
                 ...prevstate,
-                UWRInvolvedName: "",
+                uwrInvolved: "",
                 policyName: "",
                 policyNumber: "",
                 turNumber: "",
@@ -819,7 +850,7 @@ function BreachAddEditForm(props) {
                 znasbuId: "",
                 marketBasketId: "",
             }));
-        } else if (formfield.customerSegment && formfield.region === REGION_ZNA) {
+        } else if (formfield.customerSegment && isSelctedRegion.split(",").includes(REGION_ZNA)) {
             setformfield((prevstate) => ({
                 ...prevstate,
                 customerSegment: "",
@@ -827,7 +858,7 @@ function BreachAddEditForm(props) {
         }
         if (
             isNotEmptyValue(formfield.nearMisses) &&
-            formfield.region !== REGION_EMEA
+            isSelctedRegion.split(",").includes(REGION_EMEA) === false
         ) {
             setformfield((prevstate) => ({
                 ...prevstate,
@@ -895,7 +926,9 @@ function BreachAddEditForm(props) {
         tempFilterOpts.userRoles = selectedUserRoles.toString()
         tempFilterOpts.UserViewType = 'breachlog'
         tempFilterOpts.requesterUserId = userProfile.userId
-
+        if (formfield.nearMisses !== "") {
+            tempFilterOpts.nearMisses = formfield.nearMisses === "1" ? true : false
+        }
         // delete tempFilterOpts.switch
         let response = await postItem(tempFilterOpts)
         if (response) {
@@ -961,7 +994,7 @@ function BreachAddEditForm(props) {
                                     <div className="mb-4"> User Roles</div>
                                 </div>
                                 <div className="border-bottom border-top frm-container-bggray">
-                                    <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : {justifyContent: 'space-between'}}>
+                                    <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : { justifyContent: 'space-between' }}>
                                         {isReadMode &&
                                             userRoles.map((item, i) => {
                                                 return (
@@ -974,7 +1007,7 @@ function BreachAddEditForm(props) {
                                         }
                                         {!isReadMode && userRoles.map((item, i) => {
                                             return (
-                                                <div className="" style={userProfile.isCountrySuperAdmin ? {marginRight: '10%'} : {}}>
+                                                <div className="" style={userProfile.isCountrySuperAdmin ? { marginRight: '10%' } : {}}>
                                                     <FrmCheckbox
                                                         title={item.label}
                                                         name={item.name}
@@ -1140,7 +1173,7 @@ function BreachAddEditForm(props) {
                                         isReadMode={isReadMode}
                                     />
                                 </div>
-                                {formfield.region !== REGION_ZNA && (
+                                {isSelctedRegion.split(",").includes(REGION_ZNA) === false && (
                                     <div className="col-md-3">
                                         <FrmSelect
                                             title={"Customer Segment"}
@@ -1190,7 +1223,7 @@ function BreachAddEditForm(props) {
                                         isReadMode={isReadMode}
                                     />
                                 </div>
-                                {formfield.region === REGION_EMEA && (
+                                {isSelctedRegion.split(",").includes(REGION_EMEA) && (
                                     <div className="frm-filter col-md-3">
                                         <FrmSelect
                                             title={<>Near Misses</>}
@@ -1336,142 +1369,130 @@ function BreachAddEditForm(props) {
                                         />
                                     </div>
                                 </div>
-                                {formfield.region === REGION_ZNA && (
-                                    <>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <div
-                                                    className="border-bottom"
-                                                    style={{
-                                                        padding: "5px 0",
-                                                        fontWeight: "bold",
-                                                    }}
-                                                >
-                                                    ZNA Specific Filters
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="frm-filter col-md-3">
-                                                <FrmInputAutocomplete
-                                                    title={"UWr involved"}
-                                                    name={"UWRInvolvedName"}
-                                                    type={"input"}
-                                                    handleChange={onSearchFilterInputAutocomplete}
-                                                    value={formfield.UWRInvolvedName}
-                                                    options={commonfilterOpts.uwrInvolvedOpts}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                            <div className="frm-filter col-md-3">
-                                                <FrmInput
-                                                    title={"Policy name"}
-                                                    name={"policyName"}
-                                                    type={"input"}
-                                                    handleChange={onSearchFilterInput}
-                                                    value={formfield.policyName}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                            <div className="frm-filter col-md-3">
-                                                <FrmInput
-                                                    title={"Policy number"}
-                                                    name={"policyNumber"}
-                                                    type={"input"}
-                                                    handleChange={onSearchFilterInput}
-                                                    value={formfield.policyNumber}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                            <div className="frm-filter col-md-3">
-                                                <FrmInput
-                                                    title={"UQA Review ID"}
-                                                    name={"turNumber"}
-                                                    type={"input"}
-                                                    handleChange={onSearchFilterInput}
-                                                    value={formfield.turNumber}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="frm-filter col-md-3">
-                                                <FrmSelect
-                                                    title={"Office"}
-                                                    name={"office"}
-                                                    selectopts={commonfilterOpts.officeOpts}
-                                                    handleChange={onSearchFilterSelect}
-                                                    value={formfield.office}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                            <div className="col-md-6 filter-date-container">
-                                                <div className="frm-filter">
-                                                    <FrmDatePicker
-                                                        title={"Date Identified"}
-                                                        name={"IdentifiedFromDate"}
-                                                        value={formfield.IdentifiedFromDate}
-                                                        type={"date"}
-                                                        handleChange={handleDateSelectChange}
-                                                        isReadMode={isReadMode}
-                                                    />
-                                                </div>
-
-                                                <div className="daterange-title">to</div>
-
-                                                <div className="frm-filter">
-                                                    <FrmDatePicker
-                                                        title={""}
-                                                        name={"IdentifiedToDate"}
-                                                        value={formfield.IdentifiedToDate}
-                                                        type={"date"}
-                                                        handleChange={handleDateSelectChange}
-                                                        minDate={moment(
-                                                            formfield.IdentifiedFromDate
-                                                        ).toDate()}
-                                                        isReadMode={isReadMode}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="frm-filter col-md-3">
-                                                <FrmSelect
-                                                    title={"ZNA BU"}
-                                                    name={"znaSegmentId"}
-                                                    selectopts={commonfilterOpts.ZNASegmentOpts}
-                                                    handleChange={onSearchFilterSelect}
-                                                    value={formfield.znaSegmentId}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                            <div className="frm-filter col-md-3">
-                                                <FrmSelect
-                                                    title={"ZNA SBU"}
-                                                    name={"znasbuId"}
-                                                    selectopts={commonfilterOpts.ZNASBUOpts}
-                                                    handleChange={onSearchFilterSelect}
-                                                    value={formfield.znasbuId}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                            <div className="frm-filter col-md-3">
-                                                <FrmSelect
-                                                    title={"ZNA Market Basket"}
-                                                    name={"marketBasketId"}
-                                                    selectopts={
-                                                        commonfilterOpts.ZNAMarketBasketOpts
-                                                    }
-                                                    handleChange={onSearchFilterSelect}
-                                                    value={formfield.marketBasketId}
-                                                    isReadMode={isReadMode}
-                                                />
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
                             </div>
                         </div>
+                        {isSelctedRegion.split(",").includes(REGION_ZNA) && (
+                            <div className="frm-container-bgwhite">
+                                <div className="user-view-zna-filter-btn-container">
+                                    <div
+                                        className="user-view-zna-filter-btn"
+                                    >
+                                        ZNA Specific Filters
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-3">
+                                        <FrmInputAutocomplete
+                                            title={"UWr involved"}
+                                            name={"uwrInvolved"}
+                                            type={"input"}
+                                            handleChange={onSearchFilterInputAutocomplete}
+                                            value={formfield.uwrInvolved}
+                                            options={commonfilterOpts.uwrInvolvedOpts}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmInput
+                                            title={"Policy name"}
+                                            name={"policyName"}
+                                            type={"input"}
+                                            handleChange={onSearchFilterInput}
+                                            value={formfield.policyName}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmInput
+                                            title={"Policy number"}
+                                            name={"policyNumber"}
+                                            type={"input"}
+                                            handleChange={onSearchFilterInput}
+                                            value={formfield.policyNumber}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmInput
+                                            title={"UQA Review ID"}
+                                            name={"turNumber"}
+                                            type={"input"}
+                                            handleChange={onSearchFilterInput}
+                                            value={formfield.turNumber}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmSelect
+                                            title={"Office"}
+                                            name={"office"}
+                                            selectopts={commonfilterOpts.officeOpts}
+                                            handleChange={onSearchFilterSelect}
+                                            value={formfield.office}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-6 filter-date-container">
+                                        <div className="frm-filter">
+                                            <FrmDatePicker
+                                                title={"Date Identified"}
+                                                name={"IdentifiedFromDate"}
+                                                value={formfield.identifiedFromDate}
+                                                type={"date"}
+                                                handleChange={handleDateSelectChange}
+                                                isReadMode={isReadMode}
+                                            />
+                                        </div>
+
+                                        <div className="daterange-title">to</div>
+
+                                        <div className="frm-filter">
+                                            <FrmDatePicker
+                                                title={""}
+                                                name={"IdentifiedToDate"}
+                                                value={formfield.identifiedToDate}
+                                                type={"date"}
+                                                handleChange={handleDateSelectChange}
+                                                minDate={moment(
+                                                    formfield.identifiedFromDate
+                                                ).toDate()}
+                                                isReadMode={isReadMode}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmSelect
+                                            title={"ZNA BU"}
+                                            name={"znaSegmentId"}
+                                            selectopts={commonfilterOpts.ZNASegmentOpts}
+                                            handleChange={onSearchFilterSelect}
+                                            value={formfield.znaSegmentId}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmSelect
+                                            title={"ZNA SBU"}
+                                            name={"znasbuId"}
+                                            selectopts={commonfilterOpts.ZNASBUOpts}
+                                            handleChange={onSearchFilterSelect}
+                                            value={formfield.znasbuId}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <FrmSelect
+                                            title={"ZNA Market Basket"}
+                                            name={"marketBasketId"}
+                                            selectopts={commonfilterOpts.ZNAMarketBasketOpts}
+                                            handleChange={onSearchFilterSelect}
+                                            value={formfield.marketBasketId}
+                                            isReadMode={isReadMode}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </form>
                     {
                         !isReadMode ? (
@@ -1494,9 +1515,10 @@ function BreachAddEditForm(props) {
                             ""
                         )
                     }
-                </div>
-            )}
-        </div>
+                </div >
+            )
+            }
+        </div >
     );
 }
 const mapStateToProp = (state) => {

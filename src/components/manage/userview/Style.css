@@ -54,6 +54,41 @@
     margin-bottom: 45px;
 }
 
+.user-view-zna-filter-btn {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    width: 162px;
+    line-height: 29px;
+    height: 30px;
+    border-radius: 15px;
+    padding: 0 15px;
+    color: #2167ad;
+    font-weight: 600;
+    background-color: #ECEEEF;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    display: inline-block;
+}
+
+.user-view-zna-filter-btn-container::before {
+    content: '';
+    height: 1px;
+    width: 100%;
+    border-bottom: 1px solid #5495cf;
+    top: 50%;
+    display: block;
+}
+
+.user-view-zna-filter-btn-container {
+    position: relative;
+    width: 104%;
+    margin: 20px 0;
+    margin-left: -2%;
+    margin-bottom: 45px;
+}
+
 /* .userview-class hr{
     margin-top: 0% !important;
     margin-bottom: 1% !important;

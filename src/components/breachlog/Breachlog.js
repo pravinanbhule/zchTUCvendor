@@ -332,6 +332,7 @@ function Breachlog({ ...props }) {
     });
   };
   const onSearchFilterSelect = (name, value) => {
+    console.log(name, value);
     //const { name, value } = e.target;
     setselfilter({
       ...selfilter,
@@ -441,12 +442,10 @@ function Breachlog({ ...props }) {
       }
     }
     setIsSelectedRegion(tempFilterOpts.regionId)
-    console.log("tempFilterOpts>>", tempFilterOpts);
   },[selfilter.regionId])
 
   useEffect(() => {
     if (isSelctedRegion.split(",").includes(REGION_ZNA) === false) {
-      console.log("come");
       setselfilter((prevstate) => ({
         ...prevstate,
         UWRInvolvedName: "",
@@ -1418,6 +1417,12 @@ function Breachlog({ ...props }) {
         ...tempFilterOpts,
         sortExp: selSortFiled.name + " " + selSortFiled.order,
       };
+      if (selfilter.nearMisses !== "") {
+        reqParam = {
+          ...reqParam,
+          nearMisses: selfilter.nearMisses === "1" ? true : false,
+        };
+      }
     } else {
       reqParam = {
         ...reqParam,
@@ -1678,9 +1683,6 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
-
-    console.log("tempStatus>>>", tempStatus);
-
     //tempClassification.sort(dynamicSort("label"));
     tempNatureOfBreach.sort(dynamicSort("label"));
     tempStatus.sort(dynamicSort("label"));
@@ -1785,6 +1787,10 @@ function Breachlog({ ...props }) {
       }
       selectedViewData[0].regionId = regionArray
       selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
+      selectedViewData[0].nearMisses = selectedViewData[0].nearMisses === true ? '1' : selectedViewData[0].nearMisses === false ? '0' : ''
+      selectedViewData[0].UWRInvolvedName =  selectedViewData[0].uwrInvolved
+      selectedViewData[0].IdentifiedToDate =  selectedViewData[0].identifiedToDate
+      selectedViewData[0].IdentifiedFromDate =  selectedViewData[0].identifiedFromDate
       setselfilter(selectedViewData[0])
       setselectedview(value);
     } else {
@@ -2090,16 +2096,28 @@ function Breachlog({ ...props }) {
           ...tempFilterOpts.sort(dynamicSort("label")),
         ],
       }));
+      let isSelcted = tempFilterOpts.filter((item) => item.value === selfilter.marketBasketId)
+      if (selfilter.marketBasketId !== "" && isSelcted?.length > 0) {
+        setselfilter({
+            ...selfilter,
+            marketBasketId: selfilter.marketBasketId,
+        });
+      } else {
+        setselfilter({
+          ...selfilter,
+          marketBasketId: "",
+        });
+      }
     } else {
       setcommonfilterOpts((prevstate) => ({
         ...prevstate,
         ZNAMarketBasketOpts: [selectInitiVal, ...org3FilterOptsAllOpts],
       }));
+      setselfilter({
+        ...selfilter,
+        marketBasketId: "",
+      });
     }
-    setselfilter({
-      ...selfilter,
-      marketBasketId: "",
-    });
   }, [selfilter.znasbuId]);
 
   const fnsetPaginationData = (data) => {
