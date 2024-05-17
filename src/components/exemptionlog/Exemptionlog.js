@@ -2643,7 +2643,7 @@ function Exemptionlog({ ...props }) {
       setformIntialState({
         ...response,
         isdirty: false,
-        exemptionLogEmailLink: window.location.origin + window.location.pathname
+        exemptionLogEmailLink: response.exemptionLogEmailLink ? response.exemptionLogEmailLink : window.location.origin + window.location.pathname
       });
       showAddPopup();
     }
