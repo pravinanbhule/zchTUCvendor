@@ -3,6 +3,7 @@ const initialState = {
   loading: false,
   logtyps: [],
   lookupitems: [],
+  lookupbytyps: [],
   error: "",
 };
 export const lookupReducer = (state = initialState, action) => {
@@ -24,6 +25,24 @@ export const lookupReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         logtyps: [],
+        error: action.payload,
+      };
+    case lookupConstants.GETLOGBYTYPE_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case lookupConstants.GETLOGBYTYPE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        lookupbytyps: action.payload,
+      };
+    case lookupConstants.GETLOGBYTYPE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        lookupbytyps: [],
         error: action.payload,
       };
     case lookupConstants.GETLOOKUPITEMS_REQUEST:
