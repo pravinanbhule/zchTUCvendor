@@ -296,7 +296,7 @@ function Exemptionlog({ ...props }) {
   ]);
   const [nolonger, setnolonger] = useState(false);
   const [ZUGnolonger, setZUGnolonger] = useState('');
-  const [selectedExemptionLog, setselectedExemptionLog] = useState("zug");
+  const [selectedExemptionLog, setselectedExemptionLog] = useState("");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
@@ -1795,8 +1795,12 @@ function Exemptionlog({ ...props }) {
       if (userProfile.isAdminGroup) {
         getallDeletedItems();
       }
-      pageIndex = 1;
-      loadAPIData();
+      if ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null')) {
+        return
+      } else if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
+        pageIndex = 1;
+        loadAPIData();
+      }
       /*let isStartLoading = false;
       if (selectedExemptionLog === "zug") {
         isStartLoading = logstate.ZUGLoadedAll ? false : true;
@@ -1992,9 +1996,11 @@ function Exemptionlog({ ...props }) {
   const [viewResponse, setViewResponse] = useState(false);
 
   useEffect(()=>{
-    handleViews()
-    setselectedview(null)
-    setViewResponse(false)
+    if (selectedExemptionLog !== "") {
+      handleViews()
+      setselectedview(null)
+      setViewResponse(false)
+    }
   },[selectedExemptionLog])
 
   useEffect(()=>{
