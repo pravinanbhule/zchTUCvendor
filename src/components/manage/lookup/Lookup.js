@@ -476,9 +476,9 @@ function Lookup({ ...props }) {
                                 <th style={tableiconclmStyle}>Edit</th>
                               </>
                             )}
-                            {handlePermission(window.location.pathname.slice(1), "isDelete") === true && (
+                            {/* {handlePermission(window.location.pathname.slice(1), "isDelete") === true && (
                               <th style={tableiconclmStyle}>Delete</th>
-                            )}
+                            )} */}
                             <th style={{width: "100px", textAlign: 'center'}}>Data Version</th>
                             <th style={{ width: "250px" }}>Value</th>
                             <th>Active/Inactive</th>
@@ -562,7 +562,7 @@ function Lookup({ ...props }) {
                                     ></td>
                                   </>
                                 )}
-                                {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
+                                {/* {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
                                   <td
                                     className="delete-icon"
                                     onClick={() =>
@@ -573,7 +573,7 @@ function Lookup({ ...props }) {
                                     }
                                     rowid={item.lookupID}
                                   ></td>
-                                )}
+                                )} */}
                                  <td
                                     className="versionhistory-icon"
                                     onClick={() =>

@@ -55,12 +55,10 @@ function App({ state, menuClick }) {
   }
 
   if (window.location.pathname !== "/rfelogs/create-rfelog" && handlePermission("Navbar", window.location.pathname.slice(1)) === false) {
-    console.log("come First");
     state.userprofileState.isAuthenticated = false
     state.userprofileState.isUnAuthenticated = true
   }
   if(window.location.pathname === "/rfelogs/create-rfelog" && handlePermission("Navbar", "rfelogs") === false){
-    console.log("come Second");
     state.userprofileState.isAuthenticated = false
     state.userprofileState.isUnAuthenticated = true
   }

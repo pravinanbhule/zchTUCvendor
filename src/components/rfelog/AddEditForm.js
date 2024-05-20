@@ -88,6 +88,7 @@ function AddEditForm(props) {
     userProfile,
     queryparam,
     handleDataVersion,
+    sellogTabType
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -2207,7 +2208,7 @@ function AddEditForm(props) {
             OrganizationalAlignment: OrganizationalAlignment.region,
           });
           setIncountryFlag(IncountryFlagConst.LATAM);
-        } else if (approverRole.isCountryAdmin || approverRole.isNormalUser) {
+        } else if (approverRole.isCountryAdmin || approverRole.isNormalUser || approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: OrganizationalAlignment.country,
@@ -2227,11 +2228,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2247,11 +2251,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2267,11 +2274,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2287,11 +2297,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2307,11 +2320,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2327,11 +2343,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2347,11 +2366,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2367,11 +2389,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2387,11 +2412,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2407,11 +2435,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2427,11 +2458,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2447,11 +2481,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2467,11 +2504,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2487,11 +2527,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -2507,11 +2550,14 @@ function AddEditForm(props) {
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
           approverRole.isNormalUser ||
-          approverRole.isDualRole)
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
       ) {
         if (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
-          approverRole.isNormalUser) {
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
           setformfield({
             ...formfield,
             OrganizationalAlignment: approverRole.isRegionAdmin
@@ -3960,7 +4006,7 @@ function AddEditForm(props) {
       {!isReadMode ? (
         <div className="popup-footer-container">
           <div className="btn-container">
-            {!isEditMode ? (
+            {(!isEditMode || sellogTabType === 'draft') ? (
               <>
                 <button
                   className={`btn-blue ${isfrmdisabled && "disable"}`}

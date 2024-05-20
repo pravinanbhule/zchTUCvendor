@@ -79,7 +79,8 @@ function AddEditForm(props) {
     userProfile,
     queryparam,
     handleDataVersion,
-    getAllCOList
+    getAllCOList,
+    sellogTabType
   } = props;
 
   const selectInitiVal = { label: "Select", value: "" };
@@ -112,11 +113,11 @@ function AddEditForm(props) {
   ]);
   const [nearMissesEMEA, setNearMissesEMEA] = useState([
     {
-      label: "Near misses",
+      label: "Near miss",
       value: false,
     },
     {
-      label: "OE (Only EMEA)",
+      label: "Operational Event",
       value: true,
     },
   ])
@@ -1510,7 +1511,7 @@ function AddEditForm(props) {
                     isdisabled={isfrmdisabled}
                   />
                 </div>
-                {formfield.materialBreach === true ?
+                {/* {formfield.materialBreach === true ?
                   <div className="col-md-3">
                     <FrmSelect
                       title={
@@ -1530,7 +1531,7 @@ function AddEditForm(props) {
                     />
                   </div>
                   : <></>
-                }
+                } */}
                 <div className="col-md-3">
                   <FrmDatePicker
                     title={"Date Breach Occurred"}
@@ -1669,7 +1670,7 @@ function AddEditForm(props) {
                     <FrmToggleSwitch
                       title={
                         <>
-                          Near misses / OE <i>(Only EMEA)</i>
+                          Near miss / OE <i>(Only EMEA)</i>
                         </>
                       }
                       name={"nearMisses"}
@@ -2050,7 +2051,7 @@ function AddEditForm(props) {
       {!isReadMode ? (
         <div className="popup-footer-container">
           <div className="btn-container">
-            {!isEditMode ? (
+            {(!isEditMode || sellogTabType === 'draft') ? (
               <>
                 <button
                   className={`btn-blue ${isfrmdisabled && "disable"}`}

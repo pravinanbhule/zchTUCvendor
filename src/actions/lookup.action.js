@@ -46,11 +46,24 @@ const getLogTypes = (requestParam) => {
   };
 };
 const getLookupByType = (requestParam) => {
+  const request = () => {
+    return { type: lookupConstants.GETLOGBYTYPE_REQUEST };
+  };
+  const success = (data) => {
+    return { type: lookupConstants.GETLOGBYTYPE_SUCCESS, payload: data };
+  };
+  const failure = (error) => {
+    return { type: lookupConstants.GETLOGBYTYPE_FAILURE, payload: error };
+  };
+
   return async (dispatch) => {
+    dispatch(request());
     try {
       const response = await lookupService.getLookupByTypeService(requestParam);
+      dispatch(success(response.data));
       return response.data;
     } catch (err) {
+      dispatch(failure(err));
       return false;
     }
   };

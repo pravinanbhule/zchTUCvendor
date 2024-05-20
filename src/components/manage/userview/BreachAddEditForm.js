@@ -151,38 +151,7 @@ function BreachAddEditForm(props) {
             value: true,
         },
     ]);
-    const [userRoles, setUserRoles] = useState([
-        {
-            label: "Super Admin",
-            name: "isSuperAdmin",
-            filedValue: '1'
-        },
-        {
-            label: "Global Admin",
-            name: "isGlobalAdmin",
-            filedValue: '2'
-        },
-        {
-            label: "Region Admin",
-            name: "isRegionAdmin",
-            filedValue: '3'
-        },
-        {
-            label: "Country Super Admin",
-            name: "isCountrySuperAdmin",
-            filedValue: '9'
-        },
-        {
-            label: "Country Admin",
-            name: "isCountryAdmin",
-            filedValue: '4'
-        },
-        {
-            label: "Normal User",
-            name: "isNormalUser",
-            filedValue: '8'
-        },
-    ])
+    const [userRoles, setUserRoles] = useState([])
 
     const [selectedUserRoles, setSelectedUserRoles] = useState([])
 
@@ -627,6 +596,58 @@ function BreachAddEditForm(props) {
             rangeOfFinancialImpactOpts: [selectInitiVal, ...tempRangeFinImpact],
             howDetectedOpts: [selectInitiVal, ...tempHowDetected],
         }));
+        if (userProfile.isCountrySuperAdmin) {
+            setUserRoles([
+                {
+                    label: "Country Super Admin",
+                    name: "isCountrySuperAdmin",
+                    filedValue: '9'
+                },
+                {
+                    label: "Country Admin",
+                    name: "isCountryAdmin",
+                    filedValue: '4'
+                },
+                {
+                    label: "Normal User",
+                    name: "isNormalUser",
+                    filedValue: '8'
+                },
+            ])
+        } else {
+            setUserRoles([
+                {
+                    label: "Super Admin",
+                    name: "isSuperAdmin",
+                    filedValue: '1'
+                },
+                {
+                    label: "Global Admin",
+                    name: "isGlobalAdmin",
+                    filedValue: '2'
+                },
+                {
+                    label: "Region Admin",
+                    name: "isRegionAdmin",
+                    filedValue: '3'
+                },
+                {
+                    label: "Country Super Admin",
+                    name: "isCountrySuperAdmin",
+                    filedValue: '9'
+                },
+                {
+                    label: "Country Admin",
+                    name: "isCountryAdmin",
+                    filedValue: '4'
+                },
+                {
+                    label: "Normal User",
+                    name: "isNormalUser",
+                    filedValue: '8'
+                },
+            ])
+        }
         if (dashboardState.status) {
             setformfield((prevfilter) => ({
                 ...prevfilter,
@@ -940,7 +961,7 @@ function BreachAddEditForm(props) {
                                     <div className="mb-4"> User Roles</div>
                                 </div>
                                 <div className="border-bottom border-top frm-container-bggray">
-                                    <div className="m-1 mt-4" style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : {justifyContent: 'space-between'}}>
                                         {isReadMode &&
                                             userRoles.map((item, i) => {
                                                 return (
@@ -953,7 +974,7 @@ function BreachAddEditForm(props) {
                                         }
                                         {!isReadMode && userRoles.map((item, i) => {
                                             return (
-                                                <div className="">
+                                                <div className="" style={userProfile.isCountrySuperAdmin ? {marginRight: '10%'} : {}}>
                                                     <FrmCheckbox
                                                         title={item.label}
                                                         name={item.name}
