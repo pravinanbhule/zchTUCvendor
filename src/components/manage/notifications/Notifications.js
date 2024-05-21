@@ -250,6 +250,7 @@ function Notifications({ ...props }) {
         value: item.countryID,
       });
     });
+    selectOpts.sort(dynamicSort("label"));
     setcountryAllOpts([...selectOpts]);
   }, [countryState.countryItems]);
 
