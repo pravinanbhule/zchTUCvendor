@@ -473,7 +473,7 @@ function Lookup({ ...props }) {
                             {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
                               <>
                                 <th style={{ width: "40px" }}></th>
-                                <th style={tableiconclmStyle}>Edit</th>
+                                <th style={{ width: "51px"}}>Edit</th>
                               </>
                             )}
                             {/* {handlePermission(window.location.pathname.slice(1), "isDelete") === true && (
@@ -543,23 +543,27 @@ function Lookup({ ...props }) {
                                       />
                                     </td>
                                     <td
-                                      style={tableiconclmStyle}
-                                      className={`${
-                                        item.isEditMode ? "save-icon" : "edit-icon"
-                                      }`}
-                                      onClick={() => {
-                                        item.isEditMode
-                                          ? handleSave({
-                                              lookUpType: lookuptype.type,
-                                              lookupID: item.lookupID,
-                                            })
-                                          : handleEdit({
-                                              lookUpType: lookuptype.type,
-                                              lookupID: item.lookupID,
-                                            });
-                                      }}
                                       rowid={item.lookupID}
-                                    ></td>
+                                    >
+                                      <p
+                                       className={`${
+                                         item.isEditMode ? "save-icon" : "edit-icon"
+                                       }`}
+                                       onClick={() => {
+                                         item.isEditMode
+                                           ? handleSave({
+                                               lookUpType: lookuptype.type,
+                                               lookupID: item.lookupID,
+                                             })
+                                           : handleEdit({
+                                               lookUpType: lookuptype.type,
+                                               lookupID: item.lookupID,
+                                             });
+                                       }}
+                                       rowid={item.lookupID}
+                                       style={{marginBottom: '0px'}}
+                                      />
+                                    </td>
                                   </>
                                 )}
                                 {/* {handlePermission(window.location.pathname.slice(1), "isEdit") === true && (
@@ -575,13 +579,17 @@ function Lookup({ ...props }) {
                                   ></td>
                                 )} */}
                                  <td
-                                    className="versionhistory-icon"
+                                  rowid={item.lookupID}
+                                >
+                                  <p 
+                                    className="versionhistory-icon" 
+                                    style={{width: '50px', marginBottom: '0px', marginLeft: '15px'}}
                                     onClick={() =>
                                       handleDataVersion(item.lookupID)
                                     }
-                                    style={{width: '100px'}}
                                     rowid={item.lookupID}
-                                  ></td>
+                                  />
+                                </td>
                                 <td>
                                   {item.isEditMode ? (
                                     <FrmInlineInput
