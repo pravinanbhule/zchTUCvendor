@@ -18,8 +18,12 @@ function AddEditForm(props) {
     logNotificationOpts
   } = props;
 
-  const [formfield, setformfield] = useState(formIntialState);
+  const [formfield, setformfield] = useState({});
   const [issubmitted, setissubmitted] = useState(false);
+
+  useEffect(()=>{
+      setformfield({...formIntialState})
+  },[formIntialState])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,7 +75,7 @@ function AddEditForm(props) {
             <FrmMultiselect
               title={"Notification"}
               name={"logNotification"}
-              value={formfield.logNotification ? formfield.logNotification : []}
+              value={formfield.logNotification || []}
               handleChange={handleMultiSelectChange}
               isRequired={true}
               validationmsg={"Mandatory field"}

@@ -25,7 +25,8 @@ function Notifications({ ...props }) {
     userProfile,
     setMasterdataActive,
     getMasterVersion,
-    downloadExcel
+    downloadExcel,
+    checkNameExist
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "Notifications.xlsx";
@@ -228,6 +229,7 @@ function Notifications({ ...props }) {
   }, []);
 
   useEffect(() => {
+    console.log("lookupState.lookupbytyps>>", lookupState.lookupbytyps);
     if (lookupState.lookupbytyps.length > 0) {
       let templookuptypes = [];
       lookupState.lookupbytyps.forEach((item) => {
@@ -290,6 +292,7 @@ function Notifications({ ...props }) {
   };
 
   const [isEditMode, setisEditMode] = useState(false);
+  const [editmodeName, seteditmodeName] = useState("");
   const initvalstate = {
     logType: "",
     logNotification: [],
@@ -301,7 +304,7 @@ function Notifications({ ...props }) {
     let itemid = e.target.getAttribute("rowid");
     const response = await getById({ LogNotificationId: itemid });
     let logNotificationList = [];
-    let logNotificationIds = response[0].logNotification.split(",")
+    let logNotificationIds = response[0]?.logNotification.split(",")
     lookupState.lookupbytyps.forEach((item) => {
       logNotificationIds.map((notifications) => {
         if (item.lookupID === notifications) {
@@ -312,13 +315,16 @@ function Notifications({ ...props }) {
         }
       })
     });
-    setformIntialState({
-      ...response[0],
-      logNotification: logNotificationList,
-      requesterUserId: response.requesterUserId ? response.requesterUserId : "",
-    });
-    setisEditMode(true);
-    showAddPopup();
+    setTimeout(() => {
+      setformIntialState({
+        ...response[0],
+        logNotification: logNotificationList,
+        requesterUserId: response.requesterUserId ? response.requesterUserId : "",
+      });
+      setisEditMode(true);
+      seteditmodeName(response[0].countryId);
+      showAddPopup();
+    }, 2000);
   };
 
   const postItemHandler = async (item) => {
@@ -326,43 +332,62 @@ function Notifications({ ...props }) {
     templogNotificationList = [...templogNotificationList].join(
       ","
     );
-    let response = await postItem({
-      ...item,
-      logNotification: templogNotificationList,
-      CreatedById: userProfile.userId,
-      ModifiedById: userProfile.userId,
-      requesterUserId: userProfile.userId,
+    let response = await checkNameExist({
+      CountryId: item.countryId,
     });
-    if (response) {
-      //setselfilter(intialFilterState);
-      getAll({
-        LogType: selfilter.notifications
+    if (!response) {
+      response = await postItem({
+        ...item,
+        logNotification: templogNotificationList,
+        CreatedById: userProfile.userId,
+        ModifiedById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
-      hideAddPopup();
-      alert(alertMessage.notifications.add);
+      if (response) {
+        //setselfilter(intialFilterState);
+        getAll({
+          LogType: selfilter.notifications
+        });
+        hideAddPopup();
+        alert(alertMessage.notifications.add);
+      }
+    } else {
+      alert(alertMessage.notifications.nameExist);
     }
   };
   const putItemHandler = async (item) => {
+    let response = false;
+    console.log(editmodeName, item);
+    if (editmodeName.toLowerCase() !== item.countryId.toLowerCase()) {
+      response = await checkNameExist({
+        CountryId: item.countryId,
+      });
+    }
     let templogNotificationList = item?.logNotification.map((item) => item.value);
     templogNotificationList = [...templogNotificationList].join(
       ","
     );
-    let response = await postItem({
-      ...item,
-      logNotification: templogNotificationList,
-      ModifiedById: userProfile.userId,
-      requesterUserId: userProfile.userId,
-    });
-    if (response) {
-      //setselfilter(intialFilterState);
-      getAll({
-        LogType: selfilter.notifications
+    if (!response) {
+      response = await postItem({
+        ...item,
+        logNotification: templogNotificationList,
+        ModifiedById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
-      hideAddPopup();
-      alert(alertMessage.notifications.update);
+      if (response) {
+        //setselfilter(intialFilterState);
+        getAll({
+          LogType: selfilter.notifications
+        });
+        hideAddPopup();
+        setisEditMode(false);
+        setformIntialState(initvalstate);
+        seteditmodeName('');
+        alert(alertMessage.notifications.update);
+      }
+    } else {
+      alert(alertMessage.notifications.nameExist);
     }
-    setisEditMode(false);
-    setformIntialState(initvalstate);
   };
   const handleDelete = async (e) => {
     let itemid = e.target.getAttribute("rowid");
@@ -530,6 +555,7 @@ const mapActions = {
   postItem: notificationsActions.postItem,
   deleteItem: notificationsActions.deleteItem,
   getById: notificationsActions.getById,
+  checkNameExist: notificationsActions.checkNameExist,
   getLookupByType: lookupActions.getLookupByType,
   getLogTypes: lookupActions.getLogTypes,
   getAllCountry: countryActions.getAllCountry,

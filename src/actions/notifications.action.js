@@ -51,11 +51,20 @@ const deleteItem = (requestParam) => {
     }
   };
 };
+const checkNameExist = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await notificationsService.checkNameExistService(requestParam);
+      return response.data;
+    } catch (err) {}
+  };
+};
 export const notificationsActions = {
   getAll,
   getById,
   postItem,
   deleteItem,
+  checkNameExist
 };
 const getAllService = async (requestParam) => {
   const param = { params: requestParam };
@@ -76,9 +85,15 @@ const deleteItemService = async (requestParam) => {
   const response = await Axios.delete(`common/deletelognotification`, param);
   return response;
 };
+const checkNameExistService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`common/islognotificationinuse`, param);
+  return response;
+};
 const notificationsService = {
   getAllService,
   getByIdService,
   postItemService,
   deleteItemService,
+  checkNameExistService
 };

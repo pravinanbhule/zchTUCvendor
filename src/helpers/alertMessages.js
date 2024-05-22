@@ -100,6 +100,7 @@ export const alertMessage = {
     update: "The Notifications is successfully updated.",
     delete: "The Notifications is deleted.",
     deleteConfirm: "Are you sure you want to delete Notifications?",
+    nameExist: "Noification is already exist for this Country!",
   },
   breachlog: {
     draft: "The draft of the Breach Log is added.",
