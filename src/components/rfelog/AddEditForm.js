@@ -244,23 +244,19 @@ function AddEditForm(props) {
     };
     if (formIntialState?.IsSubmit) {
       if (
-        formIntialState.Underwriter.indexOf(userProfile.emailAddress) !== -1
+        formIntialState.Underwriter.toLowerCase().indexOf(userProfile.emailAddress.toLowerCase()) !== -1
       ) {
         tempuserroles.isunderwriter = true;
       }
       if (
         formIntialState.UnderwriterGrantingEmpowerment &&
-        formIntialState.UnderwriterGrantingEmpowerment.indexOf(
-          userProfile.emailAddress
-        ) !== -1
+        formIntialState.UnderwriterGrantingEmpowerment.toLowerCase().indexOf(userProfile.emailAddress.toLowerCase()) !== -1
       ) {
         tempuserroles.isapprover = true;
       }
       if (
         formIntialState.RequestForEmpowermentCC &&
-        formIntialState.RequestForEmpowermentCC.indexOf(
-          userProfile.emailAddress
-        ) !== -1
+        formIntialState.RequestForEmpowermentCC.toLowerCase().indexOf(userProfile.emailAddress.toLowerCase()) !== -1
       ) {
         tempuserroles.iscc = true;
       }

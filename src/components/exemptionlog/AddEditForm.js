@@ -168,23 +168,19 @@ function AddEditForm(props) {
     if (formIntialState.isSubmit) {
       if (
         formIntialState.individualGrantedEmpowerment &&
-        formIntialState.individualGrantedEmpowerment.indexOf(
-          userProfile.emailAddress
-        ) !== -1
+        formIntialState.individualGrantedEmpowerment.toLowerCase().indexOf(userProfile.emailAddress.toLowerCase()) !== -1
       ) {
         tempuserroles.isgrantedempowrment = true;
       }
       if (
         formIntialState.approver &&
-        formIntialState.approver.indexOf(userProfile.emailAddress) !== -1
+        formIntialState.approver.toLowerCase().indexOf(userProfile.emailAddress.toLowerCase()) !== -1
       ) {
         tempuserroles.isapprover = true;
       }
       if (
         formIntialState.empowermentRequestedBy &&
-        formIntialState.empowermentRequestedBy.indexOf(
-          userProfile.emailAddress
-        ) !== -1
+        formIntialState.empowermentRequestedBy.toLowerCase().indexOf(userProfile.emailAddress.toLowerCase()) !== -1
       ) {
         tempuserroles.issubmitter = true;
       }
