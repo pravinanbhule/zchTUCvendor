@@ -469,10 +469,6 @@ function RfelogAddEditForm({ ...props }) {
         })
     }
 
-    useEffect(() => {
-        console.log(formfield.RequestForEmpowermentStatus);
-    }, [formfield.RequestForEmpowermentStatus])
-
     const loadfilterdata = async () => {
         const lookupvalues = await Promise.all([
             getLookupByType({
@@ -509,7 +505,7 @@ function RfelogAddEditForm({ ...props }) {
         let selectedArray = [];
         tempStatus.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.requestforempowermentstatus === 'string' && formIntialState?.requestforempowermentstatus !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.requestforempowermentstatus === 'string' && formIntialState?.requestforempowermentstatus !== null) {
                     formIntialState?.requestforempowermentstatus?.split(',')?.map((id) => {
                         if (id === item.lookupID) {
                             selectedArray.push({
@@ -536,7 +532,7 @@ function RfelogAddEditForm({ ...props }) {
         tempopts = [];
         temporgnizationalalignment.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.organizationalalignment === 'string' && formIntialState?.organizationalalignment !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.organizationalalignment === 'string' && formIntialState?.organizationalalignment !== null) {
                     formIntialState?.organizationalalignment?.split(',')?.map((id) => {
                         if (id === item.lookupID) {
                             selectedArray.push({
@@ -573,7 +569,7 @@ function RfelogAddEditForm({ ...props }) {
         tempopts = [];
         temprfeempourment.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.requestforempowermentreason === 'string' && formIntialState?.requestforempowermentreason !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.requestforempowermentreason === 'string' && formIntialState?.requestforempowermentreason !== null) {
                     formIntialState?.requestforempowermentreason?.split(',')?.map((id) => {
                         if (id === item.lookupID) {
                             selectedArray.push({
@@ -646,7 +642,7 @@ function RfelogAddEditForm({ ...props }) {
         tempopts = [];
         tempDurationOfApproval.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.durationofApproval === 'string' && formIntialState?.durationofApproval !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.durationofApproval === 'string' && formIntialState?.durationofApproval !== null) {
                     formIntialState?.durationofApproval?.split(',')?.map((id) => {
                         if (id === item.lookupID) {
                             selectedArray.push({
@@ -672,7 +668,7 @@ function RfelogAddEditForm({ ...props }) {
         tempopts = [];
         tempNewRenewal.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.newRenewal === 'string' && formIntialState?.newRenewal !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.newRenewal === 'string' && formIntialState?.newRenewal !== null) {
                     formIntialState?.newRenewal?.split(',')?.map((id) => {
                         if (id === item.lookupID) {
                             selectedArray.push({
@@ -698,7 +694,7 @@ function RfelogAddEditForm({ ...props }) {
         tempopts = [];
         tempCondition.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.conditionApplicableTo === 'string' && formIntialState?.conditionApplicableTo !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.conditionApplicableTo === 'string' && formIntialState?.conditionApplicableTo !== null) {
                     formIntialState?.conditionApplicableTo?.split(',')?.map((id) => {
                         if (id === item.lookupID) {
                             selectedArray.push({
@@ -836,7 +832,7 @@ function RfelogAddEditForm({ ...props }) {
         let tempCountryMapping = [];
         let selectedArray = [];
         countryState.countryItems.forEach((item) => {
-            if (isEditMode && typeof formIntialState?.country === 'string' && formIntialState?.country !== null) {
+            if ((isEditMode || isReadMode) && typeof formIntialState?.country === 'string' && formIntialState?.country !== null) {
                 formIntialState?.country?.split(',')?.map((id) => {
                     if (id === item.countryID) {
                         selectedArray.push({
@@ -869,7 +865,7 @@ function RfelogAddEditForm({ ...props }) {
         let selectOpts = [];
         let selectedArray = [];
         regionState.regionItems.forEach((item) => {
-            if (isEditMode && typeof formIntialState?.region === 'string' && formIntialState?.region !== null) {
+            if ((isEditMode || isReadMode) && typeof formIntialState?.region === 'string' && formIntialState?.region !== null) {
                 formIntialState?.region?.split(',')?.map((id) => {
                     if (id === item.regionID) {
                         selectedArray.push({
@@ -900,7 +896,7 @@ function RfelogAddEditForm({ ...props }) {
         let tempItems = []
         let loBArray = []
         lobState.lobItems.map((item) => {
-            if (isEditMode && typeof formIntialState?.loB === 'string' && formIntialState?.loB !== null) {
+            if ((isEditMode || isReadMode) && typeof formIntialState?.loB === 'string' && formIntialState?.loB !== null) {
                 formIntialState?.loB?.split(',')?.map((id) => {
                     if (id === item.lobid) {
                         loBArray.push({
@@ -944,7 +940,7 @@ function RfelogAddEditForm({ ...props }) {
         let selectedArray = [];
         currencyState.currencyItems.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.currency === 'string' && formIntialState?.currency !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.currency === 'string' && formIntialState?.currency !== null) {
                     formIntialState?.currency?.split(',')?.map((id) => {
                         if (id === item.currencyID) {
                             selectedArray.push({
@@ -978,7 +974,7 @@ function RfelogAddEditForm({ ...props }) {
             let selectedArray = [];
             branchState.branchItems.forEach((item) => {
                 if (item.isActive) {
-                    if (isEditMode && typeof formIntialState?.branch === 'string' && formIntialState?.branch !== null) {
+                    if ((isEditMode || isReadMode) && typeof formIntialState?.branch === 'string' && formIntialState?.branch !== null) {
                         formIntialState?.branch?.split(',')?.map((id) => {
                             if (id === item.branchId) {
                                 selectedArray.push({
@@ -1014,7 +1010,7 @@ function RfelogAddEditForm({ ...props }) {
         let selectedArray = [];
         segmentState.segmentItems.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.customerSegment === 'string' && formIntialState?.customerSegment !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.customerSegment === 'string' && formIntialState?.customerSegment !== null) {
                     formIntialState?.customerSegment?.split(',')?.map((id) => {
                         if (id === item.segmentID) {
                             selectedArray.push({
@@ -1062,7 +1058,7 @@ function RfelogAddEditForm({ ...props }) {
         let selectedArray = [];
         sublobState.sublobitems.forEach((item) => {
             if (item.isActive) {
-                if (isEditMode && typeof formIntialState?.sublobid === 'string' && formIntialState?.sublobid !== null) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.sublobid === 'string' && formIntialState?.sublobid !== null) {
                     formIntialState?.sublobid?.split(',')?.map((id) => {
                         if (id === item.subLOBID) {
                             selectedArray.push({
@@ -1291,7 +1287,6 @@ function RfelogAddEditForm({ ...props }) {
     const [selectedUserRoles, setSelectedUserRoles] = useState([])
 
     const handleFilterSearch = async () => {
-        console.log(formfield);
         let data = formfield
         if (!isEmptyObjectKeys(formfield)) {
             let tempFilterOpts = {};
@@ -1375,7 +1370,6 @@ function RfelogAddEditForm({ ...props }) {
             delete data?.ConditionApplicableTo
             delete data?.SUBLOBID
             delete data?.GWP
-            console.log("data>>>", data);
             let response = await postItem(data)
             if (response) {
                 if (data.rfeViewsId) {

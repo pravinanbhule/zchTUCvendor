@@ -187,35 +187,28 @@ function BreachAddEditForm(props) {
     const [countrymapping, setcountrymapping] = useState([]);
     const [loading, setLoading] = useState(false)
 
-
-
-
-    // useEffect(() => {
-    //     setformfield(formIntialState)
-    // }, [])
-
     const handleSelectedItemArray = (selectedArray, data, field, label) => {
         let arrayData = [];
         selectedArray.map((id, j) => {
-          data.map((item, i) => {
+            data.map((item, i) => {
                 if (item.isActive && id === item[field]) {
-                  arrayData.push({
-                      ...item,
-                      label: item[label],
-                      value: item[field],
+                    arrayData.push({
+                        ...item,
+                        label: item[label],
+                        value: item[field],
                     })
                 }
             })
         })
         return arrayData
-      }
+    }
 
 
     useEffect(async () => {
         if (isEditMode || isReadMode) {
             setLoading(true)
             let response = formIntialState
-            
+
             if (regionState.regionItems && typeof response.region === 'string') {
                 let selectedRegionArray = response.region.split(',')
                 let regionArray = []
@@ -231,91 +224,127 @@ function BreachAddEditForm(props) {
                 })
                 response.region = typeof response.region === 'string' && regionArray.length === 0 ? response.region : regionArray
             }
-            response.customerSegment = []
-            console.log("response>>>", response);
+
+            if (response?.subLoB?.length && response?.subLoB?.length !== 0 && typeof response.subLoB === 'string') {
+                let selectedSubLoBArray = response.subLoB.split(',')
+                let subLoBArray = []
+                let data = await getAllSublob({ isActive: true });
+                selectedSubLoBArray.map((id, j) => {
+                    data.map((item, i) => {
+                        if (id === item.subLOBID) {
+                            subLoBArray.push({
+                                label: item.subLOBName,
+                                value: item.subLOBID,
+                                lob: item.lobid,
+                            })
+                        }
+                    })
+                })
+                response.subLoB = typeof response.subLoB === 'string' && subLoBArray.length === 0 ? response.subLoB : subLoBArray
+            }  else if (response.subLoB === null || response.subLoB === undefined) {
+                response.subLoB = []
+            }
+            
+            if (response?.customerSegment?.length && response?.customerSegment?.length !== 0 &&  typeof response.customerSegment === 'string') {
+                let selectedSubLoBArray = response.customerSegment.split(',')
+                let customerArray = [];
+                let data = await getAllSegment({ isActive: true });
+                selectedSubLoBArray.map((id, j) => {
+                    data.map((item, i) => {
+                        if (id === item.segmentID) {
+                            customerArray.push({
+                                label: item.segmentName,
+                                value: item.segmentID,
+                                country: item.countryList,
+                            })
+                        }
+                    })
+                })
+                response.customerSegment = typeof response.customerSegment === 'string' && customerArray.length === 0 ? response.customerSegment : customerArray
+            }  else if (response.customerSegment === null || response.customerSegment === undefined) {
+                response.customerSegment = []
+            }
+
             let loBArray = []
             if (response?.loB?.length && response?.loB?.length !== 0 && typeof response?.loB === 'string') {
-              let selectedloBArray = response?.loB?.split(',')
-              if (selectedloBArray) {
-                let loBData = await getAlllob({ isActive: true });
-                loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
-              }
-              response.loB = loBArray;
+                let selectedloBArray = response?.loB?.split(',')
+                if (selectedloBArray) {
+                    let loBData = await getAlllob({ isActive: true });
+                    loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
+                }
             }
-            
+            response.loB = loBArray;
+
             let classificationArray = []
             if (response?.classification?.length && response?.classification?.length !== 0 && typeof response?.classification === 'string') {
-              let selectedValueArray = response?.classification?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachClassification" });
-                classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.classification = classificationArray;
+                let selectedValueArray = response?.classification?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachClassification" });
+                    classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
-            
+            response.classification = classificationArray;
+
             let tempNatureOfBreach = []
             if (response?.natureofbreach?.length && response?.natureofbreach?.length !== 0 && typeof response?.natureofbreach === 'string') {
-              let selectedValueArray = response?.natureofbreach?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachNature" });
-                tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.natureofbreach = tempNatureOfBreach;
+                let selectedValueArray = response?.natureofbreach?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachNature" });
+                    tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
-            
+            response.natureofbreach = tempNatureOfBreach;
+
             let tempStatus = []
             if (response?.status?.length && response?.status?.length !== 0 && typeof response?.status === 'string') {
-              let selectedValueArray = response?.status?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachStatus" });
-                tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.status = tempStatus;
+                let selectedValueArray = response?.status?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachStatus" });
+                    tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
-           
+            response.status = tempStatus;
+
             let tempTypeOfBreach = []
             if (response?.typeofBreach?.length && response?.typeofBreach?.length !== 0 && typeof response?.typeofBreach === 'string') {
-              let selectedValueArray = response?.typeofBreach?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachType" });
-                tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.typeofBreach = tempTypeOfBreach;
+                let selectedValueArray = response?.typeofBreach?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachType" });
+                    tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
-           
+            response.typeofBreach = tempTypeOfBreach;
+
             let tempRootCauseBreach = []
             if (response?.rootCauseOfTheBreach?.length && response?.rootCauseOfTheBreach?.length !== 0 && typeof response?.rootCauseOfTheBreach === 'string') {
-              let selectedValueArray = response?.rootCauseOfTheBreach?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachRootCause" });
-                tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.rootCauseOfTheBreach = tempRootCauseBreach;
+                let selectedValueArray = response?.rootCauseOfTheBreach?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachRootCause" });
+                    tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
-       
+            response.rootCauseOfTheBreach = tempRootCauseBreach;
+
             let tempRangeFinImpact = []
             if (response?.rangeOfFinancialimpact?.length && response?.rangeOfFinancialimpact?.length !== 0 && typeof response?.rangeOfFinancialimpact === 'string') {
-              let selectedValueArray = response?.rangeOfFinancialimpact?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
-                tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.rangeOfFinancialimpact = tempRangeFinImpact;
+                let selectedValueArray = response?.rangeOfFinancialimpact?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
+                    tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
-            
+            response.rangeOfFinancialimpact = tempRangeFinImpact;
+
             let tempHowDetected = []
             if (response?.howdetected?.length && response?.howdetected?.length !== 0 && typeof response?.howdetected === 'string') {
-              let selectedValueArray = response?.howdetected?.split(',')
-              if (selectedValueArray) {
-                let data = await getLookupByType({ LookupType: "BreachDetection" });
-                tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-              }
-              response.howdetected = tempHowDetected;
+                let selectedValueArray = response?.howdetected?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "BreachDetection" });
+                    tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
             }
+            response.howdetected = tempHowDetected;
 
-
-
-            
             response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
             response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
             response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
@@ -1061,7 +1090,7 @@ function BreachAddEditForm(props) {
                                     <div className="mb-4"> User Roles</div>
                                 </div>
                                 <div className="border-bottom border-top frm-container-bggray">
-                                    <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : {justifyContent: 'space-between'}}>
+                                    <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : { justifyContent: 'space-between' }}>
                                         {isReadMode &&
                                             userRoles.map((item, i) => {
                                                 return (
@@ -1074,7 +1103,7 @@ function BreachAddEditForm(props) {
                                         }
                                         {!isReadMode && userRoles.map((item, i) => {
                                             return (
-                                                <div className="" style={userProfile.isCountrySuperAdmin ? {marginRight: '10%'} : {}}>
+                                                <div className="" style={userProfile.isCountrySuperAdmin ? { marginRight: '10%' } : {}}>
                                                     <FrmCheckbox
                                                         title={item.label}
                                                         name={item.name}
