@@ -2080,7 +2080,6 @@ function Exemptionlog({ ...props }) {
         })
       }
       selectedViewData[0].status = statusArray
-      console.log(selectedViewData[0]);
       setselfilter(selectedViewData[0])
       setselectedview(value);
     } else {

@@ -1139,7 +1139,6 @@ function Rfelog({ ...props }) {
       }
      
       let reasonArray = [];
-      console.log(selectedViewData[0]);
       if (selectedViewData[0]?.requestForEmpowermentReason?.length && selectedViewData[0]?.requestForEmpowermentReason?.length !== 0 && typeof selectedViewData[0]?.requestForEmpowermentReason === 'string') {
         let selectedstatusArray = selectedViewData[0]?.requestForEmpowermentReason?.split(',')
         if (selectedstatusArray) {
@@ -1206,7 +1205,6 @@ function Rfelog({ ...props }) {
         let selectedstatusArray = selectedViewData[0]?.customerSegment?.split(',')
         if (selectedstatusArray) {
           let statusData = await getAllSegment({ logType: "rfelogsAll" });
-          console.log("statusData>>", statusData);
           selectedstatusArray.map((id, j) => {
             statusData?.map((item, i) => {
                 if (item.isActive && id === item.segmentID) {
@@ -1227,7 +1225,6 @@ function Rfelog({ ...props }) {
         let selectedstatusArray = selectedViewData[0]?.sublobid?.split(',')
         if (selectedstatusArray) {
           let sublobData = await getAllSublob();
-          console.log("SubLob", sublobData);
           selectedstatusArray.map((id, j) => {
             sublobData?.map((item, i) => {
               if (item.isActive && id === item.subLOBID) {
@@ -1736,7 +1733,6 @@ function Rfelog({ ...props }) {
     let tempopts = [];
     let temGermany = [];
     segmentState.segmentItems.forEach((item) => {
-      console.log("item>>>", item);
       if (item.isActive) {
           if (item.logType && item.logType === "rfelogsGermany") {
             temGermany.push({

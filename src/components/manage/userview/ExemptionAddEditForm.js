@@ -209,7 +209,7 @@ function Exemptionlog({ ...props }) {
             } else if (response.region === null || response.region === undefined) {
                 response.regionId = []
             }
-            if (isEditMode && typeof response?.status === 'string' && response?.status !== null) {
+            if (typeof response?.status === 'string' && response?.status !== null) {
                 let tempZUGStatus = await getLookupByType({
                     LookupType: "EXMPZUGStatus",
                 });
@@ -230,7 +230,7 @@ function Exemptionlog({ ...props }) {
             } else if (response.status === null || response.status === undefined) {
                 response.status = [];
             }
-            if (isEditMode && typeof response?.loBChapter === 'string' && response?.loBChapter !== null) {
+            if (typeof response?.loBChapter === 'string' && response?.loBChapter !== null) {
                 let loBChapterArray = [];
                 lobchapterState.lobChapterItems.forEach((item) => {
                     response?.loBChapter?.split(',')?.map((id) => {

@@ -265,24 +265,24 @@ function Breachlog({ ...props }) {
   const intialFilterState = {
     entityNumber: "",
     title: "",
-    classification: "",
+    classification: [],
     group: "",
-    customersegment: "",
-    natureofbreach: "",
-    lobid: "",
+    customersegment: [],
+    natureofbreach: [],
+    lobid: [],
     actionResponsible: "",
     entries: "",
     regionId: [],
     countryId: [],
     status: "",
-    breachStatus: "",
-    sublobid: "",
-    typeOfBreach: "",
+    breachStatus: [],
+    sublobid: [],
+    typeOfBreach: [],
     materialBreach: "",
     nearMisses: "",
-    howDetected: "",
-    rootCauseOfTheBreach: "",
-    rangeOfFinancialImpact: "",
+    howDetected: [],
+    rootCauseOfTheBreach: [],
+    rangeOfFinancialImpact: [],
     creatorName: "",
     BreachOccurredFromDate: "",
     BreachOccurredToDate: "",
@@ -398,8 +398,7 @@ function Breachlog({ ...props }) {
         [name]: value,
         countryId: countryopts,
       });
-    }
-    if (name === "countryId") {
+    } else if (name === "countryId") {
       let country = value;
       let regionOpts = [];
       let selectedRegionopts = [];
@@ -419,6 +418,11 @@ function Breachlog({ ...props }) {
         ...selfilter,
         [name]: value,
         regionId: regionOpts,
+      });
+    } else {
+      setselfilter({
+        ...selfilter,
+        [name]: value,
       });
     }
   };
@@ -440,7 +444,7 @@ function Breachlog({ ...props }) {
     } else if (selfilter.customersegment && selfilter.regionId === REGION_ZNA) {
       setselfilter((prevstate) => ({
         ...prevstate,
-        customersegment: "",
+        customersegment: [],
       }));
     }
     if (
@@ -1384,8 +1388,14 @@ function Breachlog({ ...props }) {
           if (key === "materialBreach") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
-          if (key === "countryId" || key === "regionId") {
-            const tmpval = value.map((item) => item.value);
+          if (key === "countryId" || key === "regionId" ||
+              key === "breachStatus" || key === "lobid" ||
+              key === "sublobid" || key === "typeOfBreach" ||
+              key === "classification" || key === "customersegment" ||
+              key === "natureofbreach" || key === "howDetected" ||
+              key === "rootCauseOfTheBreach" || key === "rangeOfFinancialImpact"
+          ) {
+            const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
         }
@@ -1648,13 +1658,13 @@ function Breachlog({ ...props }) {
     tempHowDetected.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      classificationFilterOpts: [selectInitiVal, ...tempClassification],
-      natureOfBreachFilterOpts: [selectInitiVal, ...tempNatureOfBreach],
-      statusFilterOpts: [selectInitiVal, ...tempStatus],
-      typeOfBreachOpts: [selectInitiVal, ...tempTypeOfBreach],
-      rootCauseBreachOpts: [selectInitiVal, ...tempRootCauseBreach],
-      rangeOfFinancialImpactOpts: [selectInitiVal, ...tempRangeFinImpact],
-      howDetectedOpts: [selectInitiVal, ...tempHowDetected],
+      classificationFilterOpts: [...tempClassification],
+      natureOfBreachFilterOpts: [...tempNatureOfBreach],
+      statusFilterOpts: [...tempStatus],
+      typeOfBreachOpts: [...tempTypeOfBreach],
+      rootCauseBreachOpts: [...tempRootCauseBreach],
+      rangeOfFinancialImpactOpts: [...tempRangeFinImpact],
+      howDetectedOpts: [...tempHowDetected],
     }));
     if (dashboardState.status) {
       setisfilterApplied(true);
@@ -1690,6 +1700,22 @@ function Breachlog({ ...props }) {
       handleFilterSearch();
     }
   }, [selectedview, sellogTabType]);
+
+  const handleSelectedItemArray = (selectedArray, data, field, label) => {
+    let arrayData = [];
+    selectedArray.map((id, j) => {
+        data.map((item, i) => {
+            if (item.isActive && id === item[field]) {
+                arrayData.push({
+                    ...item,
+                    label: item[label],
+                    value: item[field],
+                })
+            }
+        })
+    })
+    return arrayData
+}
 
   const onViewFilterSelect = async(name, value) => {
     let selectedViewData = viewData.filter((item, i) => {
@@ -1733,7 +1759,122 @@ function Breachlog({ ...props }) {
             })
         })
       }
-      selectedViewData[0].regionId = regionArray
+      selectedViewData[0].regionId = regionArray      
+      if (selectedViewData[0]?.sublobid?.length && selectedViewData[0]?.sublobid?.length !== 0 && typeof selectedViewData[0].sublobid === 'string') {
+        let selectedSubLoBArray = selectedViewData[0].sublobid.split(',')
+        let subLoBArray = []
+        let data = await getAllSublob({ isActive: true });
+        selectedSubLoBArray.map((id, j) => {
+            data.map((item, i) => {
+                if (id === item.subLOBID) {
+                    subLoBArray.push({
+                        label: item.subLOBName,
+                        value: item.subLOBID,
+                        lob: item.lobid,
+                    })
+                }
+            })
+        })
+        selectedViewData[0].sublobid = typeof selectedViewData[0].sublobid === 'string' && subLoBArray.length === 0 ? selectedViewData[0].sublobid : subLoBArray
+      }
+      
+      if (selectedViewData[0]?.customersegment?.length && selectedViewData[0]?.customersegment?.length !== 0 &&  typeof selectedViewData[0].customersegment === 'string') {
+          let selectedSubLoBArray = selectedViewData[0].customersegment.split(',')
+          let customerArray = [];
+          let data = await getAllSegment({ isActive: true });
+          selectedSubLoBArray.map((id, j) => {
+              data.map((item, i) => {
+                  if (id === item.segmentID) {
+                      customerArray.push({
+                          label: item.segmentName,
+                          value: item.segmentID,
+                          country: item.countryList,
+                      })
+                  }
+              })
+          })
+          selectedViewData[0].customersegment = typeof selectedViewData[0].customersegment === 'string' && customerArray.length === 0 ? selectedViewData[0].customersegment : customerArray
+      }
+
+      let loBArray = []
+      if (selectedViewData[0]?.lobid?.length && selectedViewData[0]?.lobid?.length !== 0 && typeof selectedViewData[0]?.lobid === 'string') {
+          let selectedloBArray = selectedViewData[0]?.lobid?.split(',')
+          if (selectedloBArray) {
+              let loBData = await getAlllob({ isActive: true });
+              loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
+          }
+      }
+      selectedViewData[0].lobid = loBArray;
+
+      let classificationArray = []
+      if (selectedViewData[0]?.classification?.length && selectedViewData[0]?.classification?.length !== 0 && typeof selectedViewData[0]?.classification === 'string') {
+          let selectedValueArray = selectedViewData[0]?.classification?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachClassification" });
+              classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].classification = classificationArray;
+
+      let tempNatureOfBreach = []
+      if (selectedViewData[0]?.natureofbreach?.length && selectedViewData[0]?.natureofbreach?.length !== 0 && typeof selectedViewData[0]?.natureofbreach === 'string') {
+          let selectedValueArray = selectedViewData[0]?.natureofbreach?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachNature" });
+              tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].natureofbreach = tempNatureOfBreach;
+
+      let tempStatus = []
+      if (selectedViewData[0]?.breachStatus?.length && selectedViewData[0]?.breachStatus?.length !== 0 && typeof selectedViewData[0]?.breachStatus === 'string') {
+          let selectedValueArray = selectedViewData[0]?.breachStatus?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachStatus" });
+              tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].breachStatus = tempStatus;
+
+      let tempTypeOfBreach = []
+      if (selectedViewData[0]?.typeOfBreach?.length && selectedViewData[0]?.typeOfBreach?.length !== 0 && typeof selectedViewData[0]?.typeOfBreach === 'string') {
+          let selectedValueArray = selectedViewData[0]?.typeOfBreach?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachType" });
+              tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].typeOfBreach = tempTypeOfBreach;
+
+      let tempRootCauseBreach = []
+      if (selectedViewData[0]?.rootCauseOfTheBreach?.length && selectedViewData[0]?.rootCauseOfTheBreach?.length !== 0 && typeof selectedViewData[0]?.rootCauseOfTheBreach === 'string') {
+          let selectedValueArray = selectedViewData[0]?.rootCauseOfTheBreach?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachRootCause" });
+              tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].rootCauseOfTheBreach = tempRootCauseBreach;
+
+      let tempRangeFinImpact = []
+      if (selectedViewData[0]?.rangeOfFinancialImpact?.length && selectedViewData[0]?.rangeOfFinancialImpact?.length !== 0 && typeof selectedViewData[0]?.rangeOfFinancialImpact === 'string') {
+          let selectedValueArray = selectedViewData[0]?.rangeOfFinancialImpact?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
+              tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].rangeOfFinancialImpact = tempRangeFinImpact;
+
+      let tempHowDetected = []
+      if (selectedViewData[0]?.howDetected?.length && selectedViewData[0]?.howDetected?.length !== 0 && typeof selectedViewData[0]?.howDetected === 'string') {
+          let selectedValueArray = selectedViewData[0]?.howDetected?.split(',')
+          if (selectedValueArray) {
+              let data = await getLookupByType({ LookupType: "BreachDetection" });
+              tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+          }
+      }
+      selectedViewData[0].howDetected = tempHowDetected;
       selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
       setselfilter(selectedViewData[0])
       setselectedview(value);
@@ -1894,7 +2035,7 @@ function Breachlog({ ...props }) {
       country: item.countryList,
     }));
     tempItems.sort(dynamicSort("label"));
-    setsegmentFilterOpts([selectInitiVal, ...tempItems]);
+    setsegmentFilterOpts([...tempItems]);
   }, [segmentState.segmentItems]);
 
   useEffect(() => {
@@ -1903,7 +2044,7 @@ function Breachlog({ ...props }) {
       value: item.lobid,
     }));
     tempItems.sort(dynamicSort("label"));
-    setlobFilterOpts([selectInitiVal, ...tempItems]);
+    setlobFilterOpts([...tempItems]);
   }, [lobState.lobItems]);
 
   const [frmsublobopts, setfrmsublobopts] = useState([]);
@@ -1915,20 +2056,11 @@ function Breachlog({ ...props }) {
     }));
     tempItems.sort(dynamicSort("label"));
     setfrmsublobopts([...tempItems]);
-  }, [sublobState.sublobitems]);
-
-  useEffect(() => {
-    let tempItems = [];
-    if (selfilter.lobid) {
-      tempItems = frmsublobopts.filter((item) => item.lob === selfilter.lobid);
-    } else {
-      tempItems = frmsublobopts;
-    }
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      sublobFilterOpts: [selectInitiVal, ...tempItems],
+      sublobFilterOpts: [...tempItems],
     }));
-  }, [selfilter.lobid, frmsublobopts]);
+  }, [sublobState.sublobitems]);
 
   useEffect(() => {
     let tempopts = [];
@@ -2623,8 +2755,14 @@ function Breachlog({ ...props }) {
           if (key === "materialBreach") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
-          if (key === "countryId" || key === "regionId") {
-            const tmpval = value.map((item) => item.value);
+          if (key === "countryId" || key === "regionId" ||
+              key === "breachStatus" || key === "lobid" ||
+              key === "sublobid" || key === "typeOfBreach" ||
+              key === "classification" || key === "customersegment" ||
+              key === "natureofbreach" || key === "howDetected" ||
+              key === "rootCauseOfTheBreach" || key === "rangeOfFinancialImpact"
+          ) {
+            const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
         }
@@ -2743,11 +2881,11 @@ function Breachlog({ ...props }) {
                       </div>
                       <div className="row">
                         <div className="frm-filter col-md-3">
-                          <FrmSelect
+                          <FrmMultiselect
                             title={"Status"}
                             name={"breachStatus"}
                             selectopts={commonfilterOpts.statusFilterOpts}
-                            handleChange={onSearchFilterSelect}
+                            handleChange={handleMultiSelectChange}
                             value={selfilter.breachStatus}
                           />
                         </div>
@@ -2764,20 +2902,20 @@ function Breachlog({ ...props }) {
                           />
                         </div>
                         <div className="frm-filter  col-md-3">
-                          <FrmSelect
+                          <FrmMultiselect
                             title={"LoB"}
                             name={"lobid"}
                             selectopts={lobFilterOpts}
-                            handleChange={onSearchFilterSelect}
+                            handleChange={handleMultiSelectChange}
                             value={selfilter.lobid}
                           />
                         </div>
                         <div className="frm-filter  col-md-3">
-                          <FrmSelect
+                          <FrmMultiselect
                             title={"Sub LoB"}
                             name={"sublobid"}
                             selectopts={commonfilterOpts.sublobFilterOpts}
-                            handleChange={onSearchFilterSelect}
+                            handleChange={handleMultiSelectChange}
                             value={selfilter.sublobid}
                           />
                         </div>
@@ -2799,22 +2937,22 @@ function Breachlog({ ...props }) {
                       <div className="filter-container container">
                         <div className="row">
                           <div className="frm-filter col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"Type of Breach"}
                               name={"typeOfBreach"}
                               selectopts={commonfilterOpts.typeOfBreachOpts}
-                              handleChange={onSearchFilterSelect}
+                              handleChange={handleMultiSelectChange}
                               value={selfilter.typeOfBreach}
                             />
                           </div>
                           <div className="frm-filter col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"Classification"}
                               name={"classification"}
                               selectopts={
                                 commonfilterOpts.classificationFilterOpts
                               }
-                              handleChange={onSearchFilterSelect}
+                              handleChange={handleMultiSelectChange}
                               value={selfilter.classification}
                             />
                           </div>
@@ -2829,11 +2967,11 @@ function Breachlog({ ...props }) {
                           </div>
                           {selfilter.regionId !== REGION_ZNA && (
                             <div className="frm-filter col-md-3">
-                              <FrmSelect
+                              <FrmMultiselect
                                 title={"Customer Segment"}
                                 name={"customersegment"}
                                 selectopts={segmentFilterOpts}
-                                handleChange={onSearchFilterSelect}
+                                handleChange={handleMultiSelectChange}
                                 value={selfilter.customersegment}
                               />
                             </div>
@@ -2841,31 +2979,31 @@ function Breachlog({ ...props }) {
                         </div>
                         <div className="row">
                           <div className="frm-filter  col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"Nature of Breach"}
                               name={"natureofbreach"}
                               selectopts={
                                 commonfilterOpts.natureOfBreachFilterOpts
                               }
-                              handleChange={onSearchFilterSelect}
+                              handleChange={handleMultiSelectChange}
                               value={selfilter.natureofbreach}
                             />
                           </div>
                           <div className="frm-filter  col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"How detected"}
                               name={"howDetected"}
                               selectopts={commonfilterOpts.howDetectedOpts}
-                              handleChange={onSearchFilterSelect}
+                              handleChange={handleMultiSelectChange}
                               value={selfilter.howDetected}
                             />
                           </div>
                           <div className="frm-filter  col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"Root Cause of the Breach"}
                               name={"rootCauseOfTheBreach"}
                               selectopts={commonfilterOpts.rootCauseBreachOpts}
-                              handleChange={onSearchFilterSelect}
+                              handleChange={handleMultiSelectChange}
                               value={selfilter.rootCauseOfTheBreach}
                             />
                           </div>
@@ -2892,13 +3030,13 @@ function Breachlog({ ...props }) {
                             />
                             </div>*/}
                           <div className="frm-filter  col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"Range of financial impact"}
                               name={"rangeOfFinancialImpact"}
                               selectopts={
                                 commonfilterOpts.rangeOfFinancialImpactOpts
                               }
-                              handleChange={onSearchFilterSelect}
+                              handleChange={handleMultiSelectChange}
                               value={selfilter.rangeOfFinancialImpact}
                             />
                           </div>
