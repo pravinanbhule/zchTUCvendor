@@ -189,6 +189,14 @@ function Notifications({ ...props }) {
       },
     },
     {
+      dataField: "createdBy",
+      text: "Created By",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+    },
+    {
       dataField: "createdDate",
       text: "Created Date",
       sort: false,
@@ -197,6 +205,14 @@ function Notifications({ ...props }) {
       },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedBy",
+      text: "Modified By",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
       },
     },
     {
@@ -292,7 +308,7 @@ function Notifications({ ...props }) {
   };
 
   const [isEditMode, setisEditMode] = useState(false);
-  const [editmodeName, seteditmodeName] = useState("");
+  const [editmodeName, seteditmodeName] = useState({countryId: '', LogType: ''});
   const initvalstate = {
     logType: "",
     logNotification: [],
@@ -303,6 +319,7 @@ function Notifications({ ...props }) {
   const handleEdit = async (e) => {
     let itemid = e.target.getAttribute("rowid");
     const response = await getById({ LogNotificationId: itemid });
+    console.log("response>>", response);
     let logNotificationList = [];
     let logNotificationIds = response[0]?.logNotification.split(",")
     lookupState.lookupbytyps.forEach((item) => {
@@ -322,7 +339,7 @@ function Notifications({ ...props }) {
         requesterUserId: response.requesterUserId ? response.requesterUserId : "",
       });
       setisEditMode(true);
-      seteditmodeName(response[0].countryId);
+      seteditmodeName({countryId: response[0].countryId, LogType: response[0].logType});
       showAddPopup();
     }, 2000);
   };
@@ -334,6 +351,7 @@ function Notifications({ ...props }) {
     );
     let response = await checkNameExist({
       CountryId: item.countryId,
+      LogType: item.logType
     });
     if (!response) {
       response = await postItem({
@@ -358,9 +376,11 @@ function Notifications({ ...props }) {
   const putItemHandler = async (item) => {
     let response = false;
     console.log(editmodeName, item);
-    if (editmodeName.toLowerCase() !== item.countryId.toLowerCase()) {
+    if (editmodeName.countryId.toLowerCase() !== item.countryId.toLowerCase() || editmodeName.LogType.toLowerCase() !== item.logType.toLowerCase() ) {
+      debugger
       response = await checkNameExist({
         CountryId: item.countryId,
+        LogType: item.logType
       });
     }
     let templogNotificationList = item?.logNotification.map((item) => item.value);
