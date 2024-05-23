@@ -22,7 +22,7 @@
     "js-file-download": "^0.4.12",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "multiselect-react-dropdown": "^2.0.17",
+    "multiselect-react-dropdown": "^2.0.25",
     "react": "^17.0.2",
     "react-app-polyfill": "^3.0.0",
     "react-bootstrap-table-next": "^4.0.3",

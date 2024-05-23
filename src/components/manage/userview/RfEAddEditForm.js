@@ -157,56 +157,26 @@ function RfelogAddEditForm({ ...props }) {
         if (isEditMode || isReadMode) {
             setLoading(true)
             let response = formIntialState
-
-            if (regionState?.regionItems && typeof response?.region === 'string' && response?.region !== null) {
-                let selectedRegionArray = response?.region?.split(',')
-                let regionArray = []
-                selectedRegionArray?.map((id, j) => {
-                    regionState.regionItems.map((item, i) => {
-                        if (id === item.regionID) {
-                            regionArray.push({
-                                label: item.regionName.trim(),
-                                value: item.regionID,
-                            })
-                        }
-                    })
-                })
-                response.RegionId = typeof response?.region === 'string' && regionArray.length === 0 ? response?.region : regionArray
-            } else {
-                response.RegionId = []
-            }
             response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
             response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
             response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
             response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
             response.isNormalUser = response?.userRoles?.split(',').includes('8')
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
-            response.CHZ = response?.chzSustainabilityDeskCHZGICreditRisk
-            response.CustomerSegment = response?.customerSegment
+            response.CHZ = response?.chzSustainabilityDeskCHZGICreditRis
             response.CreatedToDate = response?.createdDateTo
             response.CreatedFromDate = response?.createdDateFrom
             response.RequestForEmpowermentCC = response?.requestforempowermentCC
-            response.RequestForEmpowermentReason = response?.requestforempowermentreason
-            response.RequestForEmpowermentStatus = response?.requestforempowermentstatus
             response.Underwriter = response?.underwriter
             response.UnderwriterGrantingEmpowerment = response?.underwritergrantingempowerment
             response.Creator = response?.creator
-            response.OrganizationalAlignment = response?.organizationalalignment
             response.Role = response?.role
-            response.LOBId = response?.loB
             response.AccountName = response?.accountName
             response.EntryNumber = response?.entryNumber
-
             response.ZurichShare = response?.zurichShare
-            response.Currency = response?.currency
-            response.Branch = response?.branch
-            response.DurationofApproval = response?.durationofApproval
-            response.NewRenewal = response?.newRenewal
             response.Limit = response?.limit
             response.AccountNumber = response?.accountNumber
             response.PolicyPeriod = response?.policyPeriod
-            response.ConditionApplicableTo = response?.conditionApplicableTo
-            response.SUBLOBID = response?.sublobid
             response.GWP = response?.gwp
 
             if (response.isPrivate === true) {
@@ -217,29 +187,10 @@ function RfelogAddEditForm({ ...props }) {
                     setSelectedUserRoles(Roles)
                 }
             }
-            setTimeout(async () => {
-                if (typeof response?.country === 'string' && response?.country !== null) {
-                    let selectedCountryArray = response?.country.split(',')
-                    let countryArray = []
-                    selectedCountryArray.map((id, j) => {
-                        countryState.countryItems.map((item, i) => {
-                            if (id === item.countryID) {
-                                countryArray.push({
-                                    label: item.countryName.trim(),
-                                    value: item.countryID,
-                                })
-                            }
-                        })
-                    })
-                    response.CountryId = countryArray
-                } else {
-                    response.CountryId = []
-                }
-                setLoading(false)
-                setformfield(response)
-            }, 5000);
+            setformfield(response)
+            setLoading(false)
         }
-    }, [regionState.regionItems])
+    }, [])
 
     const onSearchFilterInput = (e) => {
         const { name, value } = e.target;
@@ -262,29 +213,15 @@ function RfelogAddEditForm({ ...props }) {
         });
     };
     const onSearchFilterSelect = (name, value) => {
-        setformfield({
-            ...formfield,
-            [name]: value,
-        });
         if (name === "role" && value === "underwriter") {
             setformfield({
                 ...formfield,
                 underwriter: "",
                 [name]: value,
             });
-        }
-        if (name === "LOBId") {
-            if (value === "") {
-                setsublobFilterOpts(allsublobFilterOpts);
-            } else {
-                let sublobopts = allsublobFilterOpts.filter(
-                    (item) => item.lob === value
-                );
-                setsublobFilterOpts([...sublobopts]);
-            }
+        } else {
             setformfield({
                 ...formfield,
-                SUBLOBID: "",
                 [name]: value,
             });
         }
@@ -313,8 +250,7 @@ function RfelogAddEditForm({ ...props }) {
                 [name]: value,
                 CountryId: countryopts,
             });
-        }
-        if (name === "CountryId") {
+        } else if (name === "CountryId") {
             let country = value;
             let regionOpts = [];
             let selectedRegionopts = [];
@@ -334,6 +270,11 @@ function RfelogAddEditForm({ ...props }) {
                 ...formfield,
                 [name]: value,
                 RegionId: regionOpts,
+            });
+        } else {
+            setformfield({
+                ...formfield,
+                [name]: value,
             });
         }
     };
@@ -520,12 +461,17 @@ function RfelogAddEditForm({ ...props }) {
         fnOnInit();
     }, []);
 
-    const setOpts = (varValue, item) => {
+    const setOpts = (varValue, item, name) => {
         varValue.push({
+            cat: name,
             label: item.lookUpValue,
             value: item.lookupID,
         })
     }
+
+    useEffect(() => {
+        console.log(formfield.RequestForEmpowermentStatus);
+    }, [formfield.RequestForEmpowermentStatus])
 
     const loadfilterdata = async () => {
         const lookupvalues = await Promise.all([
@@ -559,29 +505,60 @@ function RfelogAddEditForm({ ...props }) {
         let tempDurationOfApproval = lookupvalues[4];
         let tempNewRenewal = lookupvalues[5];
         let tempCondition = lookupvalues[6];
-
         let tempopts = [];
+        let selectedArray = [];
         tempStatus.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.requestforempowermentstatus === 'string' && formIntialState?.requestforempowermentstatus !== null) {
+                    formIntialState?.requestforempowermentstatus?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     label: item.lookUpValue,
                     value: item.lookupID,
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            RequestForEmpowermentStatus: selectedArray,
+        }));
+        selectedArray = [];
         tempStatus = [...tempopts];
         tempopts = [];
 
         tempopts = [];
         temporgnizationalalignment.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.organizationalalignment === 'string' && formIntialState?.organizationalalignment !== null) {
+                    formIntialState?.organizationalalignment?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     label: item.lookUpValue,
                     value: item.lookupID,
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            OrganizationalAlignment: selectedArray,
+        }));
+        selectedArray = [];
         temporgnizationalalignment = [...tempopts];
+
         tempopts = [];
         temprfechz.forEach((item) => {
             if (item.isActive) {
@@ -592,162 +569,175 @@ function RfelogAddEditForm({ ...props }) {
             }
         });
         temprfechz = [...tempopts];
+
         tempopts = [];
-        let AustraliaOpts = [];
-        let BeneluxOpts = [];
-        let ChinaOpts = [];
-        let FranceOpts = [];
-        let GermanyOpts = [];
-        let HongKongOpts = [];
-        let IndiaOpts = [];
-        let IndonesiaOpts = [];
-        let ItalyOpts = [];
-        let LatAmOpts = [];
-        let MalaysiaOpts = [];
-        let MiddleEastOpts = [];
-        let NordicOpts = [];
-        let SingaporeOpts = [];
-        let SpainOpts = [];
-        let UKOpts = [];
         temprfeempourment.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.requestforempowermentreason === 'string' && formIntialState?.requestforempowermentreason !== null) {
+                    formIntialState?.requestforempowermentreason?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
                 if (item.lookUpType.includes("Australia")) {
-                    setOpts(AustraliaOpts, item)
+                    setOpts(tempopts, item, 'Australia')
                 }
                 if (item.lookUpType.includes("Benelux")) {
-                    setOpts(BeneluxOpts, item)
+                    setOpts(tempopts, item, 'Benelux')
                 }
                 if (item.lookUpType.includes("China")) {
-                    setOpts(ChinaOpts, item)
+                    setOpts(tempopts, item, 'China')
                 }
                 if (item.lookUpType.includes("France")) {
-                    setOpts(FranceOpts, item)
+                    setOpts(tempopts, item, 'France')
                 }
                 if (item.lookUpType.includes("Germany")) {
-                    setOpts(GermanyOpts, item)
+                    setOpts(tempopts, item, 'Germany')
                 }
                 if (item.lookUpType.includes("HongKong")) {
-                    setOpts(HongKongOpts, item)
+                    setOpts(tempopts, item, 'HongKong')
                 }
                 if (item.lookUpType.includes("India")) {
-                    setOpts(IndiaOpts, item)
+                    setOpts(tempopts, item, 'India')
                 }
                 if (item.lookUpType.includes("Indonesia")) {
-                    setOpts(IndonesiaOpts, item)
+                    setOpts(tempopts, item, 'Indonesia')
                 }
                 if (item.lookUpType.includes("Italy")) {
-                    setOpts(ItalyOpts, item)
+                    setOpts(tempopts, item, 'Italy')
                 }
                 if (item.lookUpType.includes("LatAm")) {
-                    setOpts(LatAmOpts, item)
+                    setOpts(tempopts, item, 'LatAm')
                 }
                 if (item.lookUpType.includes("Malaysia")) {
-                    setOpts(MalaysiaOpts, item)
+                    setOpts(tempopts, item, 'Malaysia')
                 }
                 if (item.lookUpType.includes("MiddleEast")) {
-                    setOpts(MiddleEastOpts, item)
+                    setOpts(tempopts, item, 'MiddleEast')
                 }
                 if (item.lookUpType.includes("Nordic")) {
-                    setOpts(NordicOpts, item)
+                    setOpts(tempopts, item, 'Nordic')
                 }
                 if (item.lookUpType.includes("Singapore")) {
-                    setOpts(SingaporeOpts, item)
+                    setOpts(tempopts, item, 'Singapore')
                 }
                 if (item.lookUpType.includes("Spain")) {
-                    setOpts(SpainOpts, item)
+                    setOpts(tempopts, item, 'Spain')
                 }
                 if (item.lookUpType.includes("UK")) {
-                    setOpts(UKOpts, item)
+                    setOpts(tempopts, item, 'UK')
                 }
                 if (item.lookUpType.length === 27) {
-                    setOpts(tempopts, item)
+                    setOpts(tempopts, item, 'Global')
                 }
             }
         });
-        AustraliaOpts.sort(dynamicSort("label"));
-        BeneluxOpts.sort(dynamicSort("label"));
-        ChinaOpts.sort(dynamicSort("label"));
-        FranceOpts.sort(dynamicSort("label"));
-        GermanyOpts.sort(dynamicSort("label"));
-        HongKongOpts.sort(dynamicSort("label"));
-        IndiaOpts.sort(dynamicSort("label"));
-        IndonesiaOpts.sort(dynamicSort("label"));
-        ItalyOpts.sort(dynamicSort("label"));
-        LatAmOpts.sort(dynamicSort("label"));
-        MalaysiaOpts.sort(dynamicSort("label"));
-        MiddleEastOpts.sort(dynamicSort("label"));
-        NordicOpts.sort(dynamicSort("label"));
-        SingaporeOpts.sort(dynamicSort("label"));
-        SpainOpts.sort(dynamicSort("label"));
-        UKOpts.sort(dynamicSort("label"));
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            RequestForEmpowermentReason: selectedArray,
+        }));
+        selectedArray = [];
         temprfeempourment = [...tempopts];
+
         tempopts = [];
         tempDurationOfApproval.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.durationofApproval === 'string' && formIntialState?.durationofApproval !== null) {
+                    formIntialState?.durationofApproval?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     label: item.lookUpValue,
                     value: item.lookupID,
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            DurationofApproval: selectedArray,
+        }));
+        selectedArray = [];
         tempDurationOfApproval = [...tempopts];
+
         tempopts = [];
         tempNewRenewal.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.newRenewal === 'string' && formIntialState?.newRenewal !== null) {
+                    formIntialState?.newRenewal?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     label: item.lookUpValue,
                     value: item.lookupID,
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            NewRenewal: selectedArray,
+        }));
+        selectedArray = [];
         tempNewRenewal = [...tempopts];
+
         tempopts = [];
         tempCondition.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.conditionApplicableTo === 'string' && formIntialState?.conditionApplicableTo !== null) {
+                    formIntialState?.conditionApplicableTo?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     label: item.lookUpValue,
                     value: item.lookupID,
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            ConditionApplicableTo: selectedArray,
+        }));
+        selectedArray = [];
         tempCondition = [...tempopts];
+
         tempopts = [];
 
         tempStatus.sort(dynamicSort("label"));
         temporgnizationalalignment.sort(dynamicSort("label"));
         temprfechz.sort(dynamicSort("label"));
-        temprfeempourment.sort(dynamicSort("label"));
         tempDurationOfApproval.sort(dynamicSort("label"));
         tempNewRenewal.sort(dynamicSort("label"));
         tempCondition.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            statusFilterOpts: [selectInitiVal, ...tempStatus],
-            organizationalAlignmentOpts: [selectInitiVal, ...temporgnizationalalignment],
-            requestForEmpowermentReasonOpts: [
-                selectInitiVal, 
-                ...temprfeempourment,
-                {type: 'group', name: 'Australia', items: AustraliaOpts},
-                {type: 'group', name: 'Benelux', items: BeneluxOpts},
-                {type: 'group', name: 'China', items: ChinaOpts},
-                {type: 'group', name: 'France', items: FranceOpts},
-                {type: 'group', name: 'Germany', items: GermanyOpts},
-                {type: 'group', name: 'HongKong', items: HongKongOpts},
-                {type: 'group', name: 'India', items: IndiaOpts},
-                {type: 'group', name: 'Indonesia', items: IndonesiaOpts},
-                {type: 'group', name: 'Italy', items: ItalyOpts},
-                {type: 'group', name: 'Latam', items: LatAmOpts},
-                {type: 'group', name: 'Malaysia', items: MalaysiaOpts},
-                {type: 'group', name: 'MiddleEast', items: MiddleEastOpts},
-                {type: 'group', name: 'Nordic', items: NordicOpts},
-                {type: 'group', name: 'Singapore', items: SingaporeOpts},
-                {type: 'group', name: 'Spain', items: SpainOpts},
-                {type: 'group', name: 'UK', items: UKOpts},
-            ],
+            statusFilterOpts: [...tempStatus],
+            organizationalAlignmentOpts: [...temporgnizationalalignment],
+            requestForEmpowermentReasonOpts: [...temprfeempourment],
             chzOpts: [selectInitiVal, ...temprfechz],
-            durationofApprovalOpts: [selectInitiVal, ...tempDurationOfApproval],
-            newRenewalOpts: [selectInitiVal, ...tempNewRenewal],
-            conditionApplicableToOpts: [selectInitiVal, ...tempCondition]
+            durationofApprovalOpts: [...tempDurationOfApproval],
+            newRenewalOpts: [...tempNewRenewal],
+            conditionApplicableToOpts: [...tempCondition]
         }));
         const tempfilterfields = await getLogFields({
             IncountryFlag: "",
@@ -844,15 +834,29 @@ function RfelogAddEditForm({ ...props }) {
     useEffect(() => {
         let selectOpts = [];
         let tempCountryMapping = [];
-        let tempRegionListObj = {};
+        let selectedArray = [];
         countryState.countryItems.forEach((item) => {
+            if (isEditMode && typeof formIntialState?.country === 'string' && formIntialState?.country !== null) {
+                formIntialState?.country?.split(',')?.map((id) => {
+                    if (id === item.countryID) {
+                        selectedArray.push({
+                            label: item.countryName.trim(),
+                            value: item.countryID,
+                            regionId: item.regionID,
+                        });
+                    }
+                })
+            }
             selectOpts.push({
                 label: item.countryName.trim(),
                 value: item.countryID,
                 regionId: item.regionID,
             });
         });
-
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            CountryId: selectedArray,
+        }));
         selectOpts.sort(dynamicSort("label"));
         setfrmCountrySelectOpts([...selectOpts]);
         setcountrymapping([...tempCountryMapping]);
@@ -863,13 +867,29 @@ function RfelogAddEditForm({ ...props }) {
     const [frmRegionSelectOpts, setfrmRegionSelectOpts] = useState([]);
     useEffect(() => {
         let selectOpts = [];
+        let selectedArray = [];
         regionState.regionItems.forEach((item) => {
+            if (isEditMode && typeof formIntialState?.region === 'string' && formIntialState?.region !== null) {
+                formIntialState?.region?.split(',')?.map((id) => {
+                    if (id === item.regionID) {
+                        selectedArray.push({
+                            ...item,
+                            label: item.regionName.trim(),
+                            value: item.regionID,
+                        });
+                    }
+                })
+            }
             selectOpts.push({
                 ...item,
                 label: item.regionName.trim(),
                 value: item.regionID,
             });
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            RegionId: selectedArray,
+        }));
         selectOpts.sort(dynamicSort("label"));
         setfrmRegionSelectOpts([...selectOpts]);
         setregionFilterOpts([...selectOpts]);
@@ -877,12 +897,30 @@ function RfelogAddEditForm({ ...props }) {
     }, [regionState.regionItems]);
 
     useEffect(() => {
-        let tempItems = lobState.lobItems.map((item) => ({
-            label: item.lobName,
-            value: item.lobid,
+        let tempItems = []
+        let loBArray = []
+        lobState.lobItems.map((item) => {
+            if (isEditMode && typeof formIntialState?.loB === 'string' && formIntialState?.loB !== null) {
+                formIntialState?.loB?.split(',')?.map((id) => {
+                    if (id === item.lobid) {
+                        loBArray.push({
+                            label: item.lobName,
+                            value: item.lobid,
+                        });
+                    }
+                })
+            }
+            tempItems.push({
+                label: item.lobName,
+                value: item.lobid,
+            })
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            LOBId: loBArray,
         }));
         tempItems.sort(dynamicSort("label"));
-        setlobFilterOpts([selectInitiVal, ...tempItems]);
+        setlobFilterOpts([...tempItems]);
     }, [lobState.lobItems]);
 
     useEffect(() => {
@@ -903,8 +941,20 @@ function RfelogAddEditForm({ ...props }) {
 
     useEffect(() => {
         let tempopts = [];
+        let selectedArray = [];
         currencyState.currencyItems.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.currency === 'string' && formIntialState?.currency !== null) {
+                    formIntialState?.currency?.split(',')?.map((id) => {
+                        if (id === item.currencyID) {
+                            selectedArray.push({
+                                ...item,
+                                label: item.currencyName,
+                                value: item.currencyID,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     ...item,
                     label: item.currencyName,
@@ -912,17 +962,33 @@ function RfelogAddEditForm({ ...props }) {
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            Currency: selectedArray,
+        }));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            currencyOpts: [selectInitiVal, ...tempopts],
+            currencyOpts: [...tempopts],
         }));
     }, [currencyState.currencyItems]);
 
     useEffect(() => {
         if (branchState.branchItems.length) {
             let tempopts = [];
+            let selectedArray = [];
             branchState.branchItems.forEach((item) => {
                 if (item.isActive) {
+                    if (isEditMode && typeof formIntialState?.branch === 'string' && formIntialState?.branch !== null) {
+                        formIntialState?.branch?.split(',')?.map((id) => {
+                            if (id === item.branchId) {
+                                selectedArray.push({
+                                    ...item,
+                                    label: item.branchName,
+                                    value: item.branchId,
+                                });
+                            }
+                        })
+                    }
                     tempopts.push({
                         ...item,
                         label: item.branchName,
@@ -930,10 +996,14 @@ function RfelogAddEditForm({ ...props }) {
                     });
                 }
             });
+            setformfield((prevfilter) => ({
+                ...prevfilter,
+                Branch: selectedArray,
+            }));
             tempopts.sort(dynamicSort("label"));
             setcommonfilterOpts((prevstate) => ({
                 ...prevstate,
-                branchOpts: [selectInitiVal, ...tempopts],
+                branchOpts: [...tempopts],
             }));
         }
     }, [branchState.branchItems]);
@@ -941,14 +1011,29 @@ function RfelogAddEditForm({ ...props }) {
     useEffect(() => {
         let tempopts = [];
         let temGermany = [];
+        let selectedArray = [];
         segmentState.segmentItems.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.customerSegment === 'string' && formIntialState?.customerSegment !== null) {
+                    formIntialState?.customerSegment?.split(',')?.map((id) => {
+                        if (id === item.segmentID) {
+                            selectedArray.push({
+                                ...item,
+                                label: item.segmentName,
+                                value: item.segmentID,
+                                country: item.countryList,
+                                cat: item.logType && item.logType === "rfelogsGermany" ? 'Germany' : 'Global'
+                            });
+                        }
+                    })
+                }
                 if (item.logType && item.logType === "rfelogsGermany") {
                     temGermany.push({
                         ...item,
                         label: item.segmentName,
                         value: item.segmentID,
                         country: item.countryList,
+                        cat: 'Germany'
                     })
                 } else {
                     tempopts.push({
@@ -956,21 +1041,39 @@ function RfelogAddEditForm({ ...props }) {
                         label: item.segmentName,
                         value: item.segmentID,
                         country: item.countryList,
+                        cat: 'Global'
                     });
                 }
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            CustomerSegment: selectedArray,
+        }));
         tempopts.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            customerSegmentOpts: [selectInitiVal, ...tempopts, {type: 'group', name: 'Germany', items: temGermany}],
+            customerSegmentOpts: [...tempopts, ...temGermany],
         }));
     }, [segmentState.segmentItems]);
 
     useEffect(() => {
         let tempopts = [];
+        let selectedArray = [];
         sublobState.sublobitems.forEach((item) => {
             if (item.isActive) {
+                if (isEditMode && typeof formIntialState?.sublobid === 'string' && formIntialState?.sublobid !== null) {
+                    formIntialState?.sublobid?.split(',')?.map((id) => {
+                        if (id === item.subLOBID) {
+                            selectedArray.push({
+                                ...item,
+                                label: item.subLOBName,
+                                value: item.subLOBID,
+                                lob: item.lobid,
+                            });
+                        }
+                    })
+                }
                 tempopts.push({
                     ...item,
                     label: item.subLOBName,
@@ -979,15 +1082,13 @@ function RfelogAddEditForm({ ...props }) {
                 });
             }
         });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            SUBLOBID: selectedArray,
+        }));
         tempopts.sort(dynamicSort("label"));
         setallsublobFilterOpts(tempopts)
         setsublobFilterOpts(tempopts);
-        if (formfield.LOBId) {
-            let sublobopts = tempopts.filter(
-                (item) => item.lob === formfield.LOBId
-            );
-            setsublobFilterOpts([selectInitiVal, ...sublobopts]);
-        }
     }, [sublobState.sublobitems]);
 
     const fnsetPaginationData = (data) => {
@@ -1095,6 +1196,7 @@ function RfelogAddEditForm({ ...props }) {
                                 obj.title
                             )
                         }
+                        groupBy={obj.name === "RequestForEmpowermentReason" || obj.name === "CustomerSegment" ? 'cat' : ''}
                         name={obj.name}
                         value={formfield[obj.name] || []}
                         handleChange={eval(obj.eventhandler)}
@@ -1189,6 +1291,7 @@ function RfelogAddEditForm({ ...props }) {
     const [selectedUserRoles, setSelectedUserRoles] = useState([])
 
     const handleFilterSearch = async () => {
+        console.log(formfield);
         let data = formfield
         if (!isEmptyObjectKeys(formfield)) {
             let tempFilterOpts = {};
@@ -1196,7 +1299,12 @@ function RfelogAddEditForm({ ...props }) {
                 if (formfield[key]) {
                     tempFilterOpts[key] = formfield[key];
                     let value = formfield[key];
-                    if (key === "CountryId" || key === "RegionId") {
+                    if (key === "CountryId" || key === "RegionId" ||
+                        key === "LOBId" || key === "RequestForEmpowermentStatus" ||
+                        key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
+                        key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
+                        key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
+                        key === "ConditionApplicableTo") {
                         const tmpval = value.map((item) => item.value);
                         tempFilterOpts[key] = tmpval.join(",");
                     }
@@ -1267,6 +1375,7 @@ function RfelogAddEditForm({ ...props }) {
             delete data?.ConditionApplicableTo
             delete data?.SUBLOBID
             delete data?.GWP
+            console.log("data>>>", data);
             let response = await postItem(data)
             if (response) {
                 if (data.rfeViewsId) {
@@ -1329,7 +1438,7 @@ function RfelogAddEditForm({ ...props }) {
                                 <div className="mb-4"> User Roles</div>
                             </div>
                             <div className="border-bottom border-top frm-container-bggray">
-                            <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : {justifyContent: 'space-between'}}>
+                                <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : { justifyContent: 'space-between' }}>
                                     {isReadMode &&
                                         userRoles.map((item, i) => {
                                             return (
@@ -1342,7 +1451,7 @@ function RfelogAddEditForm({ ...props }) {
                                     }
                                     {!isReadMode && userRoles.map((item, i) => {
                                         return (
-                                            <div className="" style={userProfile.isCountrySuperAdmin ? {marginRight: '10%'} : {}}>
+                                            <div className="" style={userProfile.isCountrySuperAdmin ? { marginRight: '10%' } : {}}>
                                                 <FrmCheckbox
                                                     title={item.label}
                                                     name={item.name}

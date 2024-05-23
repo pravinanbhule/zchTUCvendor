@@ -246,21 +246,6 @@ function Rfelog({ ...props }) {
         [name]: value,
       });
     }
-    if (name === "LOBId") {
-      if (value === "") {
-        setsublobFilterOpts(allsublobFilterOpts);
-      } else {
-        let sublobopts = allsublobFilterOpts.filter(
-          (item) => item.lob === selfilter.LOBId
-        );
-        setsublobFilterOpts([...sublobopts]);
-      }
-      setselfilter({
-        ...selfilter,
-        SUBLOBID: "",
-        [name]: value,
-      });
-    }
     /*if (name === "regionId" && value !== "") {
       let countryopts = countryAllFilterOpts.filter(
         (item) => item.regionId === value
@@ -324,8 +309,7 @@ function Rfelog({ ...props }) {
         [name]: value,
         CountryId: countryopts,
       });
-    }
-    if (name === "CountryId") {
+    } else if (name === "CountryId") {
       let country = value;
       let regionOpts = [];
       let selectedRegionopts = [];
@@ -345,6 +329,11 @@ function Rfelog({ ...props }) {
         ...selfilter,
         [name]: value,
         RegionId: regionOpts,
+      });
+    } else {
+      setselfilter({
+        ...selfilter,
+        [name]: value,
       });
     }
   };
@@ -792,9 +781,14 @@ function Rfelog({ ...props }) {
         if (selfilter[key]) {
           tempFilterOpts[key] = selfilter[key];
           let value = selfilter[key];
-          if (key === "CountryId" || key === "RegionId") {
-            const tmpval = value.map((item) => item.value);
-            tempFilterOpts[key] = tmpval.join(",");
+          if (key === "CountryId" || key === "RegionId" ||
+              key === "LOBId" || key === "RequestForEmpowermentStatus" ||
+              key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
+              key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
+              key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
+              key === "ConditionApplicableTo") {
+              const tmpval = value.map((item) => item.value);
+              tempFilterOpts[key] = tmpval.join(",");
           }
         }
       }
@@ -1061,6 +1055,22 @@ function Rfelog({ ...props }) {
     }
   }, [selectedUserView, sellogTabType]);
 
+  const handleSelectedItemArray = (selectedArray, data, field, label) => {
+    let arrayData = [];
+    selectedArray.map((id, j) => {
+      data.map((item, i) => {
+            if (item.isActive && id === item[field]) {
+              arrayData.push({
+                  ...item,
+                  label: item[label],
+                  value: item[field],
+                })
+            }
+        })
+    })
+    return arrayData
+  }
+
   const onUserViewFilterSelect = async(name, value) => {
     setselfilter(intialFilterState);
     let selectedViewData = viewData.filter((item, i) => {
@@ -1075,7 +1085,7 @@ function Rfelog({ ...props }) {
         if (selectedCountryArray) {
           selectedCountryArray.map((id, j) => {
               countryState.countryItems.map((item, i) => {
-                  if (id === item.countryID) {
+                  if (item.isActive && id === item.countryID) {
                       countryArray.push({
                           ...item,
                           label: item.countryName.trim(),
@@ -1090,11 +1100,11 @@ function Rfelog({ ...props }) {
       let regionArray = []
       if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
         let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
-        let regionData = await getAllRegion();
         if (selectedRegionArray) {
+          let regionData = await getAllRegion();
           selectedRegionArray.map((id, j) => {
             regionData.map((item, i) => {
-                  if (id === item.regionID) {
+                  if (item.isActive && id === item.regionID) {
                       regionArray.push({
                           ...item,
                           label: item.regionName.trim(),
@@ -1106,35 +1116,174 @@ function Rfelog({ ...props }) {
         }
       }
 
+      let loBArray = []
+      if (selectedViewData[0]?.lobId?.length && selectedViewData[0]?.lobId?.length !== 0 && typeof selectedViewData[0]?.lobId === 'string') {
+        let selectedloBArray = selectedViewData[0]?.lobId?.split(',')
+        if (selectedloBArray) {
+          let loBData = await getAlllob({ isActive: true });
+          loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
+        }
+      }
+      
+      let statusArray = [];
+      if (selectedViewData[0]?.requestForEmpowermentStatus?.length && selectedViewData[0]?.requestForEmpowermentStatus?.length !== 0 && typeof selectedViewData[0]?.requestForEmpowermentStatus === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.requestForEmpowermentStatus?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "RFEEmpowermentStatusRequest",
+          });
+          statusArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+
+      let orgArray = [];
+      if (selectedViewData[0]?.organizationalAlignment?.length && selectedViewData[0]?.organizationalAlignment?.length !== 0 && typeof selectedViewData[0]?.organizationalAlignment === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.organizationalAlignment?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "RFEOrganizationalAlignment",
+          });
+          orgArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+     
+      let reasonArray = [];
+      console.log(selectedViewData[0]);
+      if (selectedViewData[0]?.requestForEmpowermentReason?.length && selectedViewData[0]?.requestForEmpowermentReason?.length !== 0 && typeof selectedViewData[0]?.requestForEmpowermentReason === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.requestForEmpowermentReason?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "RFEEmpowermentReasonRequestAll",
+          });
+          reasonArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+   
+      let duarationArray = [];
+      if (selectedViewData[0]?.durationofApproval?.length && selectedViewData[0]?.durationofApproval?.length !== 0 && typeof selectedViewData[0]?.durationofApproval === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.durationofApproval?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "DurationofApproval",
+          });
+          duarationArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+     
+      let conditionArray = [];
+      if (selectedViewData[0]?.conditionApplicableTo?.length && selectedViewData[0]?.conditionApplicableTo?.length !== 0 && typeof selectedViewData[0]?.conditionApplicableTo === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.conditionApplicableTo?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "ConditionApplicableTo",
+          });
+          conditionArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+
+      let newRenewalArray = [];
+      if (selectedViewData[0]?.newRenewal?.length && selectedViewData[0]?.newRenewal?.length !== 0 && typeof selectedViewData[0]?.newRenewal === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.newRenewal?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "RFELogNewRenewal",
+          });
+          newRenewalArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let currencyArray = [];
+      if (selectedViewData[0]?.currency?.length && selectedViewData[0]?.currency?.length !== 0 && typeof selectedViewData[0]?.currency === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.currency?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getAllCurrency();
+          currencyArray = handleSelectedItemArray(selectedstatusArray, statusData, 'currencyID', 'currencyName')
+        }
+      }
+      
+      let branchArray = [];
+      if (selectedViewData[0]?.branch?.length && selectedViewData[0]?.branch?.length !== 0 && typeof selectedViewData[0]?.branch === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.branch?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getAllBranch();
+          branchArray = handleSelectedItemArray(selectedstatusArray, statusData, 'branchId', 'branchName')
+        }
+      }
+
+      let customerSegmentArray = [];
+      if (selectedViewData[0]?.customerSegment?.length && selectedViewData[0]?.customerSegment?.length !== 0 && typeof selectedViewData[0]?.customerSegment === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.customerSegment?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getAllSegment({ logType: "rfelogsAll" });
+          console.log("statusData>>", statusData);
+          selectedstatusArray.map((id, j) => {
+            statusData?.map((item, i) => {
+                if (item.isActive && id === item.segmentID) {
+                  customerSegmentArray.push({
+                      ...item,
+                      label: item.segmentName,
+                      value: item.segmentID,
+                      country: item.countryList,
+                    })
+                }
+            })
+          })
+        }
+      }
+
+      let subloBArray = [];
+      if (selectedViewData[0]?.sublobid?.length && selectedViewData[0]?.sublobid?.length !== 0 && typeof selectedViewData[0]?.sublobid === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.sublobid?.split(',')
+        if (selectedstatusArray) {
+          let sublobData = await getAllSublob();
+          console.log("SubLob", sublobData);
+          selectedstatusArray.map((id, j) => {
+            sublobData?.map((item, i) => {
+              if (item.isActive && id === item.subLOBID) {
+                subloBArray.push({
+                    ...item,
+                    label: item.subLOBName,
+                    value: item.subLOBID,
+                    lob: item.lobid,
+                });
+              }
+            })
+        })
+        }
+      }
+
+
+      
+
       const FilterState = {
         EntryNumber: selectedViewData[0]?.entryNumber,
         AccountName: selectedViewData[0]?.accountName,
-        LOBId: selectedViewData[0]?.lobId,
+        LOBId: loBArray,
         CountryId: countryArray,
         RegionId: regionArray,
         Underwriter: selectedViewData[0]?.underwriter,
         Role: selectedViewData[0]?.role,
-        RequestForEmpowermentStatus: selectedViewData[0]?.requestForEmpowermentStatus,
-        OrganizationalAlignment: selectedViewData[0]?.organizationalAlignment,
-        RequestForEmpowermentReason: selectedViewData[0]?.requestForEmpowermentReason,
+        RequestForEmpowermentStatus: statusArray,
+        OrganizationalAlignment: orgArray,
+        RequestForEmpowermentReason: reasonArray,
         CHZ: selectedViewData[0]?.chz,
         RequestForEmpowermentCC: selectedViewData[0]?.requestForEmpowermentCC,
         UnderwriterGrantingEmpowerment: selectedViewData[0]?.underwriterGrantingEmpowerment,
         Creator: selectedViewData[0]?.creator,
         CreatedFromDate: selectedViewData[0]?.createdFromDate,
         CreatedToDate: selectedViewData[0]?.createdToDate,
-        Currency: selectedViewData[0]?.currency,
-        Branch: selectedViewData[0]?.branch,
-        DurationofApproval: selectedViewData[0]?.durationofApproval,
-        NewRenewal: selectedViewData[0]?.newRenewal,
+        Currency: currencyArray,
+        Branch: branchArray,
+        DurationofApproval: duarationArray,
+        NewRenewal: newRenewalArray,
         Limit: selectedViewData[0]?.limit,
         ZurichShare: selectedViewData[0]?.zurichShare,
         AccountNumber: selectedViewData[0]?.accountNumber,
-        CustomerSegment: selectedViewData[0]?.customerSegment,
+        CustomerSegment: customerSegmentArray,
         PolicyPeriod: selectedViewData[0]?.policyPeriod,
-        ConditionApplicableTo: selectedViewData[0]?.conditionApplicableTo,
+        ConditionApplicableTo: conditionArray,
         GWP: selectedViewData[0]?.gwp,
-        SUBLOBID: selectedViewData[0]?.sublobid
+        SUBLOBID: subloBArray
       };
       setselfilter(FilterState)
       setSelectedUserview(value);
@@ -1175,11 +1324,12 @@ function Rfelog({ ...props }) {
     setViewResponse(true)
   }
 
-  const setOpts = (varValue, item) => {
+  const setOpts = (varValue, item, name) => {
     varValue.push({
-        label: item.lookUpValue,
-        value: item.lookupID,
-    })
+      cat: name,
+      label: item.lookUpValue,
+      value: item.lookupID,
+  })
   }
 
   const loadfilterdata = async () => {
@@ -1254,93 +1404,61 @@ function Rfelog({ ...props }) {
     });
     temprfechz = [...tempopts];
     tempopts = [];
-    let AustraliaOpts = [];
-    let BeneluxOpts = [];
-    let ChinaOpts = [];
-    let FranceOpts = [];
-    let GermanyOpts = [];
-    let HongKongOpts = [];
-    let IndiaOpts = [];
-    let IndonesiaOpts = [];
-    let ItalyOpts = [];
-    let LatAmOpts = [];
-    let MalaysiaOpts = [];
-    let MiddleEastOpts = [];
-    let NordicOpts = [];
-    let SingaporeOpts = [];
-    let SpainOpts = [];
-    let UKOpts = [];
     temprfeempourment.forEach((item) => {
         if (item.isActive) {
-            if (item.lookUpType.includes("Australia")) {
-                setOpts(AustraliaOpts, item)
-            }
-            if (item.lookUpType.includes("Benelux")) {
-                setOpts(BeneluxOpts, item)
-            }
-            if (item.lookUpType.includes("China")) {
-                setOpts(ChinaOpts, item)
-            }
-            if (item.lookUpType.includes("France")) {
-                setOpts(FranceOpts, item)
-            }
-            if (item.lookUpType.includes("Germany")) {
-                setOpts(GermanyOpts, item)
-            }
-            if (item.lookUpType.includes("HongKong")) {
-                setOpts(HongKongOpts, item)
-            }
-            if (item.lookUpType.includes("India")) {
-                setOpts(IndiaOpts, item)
-            }
-            if (item.lookUpType.includes("Indonesia")) {
-                setOpts(IndonesiaOpts, item)
-            }
-            if (item.lookUpType.includes("Italy")) {
-                setOpts(ItalyOpts, item)
-            }
-            if (item.lookUpType.includes("LatAm")) {
-                setOpts(LatAmOpts, item)
-            }
-            if (item.lookUpType.includes("Malaysia")) {
-                setOpts(MalaysiaOpts, item)
-            }
-            if (item.lookUpType.includes("MiddleEast")) {
-                setOpts(MiddleEastOpts, item)
-            }
-            if (item.lookUpType.includes("Nordic")) {
-                setOpts(NordicOpts, item)
-            }
-            if (item.lookUpType.includes("Singapore")) {
-                setOpts(SingaporeOpts, item)
-            }
-            if (item.lookUpType.includes("Spain")) {
-                setOpts(SpainOpts, item)
-            }
-            if (item.lookUpType.includes("UK")) {
-                setOpts(UKOpts, item)
-            }
-            if (item.lookUpType.length === 27) {
-                setOpts(tempopts, item)
-            }
+          if (item.lookUpType.includes("Australia")) {
+            setOpts(tempopts, item, 'Australia')
+          }
+          if (item.lookUpType.includes("Benelux")) {
+              setOpts(tempopts, item, 'Benelux')
+          }
+          if (item.lookUpType.includes("China")) {
+              setOpts(tempopts, item, 'China')
+          }
+          if (item.lookUpType.includes("France")) {
+              setOpts(tempopts, item, 'France')
+          }
+          if (item.lookUpType.includes("Germany")) {
+              setOpts(tempopts, item, 'Germany')
+          }
+          if (item.lookUpType.includes("HongKong")) {
+              setOpts(tempopts, item, 'HongKong')
+          }
+          if (item.lookUpType.includes("India")) {
+              setOpts(tempopts, item, 'India')
+          }
+          if (item.lookUpType.includes("Indonesia")) {
+              setOpts(tempopts, item, 'Indonesia')
+          }
+          if (item.lookUpType.includes("Italy")) {
+              setOpts(tempopts, item, 'Italy')
+          }
+          if (item.lookUpType.includes("LatAm")) {
+              setOpts(tempopts, item, 'LatAm')
+          }
+          if (item.lookUpType.includes("Malaysia")) {
+              setOpts(tempopts, item, 'Malaysia')
+          }
+          if (item.lookUpType.includes("MiddleEast")) {
+              setOpts(tempopts, item, 'MiddleEast')
+          }
+          if (item.lookUpType.includes("Nordic")) {
+              setOpts(tempopts, item, 'Nordic')
+          }
+          if (item.lookUpType.includes("Singapore")) {
+              setOpts(tempopts, item, 'Singapore')
+          }
+          if (item.lookUpType.includes("Spain")) {
+              setOpts(tempopts, item, 'Spain')
+          }
+          if (item.lookUpType.includes("UK")) {
+              setOpts(tempopts, item, 'UK')
+          }
+          if (item.lookUpType.length === 27) {
+              setOpts(tempopts, item, 'Global')
+          }
         }
     });
-    AustraliaOpts.sort(dynamicSort("label"));
-    BeneluxOpts.sort(dynamicSort("label"));
-    ChinaOpts.sort(dynamicSort("label"));
-    FranceOpts.sort(dynamicSort("label"));
-    GermanyOpts.sort(dynamicSort("label"));
-    HongKongOpts.sort(dynamicSort("label"));
-    IndiaOpts.sort(dynamicSort("label"));
-    IndonesiaOpts.sort(dynamicSort("label"));
-    ItalyOpts.sort(dynamicSort("label"));
-    LatAmOpts.sort(dynamicSort("label"));
-    MalaysiaOpts.sort(dynamicSort("label"));
-    MiddleEastOpts.sort(dynamicSort("label"));
-    NordicOpts.sort(dynamicSort("label"));
-    SingaporeOpts.sort(dynamicSort("label"));
-    SpainOpts.sort(dynamicSort("label"));
-    UKOpts.sort(dynamicSort("label"));
     temprfeempourment = [...tempopts];
     tempopts = [];
     tempDurationOfApproval.forEach((item) => {
@@ -1377,34 +1495,14 @@ function Rfelog({ ...props }) {
     tempStatus.sort(dynamicSort("label"));
     temporgnizationalalignment.sort(dynamicSort("label"));
     temprfechz.sort(dynamicSort("label"));
-    temprfeempourment.sort(dynamicSort("label"));
     tempDurationOfApproval.sort(dynamicSort("label"));
     tempNewRenewal.sort(dynamicSort("label"));
     tempCondition.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      statusFilterOpts: [selectInitiVal, ...tempStatus],
+      statusFilterOpts: [...tempStatus],
       organizationalAlignmentOpts: [...temporgnizationalalignment],
-      requestForEmpowermentReasonOpts: [
-        selectInitiVal, 
-        ...temprfeempourment,
-        {type: 'group', name: 'Australia', items: AustraliaOpts},
-        {type: 'group', name: 'Benelux', items: BeneluxOpts},
-        {type: 'group', name: 'China', items: ChinaOpts},
-        {type: 'group', name: 'France', items: FranceOpts},
-        {type: 'group', name: 'Germany', items: GermanyOpts},
-        {type: 'group', name: 'HongKong', items: HongKongOpts},
-        {type: 'group', name: 'India', items: IndiaOpts},
-        {type: 'group', name: 'Indonesia', items: IndonesiaOpts},
-        {type: 'group', name: 'Italy', items: ItalyOpts},
-        {type: 'group', name: 'Latam', items: LatAmOpts},
-        {type: 'group', name: 'Malaysia', items: MalaysiaOpts},
-        {type: 'group', name: 'MiddleEast', items: MiddleEastOpts},
-        {type: 'group', name: 'Nordic', items: NordicOpts},
-        {type: 'group', name: 'Singapore', items: SingaporeOpts},
-        {type: 'group', name: 'Spain', items: SpainOpts},
-        {type: 'group', name: 'UK', items: UKOpts},
-      ],
+      requestForEmpowermentReasonOpts: [...temprfeempourment],
       chzOpts: [...temprfechz],
       durationofApprovalOpts: [...tempDurationOfApproval],
       newRenewalOpts: [...tempNewRenewal],
@@ -1661,6 +1759,7 @@ function Rfelog({ ...props }) {
     let tempopts = [];
     let temGermany = [];
     segmentState.segmentItems.forEach((item) => {
+      console.log("item>>>", item);
       if (item.isActive) {
           if (item.logType && item.logType === "rfelogsGermany") {
             temGermany.push({
@@ -1668,6 +1767,7 @@ function Rfelog({ ...props }) {
                 label: item.segmentName,
                 value: item.segmentID,
                 country: item.countryList,
+                cat: 'Germany'
             })
         } else {
             tempopts.push({
@@ -1675,6 +1775,7 @@ function Rfelog({ ...props }) {
                 label: item.segmentName,
                 value: item.segmentID,
                 country: item.countryList,
+                cat: 'Global'
             });
         }
       }
@@ -1682,7 +1783,7 @@ function Rfelog({ ...props }) {
     tempopts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      customerSegmentOpts: [selectInitiVal, ...tempopts, {type: 'group', name: 'Germany', items: temGermany}],
+      customerSegmentOpts:[...tempopts, ...temGermany],
     }));
   }, [segmentState.segmentItems]);
 
@@ -1701,10 +1802,6 @@ function Rfelog({ ...props }) {
     tempopts.sort(dynamicSort("label"));
     setallsublobFilterOpts(tempopts);
     setsublobFilterOpts(tempopts);
-    if (selfilter.LOBId) {
-      let sublobopts = tempopts.filter((item) => item.lob === selfilter.LOBId);
-      setsublobFilterOpts([...sublobopts]);
-    }
   }, [sublobState.sublobitems]);
 
   const fnsetPaginationData = (data) => {
@@ -2198,9 +2295,14 @@ function Rfelog({ ...props }) {
         if (selfilter[key]) {
           tempFilterOpts[key] = selfilter[key];
         }
-        if (key === "CountryId" || key === "RegionId") {
-          const tmpval = value.map((item) => item.value);
-          tempFilterOpts[key] = tmpval.join(",");
+        if (key === "CountryId" || key === "RegionId" ||
+            key === "LOBId" || key === "RequestForEmpowermentStatus" ||
+            key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
+            key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
+            key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
+            key === "ConditionApplicableTo") {
+            const tmpval = value.map((item) => item.value);
+            tempFilterOpts[key] = tmpval.join(",");
         }
       }
       reqParam = {
@@ -2288,6 +2390,7 @@ function Rfelog({ ...props }) {
                 obj.title
               )
             }
+            groupBy={obj.name === "RequestForEmpowermentReason" || obj.name === "CustomerSegment" ? 'cat' : ''}
             name={obj.name}
             value={selfilter[obj.name]}
             handleChange={eval(obj.eventhandler)}

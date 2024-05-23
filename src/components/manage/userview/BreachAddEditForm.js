@@ -58,24 +58,24 @@ function BreachAddEditForm(props) {
     const [formfield, setformfield] = useState({
         entryNumber: "",
         title: "",
-        classification: "",
+        classification: [],
         group: "",
-        customerSegment: "",
-        natureofbreach: "",
-        loB: "",
+        customerSegment: [],
+        natureofbreach: [],
+        loB: [],
         actionResponsible: "",
         entries: "",
         region: [],
         country: [],
-        status: "",
+        status: [],
         breachStatus: "",
-        subLoB: "",
-        typeofBreach: "",
+        subLoB: [],
+        typeofBreach: [],
         materialBreach: "",
         nearMisses: "",
-        howdetected: "",
-        rootCauseOfTheBreach: "",
-        rangeOfFinancialimpact: "",
+        howdetected: [],
+        rootCauseOfTheBreach: [],
+        rangeOfFinancialimpact: [],
         creator: "",
         dateBreachOccurredFrom: "",
         dateBreachOccurredTo: "",
@@ -194,6 +194,21 @@ function BreachAddEditForm(props) {
     //     setformfield(formIntialState)
     // }, [])
 
+    const handleSelectedItemArray = (selectedArray, data, field, label) => {
+        let arrayData = [];
+        selectedArray.map((id, j) => {
+          data.map((item, i) => {
+                if (item.isActive && id === item[field]) {
+                  arrayData.push({
+                      ...item,
+                      label: item[label],
+                      value: item[field],
+                    })
+                }
+            })
+        })
+        return arrayData
+      }
 
 
     useEffect(async () => {
@@ -216,6 +231,91 @@ function BreachAddEditForm(props) {
                 })
                 response.region = typeof response.region === 'string' && regionArray.length === 0 ? response.region : regionArray
             }
+            response.customerSegment = []
+            console.log("response>>>", response);
+            let loBArray = []
+            if (response?.loB?.length && response?.loB?.length !== 0 && typeof response?.loB === 'string') {
+              let selectedloBArray = response?.loB?.split(',')
+              if (selectedloBArray) {
+                let loBData = await getAlllob({ isActive: true });
+                loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
+              }
+              response.loB = loBArray;
+            }
+            
+            let classificationArray = []
+            if (response?.classification?.length && response?.classification?.length !== 0 && typeof response?.classification === 'string') {
+              let selectedValueArray = response?.classification?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachClassification" });
+                classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.classification = classificationArray;
+            }
+            
+            let tempNatureOfBreach = []
+            if (response?.natureofbreach?.length && response?.natureofbreach?.length !== 0 && typeof response?.natureofbreach === 'string') {
+              let selectedValueArray = response?.natureofbreach?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachNature" });
+                tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.natureofbreach = tempNatureOfBreach;
+            }
+            
+            let tempStatus = []
+            if (response?.status?.length && response?.status?.length !== 0 && typeof response?.status === 'string') {
+              let selectedValueArray = response?.status?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachStatus" });
+                tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.status = tempStatus;
+            }
+           
+            let tempTypeOfBreach = []
+            if (response?.typeofBreach?.length && response?.typeofBreach?.length !== 0 && typeof response?.typeofBreach === 'string') {
+              let selectedValueArray = response?.typeofBreach?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachType" });
+                tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.typeofBreach = tempTypeOfBreach;
+            }
+           
+            let tempRootCauseBreach = []
+            if (response?.rootCauseOfTheBreach?.length && response?.rootCauseOfTheBreach?.length !== 0 && typeof response?.rootCauseOfTheBreach === 'string') {
+              let selectedValueArray = response?.rootCauseOfTheBreach?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachRootCause" });
+                tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.rootCauseOfTheBreach = tempRootCauseBreach;
+            }
+       
+            let tempRangeFinImpact = []
+            if (response?.rangeOfFinancialimpact?.length && response?.rangeOfFinancialimpact?.length !== 0 && typeof response?.rangeOfFinancialimpact === 'string') {
+              let selectedValueArray = response?.rangeOfFinancialimpact?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
+                tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.rangeOfFinancialimpact = tempRangeFinImpact;
+            }
+            
+            let tempHowDetected = []
+            if (response?.howdetected?.length && response?.howdetected?.length !== 0 && typeof response?.howdetected === 'string') {
+              let selectedValueArray = response?.howdetected?.split(',')
+              if (selectedValueArray) {
+                let data = await getLookupByType({ LookupType: "BreachDetection" });
+                tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+              }
+              response.howdetected = tempHowDetected;
+            }
+
+
+
+            
             response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
             response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
             response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
@@ -290,7 +390,7 @@ function BreachAddEditForm(props) {
             value: item.lobid,
         }));
         tempItems.sort(dynamicSort("label"));
-        setlobFilterOpts([selectInitiVal, ...tempItems]);
+        setlobFilterOpts([...tempItems]);
     }, [lobState.lobItems]);
 
 
@@ -304,21 +404,11 @@ function BreachAddEditForm(props) {
         }));
         tempItems.sort(dynamicSort("label"));
         setfrmsublobopts([...tempItems]);
-    }, [sublobState.sublobitems]);
-
-    useEffect(() => {
-        let tempItems = [];
-        if (formfield.loB) {
-            tempItems = frmsublobopts.filter((item) => item.lob === formfield.loB);
-        } else {
-            tempItems = frmsublobopts;
-        }
-        setformfield({ ...formfield, subLoB: '' });
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            sublobFilterOpts: [selectInitiVal, ...tempItems],
+            sublobFilterOpts: [...tempItems],
         }));
-    }, [formfield.loB, frmsublobopts]);
+    }, [sublobState.sublobitems]);
 
     // Customer Segment
     const [segmentFilterOpts, setsegmentFilterOpts] = useState([]);
@@ -329,7 +419,7 @@ function BreachAddEditForm(props) {
             country: item.countryList,
         }));
         tempItems.sort(dynamicSort("label"));
-        setsegmentFilterOpts([selectInitiVal, ...tempItems]);
+        setsegmentFilterOpts([...tempItems]);
     }, [segmentState.segmentItems]);
 
     // Office
@@ -588,13 +678,13 @@ function BreachAddEditForm(props) {
         tempHowDetected.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            classificationFilterOpts: [selectInitiVal, ...tempClassification],
-            natureOfBreachFilterOpts: [selectInitiVal, ...tempNatureOfBreach],
-            statusFilterOpts: [selectInitiVal, ...tempStatus],
-            typeOfBreachOpts: [selectInitiVal, ...tempTypeOfBreach],
-            rootCauseBreachOpts: [selectInitiVal, ...tempRootCauseBreach],
-            rangeOfFinancialImpactOpts: [selectInitiVal, ...tempRangeFinImpact],
-            howDetectedOpts: [selectInitiVal, ...tempHowDetected],
+            classificationFilterOpts: [...tempClassification],
+            natureOfBreachFilterOpts: [...tempNatureOfBreach],
+            statusFilterOpts: [...tempStatus],
+            typeOfBreachOpts: [...tempTypeOfBreach],
+            rootCauseBreachOpts: [...tempRootCauseBreach],
+            rangeOfFinancialImpactOpts: [...tempRangeFinImpact],
+            howDetectedOpts: [...tempHowDetected],
         }));
         if (userProfile.isCountrySuperAdmin) {
             setUserRoles([
@@ -779,8 +869,7 @@ function BreachAddEditForm(props) {
                 [name]: value,
                 country: countryopts,
             });
-        }
-        if (name === "country") {
+        } else if (name === "country") {
             let country = value;
             let regionOpts = [];
             let selectedRegionopts = [];
@@ -800,6 +889,11 @@ function BreachAddEditForm(props) {
                 ...formfield,
                 [name]: value,
                 region: regionOpts,
+            });
+        } else {
+            setformfield({
+                ...formfield,
+                [name]: value,
             });
         }
     };
@@ -822,7 +916,7 @@ function BreachAddEditForm(props) {
         } else if (formfield.customerSegment && formfield.region === REGION_ZNA) {
             setformfield((prevstate) => ({
                 ...prevstate,
-                customerSegment: "",
+                customerSegment: [],
             }));
         }
         if (
@@ -885,7 +979,13 @@ function BreachAddEditForm(props) {
                 if (key === "materialBreach") {
                     tempFilterOpts[key] = value === "1" ? true : false;
                 }
-                if (key === "country" || key === "region") {
+                if (key === "country" || key === "region" ||
+                    key === "status" || key === "loB" ||
+                    key === "subLoB" || key === "typeofBreach" ||
+                    key === "classification" || key === "customerSegment" ||
+                    key === "natureofbreach" || key === "howdetected" ||
+                    key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact"
+                ) {
                     const tmpval = value.map((item) => item.value);
                     tempFilterOpts[key] = tmpval.join(",");
                 }
@@ -1045,11 +1145,11 @@ function BreachAddEditForm(props) {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Status"}
                                         name={"status"}
-                                        value={formfield.status}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.status || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.statusFilterOpts}
@@ -1070,11 +1170,11 @@ function BreachAddEditForm(props) {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"LoB"}
                                         name={"loB"}
-                                        value={formfield.loB}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.loB || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={lobFilterOpts}
@@ -1082,11 +1182,11 @@ function BreachAddEditForm(props) {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Sub LoB"}
                                         name={"subLoB"}
-                                        value={formfield.subLoB}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.subLoB || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.sublobFilterOpts}
@@ -1105,11 +1205,11 @@ function BreachAddEditForm(props) {
                             </div>
                             <div className="row">
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Type of Breach"}
                                         name={"typeofBreach"}
-                                        value={formfield.typeofBreach}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.typeofBreach || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.typeOfBreachOpts}
@@ -1117,11 +1217,11 @@ function BreachAddEditForm(props) {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Classification"}
                                         name={"classification"}
-                                        value={formfield.classification}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.classification || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.classificationFilterOpts}
@@ -1142,11 +1242,11 @@ function BreachAddEditForm(props) {
                                 </div>
                                 {formfield.region !== REGION_ZNA && (
                                     <div className="col-md-3">
-                                        <FrmSelect
+                                        <FrmMultiselect
                                             title={"Customer Segment"}
                                             name={"customerSegment"}
-                                            value={formfield.customerSegment}
-                                            handleChange={handleSelectChange}
+                                            value={formfield.customerSegment || []}
+                                            handleChange={handleMultiSelectChange}
                                             isRequired={false}
                                             issubmitted={issubmitted}
                                             selectopts={segmentFilterOpts}
@@ -1155,11 +1255,11 @@ function BreachAddEditForm(props) {
                                     </div>
                                 )}
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Nature of Breach"}
                                         name={"natureofbreach"}
-                                        value={formfield.natureofbreach}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.natureofbreach || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.natureOfBreachFilterOpts}
@@ -1167,11 +1267,11 @@ function BreachAddEditForm(props) {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"How detected"}
                                         name={"howdetected"}
-                                        value={formfield.howdetected}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.howdetected || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.howDetectedOpts}
@@ -1179,11 +1279,11 @@ function BreachAddEditForm(props) {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Root Cause of the Breach"}
                                         name={"rootCauseOfTheBreach"}
-                                        value={formfield.rootCauseOfTheBreach}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.rootCauseOfTheBreach || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.rootCauseBreachOpts}
@@ -1203,11 +1303,11 @@ function BreachAddEditForm(props) {
                                     </div>
                                 )}
                                 <div className="col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Range of finacial impact"}
                                         name={"rangeOfFinancialimpact"}
-                                        value={formfield.rangeOfFinancialimpact}
-                                        handleChange={handleSelectChange}
+                                        value={formfield.rangeOfFinancialimpact || []}
+                                        handleChange={handleMultiSelectChange}
                                         isRequired={false}
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.rangeOfFinancialImpactOpts}

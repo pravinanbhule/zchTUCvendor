@@ -32,9 +32,9 @@ export const filterfieldsmapping = {
     filtertype: "common",
   },
   LOBId: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "lobFilterOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "common",
   },
   Role: {
@@ -69,22 +69,22 @@ export const filterfieldsmapping = {
     filtertype: "common",
   },
   RequestForEmpowermentStatus: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.statusFilterOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "common",
   },
   OrganizationalAlignment: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.organizationalAlignmentOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "advance",
     titlelinespace: true,
   },
   RequestForEmpowermentReason: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.requestForEmpowermentReasonOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "advance",
     titlelinespace: true,
   },
@@ -120,27 +120,27 @@ export const filterfieldsmapping = {
     },
   },
   Currency: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.currencyOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
   },
   Branch: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.branchOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
   },
   DurationofApproval: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.durationofApprovalOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "advance",
   },
   NewRenewal: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.newRenewalOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
   },
   Limit: {
@@ -162,9 +162,9 @@ export const filterfieldsmapping = {
     filtertype: "Incountry",
   },
   CustomerSegment: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.customerSegmentOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
   },
   PolicyPeriod: {
@@ -174,9 +174,9 @@ export const filterfieldsmapping = {
     filtertype: "Incountry",
   },
   ConditionApplicableTo: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "commonfilterOpts.conditionApplicableToOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "advance",
   },
   GWP: {
@@ -186,9 +186,9 @@ export const filterfieldsmapping = {
     filtertype: "Incountry",
   },
   SUBLOBID: {
-    componenttype: "FrmSelect",
+    componenttype: "FrmMultiselect",
     options: "sublobFilterOpts",
-    eventhandler: "onSearchFilterSelect",
+    eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
   },
 };

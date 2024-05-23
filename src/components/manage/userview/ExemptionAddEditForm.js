@@ -146,10 +146,10 @@ function Exemptionlog({ ...props }) {
         entryNumber: "",
         countryID: [],
         regionId: [],
-        loBChapter: "",
+        loBChapter: [],
         section: "",
         role: "",
-        status: "",
+        status: [],
         typeofExemption: "",
         individualGrantedEmpowerment: "",
         approver: "",
@@ -209,6 +209,45 @@ function Exemptionlog({ ...props }) {
             } else if (response.region === null || response.region === undefined) {
                 response.regionId = []
             }
+            if (isEditMode && typeof response?.status === 'string' && response?.status !== null) {
+                let tempZUGStatus = await getLookupByType({
+                    LookupType: "EXMPZUGStatus",
+                });
+                let selectedArray = [];
+                tempZUGStatus.forEach((item) => {
+                    if (item.isActive) {
+                        response?.status?.split(',')?.map((id) => {
+                            if (id === item.lookupID) {
+                                selectedArray.push({
+                                    label: item.lookUpValue,
+                                    value: item.lookupID,
+                                });
+                            }
+                        })
+                    }
+                });
+                response.status = typeof response.status === 'string' && selectedArray.length === 0 ? response.status : selectedArray
+            } else if (response.status === null || response.status === undefined) {
+                response.status = [];
+            }
+            if (isEditMode && typeof response?.loBChapter === 'string' && response?.loBChapter !== null) {
+                let loBChapterArray = [];
+                lobchapterState.lobChapterItems.forEach((item) => {
+                    response?.loBChapter?.split(',')?.map((id) => {
+                        if (id === item.lobChapterID) {
+                            loBChapterArray.push({
+                                ...item,
+                                label: item.lobChapterName.trim(),
+                                value: item.lobChapterID,
+                            });
+                        }
+                    })
+                });
+                response.loBChapter = typeof response.loBChapter === 'string' && loBChapterArray.length === 0 ? response.loBChapter : loBChapterArray
+            } else if (response.loBChapter === null || response.loBChapter === undefined) {
+                response.loBChapter = [];
+            }
+
             response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
             response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
             response.isRegionAdmin = response?.userRoles?.split(',').includes('3')
@@ -245,7 +284,7 @@ function Exemptionlog({ ...props }) {
                 setformfield(response)
             }, 5000);
         }
-    }, [regionState.regionItems])
+    }, [regionState.regionItems, lobchapterState.lobChapterItems])
 
 
     const onSearchFilterInput = (e) => {
@@ -326,8 +365,7 @@ function Exemptionlog({ ...props }) {
                 [name]: value,
                 countryID: countryopts,
             });
-        }
-        if (name === "countryID") {
+        } else if (name === "countryID") {
             let country = value;
             let regionOpts = [];
             let selectedRegionopts = [];
@@ -347,6 +385,11 @@ function Exemptionlog({ ...props }) {
                 [name]: value,
                 regionId: regionOpts,
             });
+        } else {
+            setformfield({
+                ...formfield,
+                [name]: value,
+            });
         }
     };
 
@@ -360,7 +403,8 @@ function Exemptionlog({ ...props }) {
                     if (key === "pC_URPMExemptionRequired") {
                         tempFilterOpts[key] = value === "1" ? true : false;
                     }
-                    if (key === "countryID" || key === "regionId") {
+                    if (key === "countryID" || key === "regionId" ||
+                        key === "loBChapter" || key === "status" ) {
                         const tmpval = value.map((item) => item.value);
                         tempFilterOpts[key] = tmpval.join(",");
                     }
@@ -371,6 +415,8 @@ function Exemptionlog({ ...props }) {
             tempFilterOpts.exemptiontype = selectedExemptionLog
             tempFilterOpts.country = tempFilterOpts?.countryID
             tempFilterOpts.region = tempFilterOpts?.regionId
+            tempFilterOpts.loBChapter = tempFilterOpts?.loBChapter
+            tempFilterOpts.status = tempFilterOpts?.status
             tempFilterOpts.requesterUserId = userProfile.userId
             let response = await postItem(tempFilterOpts)
             if (response) {
@@ -459,7 +505,8 @@ function Exemptionlog({ ...props }) {
                     if (key === "pC_URPMExemptionRequired") {
                         tempFilterOpts[key] = value === "1" ? true : false;
                     }
-                    if (key === "countryID" || key === "regionId") {
+                    if (key === "countryID" || key === "regionId" || 
+                        key === "loBChapter" || key === "status" ) {
                         const tmpval = value.map((item) => item.value);
                         tempFilterOpts[key] = tmpval.join(",");
                     }
@@ -630,8 +677,8 @@ function Exemptionlog({ ...props }) {
         tempTypeOfExemption.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
-            ZUGstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
-            URPMstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
+            ZUGstatusFilterOpts: [...tempZUGStatus],
+            URPMstatusFilterOpts: [...tempZUGStatus],
             URPMSectionFilterOps: [selectInitiVal, ...tempURPMSection],
             typeOfExemptionOpts: [selectInitiVal, ...tempTypeOfExemption],
         }));
@@ -834,7 +881,7 @@ function Exemptionlog({ ...props }) {
             });
         });
         selectOpts.sort(dynamicSort("label"));
-        setlobChapterFilterOpts([selectInitiVal, ...selectOpts]);
+        setlobChapterFilterOpts([...selectOpts]);
     }, [lobchapterState.lobChapterItems]);
 
 
@@ -1031,13 +1078,14 @@ function Exemptionlog({ ...props }) {
                                 </div>
                                 {selectedExemptionLog === "zug" ? (
                                     <div className="frm-filter col-md-3">
-                                        <FrmSelect
+                                        <FrmMultiselect
                                             title={"LoB Chapter"}
                                             name={"loBChapter"}
                                             selectopts={lobChapterFilterOpts}
-                                            handleChange={onSearchFilterSelect}
-                                            value={formfield.loBChapter}
+                                            handleChange={handleMultiSelectChange}
+                                            value={formfield.loBChapter || []}
                                             isReadMode={isReadMode}
+                                            isAllOptNotRequired={true}
                                         />
                                     </div>
                                 ) : (
@@ -1101,7 +1149,7 @@ function Exemptionlog({ ...props }) {
                             </div>
                             <div className="row">
                                 <div className="frm-filter col-md-3">
-                                    <FrmSelect
+                                    <FrmMultiselect
                                         title={"Status"}
                                         name={"status"}
                                         selectopts={
@@ -1109,9 +1157,10 @@ function Exemptionlog({ ...props }) {
                                                 ? commonfilterOpts.ZUGstatusFilterOpts
                                                 : commonfilterOpts.URPMstatusFilterOpts
                                         }
-                                        handleChange={onSearchFilterSelect}
-                                        value={formfield.status}
+                                        handleChange={handleMultiSelectChange}
+                                        value={formfield.status || []}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                             </div>
