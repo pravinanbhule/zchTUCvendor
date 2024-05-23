@@ -2696,7 +2696,11 @@ function Rfelog({ ...props }) {
               </div>
             </div>
             {sellogTabType === 'all' && alllogsloaded &&
-              <div style={{top: '12px', paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between', position:"absolute", right: '0'}}>
+              <div style={{
+                top: '12px', paddingLeft: "20px", 
+                paddingRight: '20px', display: 'flex', 
+                justifyContent: 'space-between', position:"absolute", 
+                right: '0', zIndex: '-1'}}>
                 <div className="frm-filter">
                 </div>
                 <div className="frm-filter toggle-btn-header">
