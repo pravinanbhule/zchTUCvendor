@@ -1804,77 +1804,77 @@ function Breachlog({ ...props }) {
               loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
           }
       }
-      selectedViewData[0].lobid = loBArray;
+      selectedViewData[0].lobid = typeof selectedViewData[0]?.lobid === 'string' && loBArray.length === 0 ? selectedViewData[0].lobid : loBArray;
 
       let classificationArray = []
       if (selectedViewData[0]?.classification?.length && selectedViewData[0]?.classification?.length !== 0 && typeof selectedViewData[0]?.classification === 'string') {
-          let selectedValueArray = selectedViewData[0]?.classification?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachClassification" });
-              classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.classification?.split(',')
+        if (selectedValueArray) {
+            let data = await getLookupByType({ LookupType: "BreachClassification" });
+            classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].classification = classificationArray;
-
+      selectedViewData[0].classification = typeof selectedViewData[0]?.classification === 'string' &&  classificationArray.length === 0 ? selectedViewData[0]?.classification : classificationArray;
+      
       let tempNatureOfBreach = []
       if (selectedViewData[0]?.natureofbreach?.length && selectedViewData[0]?.natureofbreach?.length !== 0 && typeof selectedViewData[0]?.natureofbreach === 'string') {
-          let selectedValueArray = selectedViewData[0]?.natureofbreach?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachNature" });
-              tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.natureofbreach?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "BreachNature" });
+          tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].natureofbreach = tempNatureOfBreach;
-
+      selectedViewData[0].natureofbreach = typeof selectedViewData[0]?.natureofbreach === 'string' &&  tempNatureOfBreach.length === 0 ? selectedViewData[0]?.natureofbreach : tempNatureOfBreach;
+      
       let tempStatus = []
       if (selectedViewData[0]?.breachStatus?.length && selectedViewData[0]?.breachStatus?.length !== 0 && typeof selectedViewData[0]?.breachStatus === 'string') {
-          let selectedValueArray = selectedViewData[0]?.breachStatus?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachStatus" });
-              tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.breachStatus?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "BreachStatus" });
+          tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].breachStatus = tempStatus;
-
+      selectedViewData[0].breachStatus  = typeof selectedViewData[0]?.breachStatus  === 'string' &&  tempStatus.length === 0 ? selectedViewData[0]?.breachStatus  : tempStatus;
+      
       let tempTypeOfBreach = []
       if (selectedViewData[0]?.typeOfBreach?.length && selectedViewData[0]?.typeOfBreach?.length !== 0 && typeof selectedViewData[0]?.typeOfBreach === 'string') {
-          let selectedValueArray = selectedViewData[0]?.typeOfBreach?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachType" });
-              tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.typeOfBreach?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "BreachType" });
+          tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].typeOfBreach = tempTypeOfBreach;
-
+      selectedViewData[0].typeOfBreach  = typeof selectedViewData[0]?.typeOfBreach  === 'string' &&  tempTypeOfBreach.length === 0 ? selectedViewData[0]?.typeOfBreach  : tempTypeOfBreach;
+      
       let tempRootCauseBreach = []
       if (selectedViewData[0]?.rootCauseOfTheBreach?.length && selectedViewData[0]?.rootCauseOfTheBreach?.length !== 0 && typeof selectedViewData[0]?.rootCauseOfTheBreach === 'string') {
-          let selectedValueArray = selectedViewData[0]?.rootCauseOfTheBreach?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachRootCause" });
-              tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.rootCauseOfTheBreach?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "BreachRootCause" });
+          tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].rootCauseOfTheBreach = tempRootCauseBreach;
-
+      selectedViewData[0].rootCauseOfTheBreach  = typeof selectedViewData[0]?.rootCauseOfTheBreach  === 'string' &&  tempRootCauseBreach.length === 0 ? selectedViewData[0]?.rootCauseOfTheBreach  : tempRootCauseBreach;
+      
       let tempRangeFinImpact = []
       if (selectedViewData[0]?.rangeOfFinancialImpact?.length && selectedViewData[0]?.rangeOfFinancialImpact?.length !== 0 && typeof selectedViewData[0]?.rangeOfFinancialImpact === 'string') {
-          let selectedValueArray = selectedViewData[0]?.rangeOfFinancialImpact?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
-              tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.rangeOfFinancialImpact?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
+          tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].rangeOfFinancialImpact = tempRangeFinImpact;
-
+      selectedViewData[0].rangeOfFinancialImpact  = typeof selectedViewData[0]?.rangeOfFinancialImpact  === 'string' &&  tempRangeFinImpact.length === 0 ? selectedViewData[0]?.rangeOfFinancialImpact  : tempRangeFinImpact;
+      
       let tempHowDetected = []
       if (selectedViewData[0]?.howDetected?.length && selectedViewData[0]?.howDetected?.length !== 0 && typeof selectedViewData[0]?.howDetected === 'string') {
-          let selectedValueArray = selectedViewData[0]?.howDetected?.split(',')
-          if (selectedValueArray) {
-              let data = await getLookupByType({ LookupType: "BreachDetection" });
-              tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
-          }
+        let selectedValueArray = selectedViewData[0]?.howDetected?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "BreachDetection" });
+          tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
       }
-      selectedViewData[0].howDetected = tempHowDetected;
+      selectedViewData[0].howDetected  = typeof selectedViewData[0]?.howDetected  === 'string' &&  tempHowDetected.length === 0 ? selectedViewData[0]?.howDetected  : tempHowDetected;
       selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
       setselfilter(selectedViewData[0])
       setselectedview(value);

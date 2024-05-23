@@ -2058,9 +2058,8 @@ function Exemptionlog({ ...props }) {
                 }
             })
         })
+        selectedViewData[0].LOBChapter = lOBChapterArray
       }
-      delete selectedViewData[0]?.lobChapter
-      selectedViewData[0].LOBChapter = lOBChapterArray
       
       let statusArray = []
       if (selectedViewData[0]?.status?.length && selectedViewData[0]?.status?.length !== 0 && typeof selectedViewData[0]?.status === 'string') {
@@ -2078,8 +2077,8 @@ function Exemptionlog({ ...props }) {
                 }
             })
         })
+        selectedViewData[0].status = statusArray
       }
-      selectedViewData[0].status = statusArray
       setselfilter(selectedViewData[0])
       setselectedview(value);
     } else {
