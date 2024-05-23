@@ -33,6 +33,7 @@ const getAllSegment = (requestParam) => {
     try {
       const response = await segmentService.getAllSegmentService(requestParam);
       dispatch(success(response.data));
+      return response.data
     } catch (err) {
       dispatch(failure(err));
     }

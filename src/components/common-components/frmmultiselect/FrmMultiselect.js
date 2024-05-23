@@ -15,7 +15,8 @@ function FrmMultiselect(props) {
     isReadMode,
     isAllOptNotRequired,
     titlelinespace,
-    selectedlanguage
+    selectedlanguage,
+    groupBy
   } = props;
   const [selectedItems, setselectedItems] = useState(value);
   useEffect(() => {
@@ -61,6 +62,7 @@ function FrmMultiselect(props) {
       {!isReadMode && (
         <Multiselect
           className="custom-multiselect"
+          groupBy={groupBy ? groupBy : ''}
           options={selectopts}
           displayValue="label"
           hidePlaceholder={false}

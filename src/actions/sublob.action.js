@@ -35,6 +35,7 @@ const getAllSublob = () => {
     try {
       const response = await sublobService.getAllSublobService(requestParams);
       dispatch(success(response.data));
+      return response.data
     } catch (err) {
       dispatch(failure(err));
     }

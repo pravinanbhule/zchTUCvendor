@@ -302,10 +302,10 @@ function Exemptionlog({ ...props }) {
     entryNumber: "",
     countryID: [],
     regionId: [],
-    LOBChapter: "",
+    LOBChapter: [],
     section: "",
     role: "",
-    status: "",
+    status: [],
     typeOfExemption: "",
     individualGrantedEmpowerment: "",
     approver: "",
@@ -406,16 +406,7 @@ function Exemptionlog({ ...props }) {
         [name]: value,
         countryID: countryopts,
       });
-    } /*else if (name === "regionId" && value === "") {
-      setcountryFilterOpts([...countryAllFilterOpts]);
-      setregionFilterOpts([...regionOptsAll]);
-      setselfilter({
-        ...selfilter,
-        [name]: [],
-        countryID: [],
-      });
-    }*/
-    if (name === "countryID") {
+    } else if (name === "countryID") {
       //let country = countryAllFilterOpts.filter((item) => item.value === value);
       let country = value;
       let regionOpts = [];
@@ -437,7 +428,22 @@ function Exemptionlog({ ...props }) {
         [name]: value,
         regionId: regionOpts,
       });
-    } /* else if (name === "countryID" && value === "") {
+    } else {
+      setselfilter({
+        ...selfilter,
+        [name]: value,
+      });
+    }
+    /*else if (name === "regionId" && value === "") {
+     setcountryFilterOpts([...countryAllFilterOpts]);
+     setregionFilterOpts([...regionOptsAll]);
+     setselfilter({
+       ...selfilter,
+       [name]: [],
+       countryID: [],
+     });
+   }*/
+    /* else if (name === "countryID" && value === "") {
       //setregionFilterOpts([...regionOptsAll]);
       setselfilter({
         ...selfilter,
@@ -1547,7 +1553,8 @@ function Exemptionlog({ ...props }) {
           if (key === "PC_URPMExemptionRequired") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
-          if (key === "countryID" || key === "regionId") {
+          if (key === "countryID" || key === "regionId" ||
+              key === "LOBChapter" || key === "status" ) {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -1949,8 +1956,8 @@ function Exemptionlog({ ...props }) {
     tempTypeOfExemption.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      ZUGstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
-      URPMstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
+      ZUGstatusFilterOpts: [...tempZUGStatus],
+      URPMstatusFilterOpts: [...tempZUGStatus],
       URPMSectionFilterOps: [selectInitiVal, ...tempURPMSection],
       typeOfExemptionOpts: [selectInitiVal, ...tempTypeOfExemption],
     }));
@@ -2036,7 +2043,44 @@ function Exemptionlog({ ...props }) {
         })
       }
       selectedViewData[0].regionId = regionArray
-
+      
+      let lOBChapterArray = []
+      if (selectedViewData[0]?.lobChapter?.length && selectedViewData[0]?.lobChapter?.length !== 0 && typeof selectedViewData[0]?.lobChapter === 'string') {
+        let selectedRegionArray = selectedViewData[0]?.lobChapter?.split(',')
+        let data = await getAlllobChapter();
+        selectedRegionArray?.map((id, j) => {
+            data.map((item, i) => {
+                if (id === item.lobChapterID) {
+                    lOBChapterArray.push({
+                      label: item.lobChapterName.trim(),
+                      value: item.lobChapterID,
+                    })
+                }
+            })
+        })
+      }
+      delete selectedViewData[0]?.lobChapter
+      selectedViewData[0].LOBChapter = lOBChapterArray
+      
+      let statusArray = []
+      if (selectedViewData[0]?.status?.length && selectedViewData[0]?.status?.length !== 0 && typeof selectedViewData[0]?.status === 'string') {
+        let selectedRegionArray = selectedViewData[0]?.status?.split(',')
+        let tempZUGStatus = await getLookupByType({
+          LookupType: "EXMPZUGStatus",
+      });
+        selectedRegionArray?.map((id, j) => {
+          tempZUGStatus.map((item, i) => {
+                if (id === item.lookupID) {
+                    statusArray.push({
+                      label: item.lookUpValue,
+                      value: item.lookupID,
+                    })
+                }
+            })
+        })
+      }
+      selectedViewData[0].status = statusArray
+      console.log(selectedViewData[0]);
       setselfilter(selectedViewData[0])
       setselectedview(value);
     } else {
@@ -2341,7 +2385,7 @@ function Exemptionlog({ ...props }) {
       });
     });
     selectOpts.sort(dynamicSort("label"));
-    setlobChapterFilterOpts([selectInitiVal, ...selectOpts]);
+    setlobChapterFilterOpts([...selectOpts]);
   }, [lobchapterState.lobChapterItems]);
 
   /* Add Edit Delete functionality & show popup*/
@@ -3164,7 +3208,8 @@ function Exemptionlog({ ...props }) {
           if (key === "PC_URPMExemptionRequired") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
-          if (key === "countryID" || key === "regionId") {
+          if (key === "countryID" || key === "regionId" ||
+              key === "LOBChapter" || key === "status" ) {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -3315,12 +3360,13 @@ function Exemptionlog({ ...props }) {
                         </div>
                         {selectedExemptionLog === "zug" ? (
                           <div className="frm-filter col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"LoB Chapter"}
                               name={"LOBChapter"}
                               selectopts={lobChapterFilterOpts}
-                              handleChange={onSearchFilterSelect}
-                              value={selfilter.LOBChapter}
+                              handleChange={handleMultiSelectChange}
+                              value={selfilter.LOBChapter || []}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                         ) : (
@@ -3379,7 +3425,7 @@ function Exemptionlog({ ...props }) {
                       </div>
                       <div className="row">
                         <div className="frm-filter col-md-3">
-                          <FrmSelect
+                          <FrmMultiselect
                             title={"Status"}
                             name={"status"}
                             selectopts={
@@ -3387,8 +3433,9 @@ function Exemptionlog({ ...props }) {
                                 ? commonfilterOpts.ZUGstatusFilterOpts
                                 : commonfilterOpts.URPMstatusFilterOpts
                             }
-                            handleChange={onSearchFilterSelect}
-                            value={selfilter.status}
+                            handleChange={handleMultiSelectChange}
+                            value={selfilter.status || []}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                       </div>
