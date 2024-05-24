@@ -1724,9 +1724,7 @@ function Breachlog({ ...props }) {
       }
     })
     if (selectedViewData.length !== 0) {
-      selectedViewData[0].entityNumber = selectedViewData[0]?.entryNumber
-      delete selectedViewData[0]?.entryNumber
-      let countryArray = []
+     let countryArray = []
       if (selectedViewData[0]?.countryId?.length && selectedViewData[0]?.countryId?.length !== 0 && typeof selectedViewData[0]?.countryId === 'string') {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         selectedCountryArray.map((id, j) => {
@@ -1764,9 +1762,9 @@ function Breachlog({ ...props }) {
       } else if (selectedViewData[0].regionId === null || selectedViewData[0].regionId === undefined) {
         selectedViewData[0].regionId = []
       }
+      let subLoBArray = [];
       if (selectedViewData[0]?.sublobid?.length && selectedViewData[0]?.sublobid?.length !== 0 && typeof selectedViewData[0].sublobid === 'string') {
         let selectedSubLoBArray = selectedViewData[0].sublobid.split(',')
-        let subLoBArray = []
         let data = await getAllSublob({ isActive: true });
         selectedSubLoBArray.map((id, j) => {
             data.map((item, i) => {
@@ -1779,14 +1777,11 @@ function Breachlog({ ...props }) {
                 }
             })
         })
-        selectedViewData[0].sublobid = subLoBArray
-      } else if (selectedViewData[0].sublobid === null || selectedViewData[0].sublobid === undefined) {
-        selectedViewData[0].sublobid = []
       }
       
+      let customerArray = [];
       if (selectedViewData[0]?.customersegment?.length && selectedViewData[0]?.customersegment?.length !== 0 &&  typeof selectedViewData[0].customersegment === 'string') {
           let selectedSubLoBArray = selectedViewData[0].customersegment.split(',')
-          let customerArray = [];
           let data = await getAllSegment({ isActive: true });
           selectedSubLoBArray.map((id, j) => {
               data.map((item, i) => {
@@ -1799,9 +1794,6 @@ function Breachlog({ ...props }) {
                   }
               })
           })
-          selectedViewData[0].customersegment = customerArray
-      } else if (selectedViewData[0].customersegment === null || selectedViewData[0].customersegment === undefined) {
-        selectedViewData[0].customersegment = []
       }
 
       let loBArray = []
@@ -1811,9 +1803,6 @@ function Breachlog({ ...props }) {
               let loBData = await getAlllob({ isActive: true });
               loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
           }
-          selectedViewData[0].lobid = loBArray;
-      } else if (selectedViewData[0].lobid === null || selectedViewData[0].lobid === undefined) {
-          selectedViewData[0].lobid = []
       }
 
       let classificationArray = []
@@ -1823,9 +1812,6 @@ function Breachlog({ ...props }) {
             let data = await getLookupByType({ LookupType: "BreachClassification" });
             classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].classification = classificationArray;
-      } else if (selectedViewData[0].classification === null || selectedViewData[0].classification === undefined) {
-        selectedViewData[0].classification = []
       }
       
       let tempNatureOfBreach = []
@@ -1836,9 +1822,6 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachNature" });
           tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].natureofbreach = tempNatureOfBreach;
-      }  else if (selectedViewData[0].natureofbreach === null || selectedViewData[0].natureofbreach === undefined) {
-        selectedViewData[0].natureofbreach = []
       }
       
       let tempStatus = []
@@ -1848,9 +1831,6 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachStatus" });
           tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].breachStatus  = tempStatus;
-      } else if (selectedViewData[0].breachStatus === null || selectedViewData[0].breachStatus === undefined) {
-        selectedViewData[0].breachStatus  = [];
       }
       
       let tempTypeOfBreach = []
@@ -1860,9 +1840,6 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachType" });
           tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].typeOfBreach = tempTypeOfBreach;
-      }  else if (selectedViewData[0].typeOfBreach === null || selectedViewData[0].typeOfBreach === undefined) {
-        selectedViewData[0].typeOfBreach = []
       }
       
       let tempRootCauseBreach = []
@@ -1872,9 +1849,6 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachRootCause" });
           tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].rootCauseOfTheBreach = tempRootCauseBreach;
-      } else if (selectedViewData[0].rootCauseOfTheBreach === null || selectedViewData[0].rootCauseOfTheBreach === undefined) {
-        selectedViewData[0].rootCauseOfTheBreach = []
       }
       
       let tempRangeFinImpact = []
@@ -1884,9 +1858,6 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
           tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].rangeOfFinancialImpact = tempRangeFinImpact;
-      }   else if (selectedViewData[0].rangeOfFinancialImpact === null || selectedViewData[0].rangeOfFinancialImpact === undefined) {
-        selectedViewData[0].rangeOfFinancialImpact = []
       }
       
       let tempHowDetected = []
@@ -1896,12 +1867,50 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachDetection" });
           tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
-        selectedViewData[0].howDetected = tempHowDetected;
-      } else if (selectedViewData[0].howDetected === null || selectedViewData[0].howDetected === undefined) {
-        selectedViewData[0].howDetected = []
       }
-      selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
-      setselfilter(selectedViewData[0])
+     let responseData = {
+        entityNumber: selectedViewData[0].entryNumber,
+        title: selectedViewData[0].title,
+        classification: classificationArray,
+        group: selectedViewData[0].group,
+        customersegment: customerArray,
+        natureofbreach: tempNatureOfBreach,
+        lobid: loBArray,
+        actionResponsible: selectedViewData[0].actionResponsible,
+        entries: selectedViewData[0].entries,
+        regionId: selectedViewData[0].regionId,
+        countryId: selectedViewData[0].countryId,
+        status: selectedViewData[0].status,
+        breachStatus: tempStatus,
+        sublobid: subLoBArray,
+        typeOfBreach: tempTypeOfBreach,
+        materialBreach: selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : '',
+        nearMisses: selectedViewData[0].nearMisses,
+        howDetected: tempHowDetected,
+        rootCauseOfTheBreach: tempRootCauseBreach,
+        rangeOfFinancialImpact: tempRangeFinImpact,
+        creatorName: selectedViewData[0].creatorName,
+        BreachOccurredFromDate: selectedViewData[0].breachOccurredFromDate,
+        BreachOccurredToDate: selectedViewData[0].breachOccurredToDate,
+        ActionClosedFromDate: selectedViewData[0].actionClosedFromDate,
+        ActionClosedToDate: selectedViewData[0].actionClosedToDate,
+        createdFromDate: selectedViewData[0].createdFromDate,
+        createdToDate: selectedViewData[0].createdToDate,
+        dueFromDate: selectedViewData[0].dueFromDate,
+        dueToDate: selectedViewData[0].dueToDate,
+        UWRInvolvedName: selectedViewData[0].uWRInvolvedName,
+        policyName: selectedViewData[0].policyName,
+        policyNumber: selectedViewData[0].policyNumber,
+        turNumber: selectedViewData[0].turNumber,
+        office: selectedViewData[0].office,
+        IdentifiedToDate: selectedViewData[0].IdentifiedToDate,
+        IdentifiedFromDate: selectedViewData[0].IdentifiedFromDate,
+        znaSegmentId: selectedViewData[0].znaSegmentId,
+        znasbuId: selectedViewData[0].znasbuId,
+        marketBasketId: selectedViewData[0].marketBasketId,
+      }
+
+      setselfilter(responseData)
       setselectedview(value);
     } else {
       value = null;
