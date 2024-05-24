@@ -1199,6 +1199,7 @@ function RfelogAddEditForm({ ...props }) {
                         selectopts={eval(obj.options)}
                         titlelinespace={obj.titlelinespace ? true : false}
                         isReadMode={isReadMode}
+                        isAllOptNotRequired={true}
                     />
                 );
             case "FrmDatePicker":

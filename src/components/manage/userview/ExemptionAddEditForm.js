@@ -1063,6 +1063,7 @@ function Exemptionlog({ ...props }) {
                                         handleChange={handleMultiSelectChange}
                                         value={formfield.regionId}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="frm-filter col-md-3">

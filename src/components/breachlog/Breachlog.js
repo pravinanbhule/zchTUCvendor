@@ -1741,8 +1741,10 @@ function Breachlog({ ...props }) {
                 }
             })
         })
+        selectedViewData[0].countryId = countryArray
+      } else if (selectedViewData[0].countryId === null || selectedViewData[0].countryId === undefined) {
+        selectedViewData[0].countryId = []
       }
-      selectedViewData[0].countryId = countryArray
 
       let regionArray = []
       if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
@@ -1758,8 +1760,10 @@ function Breachlog({ ...props }) {
                 }
             })
         })
+        selectedViewData[0].regionId = regionArray      
+      } else if (selectedViewData[0].regionId === null || selectedViewData[0].regionId === undefined) {
+        selectedViewData[0].regionId = []
       }
-      selectedViewData[0].regionId = regionArray      
       if (selectedViewData[0]?.sublobid?.length && selectedViewData[0]?.sublobid?.length !== 0 && typeof selectedViewData[0].sublobid === 'string') {
         let selectedSubLoBArray = selectedViewData[0].sublobid.split(',')
         let subLoBArray = []
@@ -1775,7 +1779,9 @@ function Breachlog({ ...props }) {
                 }
             })
         })
-        selectedViewData[0].sublobid = typeof selectedViewData[0].sublobid === 'string' && subLoBArray.length === 0 ? selectedViewData[0].sublobid : subLoBArray
+        selectedViewData[0].sublobid = subLoBArray
+      } else if (selectedViewData[0].sublobid === null || selectedViewData[0].sublobid === undefined) {
+        selectedViewData[0].sublobid = []
       }
       
       if (selectedViewData[0]?.customersegment?.length && selectedViewData[0]?.customersegment?.length !== 0 &&  typeof selectedViewData[0].customersegment === 'string') {
@@ -1793,7 +1799,9 @@ function Breachlog({ ...props }) {
                   }
               })
           })
-          selectedViewData[0].customersegment = typeof selectedViewData[0].customersegment === 'string' && customerArray.length === 0 ? selectedViewData[0].customersegment : customerArray
+          selectedViewData[0].customersegment = customerArray
+      } else if (selectedViewData[0].customersegment === null || selectedViewData[0].customersegment === undefined) {
+        selectedViewData[0].customersegment = []
       }
 
       let loBArray = []
@@ -1803,8 +1811,10 @@ function Breachlog({ ...props }) {
               let loBData = await getAlllob({ isActive: true });
               loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
           }
+          selectedViewData[0].lobid = loBArray;
+      } else if (selectedViewData[0].lobid === null || selectedViewData[0].lobid === undefined) {
+          selectedViewData[0].lobid = []
       }
-      selectedViewData[0].lobid = typeof selectedViewData[0]?.lobid === 'string' && loBArray.length === 0 ? selectedViewData[0].lobid : loBArray;
 
       let classificationArray = []
       if (selectedViewData[0]?.classification?.length && selectedViewData[0]?.classification?.length !== 0 && typeof selectedViewData[0]?.classification === 'string') {
@@ -1813,18 +1823,23 @@ function Breachlog({ ...props }) {
             let data = await getLookupByType({ LookupType: "BreachClassification" });
             classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].classification = classificationArray;
+      } else if (selectedViewData[0].classification === null || selectedViewData[0].classification === undefined) {
+        selectedViewData[0].classification = []
       }
-      selectedViewData[0].classification = typeof selectedViewData[0]?.classification === 'string' &&  classificationArray.length === 0 ? selectedViewData[0]?.classification : classificationArray;
       
       let tempNatureOfBreach = []
       if (selectedViewData[0]?.natureofbreach?.length && selectedViewData[0]?.natureofbreach?.length !== 0 && typeof selectedViewData[0]?.natureofbreach === 'string') {
         let selectedValueArray = selectedViewData[0]?.natureofbreach?.split(',')
         if (selectedValueArray) {
+          console.log("selectedValueArray>>",selectedViewData, selectedValueArray);
           let data = await getLookupByType({ LookupType: "BreachNature" });
           tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].natureofbreach = tempNatureOfBreach;
+      }  else if (selectedViewData[0].natureofbreach === null || selectedViewData[0].natureofbreach === undefined) {
+        selectedViewData[0].natureofbreach = []
       }
-      selectedViewData[0].natureofbreach = typeof selectedViewData[0]?.natureofbreach === 'string' &&  tempNatureOfBreach.length === 0 ? selectedViewData[0]?.natureofbreach : tempNatureOfBreach;
       
       let tempStatus = []
       if (selectedViewData[0]?.breachStatus?.length && selectedViewData[0]?.breachStatus?.length !== 0 && typeof selectedViewData[0]?.breachStatus === 'string') {
@@ -1833,8 +1848,10 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachStatus" });
           tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].breachStatus  = tempStatus;
+      } else if (selectedViewData[0].breachStatus === null || selectedViewData[0].breachStatus === undefined) {
+        selectedViewData[0].breachStatus  = [];
       }
-      selectedViewData[0].breachStatus  = typeof selectedViewData[0]?.breachStatus  === 'string' &&  tempStatus.length === 0 ? selectedViewData[0]?.breachStatus  : tempStatus;
       
       let tempTypeOfBreach = []
       if (selectedViewData[0]?.typeOfBreach?.length && selectedViewData[0]?.typeOfBreach?.length !== 0 && typeof selectedViewData[0]?.typeOfBreach === 'string') {
@@ -1843,8 +1860,10 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachType" });
           tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].typeOfBreach = tempTypeOfBreach;
+      }  else if (selectedViewData[0].typeOfBreach === null || selectedViewData[0].typeOfBreach === undefined) {
+        selectedViewData[0].typeOfBreach = []
       }
-      selectedViewData[0].typeOfBreach  = typeof selectedViewData[0]?.typeOfBreach  === 'string' &&  tempTypeOfBreach.length === 0 ? selectedViewData[0]?.typeOfBreach  : tempTypeOfBreach;
       
       let tempRootCauseBreach = []
       if (selectedViewData[0]?.rootCauseOfTheBreach?.length && selectedViewData[0]?.rootCauseOfTheBreach?.length !== 0 && typeof selectedViewData[0]?.rootCauseOfTheBreach === 'string') {
@@ -1853,8 +1872,10 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachRootCause" });
           tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].rootCauseOfTheBreach = tempRootCauseBreach;
+      } else if (selectedViewData[0].rootCauseOfTheBreach === null || selectedViewData[0].rootCauseOfTheBreach === undefined) {
+        selectedViewData[0].rootCauseOfTheBreach = []
       }
-      selectedViewData[0].rootCauseOfTheBreach  = typeof selectedViewData[0]?.rootCauseOfTheBreach  === 'string' &&  tempRootCauseBreach.length === 0 ? selectedViewData[0]?.rootCauseOfTheBreach  : tempRootCauseBreach;
       
       let tempRangeFinImpact = []
       if (selectedViewData[0]?.rangeOfFinancialImpact?.length && selectedViewData[0]?.rangeOfFinancialImpact?.length !== 0 && typeof selectedViewData[0]?.rangeOfFinancialImpact === 'string') {
@@ -1863,8 +1884,10 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
           tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].rangeOfFinancialImpact = tempRangeFinImpact;
+      }   else if (selectedViewData[0].rangeOfFinancialImpact === null || selectedViewData[0].rangeOfFinancialImpact === undefined) {
+        selectedViewData[0].rangeOfFinancialImpact = []
       }
-      selectedViewData[0].rangeOfFinancialImpact  = typeof selectedViewData[0]?.rangeOfFinancialImpact  === 'string' &&  tempRangeFinImpact.length === 0 ? selectedViewData[0]?.rangeOfFinancialImpact  : tempRangeFinImpact;
       
       let tempHowDetected = []
       if (selectedViewData[0]?.howDetected?.length && selectedViewData[0]?.howDetected?.length !== 0 && typeof selectedViewData[0]?.howDetected === 'string') {
@@ -1873,8 +1896,10 @@ function Breachlog({ ...props }) {
           let data = await getLookupByType({ LookupType: "BreachDetection" });
           tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
         }
+        selectedViewData[0].howDetected = tempHowDetected;
+      } else if (selectedViewData[0].howDetected === null || selectedViewData[0].howDetected === undefined) {
+        selectedViewData[0].howDetected = []
       }
-      selectedViewData[0].howDetected  = typeof selectedViewData[0]?.howDetected  === 'string' &&  tempHowDetected.length === 0 ? selectedViewData[0]?.howDetected  : tempHowDetected;
       selectedViewData[0].materialBreach = selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : ''
       setselfilter(selectedViewData[0])
       setselectedview(value);
@@ -2867,6 +2892,7 @@ function Breachlog({ ...props }) {
                             selectopts={regionFilterOpts}
                             handleChange={handleMultiSelectChange}
                             value={selfilter.regionId}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                         <div className="frm-filter col-md-3">
@@ -2876,6 +2902,7 @@ function Breachlog({ ...props }) {
                             selectopts={countryFilterOpts}
                             handleChange={handleMultiSelectChange}
                             value={selfilter.countryId}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                       </div>
@@ -2887,6 +2914,7 @@ function Breachlog({ ...props }) {
                             selectopts={commonfilterOpts.statusFilterOpts}
                             handleChange={handleMultiSelectChange}
                             value={selfilter.breachStatus}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                         <div className="frm-filter col-md-3">
@@ -2908,6 +2936,7 @@ function Breachlog({ ...props }) {
                             selectopts={lobFilterOpts}
                             handleChange={handleMultiSelectChange}
                             value={selfilter.lobid}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                         <div className="frm-filter  col-md-3">
@@ -2917,6 +2946,7 @@ function Breachlog({ ...props }) {
                             selectopts={commonfilterOpts.sublobFilterOpts}
                             handleChange={handleMultiSelectChange}
                             value={selfilter.sublobid}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                       </div>
@@ -2943,6 +2973,7 @@ function Breachlog({ ...props }) {
                               selectopts={commonfilterOpts.typeOfBreachOpts}
                               handleChange={handleMultiSelectChange}
                               value={selfilter.typeOfBreach}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           <div className="frm-filter col-md-3">
@@ -2954,6 +2985,7 @@ function Breachlog({ ...props }) {
                               }
                               handleChange={handleMultiSelectChange}
                               value={selfilter.classification}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           <div className="frm-filter col-md-3">
@@ -2973,6 +3005,7 @@ function Breachlog({ ...props }) {
                                 selectopts={segmentFilterOpts}
                                 handleChange={handleMultiSelectChange}
                                 value={selfilter.customersegment}
+                                isAllOptNotRequired={true}
                               />
                             </div>
                           )}
@@ -2987,6 +3020,7 @@ function Breachlog({ ...props }) {
                               }
                               handleChange={handleMultiSelectChange}
                               value={selfilter.natureofbreach}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           <div className="frm-filter  col-md-3">
@@ -2996,6 +3030,7 @@ function Breachlog({ ...props }) {
                               selectopts={commonfilterOpts.howDetectedOpts}
                               handleChange={handleMultiSelectChange}
                               value={selfilter.howDetected}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           <div className="frm-filter  col-md-3">
@@ -3005,6 +3040,7 @@ function Breachlog({ ...props }) {
                               selectopts={commonfilterOpts.rootCauseBreachOpts}
                               handleChange={handleMultiSelectChange}
                               value={selfilter.rootCauseOfTheBreach}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           {selfilter.regionId === REGION_EMEA && (
@@ -3038,6 +3074,7 @@ function Breachlog({ ...props }) {
                               }
                               handleChange={handleMultiSelectChange}
                               value={selfilter.rangeOfFinancialImpact}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           <div className="frm-filter col-md-3">
@@ -3048,6 +3085,7 @@ function Breachlog({ ...props }) {
                               handleChange={onSearchFilterInputAutocomplete}
                               value={selfilter.creatorName}
                               options={commonfilterOpts.creatorFilterOpts}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                           <div className="col-md-6 filter-date-container">
