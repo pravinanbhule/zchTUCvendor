@@ -208,7 +208,6 @@ function BreachAddEditForm(props) {
         if (isEditMode || isReadMode) {
             setLoading(true)
             let response = formIntialState
-
             if (regionState.regionItems && typeof response.region === 'string') {
                 let selectedRegionArray = response.region.split(',')
                 let regionArray = []
@@ -272,8 +271,10 @@ function BreachAddEditForm(props) {
                     let loBData = await getAlllob({ isActive: true });
                     loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
                 }
+                response.loB = loBArray;
+            } else if (response.loB === null || response.loB === undefined) {
+                response.loB = []
             }
-            response.loB = loBArray;
 
             let classificationArray = []
             if (response?.classification?.length && response?.classification?.length !== 0 && typeof response?.classification === 'string') {
@@ -282,9 +283,11 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachClassification" });
                     classificationArray = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.classification = typeof response?.classification === 'string' && classificationArray.length === 0 ? response?.classification : classificationArray;
+            } else if (response.classification === null || response.classification === undefined) {
+                response.classification = []
             }
-            response.classification = classificationArray;
-
+            
             let tempNatureOfBreach = []
             if (response?.natureofbreach?.length && response?.natureofbreach?.length !== 0 && typeof response?.natureofbreach === 'string') {
                 let selectedValueArray = response?.natureofbreach?.split(',')
@@ -292,8 +295,10 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachNature" });
                     tempNatureOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.natureofbreach = typeof response?.natureofbreach === 'string' && tempNatureOfBreach.length === 0 ? response?.natureofbreach : tempNatureOfBreach;
+            } else if (response.natureofbreach === null || response.natureofbreach === undefined) {
+                response.natureofbreach = []
             }
-            response.natureofbreach = tempNatureOfBreach;
 
             let tempStatus = []
             if (response?.status?.length && response?.status?.length !== 0 && typeof response?.status === 'string') {
@@ -302,9 +307,11 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachStatus" });
                     tempStatus = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.status = typeof response?.status === 'string' && tempStatus.length === 0 ? response?.status : tempStatus;
+            } else if (response.status === null || response.status === undefined) {
+                response.status = []
             }
-            response.status = tempStatus;
-
+            
             let tempTypeOfBreach = []
             if (response?.typeofBreach?.length && response?.typeofBreach?.length !== 0 && typeof response?.typeofBreach === 'string') {
                 let selectedValueArray = response?.typeofBreach?.split(',')
@@ -312,9 +319,11 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachType" });
                     tempTypeOfBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.typeofBreach = typeof response?.typeofBreach === 'string' && tempTypeOfBreach.length === 0 ? response?.typeofBreach : tempTypeOfBreach;
+            } else if (response.typeofBreach === null || response.typeofBreach === undefined) {
+                response.typeofBreach = []
             }
-            response.typeofBreach = tempTypeOfBreach;
-
+            
             let tempRootCauseBreach = []
             if (response?.rootCauseOfTheBreach?.length && response?.rootCauseOfTheBreach?.length !== 0 && typeof response?.rootCauseOfTheBreach === 'string') {
                 let selectedValueArray = response?.rootCauseOfTheBreach?.split(',')
@@ -322,9 +331,11 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachRootCause" });
                     tempRootCauseBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.rootCauseOfTheBreach = typeof response?.rootCauseOfTheBreach === 'string' && tempRootCauseBreach.length === 0 ? response?.rootCauseOfTheBreach : tempRootCauseBreach;
+            } else if (response.rootCauseOfTheBreach === null || response.rootCauseOfTheBreach === undefined) {
+                response.rootCauseOfTheBreach = []
             }
-            response.rootCauseOfTheBreach = tempRootCauseBreach;
-
+            
             let tempRangeFinImpact = []
             if (response?.rangeOfFinancialimpact?.length && response?.rangeOfFinancialimpact?.length !== 0 && typeof response?.rangeOfFinancialimpact === 'string') {
                 let selectedValueArray = response?.rangeOfFinancialimpact?.split(',')
@@ -332,9 +343,11 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachFinancialRange" });
                     tempRangeFinImpact = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.rangeOfFinancialimpact = typeof response?.rangeOfFinancialimpact === 'string' && tempRangeFinImpact.length === 0 ? response?.rangeOfFinancialimpact : tempRangeFinImpact;
+            } else if (response.rangeOfFinancialimpact === null || response.rangeOfFinancialimpact === undefined) {
+                response.rangeOfFinancialimpact = []
             }
-            response.rangeOfFinancialimpact = tempRangeFinImpact;
-
+            
             let tempHowDetected = []
             if (response?.howdetected?.length && response?.howdetected?.length !== 0 && typeof response?.howdetected === 'string') {
                 let selectedValueArray = response?.howdetected?.split(',')
@@ -342,8 +355,10 @@ function BreachAddEditForm(props) {
                     let data = await getLookupByType({ LookupType: "BreachDetection" });
                     tempHowDetected = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
                 }
+                response.howdetected = typeof response?.howdetected === 'string' && tempHowDetected.length === 0 ? response?.howdetected : tempHowDetected;
+            } else if (response.howdetected === null || response.howdetected === undefined) {
+                response.howdetected = []
             }
-            response.howdetected = tempHowDetected;
 
             response.isSuperAdmin = response?.userRoles?.split(',').includes('1')
             response.isGlobalAdmin = response?.userRoles?.split(',').includes('2')
@@ -1159,6 +1174,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={regionFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1171,6 +1187,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={countryFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1183,6 +1200,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.statusFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1196,6 +1214,7 @@ function BreachAddEditForm(props) {
                                             commonfilterOpts.actionResponsibleFilterOpts
                                         }
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1208,6 +1227,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={lobFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1220,6 +1240,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.sublobFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                             </div>
@@ -1243,6 +1264,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.typeOfBreachOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1255,6 +1277,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.classificationFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1280,6 +1303,7 @@ function BreachAddEditForm(props) {
                                             issubmitted={issubmitted}
                                             selectopts={segmentFilterOpts}
                                             isReadMode={isReadMode}
+                                            isAllOptNotRequired={true}
                                         />
                                     </div>
                                 )}
@@ -1293,6 +1317,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.natureOfBreachFilterOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1305,6 +1330,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.howDetectedOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -1317,6 +1343,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.rootCauseBreachOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 {formfield.region === REGION_EMEA && (
@@ -1341,6 +1368,7 @@ function BreachAddEditForm(props) {
                                         issubmitted={issubmitted}
                                         selectopts={commonfilterOpts.rangeOfFinancialImpactOpts}
                                         isReadMode={isReadMode}
+                                        isAllOptNotRequired={true}
                                     />
                                 </div>
                                 <div className="col-md-3">

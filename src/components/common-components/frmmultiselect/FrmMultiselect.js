@@ -64,7 +64,7 @@ function FrmMultiselect(props) {
           className="custom-multiselect"
           groupBy={groupBy ? groupBy : ''}
           options={selectopts}
-          displayValue="label"
+          displayValue='value'
           hidePlaceholder={false}
           showCheckbox={true}
           placeholder={selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.search"] : "Select"}
@@ -72,6 +72,10 @@ function FrmMultiselect(props) {
           onClick={onClickHandle}
           onSelect={onSelect}
           onRemove={onRemove}
+          optionValueDecorator={(a, c) => {
+            return c.label
+          }}
+          avoidHighlightFirstOption={true}
         ></Multiselect>
       )}
 
@@ -84,8 +88,8 @@ function FrmMultiselect(props) {
         {!isAllOptNotRequired &&
         selectopts &&
         selectopts.length &&
-        selectedItems.length === selectopts.length ? (
-          <div className="multi-selected-opts" key={selectopts[0].value}>
+        selectedItems?.length === selectopts?.length ? (
+          <div className="multi-selected-opts" key={selectopts[0]?.value}>
             <div>{selectopts[0].label}</div>
             {!isReadMode && (
               <div
@@ -95,7 +99,7 @@ function FrmMultiselect(props) {
             )}
           </div>
         ) : (
-          selectedItems.map((item) => (
+          selectedItems?.map((item) => (
             <div className="multi-selected-opts" key={item.value}>
               <div>{item.label}</div>
               {!isReadMode && (
