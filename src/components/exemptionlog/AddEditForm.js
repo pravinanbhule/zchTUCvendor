@@ -407,17 +407,17 @@ function AddEditForm(props) {
     }
     setloading(false);
     let isedit = false;
-    let loggeduser = userProfile.emailAddress;
+    let loggeduser = userProfile.emailAddress.toLowerCase();
 
     if (formIntialState.isSubmit) {
       if (
         (formIntialState.individualGrantedEmpowerment &&
-          formIntialState.individualGrantedEmpowerment.indexOf(loggeduser) !==
+          formIntialState.individualGrantedEmpowerment.toLowerCase().indexOf(loggeduser) !==
             -1) ||
         (formIntialState.empowermentRequestedBy &&
-          formIntialState.empowermentRequestedBy.indexOf(loggeduser) !== -1) ||
+          formIntialState.empowermentRequestedBy.toLowerCase().indexOf(loggeduser) !== -1) ||
         (formIntialState.approver &&
-          formIntialState.approver.indexOf(loggeduser) !== -1) ||
+          formIntialState.approver.toLowerCase().indexOf(loggeduser) !== -1) ||
         userProfile.isSuperAdmin ||
         userProfile.isGlobalAdmin
       ) {
