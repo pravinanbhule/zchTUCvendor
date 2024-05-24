@@ -19,6 +19,8 @@ function FrmMultiselect(props) {
     groupBy
   } = props;
   const [selectedItems, setselectedItems] = useState(value);
+  const [option, setOption] = useState(selectopts);
+  const [displayOpt, setDisplayOpt] = useState(selectopts)
   useEffect(() => {
     setselectedItems(value);
   }, [value]);
@@ -53,6 +55,21 @@ function FrmMultiselect(props) {
     handleChange(name, [...tempItems]);
   };
   const onClickHandle = () => {};
+  const handleOnSearch = (value) => {
+    if (value !== "") {
+      console.log(value);
+      let searchArray = [];
+      option.map((item ,i) => {
+        if (item.label.toLowerCase().includes(value.toLowerCase())) {
+          console.log(item.label);
+          searchArray.push(item);
+        }
+      })
+      setDisplayOpt(searchArray);
+    } else {
+      setDisplayOpt(option);
+    }
+  }
   return (
     <div className={`frm-field ${isRequired ? "mandatory" : ""}`}>
       <label htmlFor={name}>
@@ -75,6 +92,9 @@ function FrmMultiselect(props) {
           optionValueDecorator={(a, c) => {
             return c.label
           }}
+          // onSearch={(value) => {
+          //   handleOnSearch(value)
+          // }}
           avoidHighlightFirstOption={true}
         ></Multiselect>
       )}
@@ -99,7 +119,7 @@ function FrmMultiselect(props) {
             )}
           </div>
         ) : (
-          selectedItems?.map((item) => (
+          selectedItems && selectedItems.length && selectedItems?.map((item) => (
             <div className="multi-selected-opts" key={item.value}>
               <div>{item.label}</div>
               {!isReadMode && (
