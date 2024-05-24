@@ -657,14 +657,14 @@ function Exemptionlog({ ...props }) {
 
   const fnIsEditAccess = (row) => {
     let isedit = false;
-    let loggeduser = userProfile.emailAddress;
+    let loggeduser = userProfile.emailAddress.toLowerCase();
     if (row.isSubmit) {
       if (
         (row.individualGrantedEmpowerment &&
-          row.individualGrantedEmpowerment.indexOf(loggeduser) !== -1) ||
+          row.individualGrantedEmpowerment.toLowerCase().indexOf(loggeduser) !== -1) ||
         (row.empowermentRequestedBy &&
-          row.empowermentRequestedBy.indexOf(loggeduser) !== -1) ||
-        (row.approver && row.approver.indexOf(loggeduser) !== -1) ||
+          row.empowermentRequestedBy.toLowerCase().indexOf(loggeduser) !== -1) ||
+        (row.approver && row.approver.toLowerCase().indexOf(loggeduser) !== -1) ||
         userProfile.isSuperAdmin ||
         userProfile.isGlobalAdmin
       ) {
