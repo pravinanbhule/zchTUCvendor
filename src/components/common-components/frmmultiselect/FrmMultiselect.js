@@ -19,9 +19,6 @@ function FrmMultiselect(props) {
     groupBy
   } = props;
   const [selectedItems, setselectedItems] = useState([]);
-  const [option, setOption] = useState(selectopts);
-  const [displayOpt, setDisplayOpt] = useState(selectopts)
-  const displayOptRef = useRef(selectopts);
   useEffect(() => {
     if (value) {
       let selectedListOpts = [];
@@ -84,7 +81,7 @@ function FrmMultiselect(props) {
         <Multiselect
           className="custom-multiselect"
           groupBy={groupBy ? groupBy : ''}
-          options={displayOpt.map((e) => ({...e, value: e.value+"@"+e.label}))}
+          options={selectopts.map((e) => ({...e, value: e.value+"@"+e.label}))}
           displayValue='value'
           hidePlaceholder={false}
           showCheckbox={true}
