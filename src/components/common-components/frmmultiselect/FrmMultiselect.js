@@ -58,16 +58,32 @@ function FrmMultiselect(props) {
     } else {
       tempSelectedList = selectedList.filter((item) => item.value !== "*");
     }
+    let selectedListOpts = [];
+    tempSelectedList.map((item, i) => {
+      selectedListOpts.push({
+        ...item,
+        value: item.value.replace("@"+ item.label, "")
+      })
+    }) 
     setselectedItems([...tempSelectedList]);
-    handleChange(name, [...tempSelectedList]);
+    handleChange(name, [...selectedListOpts]);
   };
   const removeSelectedItem = (value) => {
     let tempItems = selectedItems.filter((item) => item.value !== value);
     if (value === "*") {
       tempItems = [];
     }
+    let selectedListOpts = [];
+    if (value !== "*") {
+      tempItems.map((item, i) => {
+        selectedListOpts.push({
+          ...item,
+          value: item.value.replace("@"+ item.label, "")
+        })
+      }) 
+    }
     setselectedItems([...tempItems]);
-    handleChange(name, [...tempItems]);
+    handleChange(name, [...selectedListOpts]);
   };
   const onClickHandle = () => {};
 
