@@ -45,6 +45,8 @@ import { alertMessage, dynamicSort, formatDate } from "../../helpers";
 import PeoplePickerPopup from "./PeoplePickerPopup";
 import Rfelocallog from "./Rfelocallog";
 import { handlePermission } from "../../permissions/Permission";
+import Pagination from "../common-components/pagination/Pagination";
+import RfELinkedPopupDetails from "./RfELinkedPopupDetails";
 
 function AddEditForm(props) {
   const {
@@ -88,7 +90,9 @@ function AddEditForm(props) {
     userProfile,
     queryparam,
     handleDataVersion,
-    sellogTabType
+    sellogTabType,
+    linkedLogLogs,
+    getById
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -2668,6 +2672,165 @@ function AddEditForm(props) {
     }
   }
 
+  // Linked RfEs 
+  const [selctedTab, setSelectedTab] = useState('rfelog')
+  const [showLinkedPopup, setShowLinkedPopup] = useState(false);
+  const [linkedPopupDetails, setLinkedPopupDetails] = useState({})
+  const [logTypes, setlogTypes] = useState([
+    {
+      label: "RfE Log",
+      value: "rfelog",
+    },
+    {
+      label: "Linked RfEs",
+      value: "linkedrfes",
+    }
+  ]);
+  const [paginationdata, setpaginationdata] = useState([]);
+  const [selSortFiled, setselSortFiled] = useState({
+    name: "ModifiedDate",
+    order: "desc",
+  });
+  const handleChangeTab = (value) => {
+    setSelectedTab(value)
+  }
+
+  
+  useEffect(async()=>{
+    // "formIntialState.rfeLogId"
+    let response = await linkedLogLogs({rfeLogId: "RFE008ECE2096AF48BF843DF5441AD242AC" })
+    setpaginationdata(response)
+  },[])
+
+  const columns = [
+    {
+      dataField: "viewaction",
+      text: "View",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="view-icon"
+            onClick={() => handleViewLinkedRfE(row.rfeLogId)}
+            rowid={row.rfeLogId}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "40px",
+          textAlign: "center",
+        };
+      },
+    },
+    // {
+    //   dataField: "DataVersion",
+    //   text: "Data Version",
+    //   formatter: (cell, row, rowIndex, formatExtraData) => {
+    //     return (
+    //       <div
+    //         className="versionhistory-icon"
+    //         onClick={() => handleDataVersion(row.rfeLogId, row.isSubmit)}
+    //         rowid={row.rfeLogId}
+    //         mode={"view"}
+    //       ></div>
+    //     );
+    //   },
+    //   sort: false,
+    //   headerStyle: (colum, colIndex) => {
+    //     return {
+    //       width: "70px",
+    //       textAlign: "center",
+    //     };
+    //   },
+    // },
+    {
+      dataField: "entryNumber",
+      text: "RfE ID",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "100px" };
+      },
+    },
+    {
+      dataField: "accountName",
+      text: "Account Name",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "100px" };
+      },
+    },
+    {
+      dataField: "countryName",
+      text: "Country",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "100px" };
+      },
+    },
+    {
+      dataField: "regionName",
+      text: "Region",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+    },
+  ];
+  const defaultSorted = [
+    {
+      dataField: selSortFiled.name,
+      order: selSortFiled.order,
+    },
+  ];
+  const handleViewLinkedRfE = async(id) => {
+    console.log(id);
+    let response = await getById({
+      rfeLogId: id,
+    });
+    if (response.FieldValues) {
+      response = response.FieldValues;
+      response.UnderwriterName = response.UnderwriterAD
+          ? response.UnderwriterAD.userName
+          : "";
+
+      if (
+          response.RequestForEmpowermentCCAD &&
+          response.RequestForEmpowermentCCAD.length
+      ) {
+          let users = "";
+          users = response.RequestForEmpowermentCCAD.map((item) => item.userName);
+          response.RequestForEmpowermentCCName = users.join(",");
+      }
+      if (
+          response.UnderwriterGrantingEmpowermentAD &&
+          response.UnderwriterGrantingEmpowermentAD.length
+      ) {
+          let users = "";
+          users = response.UnderwriterGrantingEmpowermentAD.map(
+              (item) => item.userName
+          );
+          response.UnderwriterGrantingEmpowermentName = users.join(",");
+      }
+      let countryList = response.CountryList;
+      countryList = countryList.map((country) => ({
+          label: country.countryName,
+          value: country.countryID,
+          regionId: country.regionID,
+      }));
+      response["CountryList"] = [...countryList];
+      console.log("response>>", response);
+      setLinkedPopupDetails(response);
+      setShowLinkedPopup(true);
+    }
+  }
+
+  const handleCloseLinkedPopup = () => {
+    setLinkedPopupDetails({});
+    setShowLinkedPopup(false);
+  }
+
   /*useEffect(() => {
     if (
       formfield?.CountryId === "" &&
@@ -3320,686 +3483,718 @@ function AddEditForm(props) {
           </div>
         </div>
       </div>
+      <div className="tabs-container">
+        {logTypes.map((item) => (
+          <div
+            key={item.label}
+            className={`tab-btn ${
+              selctedTab === item.value
+                ? "selected"
+                : "normal"
+            }`}
+            onClick={() => handleChangeTab(item.value)}
+          >
+            {item.label}
+          </div>
+        ))}
+      </div>
       {!formdomfields.length ? (
         <Loading />
       ) : (
-        <div className="popup-formitems logs-form">
-          <form onSubmit={handleSubmit} id="myForm">
-            <>
-              <Prompt
-                when={formIntialState?.isdirty ? true : false}
-                message={(location) =>
-                  AppLocale[
-                    selectedlanguage?.value ? selectedlanguage.value : "EN001"
-                  ].messages["common.alert.promptmsg"]
-                }
-              />
-              <div className="frm-field-bggray">
+        <>
+        {selctedTab === 'rfelog' ? (
+          <div className="popup-formitems logs-form">
+            <form onSubmit={handleSubmit} id="myForm">
+              <>
+                <Prompt
+                  when={formIntialState?.isdirty ? true : false}
+                  message={(location) =>
+                    AppLocale[
+                      selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                    ].messages["common.alert.promptmsg"]
+                  }
+                />
+                <div className="frm-field-bggray">
+                  <div className="row">
+                    {isNotEmptyValue(formfield?.EntryNumber) ? (
+                      <div
+                        className="col-md-12"
+                        style={{ marginBottom: "15px", fontSize: "16px" }}
+                      >
+                        <label>
+                          {
+                            AppLocale[
+                              selectedlanguage?.value
+                                ? selectedlanguage.value
+                                : "EN001"
+                            ].messages["label.entrynumber"]
+                          }
+                          :
+                        </label>{" "}
+                        {formfield?.EntryNumber}
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+                <>
+                  {formdomfields.map((item, index) => {
+                    let nextelement = formdomfields[index + 1]
+                      ? formdomfields[index + 1]
+                      : {};
+                    domblockspancnt += item.colspan;
+                    clsrowname = item.clsrowname ? item.clsrowname : clsrowname;
+                    if (
+                      domblockspancnt === 12 ||
+                      domblockspancnt + nextelement?.colspan > 12 ||
+                      (item.breakblock && !nextelement.breakblock) ||
+                      index === formdomfields.length - 1 ||
+                      item.name === "ZurichShare"
+                    ) {
+                      blockelelements.push(item);
+                      const eleblock = getformsfieldsblock(
+                        blockelelements,
+                        clsrowname
+                      );
+                      blockelelements = [];
+                      domblockspancnt = 0;
+                      clsrowname = "";
+                      return eleblock;
+                    } else {
+                      blockelelements.push(item);
+                    }
+                  })}
+                </>
+                {/*
+                <div>
                 <div className="row">
-                  {isNotEmptyValue(formfield?.EntryNumber) ? (
-                    <div
-                      className="col-md-12"
-                      style={{ marginBottom: "15px", fontSize: "16px" }}
-                    >
+                  <div className="col-md-3">
+                    {
+                      <FrmInputAutocomplete
+                        title={"Account Name"}
+                        titlelinespace={true}
+                        name={"AccountName"}
+                        type={"input"}
+                        handleChange={onSearchFilterInputAutocomplete}
+                        value={formfield.AccountName ? formfield.AccountName : ""}
+                        options={frmAccountOpts}
+                        isReadMode={isReadMode}
+                        isRequired={true}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        isdisabled={isfrmdisabled}
+                      />
+                    }
+                  </div>
+                  <div className="col-md-3">
+                    <FrmSelect
+                      title={"Country"}
+                      titlelinespace={true}
+                      name={"CountryId"}
+                      value={formfield.CountryId}
+                      handleChange={handleSelectChange}
+                      isRequired={true}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      selectopts={countryopts}
+                      isdisabled={isfrmdisabled}
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <FrmSelect
+                      title={<>LoB</>}
+                      titlelinespace={true}
+                      name={"LOBId"}
+                      value={formfield.LOBId}
+                      handleChange={handleSelectChange}
+                      isRequired={true}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      selectopts={frmLoB}
+                      isdisabled={isfrmdisabled}
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <FrmSelect
+                      title={
+                        <>
+                          Request for empowerment<br></br>reason
+                        </>
+                      }
+                      name={"RequestForEmpowermentReason"}
+                      value={formfield.RequestForEmpowermentReason}
+                      handleChange={handleSelectChange}
+                      isRequired={true}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      selectopts={frmrfeempourment}
+                      isdisabled={isfrmdisabled}
+                      isToolTip={true}
+                      tooltipmsg={tooltip["RequestForEmpowermentReason"]}
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-3">
+                    <FrmInput
+                      title={
+                        <>
+                          Underwriter granting<br></br>empowerment
+                        </>
+                      }
+                      name={"UnderwriterGrantingEmpowermentName"}
+                      value={formfield.UnderwriterGrantingEmpowermentName}
+                      type={"text"}
+                      handleChange={handleChange}
+                      handleClick={(e) => handleshowpeoplepicker("approver", e)}
+                      isRequired={true}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      isdisabled={isfrmdisabled}
+                    />
+                  </div>
+                  {IncountryFlag === IncountryFlagConst.LATAM &&
+                  frmBranchOpts.length ? (
+                    <div className="col-md-3">
+                      <FrmSelect
+                        title={"Branch"}
+                        titlelinespace={true}
+                        name={"Branch"}
+                        value={formfield.Branch}
+                        handleChange={handleSelectChange}
+                        isRequired={true}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        selectopts={frmBranchOpts}
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {frmselectedRegion === regions.latam &&
+                  formfield.UnderwriterGrantingEmpowermentName === "" ? (
+                    ""
+                  ) : (
+                    <div className="col-md-3">
+                      <FrmRadio
+                        title={"Organizational alignment"}
+                        titlelinespace={true}
+                        name={"OrganizationalAlignment"}
+                        value={
+                          formfield.OrganizationalAlignment
+                            ? formfield.OrganizationalAlignment
+                            : OrganizationalAlignment.global
+                        }
+                        handleChange={handleChange}
+                        isRequired={true}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        isToolTip={true}
+                        tooltipmsg={tooltip["OrgnizationalAlignment"]}
+                        issubmitted={issubmitted}
+                        selectopts={frmorgnizationalalignment}
+                        isdisabled={
+                          (isfrmdisabled && isshowlocallink) ||
+                          IncountryFlag === IncountryFlagConst.LATAM
+                        }
+                      />
+                    </div>
+                  )}
+                  {formfield.OrganizationalAlignment ===
+                    OrganizationalAlignment.country && !IncountryFlag ? (
+                    <div className="col-md-3 btn-blue" onClick={showlogPopup}>
+                      Local country log
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  <div className="col-md-3">
+                    <FrmInput
+                      title={
+                        <>
+                          Underwriter<i>(submitter)</i>
+                        </>
+                      }
+                      titlelinespace={true}
+                      name={"UnderwriterName"}
+                      value={formfield.UnderwriterName}
+                      type={"text"}
+                      handleChange={handleChange}
+                      handleClick={(e) =>
+                        handleshowpeoplepicker("underwriter", e)
+                      }
+                      isReadMode={isReadMode}
+                      isRequired={true}
+                      isdisabled={isfrmdisabled}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                    />
+                  </div>
+                </div>
+                <div className="row border-bottom">
+                  <div className="col-md-12">
+                    <FrmRichTextEditor
+                      title={<>Specific Details</>}
+                      name={"RFELogDetails"}
+                      value={
+                        formfield.RFELogDetails
+                          ? formfield.RFELogDetails
+                          : formIntialState.RFELogDetails
+                      }
+                      handleChange={handleSelectChange}
+                      isRequired={true}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      isdisabled={isfrmdisabled}
+                      isToolTip={true}
+                      tooltipmsg={tooltip["SpecificDetails"]}
+                    />
+                  </div>
+                </div>
+              </div>
+              {IncountryFlag === IncountryFlagConst.LATAM ? (
+                <div className="frm-field-bggray">
+                  <div className="row ">
+                    <div className="col-md-3">
+                      <FrmSelect
+                        title={"Customer Segment"}
+                        name={"CustomerSegment"}
+                        value={formfield.CustomerSegment}
+                        handleChange={handleSelectChange}
+                        isRequired={true}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        selectopts={frmSegmentOpts}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <FrmSelect
+                        title={"New/Renewal"}
+                        name={"NewRenewal"}
+                        value={formfield.NewRenewal}
+                        handleChange={handleSelectChange}
+                        isRequired={true}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        selectopts={inCountryOptsLATAM.frmNewRenewalOpts}
+                      />
+                    </div>
+
+                    <div className="col-md-3">
+                      <FrmInput
+                        title={"Policy Period"}
+                        name={"PolicyPeriod"}
+                        value={formfield.PolicyPeriod}
+                        type={"text"}
+                        handleChange={handleChange}
+                        isReadMode={isReadMode}
+                        isRequired={false}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        isdisabled={isfrmdisabled}
+                      />
+                    </div>
+                  </div>
+                  <div className="row border-bottom">
+                    <div className="col-md-3">
+                      <FrmSelect
+                        title={"Currency"}
+                        name={"Currency"}
+                        value={formfield.Currency}
+                        handleChange={handleSelectChange}
+                        isRequired={false}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        selectopts={frmCurrencyOpts}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <FrmInput
+                        title={"Limit"}
+                        name={"Limit"}
+                        value={formfield.Limit}
+                        type={"text"}
+                        handleChange={handleChange}
+                        isReadMode={isReadMode}
+                        isRequired={false}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        isdisabled={isfrmdisabled}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <FrmInput
+                        title={"GWP"}
+                        name={"GWP"}
+                        value={formfield.GWP}
+                        type={"text"}
+                        handleChange={handleChange}
+                        isReadMode={isReadMode}
+                        isRequired={true}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        isdisabled={isfrmdisabled}
+                      />
+                    </div>
+
+                    <div className="col-md-3">
+                      <FrmInput
+                        title={"Zurich Share"}
+                        name={"ZurichShare"}
+                        value={formfield.ZurichShare}
+                        type={"text"}
+                        handleChange={handleChange}
+                        isReadMode={isReadMode}
+                        isRequired={false}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        isdisabled={isfrmdisabled}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+              <div class="frm-container-bggray">
+                <div className="row">
+                  {!IncountryFlag ? (
+                    <div className="col-md-3">
+                      <FrmSelect
+                        title={<>CHZ Sustainability Desk / CHZ GI Credit Risk</>}
+                        name={"CHZ"}
+                        value={formfield.CHZ}
+                        handleChange={handleSelectChange}
+                        isRequired={false}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        isToolTip={true}
+                        tooltipmsg={tooltip["CHZ"]}
+                        issubmitted={issubmitted}
+                        selectopts={frmrfechz}
+                        isdisabled={isfrmdisabled}
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  <div className="col-md-3">
+                    <FrmInput
+                      title={"Request for empowerment CC"}
+                      name={"RequestForEmpowermentCCName"}
+                      value={formfield.RequestForEmpowermentCCName}
+                      type={"text"}
+                      handleChange={handleChange}
+                      handleClick={(e) => handleshowpeoplepicker("ccuser", e)}
+                      isRequired={false}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      isToolTip={true}
+                      tooltipmsg={tooltip["Rfecc"]}
+                      issubmitted={issubmitted}
+                      isdisabled={isfrmdisabled}
+                    />
+                  </div>
+                  {IncountryFlag === IncountryFlagConst.LATAM ? (
+                    <div className="col-md-3">
+                      <FrmDatePicker
+                        title={"Decision Date"}
+                        name={"DecisionDate"}
+                        value={formfield.DecisionDate}
+                        type={"date"}
+                        handleChange={handleDateSelectChange}
+                        isRequired={false}
+                        isReadMode={isReadMode}
+                        minDate={""}
+                        maxDate={""}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="row">
+                  <div className="col-md-3">
+                    <FrmSelect
+                      title={
+                        <>
+                          Request for empowerment<br></br>status
+                        </>
+                      }
+                      name={"RequestForEmpowermentStatus"}
+                      value={formfield.RequestForEmpowermentStatus}
+                      handleChange={handleSelectChange}
+                      isRequired={false}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      selectopts={frmstatus}
+                      isdisabled={isfrmdisabled || isstatusdisabled}
+                      isToolTip={true}
+                      tooltipmsg={tooltip["RequestForEmpowermentStatus"]}
+                    />
+                  </div>
+
+                  {formfield.RequestForEmpowermentStatus ===
+                    rfelog_status.Empowerment_granted_with_conditions && (
+                    <div className="col-md-3">
+                      <FrmSelect
+                        title={<>Condition Applicable To</>}
+                        titlelinespace={true}
+                        name={"ConditionApplicableTo"}
+                        value={formfield.ConditionApplicableTo}
+                        handleChange={handleSelectChange}
+                        isRequired={false}
+                        isReadMode={isReadMode}
+                        validationmsg={"Mandatory field"}
+                        issubmitted={issubmitted}
+                        selectopts={frmConditionOpts}
+                        isdisabled={isfrmdisabled || isstatusdisabled}
+                        isToolTip={true}
+                        tooltipmsg={tooltip["ConditionApplicableTo"]}
+                      />
+                    </div>
+                  )}
+                  <div className="col-md-3">
+                    <FrmSelect
+                      title={<>Duration of approval (in years)</>}
+                      name={"DurationofApproval"}
+                      value={formfield.DurationofApproval}
+                      handleChange={handleSelectChange}
+                      isRequired={
+                        isEditMode && userroles.isapprover ? true : false
+                      }
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      selectopts={frmDurationOpts}
+                      isdisabled={isfrmdisabled || isdurationdisabled}
+                      isToolTip={true}
+                      tooltipmsg={tooltip["DurationofApproval"]}
+                    />
+                  </div>
+                </div>
+                <div className="row ">
+                  <div className="col-md-12">
+                    <FrmRichTextEditor
+                      title={
+                        "Underwriter granting empowerment comments / condition"
+                      }
+                      name={"UnderwriterGrantingEmpowermentComments"}
+                      value={
+                        formfield.UnderwriterGrantingEmpowermentComments
+                          ? formfield.UnderwriterGrantingEmpowermentComments
+                          : formIntialState.UnderwriterGrantingEmpowermentComments
+                      }
+                      handleChange={handleSelectChange}
+                      isRequired={false}
+                      isReadMode={isReadMode}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      isdisabled={
+                        isfrmdisabled ||
+                        isstatusdisabled ||
+                        formfield.RequestForEmpowermentStatus ===
+                          rfelog_status.Pending
+                      }
+                      isToolTip={true}
+                      tooltipmsg={
+                        tooltip["UnderwriterGrantingEmpowermentComments"]
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="row border-bottom">
+                  <div className="col-md-3">
+                    <FrmDatePicker
+                      title={
+                        "Date of reception of information needed by approver"
+                      }
+                      name={"ReceptionInformationDate"}
+                      value={formfield.ReceptionInformationDate}
+                      type={"date"}
+                      handleChange={handleDateSelectChange}
+                      isRequired={false}
+                      isReadMode={isReadMode}
+                      minDate={""}
+                      maxDate={moment().toDate()}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      isdisabled={
+                        isfrmdisabled ||
+                        isstatusdisabled ||
+                        formfield.RequestForEmpowermentStatus ===
+                          rfelog_status.Pending
+                      }
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <FrmDatePicker
+                      title={"Date of response"}
+                      titlelinespace={true}
+                      name={"ResponseDate"}
+                      value={formfield.ResponseDate}
+                      type={"date"}
+                      handleChange={handleDateSelectChange}
+                      isRequired={false}
+                      isReadMode={isReadMode}
+                      minDate={moment(
+                        formfield.ReceptionInformationDate
+                      ).toDate()}
+                      maxDate={moment().toDate()}
+                      validationmsg={"Mandatory field"}
+                      issubmitted={issubmitted}
+                      isdisabled={
+                        isfrmdisabled ||
+                        isstatusdisabled ||
+                        formfield.RequestForEmpowermentStatus ===
+                          rfelog_status.Pending
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+                    */}
+                <div class="frm-field-bggray">
+                  <div className="row ">
+                    <div className="col-md-6">
+                      <FrmFileUpload
+                        title={
+                          AppLocale[
+                            selectedlanguage?.value
+                              ? selectedlanguage.value
+                              : "EN001"
+                          ].messages["label.uploadattachment"]
+                        }
+                        name={"FullFilePath"}
+                        uploadedfiles={formfield?.RFEAttachmentList}
+                        value={""}
+                        type={""}
+                        handleFileUpload={handleFileUpload}
+                        handleFileDelete={handleFileDelete}
+                        isRequired={false}
+                        isReadMode={isReadMode}
+                        isShowDelete={
+                          (!isReadMode && !formfield?.IsSubmit) ||
+                          (!isReadMode && userProfile.isAdminGroup)
+                        }
+                        validationmsg={
+                          AppLocale[
+                            selectedlanguage?.value
+                              ? selectedlanguage.value
+                              : "EN001"
+                          ].messages["message.mandatory"]
+                        }
+                        issubmitted={issubmitted}
+                        isshowloading={
+                          fileuploadloader ? fileuploadloader : false
+                        }
+                        selectedlanguage={
+                          selectedlanguage?.value
+                            ? selectedlanguage?.value
+                            : "EN001"
+                        }
+                        isdisabled={isfrmdisabled}
+                        downloadfile={downloadfile}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {isEditMode || isReadMode ? (
+                  <div className="row mb20 border-top pt10">
+                    <div className="col-md-3">
                       <label>
                         {
                           AppLocale[
                             selectedlanguage?.value
                               ? selectedlanguage.value
                               : "EN001"
-                          ].messages["label.entrynumber"]
+                          ].messages["label.createdby"]
                         }
-                        :
-                      </label>{" "}
-                      {formfield?.EntryNumber}
+                      </label>
+                      <br></br>
+                      {formfield?.CreatorName}
                     </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-              <>
-                {formdomfields.map((item, index) => {
-                  let nextelement = formdomfields[index + 1]
-                    ? formdomfields[index + 1]
-                    : {};
-                  domblockspancnt += item.colspan;
-                  clsrowname = item.clsrowname ? item.clsrowname : clsrowname;
-                  if (
-                    domblockspancnt === 12 ||
-                    domblockspancnt + nextelement?.colspan > 12 ||
-                    (item.breakblock && !nextelement.breakblock) ||
-                    index === formdomfields.length - 1 ||
-                    item.name === "ZurichShare"
-                  ) {
-                    blockelelements.push(item);
-                    const eleblock = getformsfieldsblock(
-                      blockelelements,
-                      clsrowname
-                    );
-                    blockelelements = [];
-                    domblockspancnt = 0;
-                    clsrowname = "";
-                    return eleblock;
-                  } else {
-                    blockelelements.push(item);
-                  }
-                })}
+                    <div className="col-md-3">
+                      <label>
+                        {
+                          AppLocale[
+                            selectedlanguage?.value
+                              ? selectedlanguage.value
+                              : "EN001"
+                          ].messages["label.createddate"]
+                        }
+                      </label>
+                      <br></br>
+                      {formfield?.CreatedDate
+                        ? formatDate(formfield?.CreatedDate)
+                        : ""}
+                    </div>
+                    <div className="col-md-3">
+                      <label>
+                        {
+                          AppLocale[
+                            selectedlanguage?.value
+                              ? selectedlanguage.value
+                              : "EN001"
+                          ].messages["label.modifiedby"]
+                        }
+                      </label>
+                      <br></br>
+                      {formfield?.LastModifiorName}
+                    </div>
+                    <div className="col-md-3">
+                      <label>
+                        {
+                          AppLocale[
+                            selectedlanguage?.value
+                              ? selectedlanguage.value
+                              : "EN001"
+                          ].messages["label.modifieddate"]
+                        }
+                      </label>
+                      <br></br>
+                      {formfield?.ModifiedDate
+                        ? formatDate(formfield?.ModifiedDate)
+                        : ""}
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
               </>
-              {/*
-              <div>
-              <div className="row">
-                <div className="col-md-3">
-                  {
-                    <FrmInputAutocomplete
-                      title={"Account Name"}
-                      titlelinespace={true}
-                      name={"AccountName"}
-                      type={"input"}
-                      handleChange={onSearchFilterInputAutocomplete}
-                      value={formfield.AccountName ? formfield.AccountName : ""}
-                      options={frmAccountOpts}
-                      isReadMode={isReadMode}
-                      isRequired={true}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      isdisabled={isfrmdisabled}
-                    />
-                  }
-                </div>
-                <div className="col-md-3">
-                  <FrmSelect
-                    title={"Country"}
-                    titlelinespace={true}
-                    name={"CountryId"}
-                    value={formfield.CountryId}
-                    handleChange={handleSelectChange}
-                    isRequired={true}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    selectopts={countryopts}
-                    isdisabled={isfrmdisabled}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <FrmSelect
-                    title={<>LoB</>}
-                    titlelinespace={true}
-                    name={"LOBId"}
-                    value={formfield.LOBId}
-                    handleChange={handleSelectChange}
-                    isRequired={true}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    selectopts={frmLoB}
-                    isdisabled={isfrmdisabled}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <FrmSelect
-                    title={
-                      <>
-                        Request for empowerment<br></br>reason
-                      </>
-                    }
-                    name={"RequestForEmpowermentReason"}
-                    value={formfield.RequestForEmpowermentReason}
-                    handleChange={handleSelectChange}
-                    isRequired={true}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    selectopts={frmrfeempourment}
-                    isdisabled={isfrmdisabled}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["RequestForEmpowermentReason"]}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-3">
-                  <FrmInput
-                    title={
-                      <>
-                        Underwriter granting<br></br>empowerment
-                      </>
-                    }
-                    name={"UnderwriterGrantingEmpowermentName"}
-                    value={formfield.UnderwriterGrantingEmpowermentName}
-                    type={"text"}
-                    handleChange={handleChange}
-                    handleClick={(e) => handleshowpeoplepicker("approver", e)}
-                    isRequired={true}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    isdisabled={isfrmdisabled}
-                  />
-                </div>
-                {IncountryFlag === IncountryFlagConst.LATAM &&
-                frmBranchOpts.length ? (
-                  <div className="col-md-3">
-                    <FrmSelect
-                      title={"Branch"}
-                      titlelinespace={true}
-                      name={"Branch"}
-                      value={formfield.Branch}
-                      handleChange={handleSelectChange}
-                      isRequired={true}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      selectopts={frmBranchOpts}
-                    />
-                  </div>
-                ) : (
-                  ""
-                )}
-                {frmselectedRegion === regions.latam &&
-                formfield.UnderwriterGrantingEmpowermentName === "" ? (
-                  ""
-                ) : (
-                  <div className="col-md-3">
-                    <FrmRadio
-                      title={"Organizational alignment"}
-                      titlelinespace={true}
-                      name={"OrganizationalAlignment"}
-                      value={
-                        formfield.OrganizationalAlignment
-                          ? formfield.OrganizationalAlignment
-                          : OrganizationalAlignment.global
-                      }
-                      handleChange={handleChange}
-                      isRequired={true}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      isToolTip={true}
-                      tooltipmsg={tooltip["OrgnizationalAlignment"]}
-                      issubmitted={issubmitted}
-                      selectopts={frmorgnizationalalignment}
-                      isdisabled={
-                        (isfrmdisabled && isshowlocallink) ||
-                        IncountryFlag === IncountryFlagConst.LATAM
-                      }
-                    />
-                  </div>
-                )}
-                {formfield.OrganizationalAlignment ===
-                  OrganizationalAlignment.country && !IncountryFlag ? (
-                  <div className="col-md-3 btn-blue" onClick={showlogPopup}>
-                    Local country log
-                  </div>
-                ) : (
-                  ""
-                )}
-                <div className="col-md-3">
-                  <FrmInput
-                    title={
-                      <>
-                        Underwriter<i>(submitter)</i>
-                      </>
-                    }
-                    titlelinespace={true}
-                    name={"UnderwriterName"}
-                    value={formfield.UnderwriterName}
-                    type={"text"}
-                    handleChange={handleChange}
-                    handleClick={(e) =>
-                      handleshowpeoplepicker("underwriter", e)
-                    }
-                    isReadMode={isReadMode}
-                    isRequired={true}
-                    isdisabled={isfrmdisabled}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                  />
-                </div>
-              </div>
-              <div className="row border-bottom">
-                <div className="col-md-12">
-                  <FrmRichTextEditor
-                    title={<>Specific Details</>}
-                    name={"RFELogDetails"}
-                    value={
-                      formfield.RFELogDetails
-                        ? formfield.RFELogDetails
-                        : formIntialState.RFELogDetails
-                    }
-                    handleChange={handleSelectChange}
-                    isRequired={true}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    isdisabled={isfrmdisabled}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["SpecificDetails"]}
-                  />
-                </div>
-              </div>
-            </div>
-            {IncountryFlag === IncountryFlagConst.LATAM ? (
-              <div className="frm-field-bggray">
-                <div className="row ">
-                  <div className="col-md-3">
-                    <FrmSelect
-                      title={"Customer Segment"}
-                      name={"CustomerSegment"}
-                      value={formfield.CustomerSegment}
-                      handleChange={handleSelectChange}
-                      isRequired={true}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      selectopts={frmSegmentOpts}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <FrmSelect
-                      title={"New/Renewal"}
-                      name={"NewRenewal"}
-                      value={formfield.NewRenewal}
-                      handleChange={handleSelectChange}
-                      isRequired={true}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      selectopts={inCountryOptsLATAM.frmNewRenewalOpts}
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <FrmInput
-                      title={"Policy Period"}
-                      name={"PolicyPeriod"}
-                      value={formfield.PolicyPeriod}
-                      type={"text"}
-                      handleChange={handleChange}
-                      isReadMode={isReadMode}
-                      isRequired={false}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      isdisabled={isfrmdisabled}
-                    />
-                  </div>
-                </div>
-                <div className="row border-bottom">
-                  <div className="col-md-3">
-                    <FrmSelect
-                      title={"Currency"}
-                      name={"Currency"}
-                      value={formfield.Currency}
-                      handleChange={handleSelectChange}
-                      isRequired={false}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      selectopts={frmCurrencyOpts}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <FrmInput
-                      title={"Limit"}
-                      name={"Limit"}
-                      value={formfield.Limit}
-                      type={"text"}
-                      handleChange={handleChange}
-                      isReadMode={isReadMode}
-                      isRequired={false}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      isdisabled={isfrmdisabled}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <FrmInput
-                      title={"GWP"}
-                      name={"GWP"}
-                      value={formfield.GWP}
-                      type={"text"}
-                      handleChange={handleChange}
-                      isReadMode={isReadMode}
-                      isRequired={true}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      isdisabled={isfrmdisabled}
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <FrmInput
-                      title={"Zurich Share"}
-                      name={"ZurichShare"}
-                      value={formfield.ZurichShare}
-                      type={"text"}
-                      handleChange={handleChange}
-                      isReadMode={isReadMode}
-                      isRequired={false}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      isdisabled={isfrmdisabled}
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
-            <div class="frm-container-bggray">
-              <div className="row">
-                {!IncountryFlag ? (
-                  <div className="col-md-3">
-                    <FrmSelect
-                      title={<>CHZ Sustainability Desk / CHZ GI Credit Risk</>}
-                      name={"CHZ"}
-                      value={formfield.CHZ}
-                      handleChange={handleSelectChange}
-                      isRequired={false}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      isToolTip={true}
-                      tooltipmsg={tooltip["CHZ"]}
-                      issubmitted={issubmitted}
-                      selectopts={frmrfechz}
-                      isdisabled={isfrmdisabled}
-                    />
-                  </div>
-                ) : (
-                  ""
-                )}
-                <div className="col-md-3">
-                  <FrmInput
-                    title={"Request for empowerment CC"}
-                    name={"RequestForEmpowermentCCName"}
-                    value={formfield.RequestForEmpowermentCCName}
-                    type={"text"}
-                    handleChange={handleChange}
-                    handleClick={(e) => handleshowpeoplepicker("ccuser", e)}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["Rfecc"]}
-                    issubmitted={issubmitted}
-                    isdisabled={isfrmdisabled}
-                  />
-                </div>
-                {IncountryFlag === IncountryFlagConst.LATAM ? (
-                  <div className="col-md-3">
-                    <FrmDatePicker
-                      title={"Decision Date"}
-                      name={"DecisionDate"}
-                      value={formfield.DecisionDate}
-                      type={"date"}
-                      handleChange={handleDateSelectChange}
-                      isRequired={false}
-                      isReadMode={isReadMode}
-                      minDate={""}
-                      maxDate={""}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                    />
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="row">
-                <div className="col-md-3">
-                  <FrmSelect
-                    title={
-                      <>
-                        Request for empowerment<br></br>status
-                      </>
-                    }
-                    name={"RequestForEmpowermentStatus"}
-                    value={formfield.RequestForEmpowermentStatus}
-                    handleChange={handleSelectChange}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    selectopts={frmstatus}
-                    isdisabled={isfrmdisabled || isstatusdisabled}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["RequestForEmpowermentStatus"]}
-                  />
-                </div>
-
-                {formfield.RequestForEmpowermentStatus ===
-                  rfelog_status.Empowerment_granted_with_conditions && (
-                  <div className="col-md-3">
-                    <FrmSelect
-                      title={<>Condition Applicable To</>}
-                      titlelinespace={true}
-                      name={"ConditionApplicableTo"}
-                      value={formfield.ConditionApplicableTo}
-                      handleChange={handleSelectChange}
-                      isRequired={false}
-                      isReadMode={isReadMode}
-                      validationmsg={"Mandatory field"}
-                      issubmitted={issubmitted}
-                      selectopts={frmConditionOpts}
-                      isdisabled={isfrmdisabled || isstatusdisabled}
-                      isToolTip={true}
-                      tooltipmsg={tooltip["ConditionApplicableTo"]}
-                    />
-                  </div>
-                )}
-                <div className="col-md-3">
-                  <FrmSelect
-                    title={<>Duration of approval (in years)</>}
-                    name={"DurationofApproval"}
-                    value={formfield.DurationofApproval}
-                    handleChange={handleSelectChange}
-                    isRequired={
-                      isEditMode && userroles.isapprover ? true : false
-                    }
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    selectopts={frmDurationOpts}
-                    isdisabled={isfrmdisabled || isdurationdisabled}
-                    isToolTip={true}
-                    tooltipmsg={tooltip["DurationofApproval"]}
-                  />
-                </div>
-              </div>
-              <div className="row ">
-                <div className="col-md-12">
-                  <FrmRichTextEditor
-                    title={
-                      "Underwriter granting empowerment comments / condition"
-                    }
-                    name={"UnderwriterGrantingEmpowermentComments"}
-                    value={
-                      formfield.UnderwriterGrantingEmpowermentComments
-                        ? formfield.UnderwriterGrantingEmpowermentComments
-                        : formIntialState.UnderwriterGrantingEmpowermentComments
-                    }
-                    handleChange={handleSelectChange}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    isdisabled={
-                      isfrmdisabled ||
-                      isstatusdisabled ||
-                      formfield.RequestForEmpowermentStatus ===
-                        rfelog_status.Pending
-                    }
-                    isToolTip={true}
-                    tooltipmsg={
-                      tooltip["UnderwriterGrantingEmpowermentComments"]
-                    }
-                  />
-                </div>
-              </div>
-              <div className="row border-bottom">
-                <div className="col-md-3">
-                  <FrmDatePicker
-                    title={
-                      "Date of reception of information needed by approver"
-                    }
-                    name={"ReceptionInformationDate"}
-                    value={formfield.ReceptionInformationDate}
-                    type={"date"}
-                    handleChange={handleDateSelectChange}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    minDate={""}
-                    maxDate={moment().toDate()}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    isdisabled={
-                      isfrmdisabled ||
-                      isstatusdisabled ||
-                      formfield.RequestForEmpowermentStatus ===
-                        rfelog_status.Pending
-                    }
-                  />
-                </div>
-                <div className="col-md-3">
-                  <FrmDatePicker
-                    title={"Date of response"}
-                    titlelinespace={true}
-                    name={"ResponseDate"}
-                    value={formfield.ResponseDate}
-                    type={"date"}
-                    handleChange={handleDateSelectChange}
-                    isRequired={false}
-                    isReadMode={isReadMode}
-                    minDate={moment(
-                      formfield.ReceptionInformationDate
-                    ).toDate()}
-                    maxDate={moment().toDate()}
-                    validationmsg={"Mandatory field"}
-                    issubmitted={issubmitted}
-                    isdisabled={
-                      isfrmdisabled ||
-                      isstatusdisabled ||
-                      formfield.RequestForEmpowermentStatus ===
-                        rfelog_status.Pending
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-                  */}
-              <div class="frm-field-bggray">
-                <div className="row ">
-                  <div className="col-md-6">
-                    <FrmFileUpload
-                      title={
-                        AppLocale[
-                          selectedlanguage?.value
-                            ? selectedlanguage.value
-                            : "EN001"
-                        ].messages["label.uploadattachment"]
-                      }
-                      name={"FullFilePath"}
-                      uploadedfiles={formfield?.RFEAttachmentList}
-                      value={""}
-                      type={""}
-                      handleFileUpload={handleFileUpload}
-                      handleFileDelete={handleFileDelete}
-                      isRequired={false}
-                      isReadMode={isReadMode}
-                      isShowDelete={
-                        (!isReadMode && !formfield?.IsSubmit) ||
-                        (!isReadMode && userProfile.isAdminGroup)
-                      }
-                      validationmsg={
-                        AppLocale[
-                          selectedlanguage?.value
-                            ? selectedlanguage.value
-                            : "EN001"
-                        ].messages["message.mandatory"]
-                      }
-                      issubmitted={issubmitted}
-                      isshowloading={
-                        fileuploadloader ? fileuploadloader : false
-                      }
-                      selectedlanguage={
-                        selectedlanguage?.value
-                          ? selectedlanguage?.value
-                          : "EN001"
-                      }
-                      isdisabled={isfrmdisabled}
-                      downloadfile={downloadfile}
-                    />
-                  </div>
-                </div>
-              </div>
-              {isEditMode || isReadMode ? (
-                <div className="row mb20 border-top pt10">
-                  <div className="col-md-3">
-                    <label>
-                      {
-                        AppLocale[
-                          selectedlanguage?.value
-                            ? selectedlanguage.value
-                            : "EN001"
-                        ].messages["label.createdby"]
-                      }
-                    </label>
-                    <br></br>
-                    {formfield?.CreatorName}
-                  </div>
-                  <div className="col-md-3">
-                    <label>
-                      {
-                        AppLocale[
-                          selectedlanguage?.value
-                            ? selectedlanguage.value
-                            : "EN001"
-                        ].messages["label.createddate"]
-                      }
-                    </label>
-                    <br></br>
-                    {formfield?.CreatedDate
-                      ? formatDate(formfield?.CreatedDate)
-                      : ""}
-                  </div>
-                  <div className="col-md-3">
-                    <label>
-                      {
-                        AppLocale[
-                          selectedlanguage?.value
-                            ? selectedlanguage.value
-                            : "EN001"
-                        ].messages["label.modifiedby"]
-                      }
-                    </label>
-                    <br></br>
-                    {formfield?.LastModifiorName}
-                  </div>
-                  <div className="col-md-3">
-                    <label>
-                      {
-                        AppLocale[
-                          selectedlanguage?.value
-                            ? selectedlanguage.value
-                            : "EN001"
-                        ].messages["label.modifieddate"]
-                      }
-                    </label>
-                    <br></br>
-                    {formfield?.ModifiedDate
-                      ? formatDate(formfield?.ModifiedDate)
-                      : ""}
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-            </>
-          </form>
-        </div>
+            </form>
+          </div>
+          ) : (
+            <Pagination
+              id={"userId"}
+              column={columns}
+              data={paginationdata}
+              defaultSorted={defaultSorted}
+              isAddButton={false}
+              isPagination={false}
+              isExportReport={false}
+              isImportLogs={false}
+              hidesearch={true}
+            />
+          )
+        }
+      </>
       )}
 
-      {!isReadMode ? (
+      {!isReadMode && selctedTab === 'rfelog' ? (
         <div className="popup-footer-container">
           <div className="btn-container">
             {(!isEditMode || sellogTabType === 'draft') ? (
@@ -4055,6 +4250,16 @@ function AddEditForm(props) {
       ) : (
         ""
       )}
+
+      {showLinkedPopup ? (
+        <RfELinkedPopupDetails
+          hidePopup={handleCloseLinkedPopup}
+          referenceRfEId={'RFE_68005778'}
+        />
+      ) : (
+        ""
+      )}
+
       {showApprover ? (
         <PeoplePickerPopup
           title={
@@ -4143,5 +4348,7 @@ const mapActions = {
   getAllPolicyAccounts: rfelogActions.getAllPolicyAccounts,
   getPolicyTermId: rfelogActions.getPolicyTermId,
   getLanguageDetails: commonActions.getLanguageDetails,
+  linkedLogLogs: rfelogActions.linkedLogLogs,
+  getById: rfelogActions.getById,
 };
 export default connect(mapStateToProp, mapActions)(AddEditForm);

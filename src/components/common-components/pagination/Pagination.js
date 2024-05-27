@@ -25,6 +25,8 @@ function Pagination(props) {
     totalItems,
     onPaginationPagechange,
     onPageSizeChange,
+    isAddButton,
+    isPagination,
     isExportReport,
     isImportLogs,
     importLogsTitle,
@@ -144,14 +146,16 @@ function Pagination(props) {
               </div>
             )
           }
-          <div
-            className={`btn-blue plus-icon ${
-              isAddActive ? "" : "disable"
-            }`}
-            onClick={() => handleAddBtnClick()}
-          >
-            {buttonTitle}
-          </div>
+          {isAddButton !== false && (
+            <div
+              className={`btn-blue plus-icon ${
+                isAddActive ? "" : "disable"
+              }`}
+              onClick={() => handleAddBtnClick()}
+            >
+              {buttonTitle}
+            </div>
+          )}
         </div>
       </div>
       <div className="row">
@@ -165,41 +169,43 @@ function Pagination(props) {
           //pagination={paginationFactory()}
         />
       </div>
-      <div className="pagination-bottom-container row">
-        <div className="col-md-1">
-          <FrmSelect
-            name={"pageno"}
-            selectopts={pageSizeOpts}
-            handleChange={onPagesizeSelect}
-            value={pagesize.toString()}
-            isinline={true}
-          />
-        </div>
-        <div className="col-md-4">
-          <div className="showtotalmsg">{totalmsg}</div>
-        </div>
-        <div className="col-md-7">
-          <div className="Page navigation">
-            <ReactPaginate
-              forcePage={pageno - 1}
-              previousLabel={"Previous"}
-              nextLabel={"Next"}
-              pageCount={totalItems ? Math.ceil(totalItems / pagesize) : 1}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={2}
-              onPageChange={handlePageClick}
-              containerClassName="pagination justify-content-end"
-              pageClassName="page-item"
-              pageLinkClassName="page-link"
-              previousClassName="page-item"
-              previousLinkClassName="page-link"
-              nextClassName="page-item"
-              nextLinkClassName="page-link"
-              activeClassName="active"
+      {isPagination !== false && (
+        <div className="pagination-bottom-container row">
+          <div className="col-md-1">
+            <FrmSelect
+              name={"pageno"}
+              selectopts={pageSizeOpts}
+              handleChange={onPagesizeSelect}
+              value={pagesize.toString()}
+              isinline={true}
             />
           </div>
+          <div className="col-md-4">
+            <div className="showtotalmsg">{totalmsg}</div>
+          </div>
+          <div className="col-md-7">
+            <div className="Page navigation">
+              <ReactPaginate
+                forcePage={pageno - 1}
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
+                pageCount={totalItems ? Math.ceil(totalItems / pagesize) : 1}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={2}
+                onPageChange={handlePageClick}
+                containerClassName="pagination justify-content-end"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName="page-item"
+                previousLinkClassName="page-link"
+                nextClassName="page-item"
+                nextLinkClassName="page-link"
+                activeClassName="active"
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -155,6 +155,19 @@ const exportReportLogs = (requestParam) => {
     }
   };
 };
+
+const linkedLogLogs = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.linkedLogsService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 export const rfelogActions = {
   getAll,
   getAllPolicyAccounts,
@@ -168,6 +181,7 @@ export const rfelogActions = {
   postItem,
   deleteItem,
   exportReportLogs,
+  linkedLogLogs
 };
 const getAllService = async (requestParam) => {
   const param = { params: requestParam };
@@ -228,6 +242,11 @@ const exportReportLogsService = async (requestParam) => {
   const response = await Axios.get(`rfelog/exportrfelogs`, param);
   return response;
 };
+const linkedLogsService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/getlinkrfeentrynumber`, param);
+  return response;
+};
 const rfelogService = {
   getAllService,
   getAllAccountService,
@@ -241,4 +260,5 @@ const rfelogService = {
   getallunderwriterService,
   getallLocalLinksService,
   exportReportLogsService,
+  linkedLogsService
 };
