@@ -100,5 +100,7 @@
 
 .validationError{
     margin-left: 2%;
+    font-weight: 400;
+    font-style: italic;
     color: red;
 }
