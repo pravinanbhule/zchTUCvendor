@@ -143,7 +143,7 @@ function RfelogAddEditForm({ ...props }) {
     ]);
     const [userRoles, setUserRoles] = useState([])
 
-    const [formfield, setformfield] = useState({viewName: '', ...intialFilterState});
+    const [formfield, setformfield] = useState({viewName: '', isPrivate: false, ...intialFilterState});
 
     const [filterdomfields, setfilterdomfields] = useState({
         common: [],
@@ -1253,6 +1253,11 @@ function RfelogAddEditForm({ ...props }) {
                     })
                 }
             })
+            if (issubmitted && showError === false && selectedValue.length === 0) {
+                setShowError(true)
+            } else if(issubmitted && showError && selectedValue.length > 0 ){
+                setShowError(false)
+            }
             setSelectedUserRoles(selectedValue)
         }
         setformfield({
@@ -1292,109 +1297,121 @@ function RfelogAddEditForm({ ...props }) {
     const validateform = () => {
         let isvalidated = true;
         for (let key in formfield) {
-          if (mandatoryFields.includes(key) && isvalidated) {
-            let value = formfield[key];
-            if (!isNotEmptyValue(value)) {
-              isvalidated = false;
+            if (mandatoryFields.includes(key) && isvalidated) {
+                let value = formfield[key];
+                value = value.trim()
+                if (value.length === 0) {
+                    setformfield({
+                        ...formfield,
+                        [key]: "",
+                    });
+                    isvalidated = false;
+                }
+                if (!isNotEmptyValue(value)) {
+                    isvalidated = false;
+                }
             }
-          }
         }
         return isvalidated;
     };
-
+    const [showError, setShowError] = useState(false)
     const handleFilterSearch = async () => {
         let data = formfield
         setissubmitted(true);
         if (validateform()) {
-            let tempFilterOpts = {};
-            for (let key in formfield) {
-                if (formfield[key]) {
-                    tempFilterOpts[key] = formfield[key];
-                    let value = formfield[key];
-                    if (key === "CountryId" || key === "RegionId" ||
-                        key === "LOBId" || key === "RequestForEmpowermentStatus" ||
-                        key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
-                        key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
-                        key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-                        key === "ConditionApplicableTo") {
-                        const tmpval = value.map((item) => item.value);
-                        tempFilterOpts[key] = tmpval.join(",");
+            if (formfield.isPrivate === false && selectedUserRoles.length === 0) {
+                setShowError(true)
+            } else {
+                let tempFilterOpts = {};
+                for (let key in formfield) {
+                    if (formfield[key]) {
+                        tempFilterOpts[key] = formfield[key];
+                        let value = formfield[key];
+                        if (key === "CountryId" || key === "RegionId" ||
+                            key === "LOBId" || key === "RequestForEmpowermentStatus" ||
+                            key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
+                            key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
+                            key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
+                            key === "ConditionApplicableTo") {
+                            const tmpval = value.map((item) => item.value);
+                            tempFilterOpts[key] = tmpval.join(",");
+                        }
+                    } else {
+                        delete formfield[key]
                     }
-                } else {
-                    delete formfield[key]
                 }
-            }
-            data = {
-                ...data,
-                ...tempFilterOpts,
-                userRoles: selectedUserRoles.toString(),
-                requesterUserId: userProfile.userId,
-                UserViewType: 'rfelog'
-            }
-            data.chzSustainabilityDeskCHZGICreditRisk = data?.CHZ
-            data.customerSegment = data?.CustomerSegment
-            data.createdDateTo = data?.CreatedToDate
-            data.createdDateFrom = data?.CreatedFromDate
-            data.requestforempowermentCC = data?.RequestForEmpowermentCC
-            data.requestforempowermentreason = data?.RequestForEmpowermentReason
-            data.requestforempowermentstatus = data?.RequestForEmpowermentStatus
-            data.underwriter = data?.Underwriter
-            data.underwritergrantingempowerment = data?.UnderwriterGrantingEmpowerment
-            data.creator = data?.Creator
-            data.organizationalalignment = data?.OrganizationalAlignment
-            data.role = data?.Role
-            data.loB = data?.LOBId
-            data.accountName = data?.AccountName
-            data.entryNumber = data?.EntryNumber
-            data.country = data?.CountryId
-            data.region = data?.RegionId
-            data.zurichShare = data?.ZurichShare
-            data.currency = data?.Currency
-            data.branch = data?.Branch
-            data.durationofApproval = data?.DurationofApproval
-            data.newRenewal = data?.NewRenewal
-            data.limit = data?.Limit
-            data.accountNumber = data?.AccountNumber
-            data.policyPeriod = data?.PolicyPeriod
-            data.conditionApplicableTo = data?.ConditionApplicableTo
-            data.sublobid = data?.SUBLOBID
-            data.gwp = data?.GWP
-            delete data?.CHZ
-            delete data?.CustomerSegment
-            delete data?.CreatedToDate
-            delete data?.CreatedFromDate
-            delete data?.RequestForEmpowermentCC
-            delete data?.RequestForEmpowermentReason
-            delete data?.RequestForEmpowermentStatus
-            delete data?.Underwriter
-            delete data?.UnderwriterGrantingEmpowerment
-            delete data?.Creator
-            delete data?.OrganizationalAlignment
-            delete data?.Role
-            delete data?.LOBId
-            delete data?.AccountName
-            delete data?.EntryNumber
-            delete data?.CountryId
-            delete data?.RegionId
-            delete data?.ZurichShare
-            delete data?.Currency
-            delete data?.Branch
-            delete data?.DurationofApproval
-            delete data?.NewRenewal
-            delete data?.Limit
-            delete data?.AccountNumber
-            delete data?.PolicyPeriod
-            delete data?.ConditionApplicableTo
-            delete data?.SUBLOBID
-            delete data?.GWP
-            let response = await postItem(data)
-            if (response) {
-                if (data.rfeViewsId) {
-                    alert(alertMessage.userview.update);
-                } else {
-                    alert(alertMessage.userview.add);
+                data = {
+                    ...data,
+                    ...tempFilterOpts,
+                    userRoles: selectedUserRoles.toString(),
+                    requesterUserId: userProfile.userId,
+                    UserViewType: 'rfelog'
                 }
-                hideAddPopup()
+                data.chzSustainabilityDeskCHZGICreditRisk = data?.CHZ
+                data.customerSegment = data?.CustomerSegment
+                data.createdDateTo = data?.CreatedToDate
+                data.createdDateFrom = data?.CreatedFromDate
+                data.requestforempowermentCC = data?.RequestForEmpowermentCC
+                data.requestforempowermentreason = data?.RequestForEmpowermentReason
+                data.requestforempowermentstatus = data?.RequestForEmpowermentStatus
+                data.underwriter = data?.Underwriter
+                data.underwritergrantingempowerment = data?.UnderwriterGrantingEmpowerment
+                data.creator = data?.Creator
+                data.organizationalalignment = data?.OrganizationalAlignment
+                data.role = data?.Role
+                data.loB = data?.LOBId
+                data.accountName = data?.AccountName
+                data.entryNumber = data?.EntryNumber
+                data.country = data?.CountryId
+                data.region = data?.RegionId
+                data.zurichShare = data?.ZurichShare
+                data.currency = data?.Currency
+                data.branch = data?.Branch
+                data.durationofApproval = data?.DurationofApproval
+                data.newRenewal = data?.NewRenewal
+                data.limit = data?.Limit
+                data.accountNumber = data?.AccountNumber
+                data.policyPeriod = data?.PolicyPeriod
+                data.conditionApplicableTo = data?.ConditionApplicableTo
+                data.sublobid = data?.SUBLOBID
+                data.gwp = data?.GWP
+                delete data?.CHZ
+                delete data?.CustomerSegment
+                delete data?.CreatedToDate
+                delete data?.CreatedFromDate
+                delete data?.RequestForEmpowermentCC
+                delete data?.RequestForEmpowermentReason
+                delete data?.RequestForEmpowermentStatus
+                delete data?.Underwriter
+                delete data?.UnderwriterGrantingEmpowerment
+                delete data?.Creator
+                delete data?.OrganizationalAlignment
+                delete data?.Role
+                delete data?.LOBId
+                delete data?.AccountName
+                delete data?.EntryNumber
+                delete data?.CountryId
+                delete data?.RegionId
+                delete data?.ZurichShare
+                delete data?.Currency
+                delete data?.Branch
+                delete data?.DurationofApproval
+                delete data?.NewRenewal
+                delete data?.Limit
+                delete data?.AccountNumber
+                delete data?.PolicyPeriod
+                delete data?.ConditionApplicableTo
+                delete data?.SUBLOBID
+                delete data?.GWP
+                let response = await postItem(data)
+                if (response) {
+                    if (data.rfeViewsId) {
+                        alert(alertMessage.userview.update);
+                    } else {
+                        alert(alertMessage.userview.add);
+                    }
+                    hideAddPopup()
+                }
             }
         }
     };
@@ -1446,8 +1463,13 @@ function RfelogAddEditForm({ ...props }) {
                     </div>
                     {showUserRoles &&
                         <>
-                            <div className="border-top font-weight-bold frm-container-bgwhite">
+                            <div className="border-top font-weight-bold frm-container-bgwhite d-flex">
                                 <div className="mb-4"> User Roles</div>
+                                {showError ?
+                                    <div className="validationError">Please select atless one user role</div>
+                                :(
+                                    ""
+                                )}
                             </div>
                             <div className="border-bottom border-top frm-container-bggray">
                                 <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : { justifyContent: 'space-between' }}>

@@ -97,3 +97,8 @@
 .addedit-close-view{
     margin: 3px;
 }
+
+.validationError{
+    margin-left: 2%;
+    color: red;
+}
