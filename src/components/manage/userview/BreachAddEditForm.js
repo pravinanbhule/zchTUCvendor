@@ -56,6 +56,7 @@ function BreachAddEditForm(props) {
     } = props;
 
     const [formfield, setformfield] = useState({
+        viewName: "",
         entryNumber: "",
         title: "",
         classification: [],
@@ -1013,42 +1014,59 @@ function BreachAddEditForm(props) {
         });
     };
 
+    const [mandatoryFields, setmandatoryFields] = useState(['viewName']);
+    const validateform = () => {
+        let isvalidated = true;
+        for (let key in formfield) {
+          if (mandatoryFields.includes(key) && isvalidated) {
+            let value = formfield[key];
+            if (!isNotEmptyValue(value)) {
+              isvalidated = false;
+            }
+          }
+        }
+        return isvalidated;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let tempFilterOpts = {};
-        for (let key in formfield) {
-            if (formfield[key]) {
-                let value = formfield[key];
-                tempFilterOpts[key] = value;
-                if (key === "materialBreach") {
-                    tempFilterOpts[key] = value === "1" ? true : false;
-                }
-                if (key === "country" || key === "region" ||
-                    key === "status" || key === "loB" ||
-                    key === "subLoB" || key === "typeofBreach" ||
-                    key === "classification" || key === "customerSegment" ||
-                    key === "natureofbreach" || key === "howdetected" ||
-                    key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact"
-                ) {
-                    const tmpval = value.map((item) => item.value);
-                    tempFilterOpts[key] = tmpval.join(",");
+        setissubmitted(true);
+        if (validateform()) {
+            let tempFilterOpts = {};
+            for (let key in formfield) {
+                if (formfield[key]) {
+                    let value = formfield[key];
+                    tempFilterOpts[key] = value;
+                    if (key === "materialBreach") {
+                        tempFilterOpts[key] = value === "1" ? true : false;
+                    }
+                    if (key === "country" || key === "region" ||
+                        key === "status" || key === "loB" ||
+                        key === "subLoB" || key === "typeofBreach" ||
+                        key === "classification" || key === "customerSegment" ||
+                        key === "natureofbreach" || key === "howdetected" ||
+                        key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact"
+                    ) {
+                        const tmpval = value.map((item) => item.value);
+                        tempFilterOpts[key] = tmpval.join(",");
+                    }
                 }
             }
-        }
-        // tempFilterOpts.isPrivate = tempFilterOpts.switch || tempFilterOpts.switch === true ? false : true;
-        tempFilterOpts.userRoles = selectedUserRoles.toString()
-        tempFilterOpts.UserViewType = 'breachlog'
-        tempFilterOpts.requesterUserId = userProfile.userId
-
-        // delete tempFilterOpts.switch
-        let response = await postItem(tempFilterOpts)
-        if (response) {
-            if (tempFilterOpts.breachViewsId) {
-                alert(alertMessage.userview.update);
-            } else {
-                alert(alertMessage.userview.add);
+            // tempFilterOpts.isPrivate = tempFilterOpts.switch || tempFilterOpts.switch === true ? false : true;
+            tempFilterOpts.userRoles = selectedUserRoles.toString()
+            tempFilterOpts.UserViewType = 'breachlog'
+            tempFilterOpts.requesterUserId = userProfile.userId
+    
+            // delete tempFilterOpts.switch
+            let response = await postItem(tempFilterOpts)
+            if (response) {
+                if (tempFilterOpts.breachViewsId) {
+                    alert(alertMessage.userview.update);
+                } else {
+                    alert(alertMessage.userview.add);
+                }
+                hideAddPopup()
             }
-            hideAddPopup()
         }
         // hideAddPopup()
     }
@@ -1081,7 +1099,8 @@ function BreachAddEditForm(props) {
                                     value={formfield?.viewName}
                                     type={"text"}
                                     handleChange={handleChange}
-                                    isRequired={false}
+                                    isRequired={true}
+                                    validationmsg={"Mandatory field"}
                                     issubmitted={issubmitted}
                                     isReadMode={isReadMode}
                                 />

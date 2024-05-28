@@ -143,6 +143,7 @@ function Exemptionlog({ ...props }) {
     const [regionOptsAll, setregionOptsAll] = useState([]);
     const [lobChapterFilterOpts, setlobChapterFilterOpts] = useState([]);
     const intialFilterState = {
+        viewName: "",
         entryNumber: "",
         countryID: [],
         regionId: [],
@@ -393,8 +394,24 @@ function Exemptionlog({ ...props }) {
         }
     };
 
+    const [issubmitted, setissubmitted] = useState(false);
+    const [mandatoryFields, setmandatoryFields] = useState(['viewName']);
+    const validateform = () => {
+        let isvalidated = true;
+        for (let key in formfield) {
+          if (mandatoryFields.includes(key) && isvalidated) {
+            let value = formfield[key];
+            if (!isNotEmptyValue(value)) {
+              isvalidated = false;
+            }
+          }
+        }
+        return isvalidated;
+    };
+
     const handleFilterSearch = async () => {
-        if (!isEmptyObjectKeys(formfield)) {
+        setissubmitted(true);
+        if (validateform()) {
             let tempFilterOpts = {};
             for (let key in formfield) {
                 if (formfield[key]) {
@@ -975,9 +992,10 @@ function Exemptionlog({ ...props }) {
                                 value={formfield?.viewName}
                                 type={"text"}
                                 handleChange={handleChange}
-                                isRequired={false}
+                                isRequired={true}
+                                validationmsg={"Mandatory field"}
                                 isReadMode={isReadMode}
-                            // issubmitted={issubmitted}
+                                issubmitted={issubmitted}
                             />
                         </div>
                         <div className="col-md-3">
