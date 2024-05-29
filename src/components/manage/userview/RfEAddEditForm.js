@@ -1466,7 +1466,7 @@ function RfelogAddEditForm({ ...props }) {
                             <div className="border-top font-weight-bold frm-container-bgwhite d-flex">
                                 <div className="mb-4"> User Roles</div>
                                 {showError ?
-                                    <div className="validationError">Please select atleast one user role</div>
+                                    <div className="validationError">Please select at least one user role</div>
                                 :(
                                     ""
                                 )}
