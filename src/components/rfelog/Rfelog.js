@@ -2274,8 +2274,10 @@ function Rfelog({ ...props }) {
             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
             key === "ConditionApplicableTo") {
-            const tmpval = value.map((item) => item.value);
-            tempFilterOpts[key] = tmpval.join(",");
+            if (value) {
+              const tmpval = value?.map((item) => item.value);
+              tempFilterOpts[key] = tmpval.join(",");
+            }
         }
       }
       reqParam = {
