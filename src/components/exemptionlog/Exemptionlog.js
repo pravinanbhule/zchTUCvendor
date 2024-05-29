@@ -388,7 +388,7 @@ function Exemptionlog({ ...props }) {
         (item) => item.regionId === value
       );
       /setcountryFilterOpts([...countryopts]);*/
-      let countryopts = [...selfilter.countryID];
+      let countryopts = selfilter?.countryID && selfilter?.countryID?.length ? [...selfilter.countryID] : [];
       let regionopts = value;
       let removeValFromIndex = [];
       countryopts.forEach((countryitem, index) => {
