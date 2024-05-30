@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import "./Style.css";
 import AppLocale from "../../../IngProvider";
@@ -15,12 +15,23 @@ function FrmMultiselect(props) {
     isReadMode,
     isAllOptNotRequired,
     titlelinespace,
-    selectedlanguage
+    selectedlanguage,
+    groupBy
   } = props;
-  const [selectedItems, setselectedItems] = useState(value);
+  const [selectedItems, setselectedItems] = useState([]);
   useEffect(() => {
-    setselectedItems(value);
+    if (value) {
+      let selectedListOpts = [];
+      value.map((item, i) => {
+        selectedListOpts.push({
+          ...item,
+          value: item.value+"@"+item.label
+        })
+      }) 
+      setselectedItems(selectedListOpts);
+    }
   }, [value]);
+
   const onSelect = (selectedList, selectedItem) => {
     let tempSelectedList = [...selectedList];
     if (
@@ -30,8 +41,15 @@ function FrmMultiselect(props) {
     ) {
       tempSelectedList = [...selectopts];
     }
+    let selectedListOpts = [];
+    tempSelectedList.map((item, i) => {
+      selectedListOpts.push({
+        ...item,
+        value: item.value.replace("@"+ item.label, "")
+      })
+    }) 
     setselectedItems([...tempSelectedList]);
-    handleChange(name, [...tempSelectedList]);
+    handleChange(name, [...selectedListOpts]);
   };
   const onRemove = (selectedList, selectedItem) => {
     let tempSelectedList = [...selectedList];
@@ -40,18 +58,35 @@ function FrmMultiselect(props) {
     } else {
       tempSelectedList = selectedList.filter((item) => item.value !== "*");
     }
+    let selectedListOpts = [];
+    tempSelectedList.map((item, i) => {
+      selectedListOpts.push({
+        ...item,
+        value: item.value.replace("@"+ item.label, "")
+      })
+    }) 
     setselectedItems([...tempSelectedList]);
-    handleChange(name, [...tempSelectedList]);
+    handleChange(name, [...selectedListOpts]);
   };
   const removeSelectedItem = (value) => {
     let tempItems = selectedItems.filter((item) => item.value !== value);
     if (value === "*") {
       tempItems = [];
     }
+    let selectedListOpts = [];
+    if (value !== "*") {
+      tempItems.map((item, i) => {
+        selectedListOpts.push({
+          ...item,
+          value: item.value.replace("@"+ item.label, "")
+        })
+      }) 
+    }
     setselectedItems([...tempItems]);
-    handleChange(name, [...tempItems]);
+    handleChange(name, [...selectedListOpts]);
   };
   const onClickHandle = () => {};
+
   return (
     <div className={`frm-field ${isRequired ? "mandatory" : ""}`}>
       <label htmlFor={name}>
@@ -61,8 +96,9 @@ function FrmMultiselect(props) {
       {!isReadMode && (
         <Multiselect
           className="custom-multiselect"
-          options={selectopts}
-          displayValue="label"
+          groupBy={groupBy ? groupBy : ''}
+          options={selectopts.map((e) => ({...e, value: e.value+"@"+e.label}))}
+          displayValue='value'
           hidePlaceholder={false}
           showCheckbox={true}
           placeholder={selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.search"] : "Select"}
@@ -70,6 +106,10 @@ function FrmMultiselect(props) {
           onClick={onClickHandle}
           onSelect={onSelect}
           onRemove={onRemove}
+          optionValueDecorator={(a, c) => {
+            return c.label
+          }}
+          avoidHighlightFirstOption={true}
         ></Multiselect>
       )}
 
@@ -82,8 +122,8 @@ function FrmMultiselect(props) {
         {!isAllOptNotRequired &&
         selectopts &&
         selectopts.length &&
-        selectedItems.length === selectopts.length ? (
-          <div className="multi-selected-opts" key={selectopts[0].value}>
+        selectedItems?.length === selectopts?.length ? (
+          <div className="multi-selected-opts" key={selectopts[0]?.value}>
             <div>{selectopts[0].label}</div>
             {!isReadMode && (
               <div
@@ -93,17 +133,19 @@ function FrmMultiselect(props) {
             )}
           </div>
         ) : (
-          selectedItems.map((item) => (
-            <div className="multi-selected-opts" key={item.value}>
-              <div>{item.label}</div>
-              {!isReadMode && (
-                <div
-                  className="delete-icon"
-                  onClick={() => removeSelectedItem(item.value)}
-                ></div>
-              )}
-            </div>
+          selectedItems && selectedItems.length ? 
+            selectedItems?.map((item) => (
+              <div className="multi-selected-opts" key={item.value}>
+                <div>{item.label}</div>
+                {!isReadMode && (
+                  <div
+                    className="delete-icon"
+                    onClick={() => removeSelectedItem(item.value)}
+                  ></div>
+                )}
+              </div>
           ))
+          : ""
         )}
       </div>
     </div>

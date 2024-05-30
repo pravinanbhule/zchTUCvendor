@@ -6,10 +6,12 @@ import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import UserProfile from "../../common-components/UserProfile";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/lob.constants";
 
 function Lob({ ...props }) {
   const { lobState, countryState } = props.state;
@@ -24,8 +26,11 @@ function Lob({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
-
+  const FileDownload = require("js-file-download");
+  const templateName = "LoB.xlsx";
   useSetNavMenu({ currentMenu: "Lob", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -140,6 +145,26 @@ function Lob({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.lobid)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "lobName",
       text: "LoB",
       sort: true,
@@ -197,6 +222,28 @@ function Lob({ ...props }) {
         return { width: "350px" };
       },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const getApproverBlock = (cell, row) => {
     const approverList = row.aproverList ? row.aproverList : [];
@@ -401,9 +448,7 @@ function Lob({ ...props }) {
         aproverList: item.lobApproverList,
         countryList: tempcountryList,
         lobApproverList: templobApproverList,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);
@@ -467,10 +512,28 @@ function Lob({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+  
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+  
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "lob",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -512,6 +575,24 @@ function Lob({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      lobid: "",
+      countryList: "",
+    }
+    if (isfilterApplied) {
+      if (selfilter.country !== "") {
+        let countryId = frmCountrySelectOpts.filter((item) => item.countryName === selfilter.country)
+        response.countryList = countryId?.[0]?.countryID
+      }
+      response.lobid = selfilter.lob 
+    }
+    const responsedata = await downloadExcel({
+      LOBID: response?.lobid,
+      CountryID: response.countryList,
+    }, "LoB");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage LoB</div>
@@ -569,6 +650,9 @@ function Lob({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -582,6 +666,18 @@ function Lob({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -603,6 +699,8 @@ const mapActions = {
   postItem: lobActions.postItem,
   deleteItem: lobActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 
 export default connect(mapStateToProp, mapActions)(Lob);

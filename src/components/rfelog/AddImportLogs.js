@@ -138,7 +138,7 @@ function AddImportLogs(props) {
     isRegionAdmin: false,
     isCountryAdmin: false,
     isNormalUser: false,
-    isCountrySuperAdmin: false
+    isCountrySuperAdmin: false,
   };
   /* const [incountryopts, setincountryopts] = useState([
     { label: "Global", value: "gn" },
@@ -628,6 +628,7 @@ function AddImportLogs(props) {
   const checkisIncountryLog = (countryList, regionList) => {
     let isUKcountry = true;
     let isSingaporecountry = true;
+    let isIndiacountry = true;
     let isChinacountry = true;
     let isHongKongcountry = true;
     let isMalaysiacountry = true;
@@ -662,6 +663,11 @@ function AddImportLogs(props) {
         isSingaporecountry = isSingaporecountry ? true : false;
       } else {
         isSingaporecountry = false;
+      }
+      if (item === INCOUNTRTY_IDS.INDIA) {
+        isIndiacountry = isIndiacountry ? true : false;
+      } else {
+        isIndiacountry = false;
       }
       if (item === INCOUNTRTY_IDS.CHINA) {
         isChinacountry = isChinacountry ? true : false;
@@ -738,13 +744,14 @@ function AddImportLogs(props) {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
       isSingaporecountry: isSingaporecountry,
-      isChinacountry : isChinacountry,
-      isHongKongcountry : isHongKongcountry,
-      isMalaysiacountry : isMalaysiacountry,
-      isFrancecountry : isFrancecountry,
-      isSpaincountry : isSpaincountry,
-      isMiddleEastcountry : isMiddleEastcountry,
-      isGermanycountry : isGermanycountry,
+      isIndiacountry: isIndiacountry,
+      isChinacountry: isChinacountry,
+      isHongKongcountry: isHongKongcountry,
+      isMalaysiacountry: isMalaysiacountry,
+      isFrancecountry: isFrancecountry,
+      isSpaincountry: isSpaincountry,
+      isMiddleEastcountry: isMiddleEastcountry,
+      isGermanycountry: isGermanycountry,
       isAustraliacountry: isAustraliacountry,
       isItalycountry: isItalycountry,
       isBeneluxcountry: isBeneluxcountry,
@@ -831,10 +838,10 @@ function AddImportLogs(props) {
                     lookupObj
                       ? masterdata[lookupObj][val]
                       : isdate
-                        ? val //moment(val).format("YYYY-MM-DD")
-                        : val
-                          ? val.toString()
-                          : val
+                      ? val //moment(val).format("YYYY-MM-DD")
+                      : val
+                      ? val.toString()
+                      : val
                   );
                 });
                 value = tempval.join(",");
@@ -845,12 +852,12 @@ function AddImportLogs(props) {
                   value = lookupObj
                     ? masterdata[lookupObj][value]
                     : isdate
-                      ? value
-                        ? value //moment(value).format("YYYY-MM-DD")
-                        : null
-                      : value
-                        ? value.toString()
-                        : value;
+                    ? value
+                      ? value //moment(value).format("YYYY-MM-DD")
+                      : null
+                    : value
+                    ? value.toString()
+                    : value;
                 }
               }
 
@@ -885,17 +892,17 @@ function AddImportLogs(props) {
                   value !== rfelog_status.Pending &&
                   !userProfile.isSuperAdmin &&
                   templogdata["UnderwriterGrantingEmpowerment"] !==
-                  userProfile.emailAddress) ||
+                    userProfile.emailAddress) ||
                 (isvalidval &&
                   (fieldname === "ReceptionInformationDate" ||
                     fieldname === "UnderwriterGrantingEmpowermentComments" ||
                     fieldname === "ResponseDate") &&
                   templogdata["RequestForEmpowermentStatus"] ===
-                  rfelog_status.Pending) ||
+                    rfelog_status.Pending) ||
                 (isvalidval &&
                   fieldname === "ConditionApplicableTo" &&
                   templogdata["RequestForEmpowermentStatus"] !==
-                  rfelog_status.Empowerment_granted_with_conditions)
+                    rfelog_status.Empowerment_granted_with_conditions)
               ) {
                 //added below condition to check & validate values
                 isvalid = false;
@@ -929,6 +936,7 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isIndiacountry,
                   isChinacountry,
                   isHongKongcountry,
                   isMalaysiacountry,
@@ -967,6 +975,14 @@ function AddImportLogs(props) {
                 if (
                   IncountryFlag === IncountryFlagCost.SINGAPORE &&
                   !isSingaporecountry
+                ) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (
+                  IncountryFlag === IncountryFlagCost.INDIA &&
+                  !isIndiacountry
                 ) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
@@ -1072,6 +1088,7 @@ function AddImportLogs(props) {
                   isLatamregion,
                   isUKcountry,
                   isSingaporecountry,
+                  isIndiacountry,
                   isChinacountry,
                   isHongKongcountry,
                   isMalaysiacountry,
@@ -1091,6 +1108,7 @@ function AddImportLogs(props) {
                   (isLatamregion ||
                     isUKcountry ||
                     isSingaporecountry ||
+                    isIndiacountry ||
                     isChinacountry ||
                     isHongKongcountry ||
                     isMalaysiacountry ||
@@ -1325,7 +1343,9 @@ function AddImportLogs(props) {
         return { ...approverIntialRole, isCountryAdmin: true };
       } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.normalUser) {
         return { ...approverIntialRole, isNormalUser: true };
-      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.countrySuperAdmin) {
+      } else if (
+        tmpapprover?.userRoles[0]?.roleId === USER_ROLE.countrySuperAdmin
+      ) {
         return { ...approverIntialRole, isCountrySuperAdmin: true };
       }
     } else {
@@ -1419,11 +1439,11 @@ function AddImportLogs(props) {
   };
   const [IncountryFlag, setIncountryFlag] = useState("gn");
 
-  useEffect(async()=>{
+  useEffect(async () => {
     if (IncountryFlag !== "gn") {
       let temprfeempourment = await getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
-        IncountryFlag: IncountryFlag
+        IncountryFlag: IncountryFlag,
       });
       let tempopts = [];
       let tempObj = {};
@@ -1443,10 +1463,10 @@ function AddImportLogs(props) {
         rfeEmpourmentObj: { ...temprfeempourmentObj },
       }));
     }
-  }, [IncountryFlag])
+  }, [IncountryFlag]);
 
   useEffect(async () => {
-    setmandatoryFields([])
+    setmandatoryFields([]);
     const tempdbfields = await getLogFields({
       IncountryFlag: IncountryFlag,
       FieldType: "Form",
@@ -1454,15 +1474,17 @@ function AddImportLogs(props) {
     tempdbfields?.forEach((item) => {
       if (item.isActive) {
         if (item.isMandatory) {
-          setmandatoryFields((mandatoryFields) => [...mandatoryFields, item.fieldName])
+          setmandatoryFields((mandatoryFields) => [
+            ...mandatoryFields,
+            item.fieldName,
+          ]);
         }
       }
-
-    })
+    });
     if (IncountryFlag === IncountryFlagCost.GERMANY) {
       getAllSegment({ logType: "rfelogsGermany" });
     }
-  }, [IncountryFlag])
+  }, [IncountryFlag]);
 
   const onSelectChange = (name, value) => {
     setIncountryFlag(value);
@@ -1566,11 +1588,11 @@ function AddImportLogs(props) {
                         <td>
                           {item["invalidEmail"]
                             ? item["invalidEmailList"].map((item) => (
-                              <>
-                                <span>{item}</span>
-                                <br></br>
-                              </>
-                            ))
+                                <>
+                                  <span>{item}</span>
+                                  <br></br>
+                                </>
+                              ))
                             : "-"}
                         </td>
                         <td>

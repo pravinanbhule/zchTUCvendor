@@ -5,3 +5,21 @@ export const branchConstants = {
   GETALLBRANCH_SUCCESS: "GETALLBRANCH_SUCCESS",
   GETALLBRANCH_FAILURE: "GETALLBRANCH_FAILURE",
 };
+
+
+export const BranchVersionHistoryexportFieldTitles = {
+  BranchName: "Branch",
+  CountryName: "Country",
+  BranchDescription: "Description",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const BranchVersionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const BranchVersionHistoryexportDateFields = {};
+export const BranchVersionHistoryexportHtmlFields = [];

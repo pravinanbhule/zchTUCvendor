@@ -37,6 +37,7 @@ import Loader from "./components/common-components/Loading";
 import Token from "./components/manage/token/Token";
 import { handlePermission } from "./permissions/Permission";
 import Co from "./components/manage/co/Co";
+import UserView from "./components/manage/userview/UserView";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -174,7 +175,11 @@ function App({ state, menuClick }) {
                         component={Co}
                         menuClick={menuClick}
                       />
-
+                       <PrivateRoute
+                        path="/userview"
+                        component={UserView}
+                        menuClick={menuClick}
+                      />
                       <PrivateRoute
                         path="/breachlogs"
                         component={Breachlog}

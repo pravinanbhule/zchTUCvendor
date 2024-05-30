@@ -28,7 +28,8 @@ function AddEditForm(props) {
     userState,
     getAllUsers,
     userroles,
-    countryAllOpts
+    countryAllOpts,
+    dualRoleOpts
   } = props;
 
   const [regionopts, setregionopts] = useState([]);
@@ -38,6 +39,7 @@ function AddEditForm(props) {
   const [issubmitted, setissubmitted] = useState(false);
   const [allCountryOpts, setAllCountryOpts] = useState([])
   const [isdisabled, setisdisabled] = useState(false);
+  const [selecteddualRoleLabel, setSelecteddualRoleLabel] = useState(formIntialState.selectedDualRole)
 
   const [accessBreachLogOpts, setaccessBreachLogOpts] = useState([
     {
@@ -93,6 +95,42 @@ function AddEditForm(props) {
       }
     });
     setcountryopts(tempopts);
+    tempopts = [];
+    selectedlist = formIntialState.countryList;
+    countryAllOpts.forEach((item) => {
+      if (isEditMode) {
+        let isselected = false;
+        selectedlist.forEach((country) => {
+          if (item.countryID === country.value) {
+            isselected = true;
+          }
+        });
+        if (item.isActive || isselected) {
+          tempopts.push(item);
+        }
+      } else if (item.isActive) {
+        tempopts.push(item);
+      }
+    });
+    setAllCountryOpts(tempopts)
+    tempopts = [];
+    selectedlist = formIntialState.regionList;
+    frmLobSelectOpts.forEach((item) => {
+      if (isEditMode) {
+        let isselected = false;
+        selectedlist.forEach((lob) => {
+          if (item.lobid === lob.value) {
+            isselected = true;
+          }
+        });
+        if (item.isActive || isselected) {
+          tempopts.push(item);
+        }
+      } else if (item.isActive) {
+        tempopts.push(item);
+      }
+    });
+    setlobopts(tempopts);
     setformfield(formIntialState);
     tempopts = [];
     selectedlist = formIntialState.countryList;
@@ -177,6 +215,7 @@ function AddEditForm(props) {
         regionList: [],
         countryList: [],
         lobList: [],
+        dualRole: null,
         userType: "Super Admin",
         isAccessBreachLog: false,
         isAccessDeleteLog: true,
@@ -198,6 +237,7 @@ function AddEditForm(props) {
         countryList: [],
         lobList: [],
         userType: "",
+        dualRole: null,
         isAccessBreachLog: false,
         isGeneralUser: true,
         isAccessDeleteLog: true,
@@ -209,6 +249,7 @@ function AddEditForm(props) {
         countryList: [],
         lobList: [],
         userType: "",
+        dualRole: null,
         isAccessBreachLog: false,
         isGeneralUser: false,
         isAccessDeleteLog: false,
@@ -223,11 +264,20 @@ function AddEditForm(props) {
     if (frmuserTypeObj[formfield.userType] !== "LoBAdmin") {
       setformfield({ ...formfield, lobList: [] });
     }
+    if (frmuserTypeObj[formfield.userType] !== "DualRole") {
+      setformfield({ ...formfield, dualRole: null, countryList: [], regionList: [] });
+    }
     if (frmuserTypeObj[formfield.userType] === "Global") {
-      setformfield({ ...formfield, regionList: [] });
+      setformfield({ ...formfield, regionList: [], lobList: [], dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "Region") {
-      setformfield({ ...formfield, countryList: [] });
+      setformfield({ ...formfield, countryList: [], lobList: [], dualRole: null, });
+    }
+    if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
+      setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], dualRole: null });
+    }
+    if (frmuserTypeObj[formfield.userType] === "Auditor") {
+      setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], isAccessDeleteLog: false, dualRole: null, });
     }
     if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
       setformfield({ ...formfield, countryList: [], regionList: [] });
@@ -286,7 +336,10 @@ function AddEditForm(props) {
     });
     countryopts.sort(dynamicSort("label"));
     setcountryopts([...countryopts]);
-    setformfield({ ...formfield, countryList: [...selExistsCountry] });
+    if (frmuserTypeObj[formfield.userType] === "DualRole" && selecteddualRoleLabel === 'Global-Country') {
+    } else {
+      setformfield({ ...formfield, countryList: [...selExistsCountry] });
+    }
   };
   const handleApproverChange = (name, value) => {
     setformfield({ ...formfield, [name]: value });
@@ -309,8 +362,35 @@ function AddEditForm(props) {
       }
       if (
         frmuserTypeObj[formfield.userType] === "Country" &&
-        !formfield.regionList.length &&
-        !formfield.countryList.length
+        (!formfield.regionList.length ||
+        !formfield.countryList.length)
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
+        (!formfield.regionList.length ||
+        !formfield.countryList.length)
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "LoBAdmin" &&
+        !formfield.lobList.length
+      ) {
+        return;
+      }
+      if (
+        frmuserTypeObj[formfield.userType] === "DualRole" &&
+        !formfield.dualRole
+      ) {
+        return;
+      }
+      if (
+        (frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+        frmuserTypeObj[formfield.userType] === "Auditor") &&
+        formfield.regionList.length > 0 && 
+        formfield.countryList.length === 0
       ) {
         return;
       }
@@ -348,6 +428,19 @@ function AddEditForm(props) {
       });
     }
   };
+
+  const handleSelectChange = (name, value, _, label) => {
+    setSelecteddualRoleLabel(label)
+    if (frmuserTypeObj[formfield.userType] === "DualRole") {
+      setformfield({ ...formfield, countryList: [], regionList: [], [name]: value });
+    } else {
+      setformfield({
+        ...formfield,
+        [name]: value,
+      });
+    }
+  };
+
   return (
     <Popup {...props}>
       <div className="popup-box">
@@ -450,15 +543,29 @@ function AddEditForm(props) {
                 isdisabled={isdisabled || formfield.isGeneralUser}
                 isSidebySide={true}
               />
+              {frmuserTypeObj[formfield.userType] === "DualRole" &&
+                <FrmSelect
+                  title={"Dual Role List"}
+                  name={"dualRole"}
+                  value={formfield.dualRole}
+                  handleChange={handleSelectChange}
+                  isRequired={false}
+                  issubmitted={issubmitted}
+                  selectopts={dualRoleOpts}
+                />
+              }
               {frmuserTypeObj[formfield.userType] === "Region" ||
-              frmuserTypeObj[formfield.userType] === "Country" ||
-              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+                frmuserTypeObj[formfield.userType] === "Country" ||
+                frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ||
+                frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ||
+                (frmuserTypeObj[formfield.userType] === "DualRole" && selecteddualRoleLabel !== 'Global-Country') ? (
                 <FrmMultiselect
                   title={"Region"}
                   name={"regionList"}
                   value={formfield.regionList ? formfield.regionList : []}
                   handleChange={handleMultiSelectChange}
-                  isRequired={true}
+                  isRequired={frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin"  ? false : true}
                   validationmsg={"Mandatory field"}
                   issubmitted={issubmitted}
                   selectopts={regionopts}
@@ -468,14 +575,19 @@ function AddEditForm(props) {
                 ""
               )}
               {frmuserTypeObj[formfield.userType] === "Country" ||
-              frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+                frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ||
+                frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ||
+                (frmuserTypeObj[formfield.userType] === "DualRole" && 
+                selecteddualRoleLabel !== 'Global-Regional' && 
+                selecteddualRoleLabel !== 'Global-Country') ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}
                     name={"countryList"}
                     value={formfield.countryList ? formfield.countryList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={true}
+                    isRequired={(frmuserTypeObj[formfield.userType] === "Auditor" || frmuserTypeObj[formfield.userType] === "LoBAdmin") && formfield.regionList.length === 0 ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={countryopts}
@@ -485,30 +597,32 @@ function AddEditForm(props) {
               ) : (
                 ""
               )}
-              {/* {frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" ? (
+              {frmuserTypeObj[formfield.userType] === "DualRole" && selecteddualRoleLabel === 'Global-Country' ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"Country"}
                     name={"countryList"}
-                    value={formfield.countryList ? formfield.countryList : []}
+                    value={formfield.countryList || []}
                     handleChange={handleMultiSelectChange}
                     isRequired={true}
-                    validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={allCountryOpts}
+                    isAllOptNotRequired={true}
                   />
                 </div>
               ) : (
                 ""
-              )} */}
-              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ? (
+              )}
+
+              {frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
+                frmuserTypeObj[formfield.userType] === "Auditor" ? (
                 <div onClick={handleCountryClick}>
                   <FrmMultiselect
                     title={"LoB"}
                     name={"lobList"}
                     value={formfield.lobList ? formfield.lobList : []}
                     handleChange={handleMultiSelectChange}
-                    isRequired={true}
+                    isRequired={frmuserTypeObj[formfield.userType] === "Auditor" ? false : true}
                     validationmsg={"Mandatory field"}
                     issubmitted={issubmitted}
                     selectopts={lobopts}

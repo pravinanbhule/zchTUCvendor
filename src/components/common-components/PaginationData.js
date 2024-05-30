@@ -122,7 +122,9 @@ function PaginationData(props) {
 
 
   const handleDownloadButtonClick = () =>{
-    handleDownload()
+    if (DownloadBtnState) {
+      handleDownload()
+    }
   }
 
   //const pagination = paginationFactory();

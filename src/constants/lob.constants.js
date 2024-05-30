@@ -8,3 +8,22 @@ export const lobConstants = {
   GETALLLOB_SUCCESS: "GETALLLOB_SUCCESS",
   GETALLLOB_FAILURE: "GETALLLOB_FAILURE",
 };
+
+export const versionHistoryexportFieldTitles = {
+  LOBName: "LoB Name",
+  LOBDescription: "Description",
+  LOBApprover: "LoB Approval",
+  Country: "Country",
+  DurationofApproval: "Duration of the approval",
+  IsActive: "Active",
+  CreatedDate: "Created Date",
+  ModifiedDate: "Modified Date",
+};
+
+export const versionHistoryExcludeFields = {
+  CreatedDate: "createdDate",
+  ModifiedDate: "modifiedDate",
+};
+
+export const versionHistoryexportDateFields = {};
+export const versionHistoryexportHtmlFields = [];

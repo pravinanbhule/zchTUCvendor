@@ -21,9 +21,9 @@ function Co({ ...props }) {
     setMasterdataActive,
     checkIsInUse,
     checkNameExist,
-    downloadCO,
     getById,
-    getMasterVersion
+    getMasterVersion,
+    downloadExcel
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "COs.xlsx";
@@ -87,26 +87,26 @@ function Co({ ...props }) {
         };
       }
     },
-    // {
-    //   dataField: "DataVersion",
-    //   text: "Data Version",
-    //   formatter: (cell, row, rowIndex, formatExtraData) => {
-    //     return (
-    //       <div
-    //         className="versionhistory-icon"
-    //         onClick={() => handleDataVersion(row.coId)}
-    //         mode={"view"}
-    //       ></div>
-    //     );
-    //   },
-    //   sort: false,
-    //   headerStyle: (colum, colIndex) => {
-    //     return {
-    //       width: "100px",
-    //       textAlign: "center",
-    //     };
-    //   },
-    // },
+    {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.coId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
     {
       dataField: "coName",
       text: "CO Name",
@@ -149,6 +149,9 @@ function Co({ ...props }) {
       dataField: "modifiedDate",
       text: "Modified Date",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
       formatter: (cell, row, rowIndex, formatExtraData) => {
         return <span>{cell ? formatDate(cell) : ""}</span>;
       },
@@ -224,6 +227,7 @@ function Co({ ...props }) {
     if (!response) {
       response = await putItem({
         ...item,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         getAll();
@@ -240,7 +244,8 @@ function Co({ ...props }) {
     let response = await checkNameExist({ COName: item.coName });
     if (!response) {
       response = await postItem({
-        ...item
+        ...item,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         getAll();
@@ -302,11 +307,6 @@ function Co({ ...props }) {
         selectedItems.splice(index, 1);
       }
     }
-    if (selectedItems.length > 1) {
-      setisDownloadEnable(false)
-    } else {
-      setisDownloadEnable(true)
-    }
     if (selectedItems.length) {
       setisActiveEnable(true);
       setselItemsList([...selectedItems]);
@@ -338,10 +338,7 @@ function Co({ ...props }) {
       coName: "",
       coDescription: ""
     }
-    if (selItemsList && selItemsList.length === 1) {
-      response = await getById({ COId: selItemsList[0] });
-    }
-    const responsedata = await downloadCO({COName: response.coName , coDescription: response.coDescription});
+    const responsedata = await downloadExcel({COName: response.coName , coDescription: response.coDescription}, "CO");
     FileDownload(responsedata, templateName);
   }
 
@@ -366,8 +363,8 @@ function Co({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
-            // isShowDownloadBtn={true}
-            // DownloadBtnState={isDownloadEnable}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
             handleDownload={handleDownload}
           />
         )}
@@ -413,7 +410,7 @@ const mapActions = {
   checkIsInUse: coActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
   checkNameExist: coActions.checkNameExist,
-  downloadCO: coActions.downloadCO,
   getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel,
 };
 export default connect(mapStateToProp, mapActions)(Co);

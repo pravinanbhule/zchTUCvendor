@@ -10,6 +10,7 @@ import {
   lobActions,
   commonActions,
   dashboardActions,
+  userViewActions,
 } from "../../actions";
 import { SHAREPOINT_LINKS } from "../../constants";
 import Loading from "../common-components/Loading";
@@ -83,6 +84,8 @@ function Exemptionlog({ ...props }) {
     exportReportURPMLogs,
     getallZUGCount,
     getallURPMCount,
+    getViewsByUserId,
+    addEditUserView
   } = props;
 
   const [logstate, setlogstate] = useState({
@@ -277,6 +280,7 @@ function Exemptionlog({ ...props }) {
     approverOpts: [],
     zugChapterVersionOpts: [],
     empowermentRequestedByOpts: [],
+    views: [{ label: "All", value: null }],
   });
   const [exemptionlogsType, setexemptionlogsType] = useState([
     {
@@ -298,10 +302,10 @@ function Exemptionlog({ ...props }) {
     entryNumber: "",
     countryID: [],
     regionId: [],
-    LOBChapter: "",
+    LOBChapter: [],
     section: "",
     role: "",
-    status: "",
+    status: [],
     typeOfExemption: "",
     individualGrantedEmpowerment: "",
     approver: "",
@@ -340,6 +344,7 @@ function Exemptionlog({ ...props }) {
   };
   const onExemptionlogSelection = (e) => {
     let { name, value } = e.target;
+    setselectedview(null)
     if (
       (value === "zug" && !logstate.ZUGLoadedAll) ||
       (value === "urpm" && !logstate.URPMLoadedAll)
@@ -348,10 +353,7 @@ function Exemptionlog({ ...props }) {
       setlogstate({ ...logstate, loading: true });
     }
     setExemLogTypeFn(value);
-    setselfilter({
-      ...selfilter,
-      [name]: value,
-    });
+    clearFilter()
   };
   const onSearchFilterSelect = (name, value) => {
     //const { name, value } = e.target;
@@ -382,7 +384,7 @@ function Exemptionlog({ ...props }) {
         (item) => item.regionId === value
       );
       /setcountryFilterOpts([...countryopts]);*/
-      let countryopts = [...selfilter.countryID];
+      let countryopts = selfilter?.countryID && selfilter?.countryID?.length ? [...selfilter.countryID] : [];
       let regionopts = value;
       let removeValFromIndex = [];
       countryopts.forEach((countryitem, index) => {
@@ -404,16 +406,7 @@ function Exemptionlog({ ...props }) {
         [name]: value,
         countryID: countryopts,
       });
-    } /*else if (name === "regionId" && value === "") {
-      setcountryFilterOpts([...countryAllFilterOpts]);
-      setregionFilterOpts([...regionOptsAll]);
-      setselfilter({
-        ...selfilter,
-        [name]: [],
-        countryID: [],
-      });
-    }*/
-    if (name === "countryID") {
+    } else if (name === "countryID") {
       //let country = countryAllFilterOpts.filter((item) => item.value === value);
       let country = value;
       let regionOpts = [];
@@ -435,7 +428,22 @@ function Exemptionlog({ ...props }) {
         [name]: value,
         regionId: regionOpts,
       });
-    } /* else if (name === "countryID" && value === "") {
+    } else {
+      setselfilter({
+        ...selfilter,
+        [name]: value,
+      });
+    }
+    /*else if (name === "regionId" && value === "") {
+     setcountryFilterOpts([...countryAllFilterOpts]);
+     setregionFilterOpts([...regionOptsAll]);
+     setselfilter({
+       ...selfilter,
+       [name]: [],
+       countryID: [],
+     });
+   }*/
+    /* else if (name === "countryID" && value === "") {
       //setregionFilterOpts([...regionOptsAll]);
       setselfilter({
         ...selfilter,
@@ -841,7 +849,7 @@ function Exemptionlog({ ...props }) {
                   handleShareItem={openShareItem}
                   handleDeleteItem={openDeleteItem}
                   userProfile={userProfile}
-                  isDelete={fnIsEditAccess(row) ? true : false}
+                  isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                 ></MoreActions>
               </>
             );
@@ -1233,7 +1241,7 @@ function Exemptionlog({ ...props }) {
                   handleShareItem={openShareItem}
                   handleDeleteItem={openDeleteItem}
                   userProfile={userProfile}
-                  isDelete={fnIsEditAccess(row) ? true : false}
+                  isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                 ></MoreActions>
               </>
             );
@@ -1529,7 +1537,8 @@ function Exemptionlog({ ...props }) {
           if (key === "PC_URPMExemptionRequired") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
-          if (key === "countryID" || key === "regionId") {
+          if (key === "countryID" || key === "regionId" ||
+              key === "LOBChapter" || key === "status" ) {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -1765,8 +1774,12 @@ function Exemptionlog({ ...props }) {
       if (userProfile.isAdminGroup) {
         getallDeletedItems();
       }
-      pageIndex = 1;
-      loadAPIData();
+      if ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null')) {
+        return
+      } else if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
+        pageIndex = 1;
+        loadAPIData();
+      }
       /*let isStartLoading = false;
       if (selectedExemptionLog === "zug") {
         isStartLoading = logstate.ZUGLoadedAll ? false : true;
@@ -1793,8 +1806,9 @@ function Exemptionlog({ ...props }) {
   }, [selectedExemptionLog]);
 
   useEffect(() => {
-    if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
-      debugger;
+    if ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null')) {
+      return
+    } else if (sellogTabType && !dashboardState.status && selectedExemptionLog) {
       pageIndex = 1;
       loadAPIData();
     }
@@ -1926,8 +1940,8 @@ function Exemptionlog({ ...props }) {
     tempTypeOfExemption.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      ZUGstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
-      URPMstatusFilterOpts: [selectInitiVal, ...tempZUGStatus],
+      ZUGstatusFilterOpts: [...tempZUGStatus],
+      URPMstatusFilterOpts: [...tempZUGStatus],
       URPMSectionFilterOps: [selectInitiVal, ...tempURPMSection],
       typeOfExemptionOpts: [selectInitiVal, ...tempTypeOfExemption],
     }));
@@ -1941,6 +1955,173 @@ function Exemptionlog({ ...props }) {
       setDashboardFilters();
     }
   };
+  
+  const [selectedview, setselectedview] = useState(null);
+  const [viewData, setViewData] = useState([]);
+  const [viewResponse, setViewResponse] = useState(false);
+
+  useEffect(()=>{
+    if (selectedExemptionLog !== "") {
+      handleViews()
+      setselectedview(null)
+      setViewResponse(false)
+    }
+  },[selectedExemptionLog])
+
+  useEffect(()=>{
+    if (selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && viewResponse && viewData?.length !== 0) {
+      onViewFilterSelect( "", userProfile?.zugExemptionViewsId)
+    } else if (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && viewResponse && viewData?.length !== 0) {
+      onViewFilterSelect( "", userProfile?.urpmExemptionViewsId)
+    } else if (viewResponse && ((selectedExemptionLog === 'zug' && userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") || (selectedExemptionLog === 'urpm' && userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== 'null'))) {
+      pageIndex = 1;
+      loadAPIData();
+    }
+  },[viewData, sellogTabType, viewResponse])
+
+  useEffect(() => {
+    if (selectedview && sellogTabType) {
+      handleFilterSearch();
+    }
+  }, [selectedview, sellogTabType]);
+
+  const onViewFilterSelect = async(name, value) => {
+    let selectedViewData = viewData?.filter((item, i) => {
+      let id = item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId
+      if (id === value) {
+        return item
+      }
+    })
+    if (selectedViewData.length !== 0) {
+      let countryArray = []
+      if (selectedViewData[0]?.countryID?.length && selectedViewData[0]?.countryID?.length !== 0 && typeof selectedViewData[0]?.countryID === 'string') {
+        let selectedCountryArray = selectedViewData[0]?.countryID?.split(',')
+        selectedCountryArray?.map((id, j) => {
+            countryState.countryItems.map((item, i) => {
+                if (id === item.countryID) {
+                    countryArray.push({
+                        ...item,
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                    })
+                }
+            })
+        })
+        selectedViewData[0].countryID = countryArray
+      }
+
+      let regionArray = []
+      if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
+        let selectedRegionArray = selectedViewData[0]?.regionId?.split(',')
+        selectedRegionArray?.map((id, j) => {
+            regionState.regionItems.map((item, i) => {
+                if (id === item.regionID) {
+                    regionArray.push({
+                        ...item,
+                        label: item.regionName.trim(),
+                        value: item.regionID,
+                    })
+                }
+            })
+        })
+        selectedViewData[0].regionId = regionArray
+      }
+      
+      let lOBChapterArray = []
+      if (selectedViewData[0]?.lobChapter?.length && selectedViewData[0]?.lobChapter?.length !== 0 && typeof selectedViewData[0]?.lobChapter === 'string') {
+        let selectedRegionArray = selectedViewData[0]?.lobChapter?.split(',')
+        let data = await getAlllobChapter();
+        selectedRegionArray?.map((id, j) => {
+            data.map((item, i) => {
+                if (id === item.lobChapterID) {
+                    lOBChapterArray.push({
+                      label: item.lobChapterName.trim(),
+                      value: item.lobChapterID,
+                    })
+                }
+            })
+        })
+        delete selectedViewData[0]?.lobChapter
+        selectedViewData[0].LOBChapter = lOBChapterArray
+      }
+      
+      let statusArray = []
+      if (selectedViewData[0]?.status?.length && selectedViewData[0]?.status?.length !== 0 && typeof selectedViewData[0]?.status === 'string') {
+        let selectedRegionArray = selectedViewData[0]?.status?.split(',')
+        let tempZUGStatus = await getLookupByType({
+          LookupType: "EXMPZUGStatus",
+      });
+        selectedRegionArray?.map((id, j) => {
+          tempZUGStatus.map((item, i) => {
+                if (id === item.lookupID) {
+                    statusArray.push({
+                      label: item.lookUpValue,
+                      value: item.lookupID,
+                    })
+                }
+            })
+        })
+        selectedViewData[0].status = statusArray
+      }
+      setselfilter(selectedViewData[0])
+      setselectedview(value);
+    } else {
+      value = null;
+      pageIndex = 1;
+      clearFilter();
+    }
+    if (value === null) {
+      setselectedview(value);
+    }
+    let data = commonfilterOpts.views.filter((item) => item.label !== "All")
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+    }));
+    await addEditUserView({LogType: selectedExemptionLog ? selectedExemptionLog : 'zug', UserId: userProfile.userId, ViewId: value})
+    let updatedUserProfileData = userProfile
+    if (selectedExemptionLog === 'urpm') {
+      updatedUserProfileData.urpmExemptionViewsId = value
+    } else {
+      updatedUserProfileData.zugExemptionViewsId = value
+    }
+    localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
+  };
+
+  const handleViews = async () => {
+    const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'exemptionlog', exemptiontype: selectedExemptionLog ? selectedExemptionLog : 'zug'  })
+    setViewData(response)
+    let viewFilterOpts = []
+    response.map((item,i) => {
+      viewFilterOpts.push({
+        label: item.viewName,
+        value: item.zugExemptionViewsId ? item.zugExemptionViewsId : item.urpmExemptionViewsId 
+      })
+    })
+    viewFilterOpts.sort(dynamicSort("label"));
+    let view;
+    if (response[0].zugExemptionViewsId) {
+      if (userProfile?.zugExemptionViewsId && userProfile?.zugExemptionViewsId !== "null") {
+        view = [{ label: "All", value: null }, ...viewFilterOpts]
+      } else {
+        view = [...viewFilterOpts]
+      }
+    }
+    if (response[0].urpmExemptionViewsId) {
+      if (userProfile?.urpmExemptionViewsId && userProfile?.urpmExemptionViewsId !== "null") {
+        view = [{ label: "All", value: null }, ...viewFilterOpts]
+      } else {
+        view = [...viewFilterOpts]
+      }
+    }
+    setcommonfilterOpts((prevstate) => ({
+      ...prevstate,
+      views: view,
+    }));
+    setViewResponse(true)
+  }
+
   useEffect(() => {
     if (
       countryFilterOpts.length &&
@@ -2187,7 +2368,7 @@ function Exemptionlog({ ...props }) {
       });
     });
     selectOpts.sort(dynamicSort("label"));
-    setlobChapterFilterOpts([selectInitiVal, ...selectOpts]);
+    setlobChapterFilterOpts([...selectOpts]);
   }, [lobchapterState.lobChapterItems]);
 
   /* Add Edit Delete functionality & show popup*/
@@ -3003,7 +3184,8 @@ function Exemptionlog({ ...props }) {
           if (key === "PC_URPMExemptionRequired") {
             tempFilterOpts[key] = value === "1" ? true : false;
           }
-          if (key === "countryID" || key === "regionId") {
+          if (key === "countryID" || key === "regionId" ||
+              key === "LOBChapter" || key === "status" ) {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -3097,7 +3279,25 @@ function Exemptionlog({ ...props }) {
       )}
       {!isshowAddPopup && !isshowImportLogsPopup && (
         <>
-          <div className="page-title">Exemption Log</div>
+          {/* <div className="page-title">Exemption Log</div> */}
+          <div className="">
+            <div className="title-rfe">
+              <div className="page-title-rfe">Exemption Log</div>
+              {viewData.length > 0 && (
+                <div className="title-dropdown-rfe">
+                  <FrmSelect
+                    title={"Switch view"}
+                    name={"switchview"}
+                    selectopts={commonfilterOpts.views}
+                    handleChange={onViewFilterSelect}
+                    value={selectedview}
+                    inlinetitle={true}
+                    isdisabled={isLoadingStarted}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
               {filterbox ? (
@@ -3136,12 +3336,13 @@ function Exemptionlog({ ...props }) {
                         </div>
                         {selectedExemptionLog === "zug" ? (
                           <div className="frm-filter col-md-3">
-                            <FrmSelect
+                            <FrmMultiselect
                               title={"LoB Chapter"}
                               name={"LOBChapter"}
                               selectopts={lobChapterFilterOpts}
-                              handleChange={onSearchFilterSelect}
-                              value={selfilter.LOBChapter}
+                              handleChange={handleMultiSelectChange}
+                              value={selfilter.LOBChapter || []}
+                              isAllOptNotRequired={true}
                             />
                           </div>
                         ) : (
@@ -3200,7 +3401,7 @@ function Exemptionlog({ ...props }) {
                       </div>
                       <div className="row">
                         <div className="frm-filter col-md-3">
-                          <FrmSelect
+                          <FrmMultiselect
                             title={"Status"}
                             name={"status"}
                             selectopts={
@@ -3208,8 +3409,9 @@ function Exemptionlog({ ...props }) {
                                 ? commonfilterOpts.ZUGstatusFilterOpts
                                 : commonfilterOpts.URPMstatusFilterOpts
                             }
-                            handleChange={onSearchFilterSelect}
-                            value={selfilter.status}
+                            handleChange={handleMultiSelectChange}
+                            value={selfilter.status || []}
+                            isAllOptNotRequired={true}
                           />
                         </div>
                       </div>
@@ -3520,6 +3722,8 @@ const mapActions = {
   getLogUsers: commonActions.getLogUsers,
   getAllEntryNumbers: commonActions.getAllEntryNumbers,
   clearDashboardClick: dashboardActions.clearDashboardClick,
+  getViewsByUserId: userViewActions.getViewsByUserId,
+  addEditUserView: commonActions.addEditUserView
 };
 
 export default connect(mapStateToProp, mapActions)(Exemptionlog);

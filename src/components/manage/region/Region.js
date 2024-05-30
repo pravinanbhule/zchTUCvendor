@@ -8,8 +8,10 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import AddEditForm from "./AddEditForm";
 import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/region.constants";
 function Region({ ...props }) {
   const { regionState } = props.state;
   const {
@@ -21,7 +23,11 @@ function Region({ ...props }) {
     checkRegionInUse,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Regions.xlsx";
   useSetNavMenu({ currentMenu: "Region", isSubmenu: true }, props.menuClick);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
@@ -105,6 +111,26 @@ function Region({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.id)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "regionID",
       text: "regionID",
       sort: true,
@@ -133,7 +159,29 @@ function Region({ ...props }) {
       dataField: "regionDescription",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {
@@ -270,10 +318,28 @@ function Region({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "region",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -312,6 +378,19 @@ function Region({ ...props }) {
       }
     }
   };
+
+  const handleDownload = async() =>{
+    let response = {
+      regionID: "",
+    }
+    if (isfilterApplied) {
+        response.regionID = selfilter.region
+    }
+    const responsedata = await downloadExcel({
+      RegionID: response?.regionID,
+    }, "Region");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Region</div>
@@ -360,6 +439,9 @@ function Region({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -371,6 +453,18 @@ function Region({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -390,5 +484,7 @@ const mapActions = {
   checkRegionExist: regionActions.checkRegionExist,
   checkRegionInUse: regionActions.checkRegionInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel,
 };
 export default connect(mapStateToProp, mapActions)(Region);

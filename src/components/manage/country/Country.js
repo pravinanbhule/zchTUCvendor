@@ -6,9 +6,11 @@ import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
 import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActiveCheckbox";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import AddEditForm from "./AddEditFrom";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/country.constants";
 function Country({ ...props }) {
   const { countryState, regionState } = props.state;
   const {
@@ -21,7 +23,11 @@ function Country({ ...props }) {
     deleteItem,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Country.xlsx";
   useSetNavMenu({ currentMenu: "Country", isSubmenu: true }, props.menuClick);
 
   const [frmRegionSelectOpts, setfrmRegionSelectOpts] = useState([]);
@@ -162,6 +168,26 @@ function Country({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.countryID)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "countryName",
       text: "Country",
       sort: true,
@@ -189,7 +215,32 @@ function Country({ ...props }) {
       dataField: "countryDescription",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {
@@ -337,9 +388,7 @@ function Country({ ...props }) {
     if (!response) {
       response = await postItem({
         ...item,
-        requesterUserId: item.requesterUserId
-          ? item.requesterUserId
-          : userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialfilterval);
@@ -389,10 +438,28 @@ function Country({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "country",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -431,6 +498,22 @@ function Country({ ...props }) {
       }
     }
   };
+
+  const handleDownload = async() =>{
+    let response = {
+      countryID: "",
+      regionID: "",
+    }
+    if (isfilterApplied) {
+      response.countryID = selfilter.country 
+      response.regionID = selfilter.region 
+    }
+    const responsedata = await downloadExcel({
+      CountryID: response?.countryID,
+      RegionID: response.regionID,
+    }, "Country");
+    FileDownload(responsedata, templateName);
+  }
 
   return (
     <>
@@ -491,6 +574,9 @@ function Country({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -504,6 +590,18 @@ function Country({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -524,5 +622,7 @@ const mapActions = {
   postItem: countryActions.postItem,
   deleteItem: countryActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Country);

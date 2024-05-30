@@ -111,6 +111,16 @@ function AddEditForm(props) {
       value: true,
     },
   ]);
+  const [nearMissesEMEA, setNearMissesEMEA] = useState([
+    {
+      label: "Near miss",
+      value: false,
+    },
+    {
+      label: "Operational Event",
+      value: true,
+    },
+  ])
   const [frmSegmentOpts, setfrmSegmentOpts] = useState([]);
   const [frmSegmentOptsAll, setfrmSegmentOptsAll] = useState([]);
   const [frmLoB, setfrmLoB] = useState([]);
@@ -1627,7 +1637,7 @@ function AddEditForm(props) {
                       tooltipmsg={tooltip["NearMisses"]}
                       validationmsg={"Mandatory field"}
                       issubmitted={issubmitted}
-                      selectopts={yesnoopts}
+                      selectopts={nearMissesEMEA}
                       isdisabled={isfrmdisabled}
                     />
                   ) : (

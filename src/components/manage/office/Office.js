@@ -8,8 +8,10 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import AddEditForm from "./AddEditForm";
 import Loading from "../../common-components/Loading";
 import PaginationData from "../../common-components/PaginationData";
-import { alertMessage, dynamicSort } from "../../../helpers";
+import { alertMessage, dynamicSort, formatDate } from "../../../helpers";
 import { handlePermission } from "../../../permissions/Permission";
+import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
+import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/office.constants";
 function Office({ ...props }) {
   const { officeState } = props.state;
   const {
@@ -21,9 +23,12 @@ function Office({ ...props }) {
     checkIsInUse,
     userProfile,
     setMasterdataActive,
+    getMasterVersion,
+    downloadExcel
   } = props;
+  const FileDownload = require("js-file-download");
+  const templateName = "Office.xlsx";
   useSetNavMenu({ currentMenu: "Office", isSubmenu: true }, props.menuClick);
-  console.log(officeState);
   //initialize filter/search functionality
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [officeFilterOpts, setofficeFilterOpts] = useState([]);
@@ -110,6 +115,26 @@ function Office({ ...props }) {
       align: "center",
     },
     {
+      dataField: "DataVersion",
+      text: "Data Version",
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return (
+          <div
+            className="versionhistory-icon"
+            onClick={() => handleDataVersion(row.officeId)}
+            mode={"view"}
+          ></div>
+        );
+      },
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return {
+          width: "100px",
+          textAlign: "center",
+        };
+      },
+    },
+    {
       dataField: "officeId",
       text: "officeId",
       sort: true,
@@ -138,7 +163,29 @@ function Office({ ...props }) {
       dataField: "officeDescription",
       text: "Description",
       sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
     },
+    {
+      dataField: "createdDate",
+      text: "Created Date",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    },
+    {
+      dataField: "modifiedDate",
+      text: "Modified Date",
+      sort: false,
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        return <span>{cell ? formatDate(cell) : ""}</span>;
+      },
+    }
   ];
   const defaultSorted = [
     {
@@ -226,6 +273,7 @@ function Office({ ...props }) {
         ...item,
         CreatedById: userProfile.userId,
         ModifiedById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialFilterState);
@@ -246,6 +294,7 @@ function Office({ ...props }) {
       response = await postItem({
         ...item,
         ModifiedById: userProfile.userId,
+        requesterUserId: userProfile.userId,
       });
       if (response) {
         //setselfilter(intialFilterState);
@@ -276,10 +325,28 @@ function Office({ ...props }) {
     }
   };
 
+  //version history
+  const [showVersionHistory, setshowVersionHistory] = useState(false);
+  const [versionHistoryData, setversionHistoryData] = useState([]);
+  
+  const hideVersionHistoryPopup = () => {
+    setshowVersionHistory(false);
+  };
+  
+  const handleDataVersion = async (itemid) => {
+    let versiondata = await getMasterVersion({
+      TempId: itemid,
+      MasterType: "office",
+    });
+    setversionHistoryData(versiondata ? versiondata : []);
+    setshowVersionHistory(true);
+  };
+
   //added below code to set active/inactive state
   const selectedItems = [];
   const [selItemsList, setselItemsList] = useState([]);
   const [isActiveEnable, setisActiveEnable] = useState(false);
+  const [isDownloadEnable, setisDownloadEnable] = useState(true);
   const handleItemSelect = async (e) => {
     let { name, value } = e.target;
     value = e.target.checked;
@@ -318,6 +385,18 @@ function Office({ ...props }) {
       }
     }
   };
+  const handleDownload = async() =>{
+    let response = {
+      officeId: "",
+    }
+    if (isfilterApplied && selItemsList.length === 0) {
+      response.officeId = selfilter.office
+    }
+    const responsedata = await downloadExcel({
+      OfficeId: response?.officeId,
+    }, "Office");
+    FileDownload(responsedata, templateName);
+  }
   return (
     <>
       <div className="page-title">Manage Office</div>
@@ -364,6 +443,9 @@ function Office({ ...props }) {
             isShowActiveBtns={true}
             ActiveBtnsState={isActiveEnable}
             ActiveSelectedItems={selItemsList}
+            isShowDownloadBtn={true}
+            DownloadBtnState={paginationdata.length !== 0 ? true : false}
+            handleDownload={handleDownload}
           />
         )}
       </div>
@@ -375,6 +457,18 @@ function Office({ ...props }) {
           isEditMode={isEditMode}
           formIntialState={formIntialState}
         ></AddEditForm>
+      ) : (
+        ""
+      )}
+      {showVersionHistory ? (
+        <VersionHistoryPopup
+          versionHistoryData={versionHistoryData}
+          hidePopup={hideVersionHistoryPopup}
+          exportFieldTitles={versionHistoryexportFieldTitles}
+          exportDateFields={versionHistoryexportDateFields}
+          exportHtmlFields={versionHistoryexportHtmlFields}
+          versionHistoryExcludeFields={versionHistoryExcludeFields}
+        />
       ) : (
         ""
       )}
@@ -394,5 +488,7 @@ const mapActions = {
   checkNameExist: officeActions.checkNameExist,
   checkIsInUse: officeActions.checkIsInUse,
   setMasterdataActive: commonActions.setMasterdataActive,
+  getMasterVersion: commonActions.getMasterVersion,
+  downloadExcel: commonActions.downloadExcel
 };
 export default connect(mapStateToProp, mapActions)(Office);
