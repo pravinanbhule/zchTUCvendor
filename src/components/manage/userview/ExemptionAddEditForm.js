@@ -143,6 +143,8 @@ function Exemptionlog({ ...props }) {
     const [regionOptsAll, setregionOptsAll] = useState([]);
     const [lobChapterFilterOpts, setlobChapterFilterOpts] = useState([]);
     const intialFilterState = {
+        viewName: "",
+        isPrivate: false,
         entryNumber: "",
         countryID: [],
         regionId: [],
@@ -393,39 +395,67 @@ function Exemptionlog({ ...props }) {
         }
     };
 
-    const handleFilterSearch = async () => {
-        if (!isEmptyObjectKeys(formfield)) {
-            let tempFilterOpts = {};
-            for (let key in formfield) {
-                if (formfield[key]) {
-                    let value = formfield[key];
-                    tempFilterOpts[key] = value;
-                    if (key === "pC_URPMExemptionRequired") {
-                        tempFilterOpts[key] = value === "1" ? true : false;
-                    }
-                    if (key === "countryID" || key === "regionId" ||
-                        key === "loBChapter" || key === "status" ) {
-                        const tmpval = value.map((item) => item.value);
-                        tempFilterOpts[key] = tmpval.join(",");
-                    }
+    const [issubmitted, setissubmitted] = useState(false);
+    const [mandatoryFields, setmandatoryFields] = useState(['viewName']);
+    const validateform = () => {
+        let isvalidated = true;
+        for (let key in formfield) {
+            if (mandatoryFields.includes(key) && isvalidated) {
+                let value = formfield[key];
+                value = value.trim()
+                if (value.length === 0) {
+                    setformfield({
+                        ...formfield,
+                        [key]: "",
+                    });
+                    isvalidated = false;
+                }
+                if (!isNotEmptyValue(value)) {
+                    isvalidated = false;
                 }
             }
-            tempFilterOpts.userRoles = selectedUserRoles.toString()
-            tempFilterOpts.UserViewType = 'exemptionlog'
-            tempFilterOpts.exemptiontype = selectedExemptionLog
-            tempFilterOpts.country = tempFilterOpts?.countryID
-            tempFilterOpts.region = tempFilterOpts?.regionId
-            tempFilterOpts.loBChapter = tempFilterOpts?.loBChapter
-            tempFilterOpts.status = tempFilterOpts?.status
-            tempFilterOpts.requesterUserId = userProfile.userId
-            let response = await postItem(tempFilterOpts)
-            if (response) {
-                if (tempFilterOpts.zugExemptionViewsId || tempFilterOpts.urpmExemptionViewsId) {
-                    alert(alertMessage.userview.update);
-                } else {
-                    alert(alertMessage.userview.add);
+        }
+        return isvalidated;
+    };
+    const [showError, setShowError] = useState(false)
+    const handleFilterSearch = async () => {
+        setissubmitted(true);
+        if (validateform()) {
+            if (formfield.isPrivate === false && selectedUserRoles.length === 0) {
+                setShowError(true)
+            } else {
+                let tempFilterOpts = {};
+                for (let key in formfield) {
+                    if (formfield[key]) {
+                        let value = formfield[key];
+                        tempFilterOpts[key] = value;
+                        if (key === "pC_URPMExemptionRequired") {
+                            tempFilterOpts[key] = value === "1" ? true : false;
+                        }
+                        if (key === "countryID" || key === "regionId" ||
+                            key === "loBChapter" || key === "status" ) {
+                            const tmpval = value.map((item) => item.value);
+                            tempFilterOpts[key] = tmpval.join(",");
+                        }
+                    }
                 }
-                hideAddPopup()
+                tempFilterOpts.userRoles = selectedUserRoles.toString()
+                tempFilterOpts.UserViewType = 'exemptionlog'
+                tempFilterOpts.exemptiontype = selectedExemptionLog
+                tempFilterOpts.country = tempFilterOpts?.countryID
+                tempFilterOpts.region = tempFilterOpts?.regionId
+                tempFilterOpts.loBChapter = tempFilterOpts?.loBChapter
+                tempFilterOpts.status = tempFilterOpts?.status
+                tempFilterOpts.requesterUserId = userProfile.userId
+                let response = await postItem(tempFilterOpts)
+                if (response) {
+                    if (tempFilterOpts.zugExemptionViewsId || tempFilterOpts.urpmExemptionViewsId) {
+                        alert(alertMessage.userview.update);
+                    } else {
+                        alert(alertMessage.userview.add);
+                    }
+                    hideAddPopup()
+                }
             }
         }
     };
@@ -915,6 +945,11 @@ function Exemptionlog({ ...props }) {
                     })
                 }
             })
+            if (issubmitted && showError === false && selectedValue.length === 0) {
+                setShowError(true)
+            } else if(issubmitted && showError && selectedValue.length > 0 ){
+                setShowError(false)
+            }
             setSelectedUserRoles(selectedValue)
         }
         setformfield({
@@ -975,9 +1010,10 @@ function Exemptionlog({ ...props }) {
                                 value={formfield?.viewName}
                                 type={"text"}
                                 handleChange={handleChange}
-                                isRequired={false}
+                                isRequired={true}
+                                validationmsg={"Mandatory field"}
                                 isReadMode={isReadMode}
-                            // issubmitted={issubmitted}
+                                issubmitted={issubmitted}
                             />
                         </div>
                         <div className="col-md-3">
@@ -1005,8 +1041,13 @@ function Exemptionlog({ ...props }) {
                     </div>
                     {showUserRoles &&
                         <>
-                            <div className="border-top font-weight-bold frm-container-bgwhite">
+                             <div className="border-top font-weight-bold frm-container-bgwhite d-flex">
                                 <div className="mb-4"> User Roles</div>
+                                {showError ?
+                                    <div className="validationError">Please select at least one user role</div>
+                                :(
+                                    ""
+                                )}
                             </div>
                             <div className="border-bottom border-top frm-container-bggray">
                             <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : {justifyContent: 'space-between'}}>

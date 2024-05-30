@@ -388,7 +388,7 @@ function Exemptionlog({ ...props }) {
         (item) => item.regionId === value
       );
       /setcountryFilterOpts([...countryopts]);*/
-      let countryopts = [...selfilter.countryID];
+      let countryopts = selfilter?.countryID && selfilter?.countryID?.length ? [...selfilter.countryID] : [];
       let regionopts = value;
       let removeValFromIndex = [];
       countryopts.forEach((countryitem, index) => {
@@ -2050,8 +2050,8 @@ function Exemptionlog({ ...props }) {
                 }
             })
         })
+        selectedViewData[0].countryID = countryArray
       }
-      selectedViewData[0].countryID = countryArray
 
       let regionArray = []
       if (selectedViewData[0]?.regionId?.length && selectedViewData[0]?.regionId?.length !== 0 && typeof selectedViewData[0]?.regionId === 'string') {
@@ -2067,8 +2067,8 @@ function Exemptionlog({ ...props }) {
                 }
             })
         })
+        selectedViewData[0].regionId = regionArray
       }
-      selectedViewData[0].regionId = regionArray
       
       let lOBChapterArray = []
       if (selectedViewData[0]?.lobChapter?.length && selectedViewData[0]?.lobChapter?.length !== 0 && typeof selectedViewData[0]?.lobChapter === 'string') {
@@ -2084,6 +2084,7 @@ function Exemptionlog({ ...props }) {
                 }
             })
         })
+        delete selectedViewData[0]?.lobChapter
         selectedViewData[0].LOBChapter = lOBChapterArray
       }
       

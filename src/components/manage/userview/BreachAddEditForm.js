@@ -56,6 +56,7 @@ function BreachAddEditForm(props) {
     } = props;
 
     const [formfield, setformfield] = useState({
+        viewName: "",
         entryNumber: "",
         title: "",
         classification: [],
@@ -240,11 +241,11 @@ function BreachAddEditForm(props) {
                     })
                 })
                 response.subLoB = typeof response.subLoB === 'string' && subLoBArray.length === 0 ? response.subLoB : subLoBArray
-            }  else if (response.subLoB === null || response.subLoB === undefined) {
+            } else if (response.subLoB === null || response.subLoB === undefined) {
                 response.subLoB = []
             }
-            
-            if (response?.customerSegment?.length && response?.customerSegment?.length !== 0 &&  typeof response.customerSegment === 'string') {
+
+            if (response?.customerSegment?.length && response?.customerSegment?.length !== 0 && typeof response.customerSegment === 'string') {
                 let selectedSubLoBArray = response.customerSegment.split(',')
                 let customerArray = [];
                 let data = await getAllSegment({ isActive: true });
@@ -260,7 +261,7 @@ function BreachAddEditForm(props) {
                     })
                 })
                 response.customerSegment = typeof response.customerSegment === 'string' && customerArray.length === 0 ? response.customerSegment : customerArray
-            }  else if (response.customerSegment === null || response.customerSegment === undefined) {
+            } else if (response.customerSegment === null || response.customerSegment === undefined) {
                 response.customerSegment = []
             }
 
@@ -287,7 +288,7 @@ function BreachAddEditForm(props) {
             } else if (response.classification === null || response.classification === undefined) {
                 response.classification = []
             }
-            
+
             let tempNatureOfBreach = []
             if (response?.natureofbreach?.length && response?.natureofbreach?.length !== 0 && typeof response?.natureofbreach === 'string') {
                 let selectedValueArray = response?.natureofbreach?.split(',')
@@ -311,7 +312,7 @@ function BreachAddEditForm(props) {
             } else if (response.status === null || response.status === undefined) {
                 response.status = []
             }
-            
+
             let tempTypeOfBreach = []
             if (response?.typeofBreach?.length && response?.typeofBreach?.length !== 0 && typeof response?.typeofBreach === 'string') {
                 let selectedValueArray = response?.typeofBreach?.split(',')
@@ -323,7 +324,7 @@ function BreachAddEditForm(props) {
             } else if (response.typeofBreach === null || response.typeofBreach === undefined) {
                 response.typeofBreach = []
             }
-            
+
             let tempRootCauseBreach = []
             if (response?.rootCauseOfTheBreach?.length && response?.rootCauseOfTheBreach?.length !== 0 && typeof response?.rootCauseOfTheBreach === 'string') {
                 let selectedValueArray = response?.rootCauseOfTheBreach?.split(',')
@@ -335,7 +336,7 @@ function BreachAddEditForm(props) {
             } else if (response.rootCauseOfTheBreach === null || response.rootCauseOfTheBreach === undefined) {
                 response.rootCauseOfTheBreach = []
             }
-            
+
             let tempRangeFinImpact = []
             if (response?.rangeOfFinancialimpact?.length && response?.rangeOfFinancialimpact?.length !== 0 && typeof response?.rangeOfFinancialimpact === 'string') {
                 let selectedValueArray = response?.rangeOfFinancialimpact?.split(',')
@@ -347,7 +348,7 @@ function BreachAddEditForm(props) {
             } else if (response.rangeOfFinancialimpact === null || response.rangeOfFinancialimpact === undefined) {
                 response.rangeOfFinancialimpact = []
             }
-            
+
             let tempHowDetected = []
             if (response?.howdetected?.length && response?.howdetected?.length !== 0 && typeof response?.howdetected === 'string') {
                 let selectedValueArray = response?.howdetected?.split(',')
@@ -859,6 +860,11 @@ function BreachAddEditForm(props) {
                     })
                 }
             })
+            if (issubmitted && showError === false && selectedValue.length === 0) {
+                setShowError(true)
+            } else if (issubmitted && showError && selectedValue.length > 0) {
+                setShowError(false)
+            }
             setSelectedUserRoles(selectedValue)
         }
         setformfield({ ...formfield, [name]: value });
@@ -1013,42 +1019,71 @@ function BreachAddEditForm(props) {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        let tempFilterOpts = {};
+    const [mandatoryFields, setmandatoryFields] = useState(['viewName']);
+    const validateform = () => {
+        let isvalidated = true;
         for (let key in formfield) {
-            if (formfield[key]) {
+            if (mandatoryFields.includes(key) && isvalidated) {
                 let value = formfield[key];
-                tempFilterOpts[key] = value;
-                if (key === "materialBreach") {
-                    tempFilterOpts[key] = value === "1" ? true : false;
+                value = value.trim()
+                if (value.length === 0) {
+                    setformfield({
+                        ...formfield,
+                        [key]: "",
+                    });
+                    isvalidated = false;
                 }
-                if (key === "country" || key === "region" ||
-                    key === "status" || key === "loB" ||
-                    key === "subLoB" || key === "typeofBreach" ||
-                    key === "classification" || key === "customerSegment" ||
-                    key === "natureofbreach" || key === "howdetected" ||
-                    key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact"
-                ) {
-                    const tmpval = value.map((item) => item.value);
-                    tempFilterOpts[key] = tmpval.join(",");
+                if (!isNotEmptyValue(value)) {
+                    isvalidated = false;
                 }
             }
         }
-        // tempFilterOpts.isPrivate = tempFilterOpts.switch || tempFilterOpts.switch === true ? false : true;
-        tempFilterOpts.userRoles = selectedUserRoles.toString()
-        tempFilterOpts.UserViewType = 'breachlog'
-        tempFilterOpts.requesterUserId = userProfile.userId
-
-        // delete tempFilterOpts.switch
-        let response = await postItem(tempFilterOpts)
-        if (response) {
-            if (tempFilterOpts.breachViewsId) {
-                alert(alertMessage.userview.update);
+        return isvalidated;
+    };
+    const [showError, setShowError] = useState(false)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setissubmitted(true);
+        if (validateform()) {
+            if (formfield.isPrivate === false && selectedUserRoles.length === 0) {
+                setShowError(true)
             } else {
-                alert(alertMessage.userview.add);
+                let tempFilterOpts = {};
+                for (let key in formfield) {
+                    if (formfield[key]) {
+                        let value = formfield[key];
+                        tempFilterOpts[key] = value;
+                        if (key === "materialBreach") {
+                            tempFilterOpts[key] = value === "1" ? true : false;
+                        }
+                        if (key === "country" || key === "region" ||
+                            key === "status" || key === "loB" ||
+                            key === "subLoB" || key === "typeofBreach" ||
+                            key === "classification" || key === "customerSegment" ||
+                            key === "natureofbreach" || key === "howdetected" ||
+                            key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact"
+                        ) {
+                            const tmpval = value.map((item) => item.value);
+                            tempFilterOpts[key] = tmpval.join(",");
+                        }
+                    }
+                }
+                // tempFilterOpts.isPrivate = tempFilterOpts.switch || tempFilterOpts.switch === true ? false : true;
+                tempFilterOpts.userRoles = selectedUserRoles.toString()
+                tempFilterOpts.UserViewType = 'breachlog'
+                tempFilterOpts.requesterUserId = userProfile.userId
+
+                // delete tempFilterOpts.switch
+                let response = await postItem(tempFilterOpts)
+                if (response) {
+                    if (tempFilterOpts.breachViewsId) {
+                        alert(alertMessage.userview.update);
+                    } else {
+                        alert(alertMessage.userview.add);
+                    }
+                    hideAddPopup()
+                }
             }
-            hideAddPopup()
         }
         // hideAddPopup()
     }
@@ -1081,7 +1116,8 @@ function BreachAddEditForm(props) {
                                     value={formfield?.viewName}
                                     type={"text"}
                                     handleChange={handleChange}
-                                    isRequired={false}
+                                    isRequired={true}
+                                    validationmsg={"Mandatory field"}
                                     issubmitted={issubmitted}
                                     isReadMode={isReadMode}
                                 />
@@ -1101,8 +1137,13 @@ function BreachAddEditForm(props) {
                         </div>
                         {showUserRoles &&
                             <>
-                                <div className="border-top font-weight-bold frm-container-bgwhite">
+                                <div className="border-top font-weight-bold frm-container-bgwhite d-flex">
                                     <div className="mb-4"> User Roles</div>
+                                    {showError ?
+                                        <div className="validationError">Please select at least one user role</div>
+                                        : (
+                                            ""
+                                        )}
                                 </div>
                                 <div className="border-bottom border-top frm-container-bggray">
                                     <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : { justifyContent: 'space-between' }}>
