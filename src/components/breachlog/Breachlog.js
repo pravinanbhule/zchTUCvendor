@@ -752,6 +752,7 @@ function Breachlog({ ...props }) {
         }
         return isShow;
       });*/
+      console.log("cpo,esd");
       setisfilterApplied(true);
       setfilterbox(false);
       setisAdvfilterApplied(false);
@@ -1428,6 +1429,7 @@ function Breachlog({ ...props }) {
   };
 
   const loadAPIData = () => {
+    console.log("come");
     setlogstate({
       ...logstate,
       loading: true,
@@ -1672,6 +1674,7 @@ function Breachlog({ ...props }) {
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([]);
   const [viewResponse, setViewResponse] = useState(false);
+  const [isReset, setIsReset] = useState(false)
 
   useEffect(()=>{
     handleViews()
@@ -1692,6 +1695,14 @@ function Breachlog({ ...props }) {
       handleFilterSearch();
     }
   }, [selectedview, sellogTabType]);
+
+  useEffect(()=>{
+    if (selfilter && isReset) {
+      setIsReset(false);
+      setfilterbox(false);
+      handleFilterSearch();
+    }
+  },[selfilter, isReset])
 
   const handleSelectedItemArray = (selectedArray, data, field, label) => {
     let arrayData = [];
@@ -1902,7 +1913,11 @@ function Breachlog({ ...props }) {
       }
 
       setselfilter(responseData)
-      setselectedview(value);
+      if (value !== selectedview) {
+        setselectedview(value);
+      } else {
+        setIsReset(true)
+      }
     } else {
       value = null;
       pageIndex = 1;
@@ -3332,9 +3347,15 @@ function Breachlog({ ...props }) {
                     >
                       Search
                     </div>
-                    <div className="btn-blue" onClick={clearFilter}>
-                      Clear
-                    </div>
+                    {selectedview ? 
+                      <div className="btn-blue" onClick={() => onViewFilterSelect('', selectedview)}>
+                        Reset
+                      </div>
+                     :
+                      <div className="btn-blue" onClick={clearFilter}>
+                        Clear
+                      </div>
+                    }
                   </div>
                 </div>
               ) : (
