@@ -2107,7 +2107,9 @@ function Exemptionlog({ ...props }) {
         selectedViewData[0].status = statusArray
       }
       setselfilter(selectedViewData[0])
-      setselectedview(value);
+      if (value !== selectedview) {
+        setselectedview(value);
+      }
     } else {
       value = null;
       pageIndex = 1;
@@ -3575,9 +3577,15 @@ function Exemptionlog({ ...props }) {
                     >
                       Search
                     </div>
-                    <div className="btn-blue" onClick={clearFilter}>
-                      Clear
-                    </div>
+                    {selectedview ? 
+                      <div className="btn-blue" onClick={() => onViewFilterSelect('', selectedview)}>
+                        Reset
+                      </div>
+                     :
+                      <div className="btn-blue" onClick={clearFilter}>
+                        Clear
+                      </div>
+                    }
                   </div>
                 </div>
               ) : (
