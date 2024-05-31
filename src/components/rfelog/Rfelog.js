@@ -1274,7 +1274,9 @@ function Rfelog({ ...props }) {
         SUBLOBID: subloBArray
       };
       setselfilter(FilterState)
-      setSelectedUserview(value);
+      if (value !== selectedUserView) {
+        setSelectedUserview(value);
+      }
     } else {
       value = null;
       pageIndex = 1;
@@ -2748,9 +2750,18 @@ function Rfelog({ ...props }) {
                     >
                       Search
                     </div>
-                    <div className="btn-blue" onClick={clearFilter}>
+                    {selectedUserView ? 
+                      <div className="btn-blue" onClick={() => onUserViewFilterSelect('', selectedUserView)}>
+                        Reset
+                      </div>
+                     :
+                      <div className="btn-blue" onClick={clearFilter}>
+                        Clear
+                      </div>
+                    }
+                    {/* <div className="btn-blue" onClick={clearFilter}>
                       Clear
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ) : (

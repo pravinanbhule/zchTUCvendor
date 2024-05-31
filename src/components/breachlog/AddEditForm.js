@@ -1024,18 +1024,23 @@ function AddEditForm(props) {
           customerSegment: "",
         });
       } else {
-        if (formfield.regionId?.indexOf(emeaRegionValue) !== -1) {
-          setmandatoryFields([
-            ...commonMandatoryFields,
-            ...regionMandotoryFields,
-            ...EMEAMandotoryFields,
-          ]);
-        } else {
-          setmandatoryFields([
-            ...commonMandatoryFields,
-            ...regionMandotoryFields,
-          ]);
-        }
+        // nearMisses
+        // if (formfield.regionId?.indexOf(emeaRegionValue) !== -1) {
+        //   setmandatoryFields([
+        //     ...commonMandatoryFields,
+        //     ...regionMandotoryFields,
+        //     ...EMEAMandotoryFields,
+        //   ]);
+        // } else {
+        //   setmandatoryFields([
+        //     ...commonMandatoryFields,
+        //     ...regionMandotoryFields,
+        //   ]);
+        // }
+        setmandatoryFields([
+          ...commonMandatoryFields,
+          ...regionMandotoryFields,
+        ]);
         setformfield({
           ...formfield,
           znaSegmentId: "",
@@ -1059,39 +1064,43 @@ function AddEditForm(props) {
         if (formfield.howDetected === howdetectedtur) {
           tempMandatoryfields = [...tempMandatoryfields, "turNumber"];
         }
-      } else {
-        if (formfield.regionId?.indexOf(emeaRegionValue) !== -1) {
-          tempMandatoryfields = [...tempMandatoryfields, "EMEAMandotoryFields"];
-        }
-        setformfield({
-          ...formfield,
-          znaSegmentId: "",
-          znasbuId: "",
-          marketBasketId: "",
-          uwrInvolved: "",
-          businessDivision: "",
-          office: "",
-          policyName: "",
-          policyNumber: "",
-          turNumber: "",
-        });
-      }
+      } 
+      // nearMisses
+      // else {
+      //   if (formfield.regionId?.indexOf(emeaRegionValue) !== -1) {
+      //     tempMandatoryfields = [...tempMandatoryfields, "EMEAMandotoryFields"];
+      //   }
+      //   setformfield({
+      //     ...formfield,
+      //     znaSegmentId: "",
+      //     znasbuId: "",
+      //     marketBasketId: "",
+      //     uwrInvolved: "",
+      //     businessDivision: "",
+      //     office: "",
+      //     policyName: "",
+      //     policyNumber: "",
+      //     turNumber: "",
+      //   });
+      // }
       setmandatoryFields([...tempMandatoryfields]);
     }
   }, [formfield.regionId, formfield.howDetected]);
-  useEffect(() => {
-    if (formfield.regionId?.indexOf(emeaRegionValue) !== -1) {
-      setformfield({
-        ...formfield,
-        nearMisses: formfield.nearMisses ? formfield.nearMisses : false,
-      });
-    } else {
-      setformfield({
-        ...formfield,
-        nearMisses: null,
-      });
-    }
-  }, [formfield.regionId]);
+  
+  // nearMisses
+  // useEffect(() => {
+  //   if (formfield.regionId?.indexOf(emeaRegionValue) !== -1) {
+  //     setformfield({
+  //       ...formfield,
+  //       nearMisses: formfield.nearMisses ? formfield.nearMisses : false,
+  //     });
+  //   } else {
+  //     setformfield({
+  //       ...formfield,
+  //       nearMisses: null,
+  //     });
+  //   }
+  // }, [formfield.regionId]);
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const [showpeoplepicker, setshowpeoplepicker] = useState(false);
@@ -1665,7 +1674,7 @@ function AddEditForm(props) {
                     tooltipmsg={tooltip["CO"]}
                   />
                 </div>
-                <div className="col-md-3">
+                {/* <div className="col-md-3">
                   {formfield.regionId?.indexOf(emeaRegionValue) !== -1 ? (
                     <FrmToggleSwitch
                       title={
@@ -1693,7 +1702,7 @@ function AddEditForm(props) {
                   ) : (
                     ""
                   )}
-                </div>
+                </div> */}
               </div>
               {formfield.regionId?.indexOf(znaRegionValue) !== -1 && (
                 <>

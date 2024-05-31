@@ -142,7 +142,7 @@ function AddImportLogs(props) {
     breachStatusObj: {},
     materialBreachcategoryObj: [],
     materialBreachObj: { TRUE: true, FALSE: false },
-    nearMissesObj: { TRUE: true, FALSE: false },
+    // nearMissesObj: { TRUE: true, FALSE: false },
   });
   const [loading, setloading] = useState(true);
   const [logType, setlogType] = useState("breachlogs");
@@ -617,10 +617,10 @@ function AddImportLogs(props) {
       lookupObj: "",
       fieldname: "howDetectedMoreInfo",
     },
-    "Near Misses (Only EMEA)": {
-      lookupObj: "nearMissesObj",
-      fieldname: "nearMisses",
-    },
+    // "Near Misses (Only EMEA)": {
+    //   lookupObj: "nearMissesObj",
+    //   fieldname: "nearMisses",
+    // },
     "Action Responsible": {
       lookupObj: "",
       fieldname: "actionResponsible",
@@ -739,8 +739,8 @@ function AddImportLogs(props) {
   const [exportData, setexportData] = useState([]);
   const [isLoadingValidation, setisLoadingValidation] = useState(false);
   const [isDataImport, setisDataImport] = useState(false);
-  const maxCount = 52;
-  const fieldCount = 38;
+  const maxCount = 51;
+  const fieldCount = 37;
   const validateExcelData = async (excelData) => {
     let excelReportData = [];
     let logData = [];
@@ -844,13 +844,14 @@ function AddImportLogs(props) {
                 if (value?.indexOf(REGION_ZNA) !== -1) {
                   mandatoryFields = [...mandatoryFields, ...znaMandotoryFields];
                 }
-                if (value?.indexOf(REGION_EMEA) !== -1) {
-                  mandatoryFields = [
-                    ...mandatoryFields,
-                    ...regionMandotoryFields,
-                    ...EMEAMandotoryFields,
-                  ];
-                }
+                // nearMisses
+                // if (value?.indexOf(REGION_EMEA) !== -1) {
+                //   mandatoryFields = [
+                //     ...mandatoryFields,
+                //     ...regionMandotoryFields,
+                //     ...EMEAMandotoryFields,
+                //   ];
+                // }
                 if (
                   value?.indexOf(REGION_ZNA) === -1 ||
                   value?.split(",").length > 1
@@ -907,9 +908,9 @@ function AddImportLogs(props) {
                     fieldname === "PolicyNumber" ||
                     fieldname === "turNumber") &&
                   templogdata["regionId"]?.indexOf(REGION_ZNA) === -1) ||
-                (isvalidval &&
-                  fieldname === "nearMisses" &&
-                  templogdata["regionId"]?.indexOf(REGION_EMEA) === -1) ||
+                // (isvalidval &&
+                //   fieldname === "nearMisses" &&
+                //   templogdata["regionId"]?.indexOf(REGION_EMEA) === -1) ||
                 (isvalidval &&
                   fieldname === "dateActionClosed" &&
                   templogdata["breachStatus"] !== breachlog_status.Close) ||
