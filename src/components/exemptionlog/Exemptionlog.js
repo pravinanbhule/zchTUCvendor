@@ -2001,6 +2001,7 @@ function Exemptionlog({ ...props }) {
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([]);
   const [viewResponse, setViewResponse] = useState(false);
+  const [isReset, setIsReset] = useState(false)
 
   useEffect(()=>{
     if (selectedExemptionLog !== "") {
@@ -2026,6 +2027,14 @@ function Exemptionlog({ ...props }) {
       handleFilterSearch();
     }
   }, [selectedview, sellogTabType]);
+
+  useEffect(()=>{
+    if (selfilter && isReset) {
+      setIsReset(false);
+      setfilterbox(false);
+      handleFilterSearch();
+    }
+  },[selfilter, isReset])
 
   const onViewFilterSelect = async(name, value) => {
     let selectedViewData = viewData?.filter((item, i) => {
@@ -2107,7 +2116,11 @@ function Exemptionlog({ ...props }) {
         selectedViewData[0].status = statusArray
       }
       setselfilter(selectedViewData[0])
-      setselectedview(value);
+      if (value !== selectedview) {
+        setselectedview(value);
+      } else {
+        setIsReset(true);
+      }
     } else {
       value = null;
       pageIndex = 1;
@@ -3575,9 +3588,15 @@ function Exemptionlog({ ...props }) {
                     >
                       Search
                     </div>
-                    <div className="btn-blue" onClick={clearFilter}>
-                      Clear
-                    </div>
+                    {selectedview ? 
+                      <div className="btn-blue" onClick={() => onViewFilterSelect('', selectedview)}>
+                        Reset
+                      </div>
+                     :
+                      <div className="btn-blue" onClick={clearFilter}>
+                        Clear
+                      </div>
+                    }
                   </div>
                 </div>
               ) : (
