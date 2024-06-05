@@ -68,10 +68,14 @@
 .Dropdown-placeholder.is-selected {
   font-style: normal;
   height: 19px;
-  overflow-y: hidden;
-  overflow-x: hidden;
+  /* overflow-y: hidden;
+  overflow-x: hidden; */
   visibility: visible;
   position: absolute;
+  max-width: 80%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .Dropdown-option.is-selected {
   background-color: #add8ef;
