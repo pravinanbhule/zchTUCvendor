@@ -2366,6 +2366,7 @@ function Rfelog({ ...props }) {
             handleChange={eval(obj.eventhandler)}
             selectopts={eval(obj.options)}
             titlelinespace={obj.titlelinespace ? true : false}
+            isAllOptNotRequired={true}
           />
         );
       case "FrmDatePicker":
