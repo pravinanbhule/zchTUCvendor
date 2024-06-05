@@ -244,6 +244,7 @@ const exportReportLogsService = async (requestParam) => {
 };
 const linkedLogsService = async (requestParam) => {
   const param = { params: requestParam };
+  console.log("param>>>", param);
   const response = await Axios.get(`rfelog/getlinkrfeentrynumber`, param);
   return response;
 };

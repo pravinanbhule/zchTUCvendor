@@ -8,6 +8,7 @@
   "title.suggestedapprover": "Liste der empfohlenen Global Approver / Genehmiger",
   "title.searchuser": "Benutzer suchen",
 
+  "button.add": "Hinzufügen",
   "button.edit": "Bearbeiten",
   "button.versionhistory": "Version",
   "button.back": "Zurück",
@@ -29,6 +30,7 @@
   "label.uploadattachment":"Anhang Hochladen",
   "label.browser": "Suchen",
   "label.entrynumber": "Entry Number",
+  "label.linkedrfe": "Linked RfE",
 
   "placeholder.select": "Auswahl",
   "placeholder.chooseafile": "Wähle einen Anhang aus…",

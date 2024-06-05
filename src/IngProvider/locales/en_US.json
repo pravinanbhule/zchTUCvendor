@@ -8,6 +8,7 @@
   "title.suggestedapprover": "List of recommended Global approvers",
   "title.searchuser": "Search User",
 
+  "button.add": "Add",
   "button.edit": "Edit",
   "button.versionhistory": "Version History",
   "button.back": "Back",
@@ -29,6 +30,7 @@
   "label.uploadattachment":"Upload Attachment",
   "label.browser": "Browser",
   "label.entrynumber": "Entry Number",
+  "label.linkedrfe": "Linked RfE",
 
   "placeholder.select": "Select",
   "placeholder.chooseafile": "Choose a file…",
