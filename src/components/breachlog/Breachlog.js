@@ -1183,14 +1183,14 @@ function Breachlog({ ...props }) {
         return { width: "200px" };
       },
     },
-    {
-      dataField: "nearMisses",
-      text: "Near Misses",
-      sort: false,
-      headerStyle: (colum, colIndex) => {
-        return { width: "150px" };
-      },
-    },
+    // {
+    //   dataField: "nearMisses",
+    //   text: "Near Misses",
+    //   sort: false,
+    //   headerStyle: (colum, colIndex) => {
+    //     return { width: "150px" };
+    //   },
+    // },
     {
       dataField: "creatorName",
       text: "Created By",
