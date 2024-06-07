@@ -40,7 +40,13 @@ function RfELinkedPopupDetails(props) {
         frmConditionOpts,
         frmDurationOpts,
         rfelog_status,
-        frmBranchOpts
+        frmBranchOpts,
+        showReferenceBtn,
+        handleCopyValue,
+        referralReasonLevel2Option,
+        referralReasonLevel3Option,
+        frmSegmentOpts,
+        inCountryOptsLATAM
     } = props;
 
     const [fieldDetails, setFieldDetails] = useState([])
@@ -48,8 +54,8 @@ function RfELinkedPopupDetails(props) {
     const [formfield, setformfield] = useState({});
     const [showTextBox, setShowTextBox] = useState(false);
     const [reasonfields, setReasonfields] = useState({
-        ReferralReasonLevel2: true,
-        ReferralReasonLevel3: true
+        ReferralReasonLevel2: details?.ReferralReasonLevel2Value !== null ? true : false,
+        ReferralReasonLevel3: details?.ReferralReasonLevel3Value !== null ? true : false,
     })
 
     useEffect(() => {
@@ -115,12 +121,13 @@ function RfELinkedPopupDetails(props) {
                         tempobj = {
                             ...tempobj,
                             isAddButton:
-                                details.ReferralReasonLevel2 ||
-                                    (details.ReferralReasonLevel2 !== null &&
-                                        details.ReferralReasonLevel2 !== "" &&
-                                        details.ReferralReasonLevel2 !== undefined)
+                                details?.ReferralReasonLevel2 ||
+                                    (details?.ReferralReasonLevel2 !== null &&
+                                        details?.ReferralReasonLevel2 !== "" &&
+                                        details?.ReferralReasonLevel2 !== undefined)
                                     ? false
                                     : true,
+                            options: IncountryFlag === IncountryFlagConst.GERMANY ? frmrfeempourmentgermany : item.options,
                         };
                         if (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValue) {
                             setShowTextBox(true);
@@ -133,10 +140,10 @@ function RfELinkedPopupDetails(props) {
                             ...tempobj,
                             options: frmrfeempourment,
                             isAddButton:
-                                details.ReferralReasonLevel3 ||
-                                    (details.ReferralReasonLevel3 !== null &&
-                                        details.ReferralReasonLevel3 !== "" &&
-                                        details.ReferralReasonLevel3 !== undefined)
+                                details?.ReferralReasonLevel3 ||
+                                    (details?.ReferralReasonLevel3 !== null &&
+                                        details?.ReferralReasonLevel3 !== "" &&
+                                        details?.ReferralReasonLevel3 !== undefined)
                                     ? false
                                     : true,
                             titlelinespace:
@@ -147,10 +154,10 @@ function RfELinkedPopupDetails(props) {
                                     ""
                                 ) === reasonOtherValue
                                     ? 0
-                                    : details.ReferralReasonLevel2 ||
-                                        (details.ReferralReasonLevel2 !== null &&
-                                            details.ReferralReasonLevel2 !== "" &&
-                                            details.ReferralReasonLevel2 !== undefined)
+                                    : details?.ReferralReasonLevel2 ||
+                                        (details?.ReferralReasonLevel2 !== null &&
+                                            details?.ReferralReasonLevel2 !== "" &&
+                                            details?.ReferralReasonLevel2 !== undefined)
                                         ? 3
                                         : 0,
                         };
@@ -168,10 +175,10 @@ function RfELinkedPopupDetails(props) {
                                     ""
                                 ) === reasonOtherValue
                                     ? 0
-                                    : details.ReferralReasonLevel3 ||
-                                        (details.ReferralReasonLevel3 !== null &&
-                                            details.ReferralReasonLevel3 !== "" &&
-                                            details.ReferralReasonLevel3 !== undefined)
+                                    : details?.ReferralReasonLevel3 ||
+                                        (details?.ReferralReasonLevel3 !== null &&
+                                            details?.ReferralReasonLevel3 !== "" &&
+                                            details?.ReferralReasonLevel3 !== undefined)
                                         ? 3
                                         : 0,
                         };
@@ -179,14 +186,14 @@ function RfELinkedPopupDetails(props) {
                     if (item.fieldName === "SUBLOBID") {
                         tempobj = {
                             ...tempobj,
-                            colspan: details.SUBLOBID ? 3 : 0,
+                            colspan: details?.SUBLOBID ? 3 : 0,
                         };
                     }
                     if (item.fieldName === "AccountNumber") {
                         tempobj = {
                             ...tempobj,
                             colspan:
-                                details.AccountNumber || accountNumberShow ? 3 : 0,
+                                details?.AccountNumber || accountNumberShow ? 3 : 0,
                         };
                     }
                     if (item.fieldName === "CustomerSegment") {
@@ -517,11 +524,29 @@ function RfELinkedPopupDetails(props) {
 
     return (
         <Popup {...props}>
-            <div className="popup-box versionhistory" style={{width: '1090px'}}>
+            <div className="popup-box versionhistory" style={{ width: '1090px' }}>
                 <div className="popup-header-container">
                     <div className="popup-header-title">Reference RfE:- {`${referenceRfEId}`}</div>
-                    <div className="popup-close" onClick={() => hidePopup()}>
-                        X
+                    <div className="header-btn-container">
+                        {showReferenceBtn &&
+                            (
+                                <div
+                                    className="addedit-close btn-blue"
+                                    style={{ marginRight: "10px" }}
+                                    onClick={() => handleCopyValue()}
+                                >
+                                    Copy Details
+                                    {/* {
+                                        AppLocale[
+                                            selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                                        ].messages["button.referenceLog"]
+                                    } */}
+                                </div>
+                            )
+                        }
+                        <div className="popup-close" style={{marginTop: '5%'}} onClick={() => hidePopup()}>
+                            X
+                        </div>
                     </div>
                 </div>
                 <div className="popup-content">
@@ -575,7 +600,7 @@ function RfELinkedPopupDetails(props) {
                                                     isRequired={false}
                                                     isReadMode={true}
                                                     isdisabled={true}
-                                                // downloadfile={downloadfile}
+                                                    downloadfile={() => { console.log("you can't dowanload file") }}
                                                 />
                                             </div>
                                         </div>

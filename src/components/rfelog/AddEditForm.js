@@ -92,6 +92,7 @@ function AddEditForm(props) {
     handleDataVersion,
     sellogTabType,
     linkedLogLogs,
+    referenceLog,
     getById,
     setInAddMode
   } = props;
@@ -2676,7 +2677,10 @@ function AddEditForm(props) {
   // Linked RfEs 
   const [selctedTab, setSelectedTab] = useState('rfelog')
   const [showLinkedPopup, setShowLinkedPopup] = useState(false);
+  const [showReferenceBtn, setShowReferenceBtn] = useState(false);
+  const [referenceRfEId, setReferenceRfEId] = useState("");
   const [linkedPopupDetails, setLinkedPopupDetails] = useState({})
+  const [specificDetails, setSpecificDetails] = useState('')
   const [logTypes, setlogTypes] = useState([
     {
       label: "RfE Log",
@@ -2688,6 +2692,7 @@ function AddEditForm(props) {
     }
   ]);
   const [paginationdata, setpaginationdata] = useState([]);
+  const [resonForReference, setResonForReference] = useState([])
   const [selSortFiled, setselSortFiled] = useState({
     name: "ModifiedDate",
     order: "desc",
@@ -2787,7 +2792,6 @@ function AddEditForm(props) {
     },
   ];
   const handleViewLinkedRfE = async(id) => {
-    console.log(id);
     let response = await getById({
       rfeLogId: id,
     });
@@ -2828,22 +2832,54 @@ function AddEditForm(props) {
   }
 
   useEffect(()=>{
-    if (!isEditMode && !isReadMode && formfield.AccountName && formfield.CountryList && formfield.LOBId) {
-      console.log(formfield.AccountName, formfield.CountryList, formfield.LOBId);
+    if (!isEditMode && !isReadMode && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
         const delayDebounceFn = setTimeout(() => {
-          console.log(formfield.AccountName)
-          // Send Axios request here
+          // handleReferenceRfE()
         }, 2000)
   
         return () => clearTimeout(delayDebounceFn)
     }
   },[formfield.AccountName, formfield.CountryList, formfield.LOBId])
 
-  const handleShowbutton = () => {
+  const handleReferenceRfE = async() =>{
+    let selectedCountryItems = formfield?.CountryList?.map(
+      (item) => item.value
+    );
+    let reqParam = {
+      AccountName: formfield.AccountName,
+      LOBId: formfield.LOBId,
+      CountryId: selectedCountryItems?.join(",") 
+    } 
+  
+    let response = await referenceLog(reqParam)
+    if (response.length !== 0) {
+      setReferenceRfEId(response[0].rfeLogId)
+      let temprfeempourment = await getLookupByType({
+        LookupType: "RFEEmpowermentReasonRequest",
+        IncountryFlag: response[0].incountryFlag,
+      });
+      let tempopts = [];
+      temprfeempourment.forEach((item) => {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+      });
+      if (response[0].incountryFlag !== IncountryFlagConst.GERMANY) {
+        tempopts.sort(dynamicSort("label"));
+      }
+      temprfeempourment = [...tempopts];
+      setResonForReference(temprfeempourment)
 
+      handleShowReferencebutton();
+    }
   }
 
-  const handleCopyValue = () => {
+  const handleShowReferencebutton = () => {
+    setShowReferenceBtn(!showReferenceBtn)
+  }
+
+  const handleCopyValueflow1 = () => {
     const referenceRfEData = {
       LinkedRFEEntryNumber: formIntialState.EntryNumber,
       EntryNumber: '',
@@ -2898,7 +2934,48 @@ function AddEditForm(props) {
       ReferralReasonLevel2: null,
       ReferralReasonLevel3: null
     }
+    setSpecificDetails(formIntialState.RFELogDetails)
     setInAddMode(referenceRfEData);
+  }
+
+  const handleCopyValueflow2 = () =>{
+    // const referenceRfEData = {
+    //   ...linkedPopupDetails,
+    //   EntryNumber: '',
+    //   LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
+    //   RFELogEmailLink: window.location.origin + '/rfelogs',
+    //   RFEAttachmentList: [],
+    //   IsSubmit: false,
+    // }
+    // delete referenceRfEData?.CreatedById
+    // delete referenceRfEData?.CreatedDate
+    // delete referenceRfEData?.ModifiedById
+    // delete referenceRfEData?.ModifiedDate
+    // delete referenceRfEData?.RFELogId
+    // setSpecificDetails(linkedPopupDetails.RFELogDetails)
+    setformfield({
+      ...linkedPopupDetails,
+      EntryNumber: '',
+      LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
+      RFELogEmailLink: window.location.origin + '/rfelogs',
+      RFEAttachmentList: [],
+      IsSubmit: false,
+    });
+    // setInAddMode(referenceRfEData);
+    assignPeoplepikerUser("UnderwriterGrantingEmpowerment", linkedPopupDetails.UnderwriterGrantingEmpowermentAD ,"approver")
+    // if () {
+      
+    // }
+    // assignPeoplepikerUser("UnderwriterGrantingEmpowerment", linkedPopupDetails.UnderwriterGrantingEmpowermentAD ,"approver")
+    setShowLinkedPopup(false);
+    // setUpdateData(true)
+  }
+
+  const handleCopySpecificDetail = () => {
+    setformfield({
+      ...formfield,
+      RFELogDetails: specificDetails
+    });
   }
 
   const handleCloseLinkedPopup = () => {
@@ -3341,6 +3418,8 @@ function AddEditForm(props) {
                 }
                 isToolTip={obj.tooltipmsg ? true : false}
                 tooltipmsg={eval(obj.tooltipmsg)}
+                isRfEBtn={obj.name === "RFELogDetails" && specificDetails !== "" ? true : false}
+                handleRfEBtnClick={handleCopySpecificDetail}
               />
 
               {obj.name === "RFELogDetails" && policyTermIds.length ? (
@@ -3498,6 +3577,21 @@ function AddEditForm(props) {
           }
         </div>
         <div className="header-btn-container">
+          {handlePermission("rfelogs", "isAdd") &&
+            !isEditMode &&
+            isReadMode && (
+            <div
+              className="btn-blue plus-icon"
+              onClick={() => handleCopyValueflow1()}
+              style={{ marginRight: "10px" }}
+            >
+              {
+                AppLocale[
+                  selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                ].messages["button.add"]
+              }
+            </div>
+          )}
           {formfield?.IsSubmit && (
             <div
               className="btn-blue"
@@ -3513,21 +3607,6 @@ function AddEditForm(props) {
               }
             </div>
           )}
-          {handlePermission("rfelogs", "isAdd") &&
-            !isEditMode &&
-            isReadMode && (
-              <div
-                className="btn-blue"
-                onClick={() => handleCopyValue()}
-                style={{ marginRight: "10px" }}
-              >
-                {
-                  AppLocale[
-                    selectedlanguage?.value ? selectedlanguage.value : "EN001"
-                  ].messages["button.add"]
-                }
-              </div>
-            )}
           {handlePermission("rfelogs", "isEdit") &&
             !isEditMode &&
             isReadMode &&
@@ -3544,6 +3623,21 @@ function AddEditForm(props) {
                 }
               </div>
             )}
+          {showReferenceBtn &&
+            (
+              <div
+                className="addedit-close btn-blue"
+                style={{ marginRight: "10px" }}
+                onClick={() => handleViewLinkedRfE(referenceRfEId)}
+              >
+                {
+                  AppLocale[
+                    selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                  ].messages["button.referenceLog"]
+                }
+            </div>
+            )
+          }
           <div
             className="addedit-close btn-blue"
             style={{ marginRight: "10px" }}
@@ -4375,8 +4469,8 @@ function AddEditForm(props) {
           selectedlanguage={selectedlanguage}
           IncountryFlag={IncountryFlag}
           IncountryFlagConst={IncountryFlagConst}
-          frmrfeempourmentgermany={frmrfeempourmentgermany}
-          frmrfeempourment={frmrfeempourment}
+          frmrfeempourmentgermany={resonForReference}
+          frmrfeempourment={resonForReference}
           reasonOtherValue={reasonOtherValue}
           frmSublob={frmSublob}
           OrganizationalAlignment={OrganizationalAlignment}
@@ -4389,6 +4483,12 @@ function AddEditForm(props) {
           frmDurationOpts={frmDurationOpts}
           rfelog_status={rfelog_status}
           frmBranchOpts={frmBranchOpts}
+          handleCopyValue={handleCopyValueflow2}
+          showReferenceBtn={showReferenceBtn}
+          referralReasonLevel2Option={resonForReference}
+          referralReasonLevel3Option={resonForReference}
+          frmSegmentOpts={frmSegmentOpts}
+          inCountryOptsLATAM={inCountryOptsLATAM}
         />
       ) : (
         ""
@@ -4483,6 +4583,7 @@ const mapActions = {
   getPolicyTermId: rfelogActions.getPolicyTermId,
   getLanguageDetails: commonActions.getLanguageDetails,
   linkedLogLogs: rfelogActions.linkedLogLogs,
+  referenceLog: rfelogActions.referenceLog,
   getById: rfelogActions.getById,
 };
 export default connect(mapStateToProp, mapActions)(AddEditForm);

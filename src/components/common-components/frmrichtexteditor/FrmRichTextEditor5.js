@@ -42,6 +42,8 @@ function FrmRichTextEditor5(props) {
     isdisabled,
     isToolTip,
     tooltipmsg,
+    isRfEBtn,
+    handleRfEBtnClick
   } = props;
   /*
 
@@ -92,7 +94,7 @@ function FrmRichTextEditor5(props) {
         !isReadMode && isdisabled ? "disabled" : ""
       }`}
     >
-      <label htmlFor={name}>
+      <label htmlFor={name} className={`${isRfEBtn ? 'ref-btn' : ''}`}>
       <div
             className={`label ${
               isToolTip && "hastooltip"
@@ -106,6 +108,17 @@ function FrmRichTextEditor5(props) {
           ) : (
             ""
           )}
+      {isRfEBtn ? (
+          <div
+            className="btn-blue"
+            style={{ marginLeft: "10px" }}
+            onClick={() => handleRfEBtnClick()}
+          >
+            Reference Details
+          </div>
+        ) : (
+          ""
+        )}
       </label>
       {isReadMode ? (
         <div

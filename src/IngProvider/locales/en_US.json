@@ -8,8 +8,9 @@
   "title.suggestedapprover": "List of recommended Global approvers",
   "title.searchuser": "Search User",
 
-  "button.add": "Add",
+  "button.add": "New RfE",
   "button.edit": "Edit",
+  "button.referenceLog": "Reference RfE's",
   "button.versionhistory": "Version History",
   "button.back": "Back",
   "button.submit": "Submit",

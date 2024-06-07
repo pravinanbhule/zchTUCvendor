@@ -8,8 +8,9 @@
   "title.suggestedapprover": "Liste der empfohlenen Global Approver / Genehmiger",
   "title.searchuser": "Benutzer suchen",
 
-  "button.add": "Hinzufügen",
+  "button.add": "Neues RfE",
   "button.edit": "Bearbeiten",
+  "button.referenceLog": "Reference RfE's",
   "button.versionhistory": "Version",
   "button.back": "Zurück",
   "button.submit": "Einreichen/Abschicken",
