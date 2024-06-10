@@ -2692,6 +2692,7 @@ function AddEditForm(props) {
     }
   ]);
   const [paginationdata, setpaginationdata] = useState([]);
+  // const [isLodaing, setIsLoading] = useState(false);
   const [resonForReference, setResonForReference] = useState([])
   const [selSortFiled, setselSortFiled] = useState({
     name: "ModifiedDate",
@@ -2704,8 +2705,10 @@ function AddEditForm(props) {
   
   useEffect(async()=>{
     if (isReadMode) {
+      // setIsLoading(true)
       let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId })
       setpaginationdata(response)
+      // setIsLoading(false)
     }
   },[])
 
@@ -4489,6 +4492,7 @@ function AddEditForm(props) {
           referralReasonLevel3Option={resonForReference}
           frmSegmentOpts={frmSegmentOpts}
           inCountryOptsLATAM={inCountryOptsLATAM}
+          frmCurrencyOpts={frmCurrencyOpts}
         />
       ) : (
         ""

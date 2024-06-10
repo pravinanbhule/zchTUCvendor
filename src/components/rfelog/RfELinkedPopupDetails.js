@@ -46,7 +46,8 @@ function RfELinkedPopupDetails(props) {
         referralReasonLevel2Option,
         referralReasonLevel3Option,
         frmSegmentOpts,
-        inCountryOptsLATAM
+        inCountryOptsLATAM,
+        frmCurrencyOpts
     } = props;
 
     const [fieldDetails, setFieldDetails] = useState([])
