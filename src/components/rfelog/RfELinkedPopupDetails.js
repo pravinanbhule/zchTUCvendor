@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 function RfELinkedPopupDetails(props) {
     const {
         hidePopup,
-        referenceRfEId,
         details,
         countryopts,
         frmLoB,
@@ -60,8 +59,8 @@ function RfELinkedPopupDetails(props) {
     })
 
     useEffect(() => {
-        setformfield(details)
-        fnloadcountryview()
+        setformfield(details);
+        fnloadcountryview();
     }, [])
 
     const fnloadcountryview = async () => {
@@ -527,7 +526,11 @@ function RfELinkedPopupDetails(props) {
         <Popup {...props}>
             <div className="popup-box versionhistory" style={{ width: '1090px' }}>
                 <div className="popup-header-container">
-                    <div className="popup-header-title">Reference RfE:- {`${referenceRfEId}`}</div>
+                    {showReferenceBtn ? (
+                        <div className="popup-header-title">Reference RfE:- {`${details.EntryNumber}`}</div>
+                    ) : (
+                        <div className="popup-header-title">Entry Number:- {`${details.EntryNumber}`}</div>
+                    )}
                     <div className="header-btn-container">
                         {showReferenceBtn &&
                             (
@@ -545,7 +548,7 @@ function RfELinkedPopupDetails(props) {
                                 </div>
                             )
                         }
-                        <div className="popup-close" style={{marginTop: '5%'}} onClick={() => hidePopup()}>
+                        <div className="popup-close" style={{ marginTop: '5%' }} onClick={() => hidePopup()}>
                             X
                         </div>
                     </div>

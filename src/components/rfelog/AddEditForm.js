@@ -47,6 +47,7 @@ import Rfelocallog from "./Rfelocallog";
 import { handlePermission } from "../../permissions/Permission";
 import Pagination from "../common-components/pagination/Pagination";
 import RfELinkedPopupDetails from "./RfELinkedPopupDetails";
+import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 
 function AddEditForm(props) {
   const {
@@ -121,6 +122,7 @@ function AddEditForm(props) {
   const [frmrfeempourmentuk, setfrmrfeempourmentuk] = useState([]);
   const [frmrfeempourmentglobal, setfrmrfeempourmentglobal] = useState([]);
   const [frmstatus, setfrmstatus] = useState([]);
+  const [popupFrmStatus, setPopupFrmStatus] = useState([]);
   const [tooltip, settooltip] = useState({});
 
   const [frmSegmentOpts, setfrmSegmentOpts] = useState([]);
@@ -594,6 +596,7 @@ function AddEditForm(props) {
       }
     });
     temNewRenewal = [...tempopts];
+    let popupstatus = [];
     let frmstatus = [];
     tempstatus.forEach((item) => {
       let isshow = false;
@@ -659,6 +662,10 @@ function AddEditForm(props) {
           value: item.lookupID,
         });
       }
+      popupstatus.push({
+        label: item.lookUpValue,
+        value: item.lookupID,
+      })
     });
 
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
@@ -668,6 +675,7 @@ function AddEditForm(props) {
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
     //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
+    setPopupFrmStatus([...popupstatus])
 
     setinCountryOptsLATAM((prevstate) => ({
       ...prevstate,
@@ -2678,8 +2686,11 @@ function AddEditForm(props) {
   const [selctedTab, setSelectedTab] = useState('rfelog')
   const [showLinkedPopup, setShowLinkedPopup] = useState(false);
   const [showReferenceBtn, setShowReferenceBtn] = useState(false);
+  const [showConfirmationMsg, setShowConfirmationMsg] = useState(false)
+  const [isConfirmedCreate, setIsConfirmedCreate] = useState(false)
   const [referenceRfEId, setReferenceRfEId] = useState("");
   const [linkedPopupDetails, setLinkedPopupDetails] = useState({})
+  const [entryNumberRfE, setEntryNumberRfE] = useState('')
   const [specificDetails, setSpecificDetails] = useState('')
   const [logTypes, setlogTypes] = useState([
     {
@@ -2830,6 +2841,7 @@ function AddEditForm(props) {
       }));
       response["CountryList"] = [...countryList];
       setLinkedPopupDetails(response);
+      setEntryNumberRfE(response.EntryNumber)
       setShowLinkedPopup(true);
     }
   }
@@ -2837,7 +2849,7 @@ function AddEditForm(props) {
   useEffect(()=>{
     if (!isEditMode && !isReadMode && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
         const delayDebounceFn = setTimeout(() => {
-          // handleReferenceRfE()
+          handleReferenceRfE();
         }, 2000)
   
         return () => clearTimeout(delayDebounceFn)
@@ -2873,13 +2885,12 @@ function AddEditForm(props) {
       }
       temprfeempourment = [...tempopts];
       setResonForReference(temprfeempourment)
-
       handleShowReferencebutton();
     }
   }
 
   const handleShowReferencebutton = () => {
-    setShowReferenceBtn(!showReferenceBtn)
+    setShowReferenceBtn(true)
   }
 
   const handleCopyValueflow1 = () => {
@@ -2942,36 +2953,19 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow2 = () =>{
-    // const referenceRfEData = {
-    //   ...linkedPopupDetails,
-    //   EntryNumber: '',
-    //   LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
-    //   RFELogEmailLink: window.location.origin + '/rfelogs',
-    //   RFEAttachmentList: [],
-    //   IsSubmit: false,
-    // }
-    // delete referenceRfEData?.CreatedById
-    // delete referenceRfEData?.CreatedDate
-    // delete referenceRfEData?.ModifiedById
-    // delete referenceRfEData?.ModifiedDate
-    // delete referenceRfEData?.RFELogId
-    // setSpecificDetails(linkedPopupDetails.RFELogDetails)
-    setformfield({
-      ...linkedPopupDetails,
-      EntryNumber: '',
-      LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
-      RFELogEmailLink: window.location.origin + '/rfelogs',
-      RFEAttachmentList: [],
-      IsSubmit: false,
-    });
-    // setInAddMode(referenceRfEData);
     assignPeoplepikerUser("UnderwriterGrantingEmpowerment", linkedPopupDetails.UnderwriterGrantingEmpowermentAD ,"approver")
-    // if () {
-      
-    // }
-    // assignPeoplepikerUser("UnderwriterGrantingEmpowerment", linkedPopupDetails.UnderwriterGrantingEmpowermentAD ,"approver")
+    setTimeout(() => {
+      setformfield({
+        ...linkedPopupDetails,
+        EntryNumber: '',
+        RequestForEmpowermentStatus: formfield.RequestForEmpowermentStatus,
+        LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
+        RFELogEmailLink: window.location.origin + '/rfelogs',
+        RFEAttachmentList: [],
+        IsSubmit: false,
+      });
+    }, 2000);
     setShowLinkedPopup(false);
-    // setUpdateData(true)
   }
 
   const handleCopySpecificDetail = () => {
@@ -3051,25 +3045,59 @@ function AddEditForm(props) {
             IsSubmit: true,
             IncountryFlag: IncountryFlag,
           });
+          setisfrmdisabled(true);
         } else {
-          postItem({
-            ...formfield,
-            IsSubmit: true,
-            IncountryFlag: IncountryFlag,
-          });
+          handleCheckPostRfE();
         }
-        setisfrmdisabled(true);
       } else {
         alert(alertMessage.rfelog.invalidapprovermsg);
       }
     }
   };
+
+  const handleConfirmed = (value) =>{
+    if (value === 'no') {
+      setShowConfirmationMsg(false)
+      postItem({
+        ...formfield,
+        IsSubmit: true,
+        IncountryFlag: IncountryFlag,
+      });
+      setisfrmdisabled(true);
+    } else if (value === 'yes') {
+      setShowConfirmationMsg(false)
+      postItem({
+        ...formfield,
+        LinkedRFEEntryNumber: entryNumberRfE,
+        IsSubmit: true,
+        IncountryFlag: IncountryFlag,
+      });
+      setisfrmdisabled(true);
+    }
+  }
+
+  const handleCheckPostRfE = () => {
+    if (showReferenceBtn && (formfield?.LinkedRFEEntryNumber === undefined || formfield?.LinkedRFEEntryNumber === "")) {
+      setShowConfirmationMsg(true)
+    } else {
+      postItem({
+        ...formfield,
+        IsSubmit: true,
+        IncountryFlag: IncountryFlag,
+      });
+      setisfrmdisabled(true);
+    }
+  }
+
   const handleSaveLog = () => {
     if (isfrmdisabled) {
       return;
     }
     let selectedCountryItems = formfield.CountryList.map((item) => item.value);
     formfield.CountryId = selectedCountryItems.join(",");
+    // if (formfield?.LinkedRFEEntryNumber) {
+    //   delete formfield?.LinkedRFEEntryNumber
+    // }
     if (formfield.AccountName) {
       //setissubmitted(true);
       postItem({ ...formfield, IsSubmit: false, IncountryFlag: IncountryFlag });
@@ -3581,6 +3609,7 @@ function AddEditForm(props) {
         </div>
         <div className="header-btn-container">
           {handlePermission("rfelogs", "isAdd") &&
+            formIntialState.RequestForEmpowermentStatus !== rfelog_status.Withdrawn &&
             !isEditMode &&
             isReadMode && (
             <div
@@ -3597,7 +3626,7 @@ function AddEditForm(props) {
           )}
           {formfield?.IsSubmit && (
             <div
-              className="btn-blue"
+              className={`btn-blue ${selctedTab === 'rfelog' ? '' : 'disable'}`}
               onClick={() =>
                 handleDataVersion(formfield?.RFELogId, formfield?.IsSubmit)
               }
@@ -3615,7 +3644,7 @@ function AddEditForm(props) {
             isReadMode &&
             (!userroles.iscc || userroles.isadmin) && (
               <div
-                className="btn-blue"
+                className={`btn-blue ${selctedTab === 'rfelog' ? '' : 'disable'}`}
                 onClick={() => setInEditMode()}
                 style={{ marginRight: "10px" }}
               >
@@ -3730,7 +3759,7 @@ function AddEditForm(props) {
                     {isNotEmptyValue(formfield?.LinkedRFEEntryNumber) ? (
                       <div
                         className="col-md-12"
-                        style={{ marginBottom: "15px", fontSize: "16px" }}
+                        style={{ marginBottom: "15px", fontSize: "14px" }}
                       >
                         <label>
                           {
@@ -4462,10 +4491,18 @@ function AddEditForm(props) {
         ""
       )}
 
+      {showConfirmationMsg &&
+        <ConfirmPopup
+          title={"Are You Sure?"}
+          hidePopup={() => handleConfirmed('no')}
+          showPage={() => handleConfirmed('yes')}
+          itemDetails={`You are creating an RfE log without linking it to another RfE log. Please select 'Yes' to link it with another RfE log`}
+        />
+      }
+
       {showLinkedPopup ? (
         <RfELinkedPopupDetails
           hidePopup={handleCloseLinkedPopup}
-          referenceRfEId={'RFE_68005778'}
           details={linkedPopupDetails}
           countryopts={countryopts}
           frmLoB={frmLoB}
@@ -4481,7 +4518,7 @@ function AddEditForm(props) {
           frmAccountOpts={frmAccountOpts}
           frmorgnizationalalignment={frmorgnizationalalignment}
           frmrfechz={frmrfechz}
-          frmstatus={frmstatus}
+          frmstatus={popupFrmStatus}
           frmConditionOpts={frmConditionOpts}
           frmDurationOpts={frmDurationOpts}
           rfelog_status={rfelog_status}
