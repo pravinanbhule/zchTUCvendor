@@ -312,6 +312,12 @@ function CreateRfelogForm(props) {
         setisEditMode(true);
         setisReadMode(false);
     };
+    
+    const setInAddMode = (data) => {
+        setformIntialState(data)
+        setisEditMode(false);
+        setisReadMode(false);
+    }
 
 
     const handleEdit = async (e, hasqueryparam) => {
@@ -389,6 +395,7 @@ function CreateRfelogForm(props) {
                     handleDataVersion={handleDataVersion}
                     isDraft={isDraft}
                     sellogTabType={selLogType}
+                    setInAddMode={setInAddMode}
                 ></AddEditForm>
             }
             {showVersionHistory ? (

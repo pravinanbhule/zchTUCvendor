@@ -23,6 +23,7 @@ import { branchReducer as branchState } from "./branch.reducer";
 import { currencyReducer as currencyState } from "./currency.reducer";
 import { tokenReducer as tokenState } from "./token.reducer";
 import { coReducer as coState } from "./co.reducer";
+import { notificationsReducer as notificationsState } from "./notifications.reducer";
 const rootReducer = combineReducers({
   appmenu,
   userprofileState,
@@ -47,6 +48,7 @@ const rootReducer = combineReducers({
   branchState,
   currencyState,
   tokenState,
-  coState
+  coState,
+  notificationsState
 });
 export default rootReducer;

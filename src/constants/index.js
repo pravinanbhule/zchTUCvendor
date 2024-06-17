@@ -23,3 +23,4 @@ export * from "./branch.constants";
 export * from "./currency.constants";
 export * from "./token.constants";
 export * from "./co.constants";
+export * from "./notifications.constants";
