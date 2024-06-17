@@ -1665,7 +1665,6 @@ function AddEditForm(props) {
           : (item.name = item.name)
       );
     } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
-      console.log("come here");
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel4: true,
@@ -1859,7 +1858,6 @@ function AddEditForm(props) {
     }
   };
   const handleReasonOptions3 = (name, value) => {
-    console.log("called called called");
     const Options = IncountryFlag === IncountryFlagConst.GERMANY ? 
                       frmrfeempourmentgermany :
                       IncountryFlag === IncountryFlagConst.UK ?
@@ -1912,10 +1910,6 @@ function AddEditForm(props) {
       setReferralReasonLevel5Option([selectInitiVal, ...ReasonOption3]);
     }
   };
-
-  useEffect(()=>{
-    console.log("referralReasonLevel4Option>>>", referralReasonLevel4Option);
-  },[referralReasonLevel4Option])
 
   const handleReasonOptions4 = (name, value) => {
     const Options = IncountryFlag === IncountryFlagConst.GERMANY ? 
@@ -2025,11 +2019,6 @@ function AddEditForm(props) {
     }
   };
 
-  // const handleReasonOptionsData = (name, value, fieldName, label) => {
-  //   console.log(name, value, fieldName, label);
-
-  // }
-
   const handleSelectChange = (name, value, fieldName, label) => {
     let SelectedLabel = "";
     if (
@@ -2049,7 +2038,6 @@ function AddEditForm(props) {
       handleReasonOptions3(name, value);
     }
     if (name === "ReferralReasonLevel4") {
-      console.log(name, value);
       handleReasonOptions4(name, value);
     }
     if (name === "ReferralReasonLevel5") {
