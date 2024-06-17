@@ -304,7 +304,7 @@ export const formfieldsmapping = {
   },
   ReferralReasonLevel4: {
     componenttype: "FrmSelect",
-    options: "referralReasonLevel3Option",
+    options: "referralReasonLevel4Option",
     eventhandler: "handleSelectChange",
     titlelinespace: true,
     colspan: 0,
@@ -313,7 +313,7 @@ export const formfieldsmapping = {
   },
   ReferralReasonLevel5: {
     componenttype: "FrmSelect",
-    options: "referralReasonLevel3Option",
+    options: "referralReasonLevel5Option",
     eventhandler: "handleSelectChange",
     titlelinespace: true,
     colspan: 0,
