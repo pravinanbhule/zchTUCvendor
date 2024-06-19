@@ -56,6 +56,7 @@ import DeleteItem from "../common-components/deleteItem/DeleteItem";
 import CopyItem from "../common-components/copyitem/CopyItem";
 import { useHistory } from "react-router-dom";
 import { handlePermission } from "../../permissions/Permission";
+import FrmToggleSwitch from "../common-components/frmtoggelswitch/FrmToggleSwitch";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -208,6 +209,8 @@ function Rfelog({ ...props }) {
     Incountry: [],
   });
   const [filterfieldslist, setfilterfieldslist] = useState();
+  const [nolonger, setnolonger] = useState(false);
+  const [withOutWithdrawn, setWithOutWithdrawn] = useState('');
 
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
@@ -800,6 +803,12 @@ function Rfelog({ ...props }) {
         sortExp: selSortFiled.name + " " + selSortFiled.order,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        RequestForEmpowermentStatus: withOutWithdrawn,
+      }
+    }
     try {
       const dbvalues = await Promise.all([
         sellogTabType === "delete"
@@ -1367,14 +1376,20 @@ function Rfelog({ ...props }) {
     let tempCondition = lookupvalues[6];
 
     let tempopts = [];
+    let statusWithdrawn = [];
     tempStatus.forEach((item) => {
       if (item.isActive) {
+        if (item.lookUpName !== 'Withdrawn') {
+          statusWithdrawn.push(item.lookupID)
+        }
         tempopts.push({
           label: item.lookUpValue,
           value: item.lookupID,
         });
       }
     });
+    statusWithdrawn = statusWithdrawn.toString();
+    setWithOutWithdrawn(statusWithdrawn)
     tempStatus = [...tempopts];
     tempopts = [];
 
@@ -1520,6 +1535,14 @@ function Rfelog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  useEffect(()=>{
+    if (nolonger === true) {
+      loadAPIData();
+    } else {
+      loadAPIData();
+    }
+  },[nolonger])
 
   const handleUserIncountryFlag = async() => {
     let IncountryFlag = '';
@@ -2298,6 +2321,12 @@ function Rfelog({ ...props }) {
         ...tempFilterOpts,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        RequestForEmpowermentStatus: withOutWithdrawn,
+      }
+    }
     try {
       alert(alertMessage.commonmsg.reportDownlaod);
       const responseblob = await exportReportLogs(reqParam);
@@ -2790,6 +2819,26 @@ function Rfelog({ ...props }) {
                 </div>
               </div>
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div style={{
+                top: '12px', paddingLeft: "20px", 
+                paddingRight: '20px', display: 'flex', 
+                justifyContent: 'space-between', position:"absolute", 
+                right: '0', zIndex: '-1'}}>
+                <div className="frm-filter">
+                </div>
+                <div className="frm-filter toggle-btn-header">
+                    <FrmToggleSwitch
+                      title={"Hide Withdrawn"}
+                      name={"withdrawn"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                      />
+                </div>
+              </div>
+            }
           </div>
           {/*!alllogsloaded && (
             <div className="progress-bar-container">
@@ -2799,7 +2848,6 @@ function Rfelog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )*/}
-
           <div className="tabs-container">
             {logTypes.map((item) => (
               <div

@@ -307,6 +307,9 @@ function Breachlog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
+  const [nolonger, setnolonger] = useState(false);
+  const [withoutClosed, setWithOutClosed] = useState('');
+
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
     setselfilter({
@@ -1412,6 +1415,12 @@ function Breachlog({ ...props }) {
         sortExp: selSortFiled.name + " " + selSortFiled.order,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        breachStatus: withoutClosed,
+      }
+    }
     try {
       /*let tempItems;
       if (sellogTabType === "delete") {
@@ -1437,7 +1446,6 @@ function Breachlog({ ...props }) {
   };
 
   const loadAPIData = () => {
-    console.log("come");
     setlogstate({
       ...logstate,
       loading: true,
@@ -1630,10 +1638,21 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
-    tempStatus = tempStatus.map((item) => ({
-      label: item.lookUpValue,
-      value: item.lookupID,
-    }));
+    let tempopts = [];
+    let noClosed = [];
+    tempStatus.forEach((item) => {
+      if (item.lookUpName !== 'Closed') {
+        noClosed.push(item.lookupID)
+      }
+      tempopts.push({
+        label: item.lookUpValue,
+        value: item.lookupID,
+      })
+    });
+    noClosed = noClosed.toString();
+    setWithOutClosed(noClosed)
+    tempStatus = [...tempopts];
+    tempopts = [];
     tempTypeOfBreach = tempTypeOfBreach.map((item) => ({
       label: item.lookUpValue,
       value: item.lookupID,
@@ -1650,7 +1669,6 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
-
     //tempClassification.sort(dynamicSort("label"));
     tempNatureOfBreach.sort(dynamicSort("label"));
     tempStatus.sort(dynamicSort("label"));
@@ -1678,6 +1696,14 @@ function Breachlog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  useEffect(()=>{
+    if (nolonger === true) {
+      loadAPIData();
+    } else {
+      loadAPIData();
+    }
+  },[nolonger])
 
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([]);
@@ -2820,6 +2846,12 @@ function Breachlog({ ...props }) {
         ...tempFilterOpts,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        breachStatus: withoutClosed,
+      }
+    }
     try {
       alert(alertMessage.commonmsg.reportDownlaod);
       const responseblob = await exportReportLogs(reqParam);
@@ -3382,6 +3414,26 @@ function Breachlog({ ...props }) {
                 </div>
               </div>
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div style={{
+                top: '12px', paddingLeft: "20px", 
+                paddingRight: '20px', display: 'flex', 
+                justifyContent: 'space-between', position:"absolute", 
+                right: '0', zIndex: '-1'}}>
+                <div className="frm-filter">
+                </div>
+                <div className="frm-filter toggle-btn-header">
+                    <FrmToggleSwitch
+                      title={"Hide Closed"}
+                      name={"closed"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    />
+                </div>
+              </div>
+            }
           </div>
           {/*<div
             className="btn-blue"
