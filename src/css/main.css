@@ -1206,8 +1206,8 @@ button:not(:last-child) {
 @media screen and (max-width: 768px) {
   .container-fluid {
     width: 100%;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding-right: 0px !important;
+    padding-left: 0px !important;
     margin-right: auto;
     margin-left: auto;
   }
