@@ -7,18 +7,32 @@ function Header({ ...props }) {
 
   useEffect(() => {
     window
-    .matchMedia("(min-width: 769px)")
-    .addEventListener('change', e => setIsDesktop( e.matches ));
+      .matchMedia("(min-width: 769px)")
+      .addEventListener('change', e => setIsDesktop(e.matches));
   }, []);
 
   return (
-    <div className="header-container">
-      <div className="site-logo"></div>
-      {isDesktop && (
-        <div className="header-title">Technical Underwriting Connect (TUC)</div>
-      )}
-      <LoggedInUser />
-    </div>
+    <>
+      {isDesktop ? (
+        <div className="header-container">
+          <div className="site-logo"></div>
+          <div className="header-title">Technical Underwriting Connect (TUC)</div>
+          <LoggedInUser />
+        </div>
+      ) :
+        (
+          <>
+            <div className="header-container">
+              <div style={{display: 'flex', width: '100%'}}>
+                <div className="site-logo"></div>
+                <LoggedInUser />
+              </div>
+              <div className="header-title">Technical Underwriting Connect (TUC)</div>
+            </div>
+          </>
+        )
+      }
+    </>
   );
 }
 

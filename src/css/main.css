@@ -1204,6 +1204,20 @@ button:not(:last-child) {
 }
 
 @media screen and (max-width: 768px) {
+  .header-container {
+    display: flex;
+    height: 80px;
+    border-bottom: 1px solid #edeef0;
+    background-color: #fff;
+    flex-direction: column;
+    justify-content: space-around;
+}
+  .header-title {
+    width: 56%;
+    font-size: 14px;
+    font-weight: 100;
+    color: #243e6f;
+  }
   .container-fluid {
     width: 100%;
     padding-right: 0px !important;
