@@ -1213,9 +1213,9 @@ button:not(:last-child) {
     justify-content: space-around;
 }
   .header-title {
-    width: 56%;
+    width: 60%;
     font-size: 14px;
-    font-weight: 100;
+    font-weight: 600;
     color: #243e6f;
   }
   .container-fluid {
