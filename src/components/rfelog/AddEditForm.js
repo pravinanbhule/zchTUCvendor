@@ -2962,6 +2962,7 @@ function AddEditForm(props) {
         LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
         RFELogEmailLink: window.location.origin + '/rfelogs',
         RFEAttachmentList: [],
+        RFELogId: '',
         IsSubmit: false,
       });
     }, 2000);
