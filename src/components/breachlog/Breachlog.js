@@ -1404,21 +1404,32 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === true && tempFilterOpts?.breachStatus === '') {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          breachStatus: withoutClosed,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
     } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        breachStatus: withoutClosed,
+      if (nolonger === true) {
+        reqParam = {
+          ...reqParam,
+          breachStatus: withoutClosed,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
       }
     }
     try {
@@ -2821,6 +2832,12 @@ function Breachlog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        breachStatus: withoutClosed,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -2842,15 +2859,17 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        breachStatus: withoutClosed,
+      if (nolonger === true && tempFilterOpts?.breachStatus === '') {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          breachStatus: withoutClosed,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
       }
     }
     try {
