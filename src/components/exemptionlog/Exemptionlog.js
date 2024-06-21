@@ -1563,25 +1563,36 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    }
-
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        status: ZUGnolonger,
+      if (nolonger === true && tempFilterOpts?.status === '') {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          status: ZUGnolonger,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
       }
+  
+    } else {
+      if (nolonger === true) {
+        reqParam = {
+          ...reqParam,
+          status: ZUGnolonger,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
+  
     }
-
     try {
       let tempItems = [];
       const dbvalues = await Promise.all([
@@ -3233,6 +3244,12 @@ function Exemptionlog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        status: ZUGnolonger,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -3249,15 +3266,17 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        status: ZUGnolonger,
+      if (nolonger === true && tempFilterOpts?.status === '') {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          status: ZUGnolonger,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
       }
     }
     try {

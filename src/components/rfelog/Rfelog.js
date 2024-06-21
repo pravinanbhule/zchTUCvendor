@@ -792,21 +792,32 @@ function Rfelog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === true && tempFilterOpts?.RequestForEmpowermentStatus === '') {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          RequestForEmpowermentStatus: withOutWithdrawn,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
     } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        RequestForEmpowermentStatus: withOutWithdrawn,
+      if (nolonger === true) {
+        reqParam = {
+          ...reqParam,
+          RequestForEmpowermentStatus: withOutWithdrawn,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
       }
     }
     try {
@@ -2297,6 +2308,12 @@ function Rfelog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === true) {
+      reqParam = {
+        ...reqParam,
+        RequestForEmpowermentStatus: withOutWithdrawn,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -2316,15 +2333,17 @@ function Rfelog({ ...props }) {
             }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        RequestForEmpowermentStatus: withOutWithdrawn,
+      if (nolonger === true && tempFilterOpts?.RequestForEmpowermentStatus === '') {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          RequestForEmpowermentStatus: withOutWithdrawn,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
       }
     }
     try {
