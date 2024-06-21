@@ -25,31 +25,23 @@ function FrmInputAutocomplete(props) {
   const [suggestionOpt, setSuggestionOpt] = useState([])
 
   useEffect(() => {
-    let data = []
+    let data = [];
     options.map((item, i) => {
       data.push({
         label: item,
-        value: item
+        value: item + '//' + i,
       })
-    })
-    setSuggestionOpt([...data])
-    setSuggestions([...data])
+    });
+    setSuggestionOpt([...data]);
+    setSuggestions([...data]);
   }, [])
 
   const handleInputChange = (event) => {
-    const suggest = []; 
-    suggestions.map((option) => {
-      if (option?.value?.toLowerCase().includes(event?.toLowerCase())) {
-        suggest.push(option)
-      }
-    })
-    setSuggestionOpt([...suggest])
     handleChange(name, event);
   };
 
-  const handleSuggestionClick = (suggetion) => {
-    //setInputValue(suggetion);
-    handleChange(name, suggetion);
+  const handleSuggestionClick = (suggetion, opt) => {
+    handleChange(name, opt.label);
   };
 
   return (
@@ -83,6 +75,7 @@ function FrmInputAutocomplete(props) {
               }}
               placeholder={selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.search"] : "Search"}
               options={suggestionOpt}
+              filterOption
               dropdownClassName='suggestions'
             />
             {isRequired && issubmitted && !value ? (
