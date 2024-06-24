@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Style.css";
 import ToolTip from "../tooltip/ToolTip";
 import AppLocale from "../../../IngProvider";
+import { AutoComplete } from "antd";
 function FrmInputAutocomplete(props) {
   const {
     title,
@@ -20,40 +21,27 @@ function FrmInputAutocomplete(props) {
     options,
     selectedlanguage
   } = props;
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const suggestions = options?.length
-    ? options?.filter((option) =>
-        option?.toLowerCase().includes(value?.toLowerCase())
-      )
-    : [];
+  const [suggestions, setSuggestions] = useState([])
+  const [suggestionOpt, setSuggestionOpt] = useState([])
 
-  const autocompleteRef = useRef();
-  const autocompletInput = useRef();
   useEffect(() => {
-    const handleClick = (event) => {
-      if (
-        autocompleteRef.current &&
-        !autocompleteRef.current.contains(event.target)
-      ) {
-        setShowSuggestions(false);
-        autocompletInput.current.blur();
-        //document.querySelector(".autocomplete input").blur();
-      }
-    };
-    document.addEventListener("click", handleClick);
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
-  }, []);
+    let data = [];
+    options.map((item, i) => {
+      data.push({
+        label: item,
+        value: item + '//' + i,
+      })
+    });
+    setSuggestionOpt([...data]);
+    setSuggestions([...data]);
+  }, [])
+
   const handleInputChange = (event) => {
-    //setInputValue(event.target.value);
-    handleChange(name, event.target.value);
+    handleChange(name, event);
   };
 
-  const handleSuggestionClick = (suggetion) => {
-    //setInputValue(suggetion);
-    handleChange(name, suggetion);
-    setShowSuggestions(false);
+  const handleSuggestionClick = (suggetion, opt) => {
+    handleChange(name, opt.label);
   };
 
   return (
@@ -77,32 +65,19 @@ function FrmInputAutocomplete(props) {
         <div>{value}</div>
       ) : (
         <>
-          <div className="autocomplete" ref={autocompleteRef}>
-            <input
-              type={type}
-              name={name}
-              value={value}
-              disabled={isdisabled ? isdisabled : false}
-              onChange={handleInputChange}
+          <div className="autocomplete">
+            <AutoComplete
+              onSearch={handleInputChange}
+              onSelect={handleSuggestionClick}
+              value={{
+                label: value,
+                value: value
+              }}
               placeholder={selectedlanguage ? AppLocale[selectedlanguage].messages["placeholder.search"] : "Search"}
-              onFocus={() => setShowSuggestions(true)}
-              maxLength="80"
-              autoComplete="off"
-              ref={autocompletInput}
+              options={suggestionOpt}
+              filterOption
+              dropdownClassName='suggestions'
             />
-            {showSuggestions && (
-              <ul className="suggestions">
-                {suggestions.map((suggestion) => (
-                  <li
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    key={suggestion}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
-
             {isRequired && issubmitted && !value ? (
               <div className="validationError">{validationmsg}</div>
             ) : (
