@@ -210,7 +210,7 @@ function Rfelog({ ...props }) {
   });
   const [filterfieldslist, setfilterfieldslist] = useState();
   const [nolonger, setnolonger] = useState(false);
-  const [withOutWithdrawn, setWithOutWithdrawn] = useState('');
+  const [withOutWithdrawn, setWithOutWithdrawn] = useState('FA04DC3E-028E-43FB-820A-B8FAFE7E44F9,C8D5D3C6-07AC-45D4-BF4F-739302937904,9C619D9F-2CC7-4C3C-9DA6-1CA9592D922B,244A22AD-A1E3-409E-BB77-A0C069AD377A,8BC958F0-677E-43AD-9886-D719082D21BD');
 
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
@@ -792,7 +792,7 @@ function Rfelog({ ...props }) {
           }
         }
       }
-      if (nolonger === true && tempFilterOpts?.RequestForEmpowermentStatus === '') {
+      if (nolonger === false && (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined)) {
         reqParam = {
           ...reqParam,
           ...tempFilterOpts,
@@ -807,7 +807,7 @@ function Rfelog({ ...props }) {
         };
       }
     } else {
-      if (nolonger === true) {
+      if (nolonger === false) {
         reqParam = {
           ...reqParam,
           RequestForEmpowermentStatus: withOutWithdrawn,
@@ -2308,7 +2308,7 @@ function Rfelog({ ...props }) {
         isDelete: true,
       };
     }
-    if (nolonger === true) {
+    if (nolonger === false) {
       reqParam = {
         ...reqParam,
         RequestForEmpowermentStatus: withOutWithdrawn,
@@ -2333,7 +2333,7 @@ function Rfelog({ ...props }) {
             }
         }
       }
-      if (nolonger === true && tempFilterOpts?.RequestForEmpowermentStatus === '') {
+      if (nolonger === false && (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined)) {
         reqParam = {
           ...reqParam,
           ...tempFilterOpts,
@@ -2838,26 +2838,6 @@ function Rfelog({ ...props }) {
                 </div>
               </div>
             </div>
-            {sellogTabType === 'all' && alllogsloaded &&
-              <div style={{
-                top: '12px', paddingLeft: "20px", 
-                paddingRight: '20px', display: 'flex', 
-                justifyContent: 'space-between', position:"absolute", 
-                right: '0', zIndex: '-1'}}>
-                <div className="frm-filter">
-                </div>
-                <div className="frm-filter toggle-btn-header">
-                    <FrmToggleSwitch
-                      title={"Hide Withdrawn"}
-                      name={"withdrawn"}
-                      value={nolonger}
-                      handleChange={(name, value)=>{setnolonger(value)}}
-                      isRequired={false}
-                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                      />
-                </div>
-              </div>
-            }
           </div>
           {/*!alllogsloaded && (
             <div className="progress-bar-container">
@@ -2867,7 +2847,7 @@ function Rfelog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )*/}
-          <div className="tabs-container">
+          <div className="tabs-container" style={{height: '111px'}}>
             {logTypes.map((item) => (
               <div
                 key={item.label}
@@ -2883,6 +2863,19 @@ function Rfelog({ ...props }) {
                 {item.label}
               </div>
             ))}
+            {sellogTabType === 'all' && alllogsloaded &&
+                <div className="frm-filter toggle-btn-header-rfe">
+                    <FrmToggleSwitch
+                      title={"Show Withdrawn"}
+                      name={"withdrawn"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    />
+                    <p>By default, the user will be shown a subset of logs (e.g., without Withdrawn and can choose to display “All” logs i.e., include the Withdrawn logs.)</p>
+                </div>
+            }
           </div>
           <div>
             {logstate.loading ? (

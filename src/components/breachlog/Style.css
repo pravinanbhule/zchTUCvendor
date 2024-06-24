@@ -57,4 +57,12 @@
 .import-excelreport .error{
   color:#FE7468
 }
+.toggle-btn-header-breach{
+  position: absolute;
+  right: 0;
+  width: 23%;
+}
 
+.toggle-btn-header-breach p{
+  font-size: 12px;
+}

@@ -295,7 +295,7 @@ function Exemptionlog({ ...props }) {
     },
   ]);
   const [nolonger, setnolonger] = useState(false);
-  const [ZUGnolonger, setZUGnolonger] = useState('');
+  const [ZUGnolonger, setZUGnolonger] = useState('D87A3F87-9007-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9008-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9009-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9010-4033-BE60-32B1C2F572DC-Manual');
   const [selectedExemptionLog, setselectedExemptionLog] = useState("");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -1564,7 +1564,7 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      if (nolonger === true && tempFilterOpts?.status === '') {
+      if (nolonger === false && (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined)) {
         reqParam = {
           ...reqParam,
           ...tempFilterOpts,
@@ -1580,7 +1580,7 @@ function Exemptionlog({ ...props }) {
       }
   
     } else {
-      if (nolonger === true) {
+      if (nolonger === false) {
         reqParam = {
           ...reqParam,
           status: ZUGnolonger,
@@ -3245,7 +3245,7 @@ function Exemptionlog({ ...props }) {
         isDelete: true,
       };
     }
-    if (nolonger === true) {
+    if (nolonger === false) {
       reqParam = {
         ...reqParam,
         status: ZUGnolonger,
@@ -3267,7 +3267,7 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      if (nolonger === true && tempFilterOpts?.status === '') {
+      if (nolonger === false && (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined)) {
         reqParam = {
           ...reqParam,
           ...tempFilterOpts,
@@ -3651,15 +3651,16 @@ function Exemptionlog({ ...props }) {
             </div>
             {sellogTabType === 'all' && alllogsloaded &&
               <div className="frm-filter toggle-btn-header">
-                  <FrmToggleSwitch
-                    title={"Hide No Longer Required/Withdrawn"}
-                    name={"nolongerrequired"}
-                    value={nolonger}
-                    handleChange={(name, value)=>{setnolonger(value)}}
-                    isRequired={false}
-                    selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                    isdisabled={!alllogsloaded}
-                    />
+                <FrmToggleSwitch
+                  title={"Show No Longer Required/Withdrawn"}
+                  name={"nolongerrequired"}
+                  value={nolonger}
+                  handleChange={(name, value)=>{setnolonger(value)}}
+                  isRequired={false}
+                  selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                  isdisabled={!alllogsloaded}
+                />
+                <p>By default, the user will be shown a subset of logs (e.g., without No Longer Required and Withdrawn and can choose to display “All” logs i.e., include the No Longer Required and Withdrawn logs.)</p>
               </div>
             }
           </div>

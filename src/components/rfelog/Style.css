@@ -71,3 +71,11 @@ table.policyterms  td{
 .title-dropdown-rfe div label {
   margin-right: 12px !important;
 }
+.toggle-btn-header-rfe{
+    position: absolute;
+    right: 0;
+    width: 20%;
+}
+.toggle-btn-header-rfe p{
+    font-size: 12px;
+}

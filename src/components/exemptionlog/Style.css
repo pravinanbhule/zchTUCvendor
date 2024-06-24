@@ -12,3 +12,11 @@
     justify-content: center;
     align-items: center;
 }
+
+.toggle-btn-header {
+    width: 17%;
+}
+
+.toggle-btn-header p{
+    font-size: 12px;
+}

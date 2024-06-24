@@ -308,7 +308,7 @@ function Breachlog({ ...props }) {
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
   const [nolonger, setnolonger] = useState(false);
-  const [withoutClosed, setWithOutClosed] = useState('');
+  const [withoutClosed, setWithOutClosed] = useState('ECA8E493-1750-4546-9BC1-A1E8DA8A1B58,391FDEB3-5C30-466C-B0C0-57C41FAA9756');
 
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
@@ -1404,7 +1404,7 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      if (nolonger === true && tempFilterOpts?.breachStatus === '') {
+      if (nolonger === false && (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined)) {
         reqParam = {
           ...reqParam,
           ...tempFilterOpts,
@@ -1419,7 +1419,7 @@ function Breachlog({ ...props }) {
         };
       }
     } else {
-      if (nolonger === true) {
+      if (nolonger === false) {
         reqParam = {
           ...reqParam,
           breachStatus: withoutClosed,
@@ -2832,7 +2832,7 @@ function Breachlog({ ...props }) {
         isDelete: true,
       };
     }
-    if (nolonger === true) {
+    if (nolonger === false) {
       reqParam = {
         ...reqParam,
         breachStatus: withoutClosed,
@@ -2859,7 +2859,7 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      if (nolonger === true && tempFilterOpts?.breachStatus === '') {
+      if (nolonger === false && (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined)) {
         reqParam = {
           ...reqParam,
           ...tempFilterOpts,
@@ -3434,26 +3434,6 @@ function Breachlog({ ...props }) {
                 </div>
               </div>
             </div>
-            {sellogTabType === 'all' && alllogsloaded &&
-              <div style={{
-                top: '12px', paddingLeft: "20px", 
-                paddingRight: '20px', display: 'flex', 
-                justifyContent: 'space-between', position:"absolute", 
-                right: '0', zIndex: '-1'}}>
-                <div className="frm-filter">
-                </div>
-                <div className="frm-filter toggle-btn-header">
-                    <FrmToggleSwitch
-                      title={"Hide Closed"}
-                      name={"closed"}
-                      value={nolonger}
-                      handleChange={(name, value)=>{setnolonger(value)}}
-                      isRequired={false}
-                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                    />
-                </div>
-              </div>
-            }
           </div>
           {/*<div
             className="btn-blue"
@@ -3470,7 +3450,7 @@ function Breachlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          <div className="tabs-container">
+          <div className="tabs-container" style={{height: '110px'}}>
             {logTypes.map((item) => (
               <div
                 key={item.label}
@@ -3482,6 +3462,19 @@ function Breachlog({ ...props }) {
                 {item.label}
               </div>
             ))}
+            {sellogTabType === 'all' && alllogsloaded &&
+                <div className="frm-filter toggle-btn-header-breach">
+                    <FrmToggleSwitch
+                      title={"Show Closed"}
+                      name={"closed"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    />
+                    <p>By default, the user will be shown a subset of logs (e.g., without Closed and can choose to display “All” logs i.e., include the Closed logs.)</p>
+                </div>
+            }
           </div>
           <div>
             {logstate.loading ? (
