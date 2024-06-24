@@ -1040,6 +1040,7 @@ function Rfelog({ ...props }) {
   const [selectedUserView, setSelectedUserview] = useState(null);
   const [viewData, setViewData] = useState([]);
   const [viewResponse, setViewResponse] = useState(false);
+  const [isReset, setIsReset] = useState(false);
 
   useEffect(()=>{
     if (userProfile?.rfeViewsId && viewResponse && viewData.length !== 0) {
@@ -1055,6 +1056,14 @@ function Rfelog({ ...props }) {
       handleFilterSearch();
     }
   }, [selectedUserView, sellogTabType]);
+
+  useEffect(()=>{
+    if (selfilter && isReset) {
+      setIsReset(false);
+      setfilterbox(false);
+      handleFilterSearch();
+    }
+  },[selfilter, isReset])
 
   const handleSelectedItemArray = (selectedArray, data, field, label) => {
     let arrayData = [];
@@ -1284,7 +1293,11 @@ function Rfelog({ ...props }) {
         SUBLOBID: subloBArray
       };
       setselfilter(FilterState)
-      setSelectedUserview(value);
+      if (value !== selectedUserView) {
+        setSelectedUserview(value);
+      } else {
+        setIsReset(true);
+      }
     } else {
       value = null;
       pageIndex = 1;
@@ -2751,9 +2764,15 @@ function Rfelog({ ...props }) {
                     >
                       Search
                     </div>
-                    <div className="btn-blue" onClick={clearFilter}>
-                      Clear
-                    </div>
+                    {selectedUserView ? 
+                      <div className="btn-blue" onClick={() => onUserViewFilterSelect('', selectedUserView)}>
+                        Reset
+                      </div>
+                     :
+                      <div className="btn-blue" onClick={clearFilter}>
+                        Clear
+                      </div>
+                    }
                   </div>
                 </div>
               ) : (
