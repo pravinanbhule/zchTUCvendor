@@ -423,6 +423,7 @@ function Breachlog({ ...props }) {
         regionId: regionOpts,
       });
     } else {
+      console.log(name, value);
       setselfilter({
         ...selfilter,
         [name]: value,
@@ -1655,11 +1656,11 @@ function Breachlog({ ...props }) {
     tempStatus.forEach((item) => {
       if (item.lookUpName !== 'Closed') {
         noClosed.push(item.lookupID)
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        })
       }
-      tempopts.push({
-        label: item.lookUpValue,
-        value: item.lookupID,
-      })
     });
     noClosed = noClosed.toString();
     setWithOutClosed(noClosed)
@@ -1711,8 +1712,28 @@ function Breachlog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
+      let data = [{
+        label: 'Closed',
+        value: '2BAA867F-5B83-4DF2-B43B-CA3251C2CC55'
+      }]
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...commonfilterOpts.statusFilterOpts, ...data],
+      }));
       loadAPIData();
     } else {
+      // if (selfilter.breachStatus.length > 0) {
+      //   let selectedStatus = selfilter.breachStatus.filter((item, i) => item.label !== 'Closed')
+      //   setselfilter({
+      //     ...selfilter,
+      //     breachStatus: selectedStatus,
+      //   });
+      // }
+      let data = commonfilterOpts.statusFilterOpts.filter((item) => item.label !== 'Closed')
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...data],
+      }));
       loadAPIData();
     }
   },[nolonger])
@@ -2932,6 +2953,7 @@ function Breachlog({ ...props }) {
                 </div>
               )}
             </div>
+            <p className="info-p">Disclaimer - By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3434,6 +3456,26 @@ function Breachlog({ ...props }) {
                 </div>
               </div>
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div style={{
+                top: '12px', paddingLeft: "20px", 
+                paddingRight: '20px', display: 'flex', 
+                justifyContent: 'space-between', position:"absolute", 
+                right: '0', zIndex: '-1'}}>
+                <div className="frm-filter">
+                </div>
+                <div className="frm-filter toggle-btn-header">
+                    <FrmToggleSwitch
+                      title={"Show Closed"}
+                      name={"closed"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    />
+                </div>
+              </div>
+            }
           </div>
           {/*<div
             className="btn-blue"
@@ -3450,23 +3492,6 @@ function Breachlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
-            <div className="frm-filter">
-            </div>
-            {sellogTabType === 'all' && alllogsloaded &&
-              <div className="frm-filter toggle-btn-header-breach">
-                <FrmToggleSwitch
-                  title={"Show Closed"}
-                  name={"closed"}
-                  value={nolonger}
-                  handleChange={(name, value)=>{setnolonger(value)}}
-                  isRequired={false}
-                  selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                />
-                <p>By default, the user will be shown a subset of logs (e.g., without Closed and can choose to display “All” logs i.e., include the Closed logs.)</p>
-              </div>
-            }
-          </div>
           <div className="tabs-container">
             {logTypes.map((item) => (
               <div

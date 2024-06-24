@@ -1393,10 +1393,12 @@ function Rfelog({ ...props }) {
         if (item.lookUpName !== 'Withdrawn') {
           statusWithdrawn.push(item.lookupID)
         }
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
+        if (item.lookUpName !== 'Withdrawn') {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
       }
     });
     statusWithdrawn = statusWithdrawn.toString();
@@ -1549,8 +1551,22 @@ function Rfelog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
+      let data = commonfilterOpts.statusFilterOpts
+      data.push({
+        label: "Withdrawn",
+        value: "F2623BCB-50B7-467B-AF06-E4A5ECFB29A4",
+      })
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...data],
+      }))
       loadAPIData();
     } else {
+      let data = commonfilterOpts.statusFilterOpts.filter((item) => item.label !== 'Withdrawn')
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...data],
+      }))
       loadAPIData();
     }
   },[nolonger])
@@ -2525,6 +2541,7 @@ function Rfelog({ ...props }) {
                 )}
               </div>
             </div>
+            <p className="info-p">Disclaimer - By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -2838,6 +2855,26 @@ function Rfelog({ ...props }) {
                 </div>
               </div>
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div style={{
+                top: '12px', paddingLeft: "20px", 
+                paddingRight: '20px', display: 'flex', 
+                justifyContent: 'space-between', position:"absolute", 
+                right: '0', zIndex: '-1'}}>
+                <div className="frm-filter">
+                </div>
+                <div className="frm-filter toggle-btn-header">
+                    <FrmToggleSwitch
+                      title={"Show Withdrawn"}
+                      name={"withdrawn"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                      />
+                </div>
+              </div>
+            }
           </div>
           {/*!alllogsloaded && (
             <div className="progress-bar-container">
@@ -2847,23 +2884,6 @@ function Rfelog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )*/}
-          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
-            <div className="frm-filter">
-            </div>
-            {sellogTabType === 'all' && alllogsloaded &&
-              <div className="frm-filter toggle-btn-header-rfe">
-                <FrmToggleSwitch
-                  title={"Show Withdrawn"}
-                  name={"withdrawn"}
-                  value={nolonger}
-                  handleChange={(name, value)=>{setnolonger(value)}}
-                  isRequired={false}
-                  selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                />
-                <p>By default, the user will be shown a subset of logs (e.g., without Withdrawn and can choose to display “All” logs i.e., include the Withdrawn logs.)</p>
-              </div>
-            }
-          </div>
           <div className="tabs-container">
             {logTypes.map((item) => (
               <div
@@ -2880,19 +2900,6 @@ function Rfelog({ ...props }) {
                 {item.label}
               </div>
             ))}
-            {/* {sellogTabType === 'all' && alllogsloaded &&
-                <div className="frm-filter toggle-btn-header-rfe">
-                    <FrmToggleSwitch
-                      title={"Show Withdrawn"}
-                      name={"withdrawn"}
-                      value={nolonger}
-                      handleChange={(name, value)=>{setnolonger(value)}}
-                      isRequired={false}
-                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                    />
-                    <p>By default, the user will be shown a subset of logs (e.g., without Withdrawn and can choose to display “All” logs i.e., include the Withdrawn logs.)</p>
-                </div>
-            } */}
           </div>
           <div>
             {logstate.loading ? (

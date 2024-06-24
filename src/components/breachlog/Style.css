@@ -57,21 +57,9 @@
 .import-excelreport .error{
   color:#FE7468
 }
-.toggle-btn-header-breach{
-  width: 17%;
-}
-
-.toggle-btn-header-breach p{
-  font-size: 12px;
+.info-p{
   color: #FE7468;
-}
-
-.toggle-btn-header-breach .frm-field.frmtoggelswitch .label{
-  margin-left: 25%;
-}
-
-.toggle-btn-header-breach .toggle-switch-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-left: 2.5%;
+  margin-top: 0;
+  margin-bottom: 15px;
 }

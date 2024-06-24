@@ -1949,11 +1949,11 @@ function Exemptionlog({ ...props }) {
       if (item.isActive) {
         if (item.lookUpName !== 'Withdrawn' && item.lookUpName !== 'No Longer Required' ) {
           nolongerZUG.push(item.lookupID)
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
         }
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
       }
     });
     nolongerZUG = nolongerZUG.toString();
@@ -2003,8 +2003,27 @@ function Exemptionlog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
+      let data = [
+        {
+          label: 'Withdrawn',
+          value: 'D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual',
+        },
+        {
+          label: 'No Longer Required',
+          value: 'D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual',
+        }
+      ]
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        ZUGstatusFilterOpts: [...commonfilterOpts.ZUGstatusFilterOpts, ...data],
+      }));
       loadAPIData();
     } else {
+      let data = commonfilterOpts.ZUGstatusFilterOpts.filter((item) => item.label !== 'Withdrawn' && item.label !== 'No Longer Required')
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        ZUGstatusFilterOpts: [...data],
+      }));
       loadAPIData();
     }
   },[nolonger])
@@ -3381,6 +3400,7 @@ function Exemptionlog({ ...props }) {
                 </div>
               )}
             </div>
+            <p className="info-p">Disclaimer - By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3651,16 +3671,15 @@ function Exemptionlog({ ...props }) {
             </div>
             {sellogTabType === 'all' && alllogsloaded &&
               <div className="frm-filter toggle-btn-header">
-                <FrmToggleSwitch
-                  title={"Show No Longer Required/Withdrawn"}
-                  name={"nolongerrequired"}
-                  value={nolonger}
-                  handleChange={(name, value)=>{setnolonger(value)}}
-                  isRequired={false}
-                  selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                  isdisabled={!alllogsloaded}
-                />
-                <p>By default, the user will be shown a subset of logs (e.g., without No Longer Required and Withdrawn and can choose to display “All” logs i.e., include the No Longer Required and Withdrawn logs.)</p>
+                  <FrmToggleSwitch
+                    title={"Show No Longer Required/Withdrawn"}
+                    name={"nolongerrequired"}
+                    value={nolonger}
+                    handleChange={(name, value)=>{setnolonger(value)}}
+                    isRequired={false}
+                    selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    isdisabled={!alllogsloaded}
+                    />
               </div>
             }
           </div>
