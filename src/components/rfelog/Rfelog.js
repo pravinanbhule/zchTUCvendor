@@ -2847,7 +2847,24 @@ function Rfelog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )*/}
-          <div className="tabs-container" style={{height: '111px'}}>
+          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
+            <div className="frm-filter">
+            </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div className="frm-filter toggle-btn-header-rfe">
+                <FrmToggleSwitch
+                  title={"Show Withdrawn"}
+                  name={"withdrawn"}
+                  value={nolonger}
+                  handleChange={(name, value)=>{setnolonger(value)}}
+                  isRequired={false}
+                  selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                />
+                <p>By default, the user will be shown a subset of logs (e.g., without Withdrawn and can choose to display “All” logs i.e., include the Withdrawn logs.)</p>
+              </div>
+            }
+          </div>
+          <div className="tabs-container">
             {logTypes.map((item) => (
               <div
                 key={item.label}
@@ -2863,7 +2880,7 @@ function Rfelog({ ...props }) {
                 {item.label}
               </div>
             ))}
-            {sellogTabType === 'all' && alllogsloaded &&
+            {/* {sellogTabType === 'all' && alllogsloaded &&
                 <div className="frm-filter toggle-btn-header-rfe">
                     <FrmToggleSwitch
                       title={"Show Withdrawn"}
@@ -2875,7 +2892,7 @@ function Rfelog({ ...props }) {
                     />
                     <p>By default, the user will be shown a subset of logs (e.g., without Withdrawn and can choose to display “All” logs i.e., include the Withdrawn logs.)</p>
                 </div>
-            }
+            } */}
           </div>
           <div>
             {logstate.loading ? (

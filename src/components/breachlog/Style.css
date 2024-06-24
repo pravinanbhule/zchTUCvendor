@@ -58,11 +58,20 @@
   color:#FE7468
 }
 .toggle-btn-header-breach{
-  position: absolute;
-  right: 0;
-  width: 23%;
+  width: 17%;
 }
 
 .toggle-btn-header-breach p{
   font-size: 12px;
+  color: #FE7468;
+}
+
+.toggle-btn-header-breach .frm-field.frmtoggelswitch .label{
+  margin-left: 25%;
+}
+
+.toggle-btn-header-breach .toggle-switch-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

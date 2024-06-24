@@ -3450,7 +3450,24 @@ function Breachlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          <div className="tabs-container" style={{height: '110px'}}>
+          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
+            <div className="frm-filter">
+            </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div className="frm-filter toggle-btn-header-breach">
+                <FrmToggleSwitch
+                  title={"Show Closed"}
+                  name={"closed"}
+                  value={nolonger}
+                  handleChange={(name, value)=>{setnolonger(value)}}
+                  isRequired={false}
+                  selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                />
+                <p>By default, the user will be shown a subset of logs (e.g., without Closed and can choose to display “All” logs i.e., include the Closed logs.)</p>
+              </div>
+            }
+          </div>
+          <div className="tabs-container">
             {logTypes.map((item) => (
               <div
                 key={item.label}
@@ -3462,19 +3479,6 @@ function Breachlog({ ...props }) {
                 {item.label}
               </div>
             ))}
-            {sellogTabType === 'all' && alllogsloaded &&
-                <div className="frm-filter toggle-btn-header-breach">
-                    <FrmToggleSwitch
-                      title={"Show Closed"}
-                      name={"closed"}
-                      value={nolonger}
-                      handleChange={(name, value)=>{setnolonger(value)}}
-                      isRequired={false}
-                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                    />
-                    <p>By default, the user will be shown a subset of logs (e.g., without Closed and can choose to display “All” logs i.e., include the Closed logs.)</p>
-                </div>
-            }
           </div>
           <div>
             {logstate.loading ? (
