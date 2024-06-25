@@ -114,7 +114,7 @@ function FrmRichTextEditor5(props) {
             style={{ marginLeft: "10px" }}
             onClick={() => handleRfEBtnClick()}
           >
-            Reference Details
+            Copy previous RfE Details
           </div>
         ) : (
           ""

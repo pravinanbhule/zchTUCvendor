@@ -539,7 +539,7 @@ function RfELinkedPopupDetails(props) {
                                     style={{ marginRight: "10px" }}
                                     onClick={() => handleCopyValue()}
                                 >
-                                    Copy Details
+                                    Link RfE
                                     {/* {
                                         AppLocale[
                                             selectedlanguage?.value ? selectedlanguage.value : "EN001"
