@@ -166,6 +166,7 @@ function Pagination(props) {
           columns={column}
           defaultSorted={defaultSorted}
           defaultSortDirection="asc"
+          noDataIndication='No data available'
           //pagination={paginationFactory()}
         />
       </div>
