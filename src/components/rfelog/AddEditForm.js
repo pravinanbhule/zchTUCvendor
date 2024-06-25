@@ -132,7 +132,7 @@ function AddEditForm(props) {
   const [frmBranchOpts, setfrmBranchOpts] = useState([]);
   const [frmBranchOptsAll, setfrmBranchOptsAll] = useState([]);
   const [frmCurrencyOpts, setfrmCurrencyOpts] = useState([]);
-  const [policyaccountOpts, setpolicyaccountOpts] = useState({});
+  const [policyaccountOpts, setpolicyaccountOpts] = useState([]);
   const [policyaccloader, setpolicyaccloader] = useState(false);
   const [frmAccountOpts, setfrmAccountOpts] = useState([]);
   const [policyTermIds, setpolicyTermIds] = useState([]);
@@ -1403,20 +1403,20 @@ function AddEditForm(props) {
           countryCode: formfield?.countryCode ? formfield?.countryCode : "",
           lineOfBusiness: formfield?.mappedLOBs ? formfield?.mappedLOBs : "",
         });
-        let tempAccObj = {};
-
-        Array.isArray(tempAccounts) &&
-          tempAccounts?.forEach((iteam) => {
-            // if (isNaN(iteam.charAt(0))) {
-            if (tempAccObj[iteam.charAt(0).toLowerCase()]) {
-              tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
-            } else {
-              tempAccObj[iteam.charAt(0).toLowerCase()] = [];
-              tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
-            }
-            //}
-          });
-        setpolicyaccountOpts({ ...tempAccObj });
+        // let tempAccObj = {};
+        // Array.isArray(tempAccounts) &&
+        //   tempAccounts?.forEach((iteam) => {
+        //     // if (isNaN(iteam.charAt(0))) {
+        //     if (tempAccObj[iteam.charAt(0).toLowerCase()]) {
+        //       tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
+        //     } else {
+        //       tempAccObj[iteam.charAt(0).toLowerCase()] = [];
+        //       tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
+        //     }
+        //     //}
+        // });
+        // setpolicyaccountOpts({ ...tempAccObj });
+        setpolicyaccountOpts([...tempAccounts]);
         setfrmAccountOpts([]);
         setpolicyaccloader(false);
       } else {
@@ -2269,7 +2269,15 @@ function AddEditForm(props) {
   const onSearchFilterInputAutocomplete = (name, value) => {
     //const { name, value } = e.target;
     setformfield({ ...formfield, isdirty: true, [name]: value });
-    setfrmAccountOpts(policyaccountOpts[value.charAt(0).toLowerCase()]);
+    if (value !== '') {
+      let searchData = policyaccountOpts.filter((option) =>
+        option?.toLowerCase().includes(value?.toLowerCase())
+      )
+      setfrmAccountOpts([...searchData]);
+    } 
+    if (value === '') {
+      setfrmAccountOpts([]);
+    }
   };
   useEffect(() => {
     let tempBranchOpts = [];
@@ -3148,12 +3156,13 @@ function AddEditForm(props) {
     }
   ]);
   const [paginationdata, setpaginationdata] = useState([]);
-  // const [isLodaing, setIsLoading] = useState(false);
-  const [resonForReference, setResonForReference] = useState([])
+  const [isLodaing, setIsLoading] = useState(false);
+  const [resonForReference, setResonForReference] = useState([]);
   const [selSortFiled, setselSortFiled] = useState({
     name: "ModifiedDate",
     order: "desc",
   });
+  const [linkedRfEId, setLinkedRfEId] = useState('')
   const handleChangeTab = (value) => {
     setSelectedTab(value)
   }
@@ -3161,10 +3170,12 @@ function AddEditForm(props) {
   
   useEffect(async()=>{
     if (isReadMode) {
-      // setIsLoading(true)
-      let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId })
-      setpaginationdata(response)
-      // setIsLoading(false)
+      setIsLoading(true);
+      let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId });
+      let linkedRfEId = response.filter((item) => item.entryNumber === formIntialState?.LinkedRFEEntryNumber);
+      setLinkedRfEId(linkedRfEId[0].rfeLogId);
+      setpaginationdata(response);
+      setIsLoading(false);
     }
   },[])
 
@@ -3398,20 +3409,11 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow2 = () =>{
-    assignPeoplepikerUser("UnderwriterGrantingEmpowerment", linkedPopupDetails.UnderwriterGrantingEmpowermentAD ,"approver")
-
-    setTimeout(() => {
-      setformfield({
-        ...linkedPopupDetails,
-        EntryNumber: '',
-        RequestForEmpowermentStatus: formfield.RequestForEmpowermentStatus,
-        LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
-        RFELogEmailLink: window.location.origin + '/rfelogs',
-        RFEAttachmentList: [],
-        RFELogId: '',
-        IsSubmit: false,
-      });
-    }, 2000);
+    setformfield({
+      ...formfield,
+      LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
+    });
+    setSpecificDetails(linkedPopupDetails.RFELogDetails)
     setShowLinkedPopup(false);
   }
 
@@ -4211,7 +4213,8 @@ function AddEditForm(props) {
                     {isNotEmptyValue(formfield?.LinkedRFEEntryNumber) ? (
                       <div
                         className="col-md-12"
-                        style={{ marginBottom: "15px", fontSize: "14px" }}
+                        style={{ marginBottom: "15px", fontSize: "14px", cursor: 'pointer' }}
+                        onClick={() => handleViewLinkedRfE(linkedRfEId)}
                       >
                         <label>
                           {
@@ -4870,17 +4873,23 @@ function AddEditForm(props) {
             </form>
           </div>
           ) : (
-            <Pagination
-              id={"userId"}
-              column={columns}
-              data={paginationdata}
-              defaultSorted={defaultSorted}
-              isAddButton={false}
-              isPagination={false}
-              isExportReport={false}
-              isImportLogs={false}
-              hidesearch={true}
-            />
+            <>
+              {isLodaing ? (
+                <Loading />
+              ) : (
+                <Pagination
+                  id={"userId"}
+                  column={columns}
+                  data={paginationdata}
+                  defaultSorted={defaultSorted}
+                  isAddButton={false}
+                  isPagination={false}
+                  isExportReport={false}
+                  isImportLogs={false}
+                  hidesearch={true}
+                />
+              )}
+            </>
           )
         }
       </>
