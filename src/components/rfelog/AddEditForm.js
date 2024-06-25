@@ -1338,7 +1338,7 @@ function AddEditForm(props) {
               tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
             }
             //}
-          });
+        });
         setpolicyaccountOpts({ ...tempAccObj });
         setfrmAccountOpts([]);
         setpolicyaccloader(false);
@@ -2703,12 +2703,13 @@ function AddEditForm(props) {
     }
   ]);
   const [paginationdata, setpaginationdata] = useState([]);
-  // const [isLodaing, setIsLoading] = useState(false);
-  const [resonForReference, setResonForReference] = useState([])
+  const [isLodaing, setIsLoading] = useState(false);
+  const [resonForReference, setResonForReference] = useState([]);
   const [selSortFiled, setselSortFiled] = useState({
     name: "ModifiedDate",
     order: "desc",
   });
+  const [linkedRfEId, setLinkedRfEId] = useState('')
   const handleChangeTab = (value) => {
     setSelectedTab(value)
   }
@@ -2716,10 +2717,12 @@ function AddEditForm(props) {
   
   useEffect(async()=>{
     if (isReadMode) {
-      // setIsLoading(true)
-      let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId })
-      setpaginationdata(response)
-      // setIsLoading(false)
+      setIsLoading(true);
+      let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId });
+      let linkedRfEId = response.filter((item) => item.entryNumber === formIntialState?.LinkedRFEEntryNumber);
+      setLinkedRfEId(linkedRfEId[0].rfeLogId);
+      setpaginationdata(response);
+      setIsLoading(false);
     }
   },[])
 
@@ -2953,19 +2956,11 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow2 = () =>{
-    assignPeoplepikerUser("UnderwriterGrantingEmpowerment", linkedPopupDetails.UnderwriterGrantingEmpowermentAD ,"approver")
-    setTimeout(() => {
-      setformfield({
-        ...linkedPopupDetails,
-        EntryNumber: '',
-        RequestForEmpowermentStatus: formfield.RequestForEmpowermentStatus,
-        LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
-        RFELogEmailLink: window.location.origin + '/rfelogs',
-        RFEAttachmentList: [],
-        RFELogId: '',
-        IsSubmit: false,
-      });
-    }, 2000);
+    setformfield({
+      ...formfield,
+      LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
+    });
+    setSpecificDetails(linkedPopupDetails.RFELogDetails)
     setShowLinkedPopup(false);
   }
 
@@ -3760,7 +3755,8 @@ function AddEditForm(props) {
                     {isNotEmptyValue(formfield?.LinkedRFEEntryNumber) ? (
                       <div
                         className="col-md-12"
-                        style={{ marginBottom: "15px", fontSize: "14px" }}
+                        style={{ marginBottom: "15px", fontSize: "14px", cursor: 'pointer' }}
+                        onClick={() => handleViewLinkedRfE(linkedRfEId)}
                       >
                         <label>
                           {
@@ -4419,17 +4415,23 @@ function AddEditForm(props) {
             </form>
           </div>
           ) : (
-            <Pagination
-              id={"userId"}
-              column={columns}
-              data={paginationdata}
-              defaultSorted={defaultSorted}
-              isAddButton={false}
-              isPagination={false}
-              isExportReport={false}
-              isImportLogs={false}
-              hidesearch={true}
-            />
+            <>
+              {isLodaing ? (
+                <Loading />
+              ) : (
+                <Pagination
+                  id={"userId"}
+                  column={columns}
+                  data={paginationdata}
+                  defaultSorted={defaultSorted}
+                  isAddButton={false}
+                  isPagination={false}
+                  isExportReport={false}
+                  isImportLogs={false}
+                  hidesearch={true}
+                />
+              )}
+            </>
           )
         }
       </>
