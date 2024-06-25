@@ -210,7 +210,7 @@ function Rfelog({ ...props }) {
   });
   const [filterfieldslist, setfilterfieldslist] = useState();
   const [nolonger, setnolonger] = useState(false);
-  const [withOutWithdrawn, setWithOutWithdrawn] = useState('');
+  const [withOutWithdrawn, setWithOutWithdrawn] = useState('FA04DC3E-028E-43FB-820A-B8FAFE7E44F9,C8D5D3C6-07AC-45D4-BF4F-739302937904,9C619D9F-2CC7-4C3C-9DA6-1CA9592D922B,244A22AD-A1E3-409E-BB77-A0C069AD377A,8BC958F0-677E-43AD-9886-D719082D21BD');
 
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
@@ -792,21 +792,32 @@ function Rfelog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === false && (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined)) {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          RequestForEmpowermentStatus: withOutWithdrawn,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
     } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        RequestForEmpowermentStatus: withOutWithdrawn,
+      if (nolonger === false) {
+        reqParam = {
+          ...reqParam,
+          RequestForEmpowermentStatus: withOutWithdrawn,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
       }
     }
     try {
@@ -1382,10 +1393,12 @@ function Rfelog({ ...props }) {
         if (item.lookUpName !== 'Withdrawn') {
           statusWithdrawn.push(item.lookupID)
         }
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
+        if (item.lookUpName !== 'Withdrawn') {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
       }
     });
     statusWithdrawn = statusWithdrawn.toString();
@@ -1538,8 +1551,22 @@ function Rfelog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
+      let data = commonfilterOpts.statusFilterOpts
+      data.push({
+        label: "Withdrawn",
+        value: "F2623BCB-50B7-467B-AF06-E4A5ECFB29A4",
+      })
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...data],
+      }))
       loadAPIData();
     } else {
+      let data = commonfilterOpts.statusFilterOpts.filter((item) => item.label !== 'Withdrawn')
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...data],
+      }))
       loadAPIData();
     }
   },[nolonger])
@@ -2297,6 +2324,12 @@ function Rfelog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === false) {
+      reqParam = {
+        ...reqParam,
+        RequestForEmpowermentStatus: withOutWithdrawn,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -2316,15 +2349,17 @@ function Rfelog({ ...props }) {
             }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        RequestForEmpowermentStatus: withOutWithdrawn,
+      if (nolonger === false && (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined)) {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          RequestForEmpowermentStatus: withOutWithdrawn,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
       }
     }
     try {
@@ -2506,6 +2541,7 @@ function Rfelog({ ...props }) {
                 )}
               </div>
             </div>
+            <p className="info-p">Disclaimer - By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -2829,7 +2865,7 @@ function Rfelog({ ...props }) {
                 </div>
                 <div className="frm-filter toggle-btn-header">
                     <FrmToggleSwitch
-                      title={"Hide Withdrawn"}
+                      title={"Show Withdrawn"}
                       name={"withdrawn"}
                       value={nolonger}
                       handleChange={(name, value)=>{setnolonger(value)}}

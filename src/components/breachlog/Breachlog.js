@@ -308,7 +308,7 @@ function Breachlog({ ...props }) {
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
   const [nolonger, setnolonger] = useState(false);
-  const [withoutClosed, setWithOutClosed] = useState('');
+  const [withoutClosed, setWithOutClosed] = useState('ECA8E493-1750-4546-9BC1-A1E8DA8A1B58,391FDEB3-5C30-466C-B0C0-57C41FAA9756');
 
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
@@ -423,6 +423,7 @@ function Breachlog({ ...props }) {
         regionId: regionOpts,
       });
     } else {
+      console.log(name, value);
       setselfilter({
         ...selfilter,
         [name]: value,
@@ -1404,21 +1405,32 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === false && (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined)) {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          breachStatus: withoutClosed,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
     } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        breachStatus: withoutClosed,
+      if (nolonger === false) {
+        reqParam = {
+          ...reqParam,
+          breachStatus: withoutClosed,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
       }
     }
     try {
@@ -1644,11 +1656,11 @@ function Breachlog({ ...props }) {
     tempStatus.forEach((item) => {
       if (item.lookUpName !== 'Closed') {
         noClosed.push(item.lookupID)
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        })
       }
-      tempopts.push({
-        label: item.lookUpValue,
-        value: item.lookupID,
-      })
     });
     noClosed = noClosed.toString();
     setWithOutClosed(noClosed)
@@ -1700,8 +1712,28 @@ function Breachlog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
+      let data = [{
+        label: 'Closed',
+        value: '2BAA867F-5B83-4DF2-B43B-CA3251C2CC55'
+      }]
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...commonfilterOpts.statusFilterOpts, ...data],
+      }));
       loadAPIData();
     } else {
+      // if (selfilter.breachStatus.length > 0) {
+      //   let selectedStatus = selfilter.breachStatus.filter((item, i) => item.label !== 'Closed')
+      //   setselfilter({
+      //     ...selfilter,
+      //     breachStatus: selectedStatus,
+      //   });
+      // }
+      let data = commonfilterOpts.statusFilterOpts.filter((item) => item.label !== 'Closed')
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        statusFilterOpts: [...data],
+      }));
       loadAPIData();
     }
   },[nolonger])
@@ -2821,6 +2853,12 @@ function Breachlog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === false) {
+      reqParam = {
+        ...reqParam,
+        breachStatus: withoutClosed,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -2842,15 +2880,17 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        breachStatus: withoutClosed,
+      if (nolonger === false && (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined)) {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          breachStatus: withoutClosed,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
       }
     }
     try {
@@ -2913,6 +2953,7 @@ function Breachlog({ ...props }) {
                 </div>
               )}
             </div>
+            <p className="info-p">Disclaimer - By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3425,7 +3466,7 @@ function Breachlog({ ...props }) {
                 </div>
                 <div className="frm-filter toggle-btn-header">
                     <FrmToggleSwitch
-                      title={"Hide Closed"}
+                      title={"Show Closed"}
                       name={"closed"}
                       value={nolonger}
                       handleChange={(name, value)=>{setnolonger(value)}}

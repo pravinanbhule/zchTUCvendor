@@ -57,4 +57,9 @@
 .import-excelreport .error{
   color:#FE7468
 }
-
+.info-p{
+  color: #FE7468;
+  margin-left: 2.5%;
+  margin-top: 0;
+  margin-bottom: 15px;
+}

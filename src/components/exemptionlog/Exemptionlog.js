@@ -295,7 +295,7 @@ function Exemptionlog({ ...props }) {
     },
   ]);
   const [nolonger, setnolonger] = useState(false);
-  const [ZUGnolonger, setZUGnolonger] = useState('');
+  const [ZUGnolonger, setZUGnolonger] = useState('D87A3F87-9007-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9008-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9009-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9010-4033-BE60-32B1C2F572DC-Manual');
   const [selectedExemptionLog, setselectedExemptionLog] = useState("");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -1564,25 +1564,36 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
-    }
-
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        status: ZUGnolonger,
+      if (nolonger === false && (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined)) {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          status: ZUGnolonger,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
       }
+  
+    } else {
+      if (nolonger === false) {
+        reqParam = {
+          ...reqParam,
+          status: ZUGnolonger,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
+  
     }
-
     try {
       let tempItems = [];
       const dbvalues = await Promise.all([
@@ -1938,11 +1949,11 @@ function Exemptionlog({ ...props }) {
       if (item.isActive) {
         if (item.lookUpName !== 'Withdrawn' && item.lookUpName !== 'No Longer Required' ) {
           nolongerZUG.push(item.lookupID)
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
         }
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
       }
     });
     nolongerZUG = nolongerZUG.toString();
@@ -1992,8 +2003,27 @@ function Exemptionlog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
+      let data = [
+        {
+          label: 'Withdrawn',
+          value: 'D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual',
+        },
+        {
+          label: 'No Longer Required',
+          value: 'D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual',
+        }
+      ]
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        ZUGstatusFilterOpts: [...commonfilterOpts.ZUGstatusFilterOpts, ...data],
+      }));
       loadAPIData();
     } else {
+      let data = commonfilterOpts.ZUGstatusFilterOpts.filter((item) => item.label !== 'Withdrawn' && item.label !== 'No Longer Required')
+      setcommonfilterOpts((prevstate) => ({
+        ...prevstate,
+        ZUGstatusFilterOpts: [...data],
+      }));
       loadAPIData();
     }
   },[nolonger])
@@ -3234,6 +3264,12 @@ function Exemptionlog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === false) {
+      reqParam = {
+        ...reqParam,
+        status: ZUGnolonger,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -3250,15 +3286,17 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
-    }
-    if (nolonger === true) {
-      reqParam = {
-        ...reqParam,
-        status: ZUGnolonger,
+      if (nolonger === false && (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined)) {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          status: ZUGnolonger,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
       }
     }
     try {
@@ -3362,6 +3400,7 @@ function Exemptionlog({ ...props }) {
                 </div>
               )}
             </div>
+            <p className="info-p">Disclaimer - By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3633,7 +3672,7 @@ function Exemptionlog({ ...props }) {
             {sellogTabType === 'all' && alllogsloaded &&
               <div className="frm-filter toggle-btn-header">
                   <FrmToggleSwitch
-                    title={"Hide No Longer Required/Withdrawn"}
+                    title={"Show No Longer Required/Withdrawn"}
                     name={"nolongerrequired"}
                     value={nolonger}
                     handleChange={(name, value)=>{setnolonger(value)}}

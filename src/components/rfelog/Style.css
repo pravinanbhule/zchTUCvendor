@@ -71,3 +71,6 @@ table.policyterms  td{
 .title-dropdown-rfe div label {
   margin-right: 12px !important;
 }
+.title-dropdown-rfe .frm-field  {
+  margin-bottom: 10px !important;
+}
