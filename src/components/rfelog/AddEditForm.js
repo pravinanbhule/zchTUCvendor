@@ -1534,7 +1534,8 @@ function AddEditForm(props) {
       setShowTextBox(false);
       setShowButtons(false);
       setButtonsDisable(true);
-    } else if (IncountryFlag === IncountryFlagConst.GERMANY) {
+    } 
+    if (IncountryFlag === IncountryFlagConst.GERMANY) {
       setIsGermany(true);
       getAllSegment({ logType: "rfelogsGermany" });
       if (
@@ -1564,7 +1565,8 @@ function AddEditForm(props) {
         setShowButtons(true);
         setButtonsDisable(true);
       }
-    } else if (IncountryFlag === IncountryFlagConst.UK) {
+    } 
+    if (IncountryFlag === IncountryFlagConst.UK) {
       if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
           /\s/g,
           ""
