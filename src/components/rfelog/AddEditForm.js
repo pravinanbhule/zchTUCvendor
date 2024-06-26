@@ -3604,7 +3604,7 @@ function AddEditForm(props) {
   let domblockspancnt = 0;
   let clsrowname = "";
 
-  return loading ? (
+  return (loading || isLodaing) ? (
     <Loading />
   ) : (
     <div className="addedit-logs-container">
