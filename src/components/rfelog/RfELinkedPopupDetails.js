@@ -28,6 +28,7 @@ function RfELinkedPopupDetails(props) {
         IncountryFlagConst,
         frmrfeempourmentgermany,
         reasonOtherValue,
+        reasonOtherValueUK,
         frmSublob,
         OrganizationalAlignment,
         segmentAccount,
@@ -44,6 +45,8 @@ function RfELinkedPopupDetails(props) {
         handleCopyValue,
         referralReasonLevel2Option,
         referralReasonLevel3Option,
+        referralReasonLevel4Option,
+        referralReasonLevel5Option,
         frmSegmentOpts,
         inCountryOptsLATAM,
         frmCurrencyOpts
@@ -56,6 +59,8 @@ function RfELinkedPopupDetails(props) {
     const [reasonfields, setReasonfields] = useState({
         ReferralReasonLevel2: details?.ReferralReasonLevel2Value !== null ? true : false,
         ReferralReasonLevel3: details?.ReferralReasonLevel3Value !== null ? true : false,
+        ReferralReasonLevel4: details?.ReferralReasonLevel4Value !== null ? true : false,
+        ReferralReasonLevel5: details?.ReferralReasonLevel5Value !== null ? true : false,
     })
 
     useEffect(() => {
@@ -65,7 +70,7 @@ function RfELinkedPopupDetails(props) {
 
     const fnloadcountryview = async () => {
         const tempdbfields = await getLogFields({
-            IncountryFlag: IncountryFlag,
+            IncountryFlag: details.IncountryFlag,
             FieldType: "Form",
             LanguageCode: selectedlanguage?.value,
         });
@@ -129,7 +134,9 @@ function RfELinkedPopupDetails(props) {
                                     : true,
                             options: IncountryFlag === IncountryFlagConst.GERMANY ? frmrfeempourmentgermany : item.options,
                         };
-                        if (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValue) {
+                        if (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValue ||
+                            details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValueUK
+                        ) {
                             setShowTextBox(true);
                         } else {
                             setShowTextBox(false);
@@ -149,10 +156,14 @@ function RfELinkedPopupDetails(props) {
                             titlelinespace:
                                 selectedlanguage?.value === "DE001" ? false : true,
                             colspan:
+                                (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValue ||
                                 details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                                     /\s/g,
                                     ""
-                                ) === reasonOtherValue
+                                ) === reasonOtherValueUK)
                                     ? 0
                                     : details?.ReferralReasonLevel2 ||
                                         (details?.ReferralReasonLevel2 !== null &&
@@ -165,20 +176,84 @@ function RfELinkedPopupDetails(props) {
                     if (item.fieldName === "ReferralReasonLevel3") {
                         tempobj = {
                             ...tempobj,
-                            isAddButton: false,
+                            isAddButton: details?.ReferralReasonLevel4 ||
+                            (details?.ReferralReasonLevel4 !== null &&
+                                details?.ReferralReasonLevel4 !== "" &&
+                                details?.ReferralReasonLevel4 !== undefined)
+                            ? false
+                            : true,
                             options: frmrfeempourment,
                             titlelinespace:
                                 selectedlanguage?.value === "DE001" ? false : true,
                             colspan:
+                                (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValue ||
                                 details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                                     /\s/g,
                                     ""
-                                ) === reasonOtherValue
+                                ) === reasonOtherValueUK)
                                     ? 0
                                     : details?.ReferralReasonLevel3 ||
                                         (details?.ReferralReasonLevel3 !== null &&
                                             details?.ReferralReasonLevel3 !== "" &&
                                             details?.ReferralReasonLevel3 !== undefined)
+                                        ? 3
+                                        : 0,
+                        };
+                    }
+                    if (item.fieldName === "ReferralReasonLevel4") {
+                        tempobj = {
+                            ...tempobj,
+                            isAddButton: details?.ReferralReasonLevel5 ||
+                            (details?.ReferralReasonLevel5 !== null &&
+                                details?.ReferralReasonLevel5 !== "" &&
+                                details?.ReferralReasonLevel5 !== undefined)
+                            ? false
+                            : true,
+                            options: frmrfeempourment,
+                            titlelinespace:
+                                selectedlanguage?.value === "DE001" ? false : true,
+                            colspan:
+                                (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValue ||
+                                details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValueUK)
+                                    ? 0
+                                    : details?.ReferralReasonLevel4 ||
+                                        (details?.ReferralReasonLevel4 !== null &&
+                                            details?.ReferralReasonLevel4 !== "" &&
+                                            details?.ReferralReasonLevel4 !== undefined)
+                                        ? 3
+                                        : 0,
+                        };
+                    }
+                    if (item.fieldName === "ReferralReasonLevel5") {
+                        tempobj = {
+                            ...tempobj,
+                            isAddButton: false,
+                            options: frmrfeempourment,
+                            titlelinespace:
+                                selectedlanguage?.value === "DE001" ? false : true,
+                            colspan:
+                                (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValue ||
+                                details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValueUK)
+                                    ? 0
+                                    : details?.ReferralReasonLevel5 ||
+                                        (details?.ReferralReasonLevel5 !== null &&
+                                            details?.ReferralReasonLevel5 !== "" &&
+                                            details?.ReferralReasonLevel5 !== undefined)
                                         ? 3
                                         : 0,
                         };
@@ -397,7 +472,10 @@ function RfELinkedPopupDetails(props) {
                             }
                             titlelinespace={
                                 (obj.name === "ReferralReasonLevel2" ||
-                                    obj.name === "ReferralReasonLevel3") &&
+                                    obj.name === "ReferralReasonLevel3" ||
+                                    obj.name === "ReferralReasonLevel4" ||
+                                    obj.name === "ReferralReasonLevel5" 
+                                ) &&
                                     selectedlanguage?.value &&
                                     selectedlanguage?.value !== "EN001"
                                     ? false

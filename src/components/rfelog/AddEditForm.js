@@ -209,7 +209,10 @@ function AddEditForm(props) {
   const [fileuploadloader, setfileuploadloader] = useState(false);
 
   const [loading, setloading] = useState(true);
-  const [languageDetails, setLanguageDetails] = useState([]);
+  const [languageDetails, setLanguageDetails] = useState([
+    { label: "German", value: "DE001" },
+    { label: "English", value: "EN001" },
+  ]);
   const [selectedlanguage, setSelectedlanguage] = useState();
   const [isGermany, setIsGermany] = useState(false);
   const [showTextBox, setShowTextBox] = useState(false);
@@ -245,6 +248,9 @@ function AddEditForm(props) {
   const [accountNumberShow, setAccountNumberShow] = useState(false);
   const [reasonOtherValue, setReasonOtherValue] = useState(
     "others(indiesemfallbitteimkommentardenrfegrundeingeben)"
+  );
+  const [reasonOtherValueUK, setReasonOtherValueUK] = useState(
+    "others"
   );
   const [selectedApprover, setSelectedApprover] = useState('')
 
@@ -1035,10 +1041,14 @@ function AddEditForm(props) {
               titlelinespace:
                 selectedlanguage?.value === "DE001" ? false : true,
               colspan:
+                (formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                  /\s/g,
+                  ""
+                ) === reasonOtherValue ||
                 formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                   /\s/g,
                   ""
-                ) === reasonOtherValue
+                ) === reasonOtherValueUK)
                   ? 0
                   : formIntialState.ReferralReasonLevel2 ||
                     (formfield.ReferralReasonLevel2 !== null &&
@@ -1067,10 +1077,14 @@ function AddEditForm(props) {
               titlelinespace:
                 selectedlanguage?.value === "DE001" ? false : true,
               colspan:
-                formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-                  /\s/g,
-                  ""
-                ) === reasonOtherValue
+              (formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValue ||
+              formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValueUK)
                   ? 0
                   : formIntialState.ReferralReasonLevel3 ||
                     (formfield.ReferralReasonLevel3 !== null &&
@@ -1098,10 +1112,14 @@ function AddEditForm(props) {
               titlelinespace:
                 selectedlanguage?.value === "DE001" ? false : true,
               colspan:
-                formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-                  /\s/g,
-                  ""
-                ) === reasonOtherValue
+              (formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValue ||
+              formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValueUK)
                   ? 0
                   : formIntialState.ReferralReasonLevel4 ||
                     (formfield.ReferralReasonLevel4 !== null &&
@@ -1124,10 +1142,14 @@ function AddEditForm(props) {
               titlelinespace:
                 selectedlanguage?.value === "DE001" ? false : true,
               colspan:
-                formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-                  /\s/g,
-                  ""
-                ) === reasonOtherValue
+              (formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValue ||
+              formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValueUK)
                   ? 0
                   : formIntialState.ReferralReasonLevel5 ||
                     (formfield.ReferralReasonLevel5 !== null &&
@@ -1543,9 +1565,23 @@ function AddEditForm(props) {
         setButtonsDisable(true);
       }
     } else if (IncountryFlag === IncountryFlagConst.UK) {
-      if (formIntialState.RequestForEmpowermentReason !== "") {
+      if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+          /\s/g,
+          ""
+        ) !== reasonOtherValueUK &&
+        formIntialState.RequestForEmpowermentReason !== "") {
         setShowButtons(true);
         setButtonsDisable(false);
+      }
+      if (
+        formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+          /\s/g,
+          ""
+        ) === reasonOtherValueUK
+      ) {
+        setShowButtons(false);
+        setButtonsDisable(true);
+        setShowTextBox(true);
       }
       if (
         formIntialState?.RequestForEmpowermentReason === "" ||
@@ -1603,7 +1639,9 @@ function AddEditForm(props) {
                       frmrfeempourment;
       let ReasonOption = Options.filter(
         (item) =>
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
+          IncountryFlag === IncountryFlagConst.GERMANY ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1614,7 +1652,9 @@ function AddEditForm(props) {
       );
       let ReasonOption1 = Options.filter(
         (item) =>
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
+          IncountryFlag === IncountryFlagConst.GERMANY ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1625,7 +1665,9 @@ function AddEditForm(props) {
       );
       let ReasonOption2 = Options.filter(
         (item) =>
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
+          IncountryFlag === IncountryFlagConst.GERMANY ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1636,7 +1678,9 @@ function AddEditForm(props) {
       );
       let ReasonOption3 = Options.filter(
         (item) =>
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
+          IncountryFlag === IncountryFlagConst.GERMANY ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -2101,7 +2145,7 @@ function AddEditForm(props) {
       });
     } else if (
       name === "RequestForEmpowermentReason" &&
-      SelectedLabel === reasonOtherValue
+      (SelectedLabel === reasonOtherValue || SelectedLabel === reasonOtherValueUK)
     ) {
       setShowTextBox(true);
       setShowButtons(false);
@@ -2149,7 +2193,8 @@ function AddEditForm(props) {
       });
     } else if (
       name === "RequestForEmpowermentReason" &&
-      (SelectedLabel !== reasonOtherValue || value !== "")
+      ((SelectedLabel !== reasonOtherValue || value !== "") ||
+        (SelectedLabel !== reasonOtherValueUK || value !== ""))
     ) {
       formdomfields.filter((item, i) =>
         item.name === "RequestForEmpowermentReason" &&
@@ -3173,7 +3218,9 @@ function AddEditForm(props) {
       setIsLoading(true);
       let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId });
       let linkedRfEId = response.filter((item) => item.entryNumber === formIntialState?.LinkedRFEEntryNumber);
-      setLinkedRfEId(linkedRfEId[0].rfeLogId);
+      if (linkedRfEId.length > 0) {
+        setLinkedRfEId(linkedRfEId[0].rfeLogId);
+      }
       setpaginationdata(response);
       setIsLoading(false);
     }
@@ -4973,6 +5020,7 @@ function AddEditForm(props) {
           frmrfeempourmentgermany={resonForReference}
           frmrfeempourment={resonForReference}
           reasonOtherValue={reasonOtherValue}
+          reasonOtherValueUK={reasonOtherValueUK}
           frmSublob={frmSublob}
           OrganizationalAlignment={OrganizationalAlignment}
           segmentAccount={segmentAccount}
@@ -4988,6 +5036,8 @@ function AddEditForm(props) {
           showReferenceBtn={showReferenceBtn}
           referralReasonLevel2Option={resonForReference}
           referralReasonLevel3Option={resonForReference}
+          referralReasonLevel4Option={resonForReference}
+          referralReasonLevel5Option={resonForReference}
           frmSegmentOpts={frmSegmentOpts}
           inCountryOptsLATAM={inCountryOptsLATAM}
           frmCurrencyOpts={frmCurrencyOpts}
