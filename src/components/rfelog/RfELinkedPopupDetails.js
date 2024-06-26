@@ -49,7 +49,8 @@ function RfELinkedPopupDetails(props) {
         referralReasonLevel5Option,
         frmSegmentOpts,
         inCountryOptsLATAM,
-        frmCurrencyOpts
+        frmCurrencyOpts,
+        linkedRfEId
     } = props;
 
     const [fieldDetails, setFieldDetails] = useState([])
@@ -610,7 +611,7 @@ function RfELinkedPopupDetails(props) {
                         <div className="popup-header-title">Entry Number:- {`${details.EntryNumber}`}</div>
                     )}
                     <div className="header-btn-container">
-                        {showReferenceBtn &&
+                        {showReferenceBtn && linkedRfEId !== details.RFELogId &&
                             (
                                 <div
                                     className="addedit-close btn-blue"

@@ -3458,6 +3458,7 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow2 = () =>{
+    setLinkedRfEId(linkedPopupDetails.RFELogId)
     setformfield({
       ...formfield,
       LinkedRFEEntryNumber: linkedPopupDetails.EntryNumber,
@@ -5043,6 +5044,7 @@ function AddEditForm(props) {
           frmSegmentOpts={frmSegmentOpts}
           inCountryOptsLATAM={inCountryOptsLATAM}
           frmCurrencyOpts={frmCurrencyOpts}
+          linkedRfEId={linkedRfEId}
         />
       ) : (
         ""
