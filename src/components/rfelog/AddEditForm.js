@@ -1340,7 +1340,7 @@ function AddEditForm(props) {
         // });
         // setpolicyaccountOpts({ ...tempAccObj });
         setpolicyaccountOpts([...tempAccounts]);
-        setfrmAccountOpts([]);
+        setfrmAccountOpts([...tempAccounts]);
         setpolicyaccloader(false);
       } else {
         setpolicyaccountOpts({});
@@ -1830,15 +1830,6 @@ function AddEditForm(props) {
   const onSearchFilterInputAutocomplete = (name, value) => {
     //const { name, value } = e.target;
     setformfield({ ...formfield, isdirty: true, [name]: value });
-    if (value !== '') {
-      let searchData = policyaccountOpts.filter((option) =>
-        option?.toLowerCase().includes(value?.toLowerCase())
-      )
-      setfrmAccountOpts([...searchData]);
-    } 
-    if (value === '') {
-      setfrmAccountOpts([]);
-    }
   };
   useEffect(() => {
     let tempBranchOpts = [];
