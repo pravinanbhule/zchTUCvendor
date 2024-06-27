@@ -122,7 +122,7 @@ function AddEditForm(props) {
   const [frmBranchOpts, setfrmBranchOpts] = useState([]);
   const [frmBranchOptsAll, setfrmBranchOptsAll] = useState([]);
   const [frmCurrencyOpts, setfrmCurrencyOpts] = useState([]);
-  const [policyaccountOpts, setpolicyaccountOpts] = useState({});
+  const [policyaccountOpts, setpolicyaccountOpts] = useState([]);
   const [policyaccloader, setpolicyaccloader] = useState(false);
   const [frmAccountOpts, setfrmAccountOpts] = useState([]);
   const [policyTermIds, setpolicyTermIds] = useState([]);
@@ -1312,21 +1312,22 @@ function AddEditForm(props) {
           countryCode: formfield?.countryCode ? formfield?.countryCode : "",
           lineOfBusiness: formfield?.mappedLOBs ? formfield?.mappedLOBs : "",
         });
-        let tempAccObj = {};
+        // let tempAccObj = {};
 
-        Array.isArray(tempAccounts) &&
-          tempAccounts?.forEach((iteam) => {
-            // if (isNaN(iteam.charAt(0))) {
-            if (tempAccObj[iteam.charAt(0).toLowerCase()]) {
-              tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
-            } else {
-              tempAccObj[iteam.charAt(0).toLowerCase()] = [];
-              tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
-            }
-            //}
-          });
-        setpolicyaccountOpts({ ...tempAccObj });
-        setfrmAccountOpts([]);
+        // Array.isArray(tempAccounts) &&
+        //   tempAccounts?.forEach((iteam) => {
+        //     // if (isNaN(iteam.charAt(0))) {
+        //     if (tempAccObj[iteam.charAt(0).toLowerCase()]) {
+        //       tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
+        //     } else {
+        //       tempAccObj[iteam.charAt(0).toLowerCase()] = [];
+        //       tempAccObj[iteam.charAt(0).toLowerCase()].push(iteam);
+        //     }
+        //     //}
+        //   });
+        // setpolicyaccountOpts({ ...tempAccObj });
+        setpolicyaccountOpts({ ...tempAccounts });
+        setfrmAccountOpts([...tempAccounts]);
         setpolicyaccloader(false);
       } else {
         setpolicyaccountOpts({});
@@ -1816,7 +1817,7 @@ function AddEditForm(props) {
   const onSearchFilterInputAutocomplete = (name, value) => {
     //const { name, value } = e.target;
     setformfield({ ...formfield, isdirty: true, [name]: value });
-    setfrmAccountOpts(policyaccountOpts[value.charAt(0).toLowerCase()]);
+    // setfrmAccountOpts(policyaccountOpts[value.charAt(0).toLowerCase()]);
   };
   useEffect(() => {
     let tempBranchOpts = [];
