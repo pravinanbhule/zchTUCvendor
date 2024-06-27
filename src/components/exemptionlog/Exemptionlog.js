@@ -1564,13 +1564,24 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      if (nolonger === false && (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined)) {
-        reqParam = {
-          ...reqParam,
-          ...tempFilterOpts,
-          status: ZUGnolonger,
-          sortExp: selSortFiled.name + " " + selSortFiled.order,
-        }
+      if (nolonger === false) {
+          if (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined) {
+            reqParam = {
+              ...reqParam,
+              ...tempFilterOpts,
+              status: ZUGnolonger,
+              sortExp: selSortFiled.name + " " + selSortFiled.order,
+            }
+          } else if (tempFilterOpts?.status) {
+            let selectedStatus = tempFilterOpts?.status.split(",");
+            selectedStatus = selectedStatus.filter((item) => item !== "D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual" && item !== "D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual");
+            reqParam = {
+              ...reqParam,
+              ...tempFilterOpts,
+              status: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+              sortExp: selSortFiled.name + " " + selSortFiled.order,
+            }  
+          }
       } else {
         reqParam = {
           ...reqParam,
@@ -1949,11 +1960,11 @@ function Exemptionlog({ ...props }) {
       if (item.isActive) {
         if (item.lookUpName !== 'Withdrawn' && item.lookUpName !== 'No Longer Required' ) {
           nolongerZUG.push(item.lookupID)
-          tempopts.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
         }
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
       }
     });
     nolongerZUG = nolongerZUG.toString();
@@ -2003,27 +2014,8 @@ function Exemptionlog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
-      let data = [
-        {
-          label: 'Withdrawn',
-          value: 'D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual',
-        },
-        {
-          label: 'No Longer Required',
-          value: 'D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual',
-        }
-      ]
-      setcommonfilterOpts((prevstate) => ({
-        ...prevstate,
-        ZUGstatusFilterOpts: [...commonfilterOpts.ZUGstatusFilterOpts, ...data],
-      }));
       loadAPIData();
     } else {
-      let data = commonfilterOpts.ZUGstatusFilterOpts.filter((item) => item.label !== 'Withdrawn' && item.label !== 'No Longer Required')
-      setcommonfilterOpts((prevstate) => ({
-        ...prevstate,
-        ZUGstatusFilterOpts: [...data],
-      }));
       loadAPIData();
     }
   },[nolonger])
@@ -3286,11 +3278,21 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      if (nolonger === false && (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined)) {
-        reqParam = {
-          ...reqParam,
-          ...tempFilterOpts,
-          status: ZUGnolonger,
+      if (nolonger === false) {
+        if (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined) {
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            status: ZUGnolonger,
+          }
+        } else if (tempFilterOpts?.status) {
+          let selectedStatus = tempFilterOpts?.status.split(",");
+          selectedStatus = selectedStatus.filter((item) => item !== "D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual" && item !== "D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual");
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            status: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+          }  
         }
       } else {
         reqParam = {
