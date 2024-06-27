@@ -792,12 +792,23 @@ function Rfelog({ ...props }) {
           }
         }
       }
-      if (nolonger === false && (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined)) {
-        reqParam = {
-          ...reqParam,
-          ...tempFilterOpts,
-          RequestForEmpowermentStatus: withOutWithdrawn,
-          sortExp: selSortFiled.name + " " + selSortFiled.order,
+      if (nolonger === false) {
+        if (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined) {
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            RequestForEmpowermentStatus: withOutWithdrawn,
+            sortExp: selSortFiled.name + " " + selSortFiled.order,
+          }
+        } else if (tempFilterOpts?.RequestForEmpowermentStatus) {
+          let selectedStatus = tempFilterOpts?.RequestForEmpowermentStatus.split(",");
+          selectedStatus = selectedStatus.filter((item) => item !== "F2623BCB-50B7-467B-AF06-E4A5ECFB29A4");
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            RequestForEmpowermentStatus: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+            sortExp: selSortFiled.name + " " + selSortFiled.order,
+          }  
         }
       } else {
         reqParam = {
@@ -1393,12 +1404,10 @@ function Rfelog({ ...props }) {
         if (item.lookUpName !== 'Withdrawn') {
           statusWithdrawn.push(item.lookupID)
         }
-        if (item.lookUpName !== 'Withdrawn') {
-          tempopts.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
-        }
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
       }
     });
     statusWithdrawn = statusWithdrawn.toString();
@@ -1551,22 +1560,8 @@ function Rfelog({ ...props }) {
 
   useEffect(()=>{
     if (nolonger === true) {
-      let data = commonfilterOpts.statusFilterOpts
-      data.push({
-        label: "Withdrawn",
-        value: "F2623BCB-50B7-467B-AF06-E4A5ECFB29A4",
-      })
-      setcommonfilterOpts((prevstate) => ({
-        ...prevstate,
-        statusFilterOpts: [...data],
-      }))
       loadAPIData();
     } else {
-      let data = commonfilterOpts.statusFilterOpts.filter((item) => item.label !== 'Withdrawn')
-      setcommonfilterOpts((prevstate) => ({
-        ...prevstate,
-        statusFilterOpts: [...data],
-      }))
       loadAPIData();
     }
   },[nolonger])
@@ -2349,11 +2344,21 @@ function Rfelog({ ...props }) {
             }
         }
       }
-      if (nolonger === false && (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined)) {
-        reqParam = {
-          ...reqParam,
-          ...tempFilterOpts,
-          RequestForEmpowermentStatus: withOutWithdrawn,
+      if (nolonger === false) {
+        if (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined) {
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            RequestForEmpowermentStatus: withOutWithdrawn,
+          }
+        } else if (tempFilterOpts?.RequestForEmpowermentStatus) {
+          let selectedStatus = tempFilterOpts?.RequestForEmpowermentStatus.split(",");
+          selectedStatus = selectedStatus.filter((item) => item !== "F2623BCB-50B7-467B-AF06-E4A5ECFB29A4");
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            RequestForEmpowermentStatus: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+          }
         }
       } else {
         reqParam = {
