@@ -34,7 +34,7 @@ function FrmInputAutocomplete(props) {
     });
     setSuggestionOpt([...data]);
     setSuggestions([...data]);
-  }, [])
+  }, [options])
 
   const handleInputChange = (event) => {
     handleChange(name, event);
