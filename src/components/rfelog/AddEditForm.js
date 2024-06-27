@@ -2719,7 +2719,9 @@ function AddEditForm(props) {
       setIsLoading(true);
       let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId });
       let linkedRfEId = response.filter((item) => item.entryNumber === formIntialState?.LinkedRFEEntryNumber);
-      setLinkedRfEId(linkedRfEId[0].rfeLogId);
+      if (linkedRfEId.length > 0) {
+        setLinkedRfEId(linkedRfEId[0]?.rfeLogId);
+      }
       setpaginationdata(response);
       setIsLoading(false);
     }
