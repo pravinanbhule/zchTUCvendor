@@ -60,7 +60,7 @@ table.policyterms  td{
 .page-title-rfe{
     font-size: 20px;
     font-weight: 600;
-    padding: 15px 10px 0px;
+    padding: 15px 15px 0px;
     color: #243e6f;
     margin-left: 1.5%;
 }
@@ -71,6 +71,6 @@ table.policyterms  td{
 .title-dropdown-rfe div label {
   margin-right: 12px !important;
 }
-.title-dropdown-rfe .frm-field  {
-  margin-bottom: 0px !important;
+.toggle-button-zindex {
+  z-index: 10 !important;
 }

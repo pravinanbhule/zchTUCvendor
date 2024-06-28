@@ -2951,7 +2951,6 @@ function Breachlog({ ...props }) {
                 </div>
               )}
             </div>
-            <p className="info-p">Disclaimer - By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3459,7 +3458,9 @@ function Breachlog({ ...props }) {
                 top: '12px', paddingLeft: "20px", 
                 paddingRight: '20px', display: 'flex', 
                 justifyContent: 'space-between', position:"absolute", 
-                right: '0', zIndex: '-1'}}>
+                right: '0', zIndex: '-1'}}
+                className={`${filterbox ? '' : 'toggle-button-zindex'}`}
+                >
                 <div className="frm-filter">
                 </div>
                 <div className="frm-filter toggle-btn-header">
@@ -3471,7 +3472,7 @@ function Breachlog({ ...props }) {
                       isRequired={false}
                       selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
                       isToolTip={true}
-                      tooltipmsg={"Disclaimer - By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches."}
+                      tooltipmsg={"<p>Disclaimer - By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches.</p>"}
                     />
                 </div>
               </div>

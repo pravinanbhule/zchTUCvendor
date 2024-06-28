@@ -33,7 +33,9 @@ function FrmToggleSwitch(props) {
       className={`frmtoggelswitch frm-field ${isRequired ? "mandatory" : ""}`}
     >
       <div>
-        <div className="label">{title}</div>
+        <div className="label">
+          {title}
+        </div>
         {isToolTip ? (
           <>
             <div className="icon info-icon" data-tip={tooltipmsg}></div>

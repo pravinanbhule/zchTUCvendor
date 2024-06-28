@@ -2546,7 +2546,6 @@ function Rfelog({ ...props }) {
                 )}
               </div>
             </div>
-            <p className="info-p">Disclaimer - By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -2865,7 +2864,9 @@ function Rfelog({ ...props }) {
                 top: '12px', paddingLeft: "20px", 
                 paddingRight: '20px', display: 'flex', 
                 justifyContent: 'space-between', position:"absolute", 
-                right: '0', zIndex: '-1'}}>
+                right: '0', zIndex: '-1'}}
+                className={`${filterbox ? '' : 'toggle-button-zindex'}`}
+                >
                 <div className="frm-filter">
                 </div>
                 <div className="frm-filter toggle-btn-header">
@@ -2876,6 +2877,8 @@ function Rfelog({ ...props }) {
                       handleChange={(name, value)=>{setnolonger(value)}}
                       isRequired={false}
                       selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                      isToolTip={true}
+                      tooltipmsg={"<p>Disclaimer - By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
                       />
                 </div>
               </div>
