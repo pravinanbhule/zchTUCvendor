@@ -3402,7 +3402,6 @@ function Exemptionlog({ ...props }) {
                 </div>
               )}
             </div>
-            <p className="info-p">Disclaimer - By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3681,6 +3680,8 @@ function Exemptionlog({ ...props }) {
                     isRequired={false}
                     selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
                     isdisabled={!alllogsloaded}
+                    isToolTip={true}
+                    tooltipmsg={"<p>Disclaimer - By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
                     />
               </div>
             }
