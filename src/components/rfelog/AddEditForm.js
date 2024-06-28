@@ -1481,7 +1481,7 @@ function AddEditForm(props) {
       }
     };
     getIds();
-  }, [formfield.AccountName, formfield.countryCode, formfield.mappedLOBs]);
+  }, [formfield.AccountName, formfield.countryCode, formfield.mappedLOBs, loading]);
 
   const [locallinks, setlocallinks] = useState([]);
   useEffect(async () => {
