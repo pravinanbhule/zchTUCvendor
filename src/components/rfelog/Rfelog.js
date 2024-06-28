@@ -2546,6 +2546,7 @@ function Rfelog({ ...props }) {
                 )}
               </div>
             </div>
+            <p className="info-p">Disclaimer - By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -2878,7 +2879,7 @@ function Rfelog({ ...props }) {
                       isRequired={false}
                       selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
                       isToolTip={true}
-                      tooltipmsg={"<p>Disclaimer - By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
+                      tooltipmsg={"<p>By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
                       />
                 </div>
               </div>
