@@ -59,7 +59,9 @@ function RfELinkedPopupDetails(props) {
     })
 
     useEffect(async () => {
-        details?.CustomerSegment = details?.CustomerSegmentValue
+        if (details?.CustomerSegment !== "") {
+            details.CustomerSegment = details?.CustomerSegmentValue
+        }
         setformfield(details);
         fnloadcountryview();
     }, [])
