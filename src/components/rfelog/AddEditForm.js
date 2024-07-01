@@ -116,7 +116,7 @@ function AddEditForm(props) {
   const [frmConditionOpts, setConditionOpts] = useState([]);
   const [frmrfechz, setfrmrfechz] = useState([]);
   const [frmrfeempourment, setfrmrfeempourment] = useState([]);
-  const [frmrfeempourmentgermany, setfrmrfeempourmentgermany] = useState([]);
+  const [countryReasons, setCountryReasons] = useState([]);
   const [referralReasonLevel2Option, setReferralReasonLevel2Option] = useState([]);
   const [referralReasonLevel3Option, setReferralReasonLevel3Option] = useState([]);
   const [frmrfeempourmentuk, setfrmrfeempourmentuk] = useState([]);
@@ -671,7 +671,7 @@ function AddEditForm(props) {
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourmentcountry]);
-    setfrmrfeempourmentgermany([...temprfeempourmentcountry]);
+    setCountryReasons([...temprfeempourmentcountry]);
     setfrmrfeempourmentglobal([selectInitiVal, ...temprfeempourment]);
     //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
@@ -776,9 +776,9 @@ function AddEditForm(props) {
           }
           temprfeempourment = [...tempopts];
           setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
-          setfrmrfeempourmentgermany([...temprfeempourment]);
+          setCountryReasons([...temprfeempourment]);
           if (formfield.RequestForEmpowermentReason) {
-            const isPresent = frmrfeempourmentglobal.filter(
+            const isPresent = temprfeempourment.filter(
               (item) => item.value === formfield.RequestForEmpowermentReason
             );
             if (!isPresent?.length) {
@@ -928,7 +928,18 @@ function AddEditForm(props) {
     }
   }, [selectedlanguage]);
 
+  const [isFirst, setIsFirst] = useState(true);
+
   const fnloadcountryview = async () => {
+    if ((isEditMode || isReadMode) && isFirst && IncountryFlag === IncountryFlagConst.GERMANY) {
+      setIsFirst(false);
+    }
+    if (!isFirst) {
+      handleResetGermany();
+    } 
+    if (!isEditMode && !isReadMode) {
+      handleResetGermany();
+    }
     const tempdbfields = await getLogFields({
       IncountryFlag: IncountryFlag,
       FieldType: "Form",
@@ -1496,23 +1507,6 @@ function AddEditForm(props) {
           ? (item.isAddButton = true)
           : (item.name = item.name)
       );
-      const GermanyOptions = frmrfeempourmentgermany;
-      let GermanyReasonOption = GermanyOptions.filter(
-        (item) =>
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
-          item.value !== formfield.RequestForEmpowermentReason &&
-          item.value !== formfield.ReferralReasonLevel3 &&
-          item.value !== formIntialState.ReferralReasonLevel3
-      );
-      let GermanyReasonOption1 = GermanyOptions.filter(
-        (item) =>
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
-          item.value !== formfield.RequestForEmpowermentReason &&
-          item.value !== formfield.ReferralReasonLevel2 &&
-          item.value !== formIntialState.ReferralReasonLevel2
-      );
-      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption]);
-      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1]);
     } else if (name === "ReferralReasonLevel2") {
       setReasonfields({
         ...reasonfields,
@@ -1550,23 +1544,31 @@ function AddEditForm(props) {
         ReferralReasonLevel3: true,
       });
     }
-    const GermanyOptions = frmrfeempourmentgermany;
-    if (name === "RequestForEmpowermentReason" || value !== "") {
-      let GermanyReasonOption = GermanyOptions.filter(
-        (item) =>
+    const Options = countryReasons;
+    let ReasonOption = Options.filter(
+      (item) => {
+        if (item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel3 &&
           item.value !== formIntialState.ReferralReasonLevel3
-      );
-      let GermanyReasonOption1 = GermanyOptions.filter(
-        (item) =>
+        ) {
+          return item;
+        }
+      }
+    )
+    let ReasonOption1 = Options.filter(
+      (item) => {
+        if (item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formIntialState.ReferralReasonLevel2
-      );
-      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption]);
-      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1]);
-    }
+        ) {
+          return item;
+        }
+      }
+    );
+    setReferralReasonLevel2Option([selectInitiVal, ...ReasonOption]);
+    setReferralReasonLevel3Option([selectInitiVal, ...ReasonOption1]);
   };
   const handleReasonOptions2 = (name, value) => {
     if (
@@ -1587,42 +1589,65 @@ function AddEditForm(props) {
         ReferralReasonLevel3: true,
       });
     }
-    const GermanyOptions = frmrfeempourmentgermany;
-    if (name === "ReferralReasonLevel2" || value !== "") {
-      let GermanyReasonOption = GermanyOptions.filter(
-        (item) =>
-          item.value !== value &&
+    const Options = countryReasons;
+    let ReasonOption = Options.filter(
+      (item) => {
+        if (item.value !== value &&
           item.value !== formfield.ReferralReasonLevel3 &&
           item.value !== formIntialState.ReferralReasonLevel3
-      );
-      let GermanyReasonOption1 = GermanyOptions.filter(
-        (item) =>
+        ) {
+          return item;
+        }
+      }
+    );
+    let ReasonOption1 = Options.filter(
+      (item) => {
+        if (item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
-          item.value !== formIntialState.RequestForEmpowermentReason
-      );
-      setfrmrfeempourment([selectInitiVal, ...GermanyReasonOption]);
-      setReferralReasonLevel3Option([selectInitiVal, ...GermanyReasonOption1]);
-    }
+          item.value !== formfield.ReferralReasonLevel4 &&
+          item.value !== formfield.ReferralReasonLevel5 &&
+          item.value !== formIntialState.RequestForEmpowermentReason &&
+          item.value !== formIntialState.ReferralReasonLevel4 &&
+          item.value !== formIntialState.ReferralReasonLevel5
+        ) {
+          return item;
+        }
+      }
+    );
+    setfrmrfeempourment([selectInitiVal, ...ReasonOption]);
+    setReferralReasonLevel3Option([selectInitiVal, ...ReasonOption1]);
   };
   const handleReasonOptions3 = (name, value) => {
-    const GermanyOptions = frmrfeempourmentgermany;
-    if (name === "ReferralReasonLevel3" || value !== "") {
-      let GermanyReasonOption = GermanyOptions.filter(
-        (item) =>
+    const Options = countryReasons;
+    let ReasonOption = Options.filter(
+      (item) => {
+        if (
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formIntialState.ReferralReasonLevel2
-      );
-      let GermanyReasonOption1 = GermanyOptions.filter(
-        (item) =>
+        ) {
+          return item;
+        }
+      }
+    );
+    let ReasonOption1 = Options.filter(
+      (item) => {
+        if (item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
-          item.value !== formIntialState.RequestForEmpowermentReason
-      );
-      setfrmrfeempourment([selectInitiVal, ...GermanyReasonOption]);
-      setReferralReasonLevel2Option([selectInitiVal, ...GermanyReasonOption1]);
-    }
+          item.value !== formfield.ReferralReasonLevel4 &&
+          item.value !== formfield.ReferralReasonLevel5 &&
+          item.value !== formIntialState.RequestForEmpowermentReason &&
+          item.value !== formIntialState.ReferralReasonLevel4 &&
+          item.value !== formIntialState.ReferralReasonLevel5
+        ) {
+          return item;
+        }
+      }
+    );
+    setfrmrfeempourment([selectInitiVal, ...ReasonOption]);
+    setReferralReasonLevel2Option([selectInitiVal, ...ReasonOption1]);
   };
 
   const handleSelectChange = (name, value, fieldName, label) => {
@@ -1877,25 +1902,31 @@ function AddEditForm(props) {
         });
       });
       setfrmselectedRegion([...selectedregions]);
-      setReasonfields({
-        ...reasonfields,
-        ReferralReasonLevel2: false,
-        ReferralReasonLevel3: false,
-      });
-      setAccountNumberShow(false);
-      setButtonsDisable(true);
-      delete formIntialState.RequestForEmpowermentReason;
-      delete formIntialState.ReferralReasonLevel2;
-      delete formIntialState.ReferralReasonLevel3;
-      delete formIntialState.AccountNumber;
-      delete formIntialState.CustomerSegment;
+      // setReasonfields({
+      //   ...reasonfields,
+      //   ReferralReasonLevel2: false,
+      //   ReferralReasonLevel3: false,
+      //   ReferralReasonLevel4: false,
+      //   ReferralReasonLevel5: false,
+      // });
+      // setAccountNumberShow(false);
+      // setButtonsDisable(true);
+      // delete formIntialState.RequestForEmpowermentReason;
+      // delete formIntialState.ReferralReasonLevel2;
+      // delete formIntialState.ReferralReasonLevel3;
+      // delete formIntialState.ReferralReasonLevel4;
+      // delete formIntialState.ReferralReasonLevel5;
+      // delete formIntialState.AccountNumber;
+      // delete formIntialState.CustomerSegment;
       setformfield({
         ...formfield,
-        RequestForEmpowermentReason: null,
-        ReferralReasonLevel2: null,
-        ReferralReasonLevel3: null,
-        CustomerSegment: null,
-        AccountNumber: null,
+        // RequestForEmpowermentReason: null,
+        // ReferralReasonLevel2: null,
+        // ReferralReasonLevel3: null,
+        // ReferralReasonLevel4: null,
+        // ReferralReasonLevel5: null,
+        // CustomerSegment: null,
+        // AccountNumber: null,
         isdirty: true,
         [name]: value,
         Branch: "",
@@ -2021,6 +2052,34 @@ function AddEditForm(props) {
     setshowUnderwriter(false);
     window.scrollTo({ top: scrollPosition, behavior: "smooth" });
   };
+  const handleResetGermany = () => {
+    setReasonfields({
+      ...reasonfields,
+      ReferralReasonLevel2: false,
+      ReferralReasonLevel3: false,
+      ReferralReasonLevel4: false,
+      ReferralReasonLevel5: false,
+    });
+    setAccountNumberShow(false);
+    setButtonsDisable(true);
+    delete formIntialState.RequestForEmpowermentReason;
+    delete formIntialState.ReferralReasonLevel2;
+    delete formIntialState.ReferralReasonLevel3;
+    delete formIntialState.ReferralReasonLevel4;
+    delete formIntialState.ReferralReasonLevel5;
+    delete formIntialState.AccountNumber;
+    delete formIntialState.CustomerSegment;
+    setformfield({
+      ...formfield,
+      RequestForEmpowermentReason: null,
+      ReferralReasonLevel2: null,
+      ReferralReasonLevel3: null,
+      ReferralReasonLevel4: null,
+      ReferralReasonLevel5: null,
+      CustomerSegment: null,
+      AccountNumber: null,
+    });
+  }
   const assignPeoplepikerUser = async (name, value, usertype) => {
     let displayname = [];
     let email = [];
@@ -2954,6 +3013,8 @@ function AddEditForm(props) {
     }
     setSpecificDetails(formIntialState.RFELogDetails)
     setInAddMode(referenceRfEData);
+    setSelectedApprover('');
+    setapproverRole({ ...approverIntialRole });
   }
 
   const handleCopyValueflow2 = () =>{
