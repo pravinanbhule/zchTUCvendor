@@ -44,11 +44,9 @@ function RfELinkedPopupDetails(props) {
         handleCopyValue,
         referralReasonLevel2Option,
         referralReasonLevel3Option,
-        frmSegmentOpts,
         inCountryOptsLATAM,
         frmCurrencyOpts
     } = props;
-
     const [fieldDetails, setFieldDetails] = useState([])
     const [accountNumberShow, setAccountNumberShow] = useState(false);
     const [formfield, setformfield] = useState({});
@@ -58,7 +56,8 @@ function RfELinkedPopupDetails(props) {
         ReferralReasonLevel3: details?.ReferralReasonLevel3Value !== null ? true : false,
     })
 
-    useEffect(() => {
+    useEffect(async () => {
+        details.CustomerSegment = details.CustomerSegmentValue
         setformfield(details);
         fnloadcountryview();
     }, [])
@@ -69,7 +68,7 @@ function RfELinkedPopupDetails(props) {
             FieldType: "Form",
             LanguageCode: selectedlanguage?.value,
         });
-        if (IncountryFlag === IncountryFlagConst.GERMANY) {
+        if (details?.CountryName === "Germany") {
             let newFields = tempdbfields;
             let index = newFields.findIndex(
                 (item) => item.fieldName === "CustomerSegment"
@@ -199,6 +198,8 @@ function RfELinkedPopupDetails(props) {
                     if (item.fieldName === "CustomerSegment") {
                         tempobj = {
                             ...tempobj,
+                            componenttype: "FrmInputAutocomplete",
+                            options: "frmAccountOpts",
                             titlelinespace:
                                 selectedlanguage?.value === "DE001" && window.innerWidth < 1488
                                     ? true
