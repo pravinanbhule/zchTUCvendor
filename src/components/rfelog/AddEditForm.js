@@ -3473,6 +3473,7 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow1 = () => {
+    setSelectedTab('rfelog')
     setLinkedRfEId(formIntialState.RFELogId)
     const referenceRfEData = {
       LinkedRFEEntryNumber: formIntialState.EntryNumber,
