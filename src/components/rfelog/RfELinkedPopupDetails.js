@@ -68,7 +68,7 @@ function RfELinkedPopupDetails(props) {
 
     const fnloadcountryview = async () => {
         const tempdbfields = await getLogFields({
-            IncountryFlag: IncountryFlag,
+            IncountryFlag: details.IncountryFlag,
             FieldType: "Form",
             LanguageCode: selectedlanguage?.value,
         });
@@ -537,7 +537,7 @@ function RfELinkedPopupDetails(props) {
                         <div className="popup-header-title">Entry Number:- {`${details.EntryNumber}`}</div>
                     )}
                     <div className="header-btn-container">
-                        {showReferenceBtn &&
+                        {showReferenceBtn && linkedRfEId !== details.RFELogId &&
                             (
                                 <div
                                     className="addedit-close btn-blue"
