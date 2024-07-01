@@ -4603,6 +4603,7 @@ function AddEditForm(props) {
           frmSegmentOpts={frmSegmentOpts}
           inCountryOptsLATAM={inCountryOptsLATAM}
           frmCurrencyOpts={frmCurrencyOpts}
+          linkedRfEId={linkedRfEId}
         />
       ) : (
         ""
