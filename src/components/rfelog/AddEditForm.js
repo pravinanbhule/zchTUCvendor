@@ -3416,6 +3416,7 @@ function AddEditForm(props) {
       response["CountryList"] = [...countryList];
       setLinkedPopupDetails(response);
       setEntryNumberRfE(response.EntryNumber)
+      await handleLinkedRfEReason(response?.IncountryFlag);
       setShowLinkedPopup(true);
     }
   }
@@ -3443,24 +3444,28 @@ function AddEditForm(props) {
     let response = await referenceLog(reqParam)
     if (response.length !== 0) {
       setReferenceRfEId(response[0].rfeLogId)
-      let temprfeempourment = await getLookupByType({
-        LookupType: "RFEEmpowermentReasonRequest",
-        IncountryFlag: response[0].incountryFlag,
-      });
-      let tempopts = [];
-      temprfeempourment.forEach((item) => {
-          tempopts.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
-      });
-      if (response[0].incountryFlag !== IncountryFlagConst.GERMANY) {
-        tempopts.sort(dynamicSort("label"));
-      }
-      temprfeempourment = [...tempopts];
-      setResonForReference(temprfeempourment)
+      await handleLinkedRfEReason(response[0].incountryFlag);
       handleShowReferencebutton();
     }
+  }
+
+  const handleLinkedRfEReason = async(flag) => {
+    let temprfeempourment = await getLookupByType({
+      LookupType: "RFEEmpowermentReasonRequest",
+      IncountryFlag: flag,
+    });
+    let tempopts = [];
+    temprfeempourment.forEach((item) => {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+    });
+    if (flag !== IncountryFlagConst.GERMANY) {
+      tempopts.sort(dynamicSort("label"));
+    }
+    temprfeempourment = [...tempopts];
+    setResonForReference(temprfeempourment)
   }
 
   const handleShowReferencebutton = () => {
@@ -3468,6 +3473,7 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow1 = () => {
+    setLinkedRfEId(formIntialState.RFELogId)
     const referenceRfEData = {
       LinkedRFEEntryNumber: formIntialState.EntryNumber,
       EntryNumber: '',
