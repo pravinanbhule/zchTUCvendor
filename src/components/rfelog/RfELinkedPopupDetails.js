@@ -45,7 +45,9 @@ function RfELinkedPopupDetails(props) {
         referralReasonLevel2Option,
         referralReasonLevel3Option,
         inCountryOptsLATAM,
-        frmCurrencyOpts
+        frmCurrencyOpts,
+        linkedRfEId,
+        frmSegmentOpts
     } = props;
     const [fieldDetails, setFieldDetails] = useState([])
     const [accountNumberShow, setAccountNumberShow] = useState(false);
@@ -57,7 +59,7 @@ function RfELinkedPopupDetails(props) {
     })
 
     useEffect(async () => {
-        details.CustomerSegment = details.CustomerSegmentValue
+        details?.CustomerSegment = details?.CustomerSegmentValue
         setformfield(details);
         fnloadcountryview();
     }, [])
