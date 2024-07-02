@@ -3,17 +3,22 @@ import { connect } from "react-redux";
 import { getUrlParameter } from "../../helpers";
 import { commonActions } from "../../actions";
 
-function Demo(props) {
+function EmailRequest(props) {
     const {
-        demoAPI
+        EmailRequestAPI
     } = props;
 
     const [isLodaing, setIsLoading] = useState(false);
+    const [responseMsg, setResponseMsg] = useState('')
 
     useEffect(async () => {
         setIsLoading(true);
-        if (getUrlParameter("CustId")) {
-            const response = await demoAPI({ CustId: getUrlParameter("CustId") })
+        if (getUrlParameter("rfelog")) {
+            const response = await EmailRequestAPI({ 
+                RFELogId: getUrlParameter("rfelog"), 
+                RequestForEmpowermentStatus: getUrlParameter("status")
+            })
+            setResponseMsg(response)
             if (response) {
                 setTimeout(() => {
                     setIsLoading(false);
@@ -32,7 +37,7 @@ function Demo(props) {
                 </>
             ) : (
                 <>
-                    Your request Approved
+                    {responseMsg}
                 </>
             )}
         </div>
@@ -44,6 +49,6 @@ const mapStateToProp = (state) => {
     };
 };
 const mapActions = {
-    demoAPI: commonActions.demoAPI
+    EmailRequestAPI: commonActions.EmailRequestAPI
 }
-export default connect(mapStateToProp, mapActions)(Demo);
+export default connect(mapStateToProp, mapActions)(EmailRequest);

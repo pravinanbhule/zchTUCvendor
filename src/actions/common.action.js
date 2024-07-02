@@ -221,10 +221,10 @@ const downloadExcel = (requestParam, type) => {
     }
   };
 };
-const demoAPI = (requestParam, type) => {
+const EmailRequestAPI = (requestParam, type) => {
   return async (dispatch) => {
     try {
-      const response = await commonService.demoService(requestParam);
+      const response = await commonService.EmailRequestService(requestParam);
       return response.data;
     } catch (err) {
       return false;
@@ -253,7 +253,7 @@ export const commonActions = {
   getExemptionUserView,
   addEditUserView,
   downloadExcel,
-  demoAPI
+  EmailRequestAPI
 };
 const uploadFileService = async (requestParam) => {
   const response = await Axios.post(`common/uploadfile`, requestParam, {
@@ -358,8 +358,9 @@ const addEditUserViewService = async (requestParam) => {
   const response = await Axios.post(`common/addedituserview?LogType=${requestParam.LogType}&UserId=${requestParam.UserId}&ViewId=${requestParam.ViewId}`);
   return response;
 };
-const demoService = async (requestParam) => {
-  const response = await Axios.get(`testcustomer/gettestcustomer`);
+const EmailRequestService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.post(`rfelog/autoapprover?RFELogId=${requestParam.RFELogId}&RequestForEmpowermentStatus=${requestParam.RequestForEmpowermentStatus}`, param);
   return response;
 };
 const downaloadExcelManage = async(requestParam, type) => {
@@ -444,5 +445,5 @@ const commonService = {
   getMasterVersionService,
   addEditUserViewService,
   downaloadExcelManage,
-  demoService
+  EmailRequestService
 };
