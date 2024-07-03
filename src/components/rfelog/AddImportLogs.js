@@ -498,6 +498,14 @@ function AddImportLogs(props) {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "ReferralReasonLevel3",
     },
+    "Referral Reason Level 4": {
+      lookupObj: "rfeEmpourmentObj",
+      fieldname: "ReferralReasonLevel4",
+    },
+    "Referral Reason Level 5": {
+      lookupObj: "rfeEmpourmentObj",
+      fieldname: "ReferralReasonLevel5",
+    },
     "Customer Segment": {
       lookupObj: "segmentObj",
       fieldname: "CustomerSegment",
@@ -1494,7 +1502,7 @@ function AddImportLogs(props) {
     if (IncountryFlag === IncountryFlagCost.LATAM) {
       setimportfieldscount(29);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
-      setimportfieldscount(22);
+      setimportfieldscount(27);
     } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else if (IncountryFlag === IncountryFlagCost.GERMANY) {
