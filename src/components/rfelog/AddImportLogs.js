@@ -812,6 +812,8 @@ function AddImportLogs(props) {
           let dataEmails = [];
           setisLoadingValidation(true);
           let index = 0;
+          let reasons = [];
+          let selectedReasonOther = false;
           const columndataRecursion = async () => {
             let cellData = data[index];
             if (index === 0) {
@@ -868,7 +870,25 @@ function AddImportLogs(props) {
                     : value;
                 }
               }
-
+              if (fieldname === "RequestForEmpowermentReason" ||
+                fieldname === "ReferralReasonLevel2" ||
+                fieldname === "ReferralReasonLevel3" ||
+                fieldname === "ReferralReasonLevel4" ||
+                fieldname === "ReferralReasonLevel5"
+              ) {
+                if (reasons.length > 0 && reasons.includes(value)) {
+                  alert(alertMessage.importlogs.invalidDataMsg);
+                  isExcelValid = false;
+                  setisLoadingValidation(false);
+                  return;
+                }
+                if (cellData?.toLowerCase().replace(/\s/g,"") === "others" ||
+                cellData?.toLowerCase().replace(/\s/g,"") === "others(indiesemfallbitteimkommentardenrfegrundeingeben)"
+                ) {
+                  selectedReasonOther = true
+                }
+                reasons.push(value);
+              }
               if (
                 isemail &&
                 value &&
@@ -1225,6 +1245,20 @@ function AddImportLogs(props) {
                   templogdata["ResponseDate"] = null;
                   templogdata["ReceptionInformationDate"] = null;
                   templogdata["UnderwriterGrantingEmpowermentComments"] = "";
+                }
+                if (selectedReasonOther) {
+                  if (IncountryFlag === IncountryFlagCost.UK) {
+                    templogdata["RequestForEmpowermentReason"] = "GEN65F18802-A109-4B7C-BBCF-20CF78B89142";
+                  } 
+                  if (IncountryFlag === IncountryFlagCost.GERMANY) {
+                    templogdata["RequestForEmpowermentReason"] = "00EBEE31-9CAE-4094-853F-D8F5EB1F124B";
+                  }
+                  delete templogdata["ReferralReasonLevel2"];
+                  delete templogdata["ReferralReasonLevel3"];
+                  delete templogdata["ReferralReasonLevel4"];
+                  delete templogdata["ReferralReasonLevel5"];
+                } else {
+                  delete templogdata["OtherReferralReason"];
                 }
                 logData.push({
                   ...formIntialState,
