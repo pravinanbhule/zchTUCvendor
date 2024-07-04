@@ -866,12 +866,6 @@ function AddImportLogs(props) {
                 fieldname === "ReferralReasonLevel2" ||
                 fieldname === "ReferralReasonLevel3"
               ) {
-                if (reasons.length > 0 && reasons.includes(value)) {
-                  alert(alertMessage.importlogs.invalidDataMsg);
-                  isExcelValid = false;
-                  setisLoadingValidation(false);
-                  return;
-                }
                 if (cellData?.toLowerCase().replace(/\s/g,"") === "others(indiesemfallbitteimkommentardenrfegrundeingeben)") {
                   selectedReasonOther = true
                 }
@@ -918,7 +912,14 @@ function AddImportLogs(props) {
                 (isvalidval &&
                   fieldname === "ConditionApplicableTo" &&
                   templogdata["RequestForEmpowermentStatus"] !==
-                    rfelog_status.Empowerment_granted_with_conditions)
+                    rfelog_status.Empowerment_granted_with_conditions) ||
+                ((fieldname === "RequestForEmpowermentReason" ||
+                    fieldname === "ReferralReasonLevel2" ||
+                    fieldname === "ReferralReasonLevel3" ||
+                    fieldname === "ReferralReasonLevel4" ||
+                    fieldname === "ReferralReasonLevel5") &&
+                    reasons.filter((item) => item === value)?.length > 1
+                )
               ) {
                 //added below condition to check & validate values
                 isvalid = false;
