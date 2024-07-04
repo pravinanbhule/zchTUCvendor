@@ -740,7 +740,9 @@ function AddEditForm(props) {
       const tempIds = await getPolicyTermId({
         policyId: formIntialState.PolicyTermId,
       });
-      setpolicyTermIds([...tempIds]);
+      if (tempIds !== false) {
+        setpolicyTermIds([...tempIds]);
+      }
     }
     setloading(false);
   };
