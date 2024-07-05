@@ -26,6 +26,7 @@ export function handlePermission(page, name) {
                 userview: true,
                 user: true,
                 lookup: true,
+                notifications: true,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -120,6 +121,11 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isDelete: true
             },
+            notifications: {
+                isAdd: true,
+                isEdit: true,
+                isDelete: true
+            },
             breachlogs: {
                 isAdd: true,
                 isEdit: true,
@@ -165,6 +171,7 @@ export function handlePermission(page, name) {
                 userview: false,
                 user: true,
                 lookup: false,
+                notifications: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -218,6 +225,7 @@ export function handlePermission(page, name) {
                 user: true,
                 co: false,
                 userview: false,
+                notifications: false,
                 lookup: false,
                 breachlogs: true,
                 rfelogs: true,
@@ -273,6 +281,7 @@ export function handlePermission(page, name) {
                 userview: false,
                 user: false,
                 lookup: false,
+                notifications: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -322,6 +331,7 @@ export function handlePermission(page, name) {
                 userview: false,
                 user: false,
                 lookup: false,
+                notifications: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -372,6 +382,7 @@ export function handlePermission(page, name) {
                 userview: true,
                 user: true,
                 lookup: true,
+                notifications: true,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -426,6 +437,11 @@ export function handlePermission(page, name) {
                 isEdit: true,
                 isDelete: true
             },
+            notifications: {
+                isAdd: true,
+                isEdit: true,
+                isDelete: true
+            },
             breachlogs: {
                 isAdd: true,
                 isEdit: true,
@@ -471,6 +487,7 @@ export function handlePermission(page, name) {
                 userview: true,
                 user: true,
                 lookup: true,
+                notifications: true,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -565,6 +582,11 @@ export function handlePermission(page, name) {
                 isEdit: false,
                 isDelete: false
             },
+            notifications: {
+                isAdd: false,
+                isEdit: false,
+                isDelete: false
+            },
             breachlogs: {
                 isAdd: false,
                 isEdit: false,
@@ -610,6 +632,7 @@ export function handlePermission(page, name) {
                 userview: false,
                 user: false,
                 lookup: false,
+                notifications: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true
@@ -659,6 +682,7 @@ export function handlePermission(page, name) {
                 userview: false,
                 user: false,
                 lookup: false,
+                notifications: false,
                 breachlogs: true,
                 rfelogs: true,
                 exemptionlogs: true

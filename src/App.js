@@ -38,6 +38,7 @@ import Token from "./components/manage/token/Token";
 import { handlePermission } from "./permissions/Permission";
 import Co from "./components/manage/co/Co";
 import UserView from "./components/manage/userview/UserView";
+import Notifications from "./components/manage/notifications/Notifications";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -168,6 +169,11 @@ function App({ state, menuClick }) {
                       <PrivateRoute
                         path="/lookup"
                         component={Lookup}
+                        menuClick={menuClick}
+                      />
+                      <PrivateRoute
+                        path="/notifications"
+                        component={Notifications}
                         menuClick={menuClick}
                       />
                        <PrivateRoute

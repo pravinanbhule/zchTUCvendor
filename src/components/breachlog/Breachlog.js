@@ -307,6 +307,9 @@ function Breachlog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
+  const [nolonger, setnolonger] = useState(false);
+  const [withoutClosed, setWithOutClosed] = useState('ECA8E493-1750-4546-9BC1-A1E8DA8A1B58,391FDEB3-5C30-466C-B0C0-57C41FAA9756');
+
   const onSearchFilterInput = (e) => {
     const { name, value } = e.target;
     setselfilter({
@@ -1102,6 +1105,14 @@ function Breachlog({ ...props }) {
       },
     },
     {
+      dataField: "materialBreachCategoryValue",
+      text: "Material Breach category",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
+      },
+    },
+    {
       dataField: "howDetectedValue",
       text: "How detected",
       sort: false,
@@ -1393,16 +1404,44 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === false) {
+          if (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined) {
+            reqParam = {
+              ...reqParam,
+              ...tempFilterOpts,
+              breachStatus: withoutClosed,
+              sortExp: selSortFiled.name + " " + selSortFiled.order,
+            }
+          } else if (tempFilterOpts?.breachStatus) {
+            let selectedStatus = tempFilterOpts?.breachStatus.split(",");
+            selectedStatus = selectedStatus.filter((item) => item !== "2BAA867F-5B83-4DF2-B43B-CA3251C2CC55");
+            reqParam = {
+              ...reqParam,
+              ...tempFilterOpts,
+              breachStatus: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+              sortExp: selSortFiled.name + " " + selSortFiled.order,
+            }  
+          }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
     } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === false) {
+        reqParam = {
+          ...reqParam,
+          breachStatus: withoutClosed,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
     }
     try {
       /*let tempItems;
@@ -1622,10 +1661,21 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
-    tempStatus = tempStatus.map((item) => ({
-      label: item.lookUpValue,
-      value: item.lookupID,
-    }));
+    let tempopts = [];
+    let noClosed = [];
+    tempStatus.forEach((item) => {
+      if (item.lookUpName !== 'Closed') {
+        noClosed.push(item.lookupID)
+      }
+      tempopts.push({
+        label: item.lookUpValue,
+        value: item.lookupID,
+      })
+    });
+    noClosed = noClosed.toString();
+    setWithOutClosed(noClosed)
+    tempStatus = [...tempopts];
+    tempopts = [];
     tempTypeOfBreach = tempTypeOfBreach.map((item) => ({
       label: item.lookUpValue,
       value: item.lookupID,
@@ -1642,7 +1692,6 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
-
     //tempClassification.sort(dynamicSort("label"));
     tempNatureOfBreach.sort(dynamicSort("label"));
     tempStatus.sort(dynamicSort("label"));
@@ -1670,6 +1719,14 @@ function Breachlog({ ...props }) {
       setdashboardStateApplied(true);
     }
   };
+
+  useEffect(()=>{
+    if (nolonger === true) {
+      loadAPIData();
+    } else {
+      loadAPIData();
+    }
+  },[nolonger])
 
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([]);
@@ -2358,6 +2415,7 @@ function Breachlog({ ...props }) {
     sbuName: "",
     isdirty: false,
     BreachLogEmailLink: window.location.href,
+    materialBreachCategory: ""
   };
 
   const [formIntialState, setformIntialState] = useState(formInitialValue);
@@ -2576,6 +2634,7 @@ function Breachlog({ ...props }) {
     RootCauseOfTheBreachValue: "Root Cause of the Breach",
     NatureOfBreachValue: "Nature of Breach",
     MaterialBreach: "Material Breach",
+    MaterialBreachCategoryValue: "Material Breach category",
     DateBreachOccurred: "Date Breach Occurred",
     BreachDetails: "Breach Details",
     RangeOfFinancialImpactValue: "Range of financial impact",
@@ -2784,6 +2843,12 @@ function Breachlog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === false) {
+      reqParam = {
+        ...reqParam,
+        breachStatus: withoutClosed,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -2805,10 +2870,28 @@ function Breachlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
+      if (nolonger === false) {
+        if (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined) {
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            breachStatus: withoutClosed
+          }
+        } else if (tempFilterOpts?.breachStatus) {
+          let selectedStatus = tempFilterOpts?.breachStatus.split(",");
+          selectedStatus = selectedStatus.filter((item) => item !== "2BAA867F-5B83-4DF2-B43B-CA3251C2CC55");
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            breachStatus: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+          }  
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
+      }
     }
     try {
       alert(alertMessage.commonmsg.reportDownlaod);
@@ -2870,6 +2953,7 @@ function Breachlog({ ...props }) {
                 </div>
               )}
             </div>
+            <p className="info-p">Disclaimer - By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3372,6 +3456,30 @@ function Breachlog({ ...props }) {
                 </div>
               </div>
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div style={{
+                top: '12px', paddingLeft: "20px", 
+                paddingRight: '20px', display: 'flex', 
+                justifyContent: 'space-between', position:"absolute", 
+                right: '0', zIndex: '-1'}}
+                className={`${filterbox ? '' : 'toggle-button-zindex'}`}
+                >
+                <div className="frm-filter">
+                </div>
+                <div className="frm-filter toggle-btn-header">
+                    <FrmToggleSwitch
+                      title={"Show Closed"}
+                      name={"closed"}
+                      value={nolonger}
+                      handleChange={(name, value)=>{setnolonger(value)}}
+                      isRequired={false}
+                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                      isToolTip={true}
+                      tooltipmsg={"<p>By default the 'Closed' breaches are not displayed. Please use the toggle button to view all breaches.</p>"}
+                    />
+                </div>
+              </div>
+            }
           </div>
           {/*<div
             className="btn-blue"

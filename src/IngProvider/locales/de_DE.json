@@ -8,7 +8,9 @@
   "title.suggestedapprover": "Liste der empfohlenen Global Approver / Genehmiger",
   "title.searchuser": "Benutzer suchen",
 
+  "button.add": "Neues RfE",
   "button.edit": "Bearbeiten",
+  "button.referenceLog": "Reference RfE's",
   "button.versionhistory": "Version",
   "button.back": "Zurück",
   "button.submit": "Einreichen/Abschicken",
@@ -29,6 +31,7 @@
   "label.uploadattachment":"Anhang Hochladen",
   "label.browser": "Suchen",
   "label.entrynumber": "Entry Number",
+  "label.linkedrfe": "Linked RfE",
 
   "placeholder.select": "Auswahl",
   "placeholder.chooseafile": "Wähle einen Anhang aus…",

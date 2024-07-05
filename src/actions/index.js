@@ -23,3 +23,4 @@ export * from "./currency.action";
 export * from "./token.action";
 export * from "./co.action";
 export * from "./userview.action";
+export * from "./notifications.action";

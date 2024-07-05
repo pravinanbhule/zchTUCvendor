@@ -45,6 +45,7 @@ import CopyItem from "../common-components/copyitem/CopyItem";
 import { isEmpty } from "lodash";
 import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
 import { handlePermission } from "../../permissions/Permission";
+import FrmToggleSwitch from "../common-components/frmtoggelswitch/FrmToggleSwitch";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -292,6 +293,8 @@ function Exemptionlog({ ...props }) {
       value: "urpm",
     },
   ]);
+  const [nolonger, setnolonger] = useState(false);
+  const [ZUGnolonger, setZUGnolonger] = useState('D87A3F87-9007-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9008-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9009-4033-BE60-32B1C2F572DC-Manual,D87A3F87-9010-4033-BE60-32B1C2F572DC-Manual');
   const [selectedExemptionLog, setselectedExemptionLog] = useState("");
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -1112,6 +1115,14 @@ function Exemptionlog({ ...props }) {
       },
     },
     {
+      dataField: "exemptionDetailForLocalAddendum",
+      text: "Exemption Detail for local addendum",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
+      },
+    },
+    {
       dataField: "isArchived",
       text: "Link to SharePoint",
       sort: false,
@@ -1466,6 +1477,14 @@ function Exemptionlog({ ...props }) {
       },
     },
     {
+      dataField: "exemptionDetailForLocalAddendum",
+      text: "Exemption Detail for local addendum",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "200px" };
+      },
+    },
+    {
       dataField: "isArchived",
       text: "Link to SharePoint",
       sort: false,
@@ -1544,16 +1563,46 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === false) {
+          if (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined) {
+            reqParam = {
+              ...reqParam,
+              ...tempFilterOpts,
+              status: ZUGnolonger,
+              sortExp: selSortFiled.name + " " + selSortFiled.order,
+            }
+          } else if (tempFilterOpts?.status) {
+            let selectedStatus = tempFilterOpts?.status.split(",");
+            selectedStatus = selectedStatus.filter((item) => item !== "D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual" && item !== "D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual");
+            reqParam = {
+              ...reqParam,
+              ...tempFilterOpts,
+              status: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+              sortExp: selSortFiled.name + " " + selSortFiled.order,
+            }  
+          }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
+  
     } else {
-      reqParam = {
-        ...reqParam,
-        sortExp: selSortFiled.name + " " + selSortFiled.order,
-      };
+      if (nolonger === false) {
+        reqParam = {
+          ...reqParam,
+          status: ZUGnolonger,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          sortExp: selSortFiled.name + " " + selSortFiled.order,
+        };
+      }
+  
     }
     try {
       let tempItems = [];
@@ -1905,14 +1954,20 @@ function Exemptionlog({ ...props }) {
     let tempZUGStatus = lookupvalues[0];
     let tempURPMSection = lookupvalues[1];
     let tempTypeOfExemption = lookupvalues[2];
+    let nolongerZUG = [];
     tempZUGStatus.forEach((item) => {
       if (item.isActive) {
+        if (item.lookUpName !== 'Withdrawn' && item.lookUpName !== 'No Longer Required' ) {
+          nolongerZUG.push(item.lookupID)
+        }
         tempopts.push({
           label: item.lookUpValue,
           value: item.lookupID,
         });
       }
     });
+    nolongerZUG = nolongerZUG.toString();
+    setZUGnolonger(nolongerZUG)
     tempZUGStatus = [...tempopts];
     tempopts = [];
     tempURPMSection.forEach((item) => {
@@ -1955,6 +2010,14 @@ function Exemptionlog({ ...props }) {
       setDashboardFilters();
     }
   };
+
+  useEffect(()=>{
+    if (nolonger === true) {
+      loadAPIData();
+    } else {
+      loadAPIData();
+    }
+  },[nolonger])
   
   const [selectedview, setselectedview] = useState(null);
   const [viewData, setViewData] = useState([]);
@@ -2077,7 +2140,7 @@ function Exemptionlog({ ...props }) {
       if (value !== selectedview) {
         setselectedview(value);
       } else {
-        setIsReset(true)
+        setIsReset(true);
       }
     } else {
       value = null;
@@ -2506,6 +2569,7 @@ function Exemptionlog({ ...props }) {
     marketBasketList: [],
     znaProductsId: "",
     znaProductsList: [],
+    exemptionDetailForLocalAddendum: ""
   };
   const formInitialValueURPM = {
     countryID: "",
@@ -2549,6 +2613,7 @@ function Exemptionlog({ ...props }) {
     marketBasketList: [],
     znaProductsId: "",
     znaProductsList: [],
+    exemptionDetailForLocalAddendum: ""
   };
   const [formIntialState, setformIntialState] = useState(formInitialValueZUG);
 
@@ -2894,6 +2959,7 @@ function Exemptionlog({ ...props }) {
     MarketBasketName: "ZNA Market Basket",
     ZNAProductsName: "ZNA Products",
     ExemptionCCName: "Exemption CC",
+    ExemptionDetailForLocalAddendum : "Exemption Detail for local addendum",
   };
   const versionHistoryexportFieldTitlesURPM = {
     EntryNumber: "Entry Number",
@@ -2923,6 +2989,7 @@ function Exemptionlog({ ...props }) {
     MarketBasketName: "ZNA Market Basket",
     ZNAProductsName: "ZNA Products",
     ExemptionCCName: "Exemption CC",
+    ExemptionDetailForLocalAddendum : "Exemption Detail for local addendum",
   };
   const versionHistoryexportHtmlFields = [
     "EmpowermentAndFeedbackRequest",
@@ -3188,6 +3255,12 @@ function Exemptionlog({ ...props }) {
         isDelete: true,
       };
     }
+    if (nolonger === false) {
+      reqParam = {
+        ...reqParam,
+        status: ZUGnolonger,
+      }
+    }
     if (!isEmptyObjectKeys(selfilter)) {
       let tempFilterOpts = {};
       for (let key in selfilter) {
@@ -3204,10 +3277,28 @@ function Exemptionlog({ ...props }) {
           }
         }
       }
-      reqParam = {
-        ...reqParam,
-        ...tempFilterOpts,
-      };
+      if (nolonger === false) {
+        if (tempFilterOpts?.status === '' || tempFilterOpts?.status === undefined) {
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            status: ZUGnolonger,
+          }
+        } else if (tempFilterOpts?.status) {
+          let selectedStatus = tempFilterOpts?.status.split(",");
+          selectedStatus = selectedStatus.filter((item) => item !== "D87A3F87-9011-4033-BE60-32B1C2F572DC-Manual" && item !== "D87A3F87-9012-4033-BE60-32B1C2F572DC-Manual");
+          reqParam = {
+            ...reqParam,
+            ...tempFilterOpts,
+            status: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
+          }  
+        }
+      } else {
+        reqParam = {
+          ...reqParam,
+          ...tempFilterOpts,
+        };
+      }
     }
     try {
       alert(alertMessage.commonmsg.reportDownlaod);
@@ -3310,6 +3401,7 @@ function Exemptionlog({ ...props }) {
                 </div>
               )}
             </div>
+            <p className="info-p">Disclaimer - By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>
           </div>
           <div className="page-filter-outercontainer">
             <div className="page-filter-positioncontainer">
@@ -3567,7 +3659,7 @@ function Exemptionlog({ ...props }) {
               <div className="progress-completion">Loading logs...</div>
             </div>
           )}
-          <div style={{ paddingLeft: "20px" }}>
+          <div style={{ paddingLeft: "20px", paddingRight: '20px', display: 'flex', justifyContent: 'space-between'}}>
             <div className="frm-filter">
               <FrmRadio
                 title={"Exemption Log Type"}
@@ -3578,6 +3670,21 @@ function Exemptionlog({ ...props }) {
                 isdisabled={!alllogsloaded}
               />
             </div>
+            {sellogTabType === 'all' && alllogsloaded &&
+              <div className="frm-filter toggle-btn-header">
+                  <FrmToggleSwitch
+                    title={"Show No Longer Required/Withdrawn"}
+                    name={"nolongerrequired"}
+                    value={nolonger}
+                    handleChange={(name, value)=>{setnolonger(value)}}
+                    isRequired={false}
+                    selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
+                    isdisabled={!alllogsloaded}
+                    isToolTip={true}
+                    tooltipmsg={"<p>By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
+                    />
+              </div>
+            }
           </div>
           <div className="tabs-container">
             {logTypes.map((item) => (

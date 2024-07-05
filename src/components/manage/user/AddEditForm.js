@@ -279,12 +279,6 @@ function AddEditForm(props) {
     if (frmuserTypeObj[formfield.userType] === "Auditor") {
       setformfield({ ...formfield, countryList: [], regionList: [], lobList: [], isAccessDeleteLog: false, dualRole: null, });
     }
-    if (frmuserTypeObj[formfield.userType] === "LoBAdmin") {
-      setformfield({ ...formfield, countryList: [], regionList: [] });
-    }
-    if (frmuserTypeObj[formfield.userType] === "Auditor") {
-      setformfield({ ...formfield, countryList: [], regionList: [], isAccessDeleteLog: false });
-    }
   }, [formfield.userType]);
   useEffect(() => {
       mapCountryRegion();
@@ -391,13 +385,6 @@ function AddEditForm(props) {
         frmuserTypeObj[formfield.userType] === "Auditor") &&
         formfield.regionList.length > 0 && 
         formfield.countryList.length === 0
-      ) {
-        return;
-      }
-      if (
-        frmuserTypeObj[formfield.userType] === "CountrySuperAdmin" &&
-        !formfield.regionList.length &&
-        !formfield.countryList.length
       ) {
         return;
       }

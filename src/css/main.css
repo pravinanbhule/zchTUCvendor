@@ -702,6 +702,7 @@ button:not(:last-child) {
 .btn-blue.disable:hover {
   background-color: #dee2e6 !important;
   cursor: default !important;
+  pointer-events: none;
 }
 .btn-blue:hover {
   background-color: rgba(33, 103, 173, 0.7);
@@ -1190,7 +1191,7 @@ button:not(:last-child) {
 .page-title-rfe{
     font-size: 20px;
     font-weight: 600;
-    padding: 10px 15px;
+    padding: 15px 10px 0px;
     color: #243e6f;
     margin-left: 1.5%;
 }
