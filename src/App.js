@@ -40,6 +40,7 @@ import { handlePermission } from "./permissions/Permission";
 import Co from "./components/manage/co/Co";
 import UserView from "./components/manage/userview/UserView";
 import Notifications from "./components/manage/notifications/Notifications";
+import Emailrequest from "./components/emailrequest/EmailRequest";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -101,6 +102,11 @@ function App({ state, menuClick }) {
                       <PrivateRoute
                         path="/region"
                         component={Region}
+                        menuClick={menuClick}
+                      />
+                      <PrivateRoute
+                        path="/email-request"
+                        component={Emailrequest}
                         menuClick={menuClick}
                       />
                       <PrivateRoute
