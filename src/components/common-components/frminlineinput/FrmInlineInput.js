@@ -20,7 +20,7 @@ function FrmInlineInput(props) {
         name={name}
         value={value}
         onChange={handleChange}
-        maxLength="60"
+        // maxLength="60"
         itemid={itemid}
       ></input>
       {isRequired && issubmitted && !value ? (
