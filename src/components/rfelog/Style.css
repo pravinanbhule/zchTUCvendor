@@ -74,3 +74,6 @@ table.policyterms  td{
 .title-dropdown-rfe .frm-field  {
   margin-bottom: 0px !important;
 }
+.toggle-button-zindex {
+  z-index: 10 !important;
+}

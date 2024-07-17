@@ -100,32 +100,10 @@ function VersionHistoryPopupRfe(props) {
                                   : ""}
                               </td>
                             </tr>
-                            {Object.keys(item).map((key, i) => {
-                              if (
-                                key !== "VersionNo" &&
-                                key !== "Last Modifior Name"
-                              ) {
-                                return (
-                                  <tr class="linktoparent">
-                                    <td></td>
-                                    <td>{key}</td>
-                                    <td>
-                                      {item[key]
-                                        ? item[key] === true ||
-                                          item[key] === false
-                                          ? item[key]
-                                            ? "Yes"
-                                            : "No"
-                                          : item[key].split(',').join(', ')
-                                        : ""}
-                                    </td>
-                                  </tr>
-                                );
-                              }
-                            })}
-                            {/*Object.keys(exportFieldTitles).map((key, i) => {
+                            {Object.keys(exportFieldTitles).map((key, i) => {
                               if (
                                 item[key] !== undefined &&
+                                item[key] !== null &&
                                 !versionHistoryExcludeFields[key]
                               ) {
                                 return (
@@ -165,7 +143,32 @@ function VersionHistoryPopupRfe(props) {
                                   </tr>
                                 );
                               }
-                            })*/}
+                            })}
+                            {Object.keys(item).map((key, i) => {
+                              if (
+                                exportFieldTitles[key] === undefined &&
+                                item[key] !== null &&
+                                key !== "VersionNo" &&
+                                key !== "Last Modifior Name"
+                              ) {
+                                return (
+                                  <tr class="linktoparent">
+                                    <td></td>
+                                    <td>{key}</td>
+                                    <td>
+                                      {item[key]
+                                        ? (item[key] === true ||
+                                          item[key] === false)
+                                          ? item[key]
+                                            ? "Yes"
+                                            : "No"
+                                          : item[key].split(',').join(', ')
+                                        : ""}
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            })}
                           </tbody>
                         );
                       })}

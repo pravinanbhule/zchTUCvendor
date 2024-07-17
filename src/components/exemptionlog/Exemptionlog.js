@@ -3681,6 +3681,8 @@ function Exemptionlog({ ...props }) {
                     isRequired={false}
                     selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
                     isdisabled={!alllogsloaded}
+                    isToolTip={true}
+                    tooltipmsg={"<p>By default the no longer required/withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
                     />
               </div>
             }
