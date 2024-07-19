@@ -837,120 +837,13 @@ function AddEditForm(props) {
         tooltipObj[item.toolTipField] = item.toolTipText;
       });
       settooltip(tooltipObj);
-      if (IncountryFlag === IncountryFlagConst.GERMANY) {
-        if (selectedlanguage.value === "DE001") {
-          formdomfields.filter((item) =>
-            item.name === "RequestForEmpowermentReason"
-              ? (item.isAddButton = true)
-              : item.name === "ReferralReasonLevel2"
-              ? (item.titlelinespace = false)
-              : item.name === "ReferralReasonLevel3"
-              ? (item.titlelinespace = false)
-              : item.name === "AccountNumber" && accountNumberShow
-              ? (item.colspan = 3)
-              : (item.colspan = item.colspan)
-          );
-        } else {
-          formdomfields.filter((item) =>
-            item.name === "RequestForEmpowermentReason"
-              ? (item.isAddButton = true)
-              : item.name === "ReferralReasonLevel2"
-              ? (item.titlelinespace = false)
-              : item.name === "ReferralReasonLevel3"
-              ? (item.titlelinespace = false)
-              : item.name === "AccountNumber" && accountNumberShow
-              ? (item.colspan = 3)
-              : (item.colspan = item.colspan)
-          );
-        }
-        if (
-          formfield.ReferralReasonLevel2 === "" ||
-          formfield.ReferralReasonLevel2 === null ||
-          formfield.ReferralReasonLevel2 === undefined
-        ) {
-          setReasonfields({
-            ...reasonfields,
-            ReferralReasonLevel2: false,
-            ReferralReasonLevel3: false,
-          });
-          delete formIntialState.ReferralReasonLevel2;
-          delete formIntialState.ReferralReasonLevel3;
-          formdomfields.filter((item) =>
-            item.name === "RequestForEmpowermentReason"
-              ? (item.isAddButton = true)
-              : item.name === "ReferralReasonLevel2"
-              ? (item.colspan = 0)
-              : item.name === "ReferralReasonLevel3"
-              ? (item.colspan = 0)
-              : item.name === "AccountNumber" && accountNumberShow
-              ? (item.colspan = 3)
-              : (item.colspan = item.colspan)
-          );
-          setformfield({
-            ...formfield,
-            ReferralReasonLevel2: null,
-            ReferralReasonLevel3: null,
-            isdirty: true,
-          });
-        }
-        if (
-          (formfield.ReferralReasonLevel3 === "" ||
-            formfield.ReferralReasonLevel3 === null ||
-            formfield.ReferralReasonLevel3 === undefined) &&
-          formfield.ReferralReasonLevel2 !== "" &&
-          formfield.ReferralReasonLevel2 !== null &&
-          formfield.ReferralReasonLevel2 !== undefined
-        ) {
-          setReasonfields({
-            ...reasonfields,
-            ReferralReasonLevel2: true,
-            ReferralReasonLevel3: false,
-          });
-          delete formIntialState.ReferralReasonLevel3;
-          formdomfields.filter((item) =>
-            item.name === "ReferralReasonLevel2"
-              ? ((item.isAddButton = true), (item.colspan = 3))
-              : item.name === "ReferralReasonLevel3"
-              ? (item.colspan = 0)
-              : item.name === "AccountNumber" && accountNumberShow
-              ? (item.colspan = 3)
-              : (item.colspan = item.colspan)
-          );
-          setformfield({
-            ...formfield,
-            ReferralReasonLevel3: null,
-            isdirty: true,
-          });
-        } else if (
-          formfield.ReferralReasonLevel3 !== "" &&
-          formfield.ReferralReasonLevel3 !== null &&
-          formfield.ReferralReasonLevel2 !== "" &&
-          formfield.ReferralReasonLevel2 !== null
-        ) {
-          formdomfields.filter((item) =>
-            item.name === "ReferralReasonLevel2"
-              ? (item.isAddButton = false)
-              : item.name === "ReferralReasonLevel3"
-              ? (item.colspan = 3)
-              : item.name === "AccountNumber" && accountNumberShow
-              ? (item.colspan = 3)
-              : (item.colspan = item.colspan)
-          );
-        }
-        if (
-          formfield.RequestForEmpowermentReason !== "" &&
-          formfield.RequestForEmpowermentReason !== null
-        ) {
-          setButtonsDisable(false);
-        }
-      }
     }
   }, [selectedlanguage]);
 
   const [isFirst, setIsFirst] = useState(true);
 
   const fnloadcountryview = async () => {
-    if ((isEditMode || isReadMode) && isFirst && IncountryFlag === IncountryFlagConst.GERMANY) {
+    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK)) {
       setIsFirst(false);
     }
     if (!isFirst) {
@@ -1620,29 +1513,11 @@ function AddEditForm(props) {
       });
       setButtonsDisable(true);
       formdomfields.filter((item) =>
-        item.name === "ReferralReasonLevel2"
-          ? (item.colspan = 3)
-          : (item.colspan = item.colspan)
-      );
-      formdomfields.filter((item) =>
         item.name === "RequestForEmpowermentReason"
           ? (item.isAddButton = false)
-          : item.name === "ReferralReasonLevel2" &&
-            formfield.ReferralReasonLevel3 !== null
-          ? (item.isAddButton = false)
           : item.name === "ReferralReasonLevel2"
-          ? (item.isAddButton = true)
-          : item.name === "ReferralReasonLevel3" &&
-            formfield.ReferralReasonLevel4 !== null
-          ? (item.isAddButton = false)
-          : item.name === "ReferralReasonLevel3"
-          ? (item.isAddButton = true)
-          : item.name === "ReferralReasonLevel4" &&
-            formfield.ReferralReasonLevel5 !== null
-          ? (item.isAddButton = false)
-          : item.name === "ReferralReasonLevel4"
-          ? (item.isAddButton = true)
-          : (item.name = item.name)
+          ? (item.colspan = 3, item.isAddButton = (reasonfields.ReferralReasonLevel3 === false ? true : false))
+          : (item.colspan = item.colspan)
       );
     } else if (name === "ReferralReasonLevel2") {
       setReasonfields({
@@ -1650,14 +1525,11 @@ function AddEditForm(props) {
         ReferralReasonLevel3: true,
       });
       formdomfields.filter((item) =>
-        item.name === "ReferralReasonLevel3"
-          ? (item.colspan = 3, item.isAddButton = IncountryFlag === IncountryFlagConst.UK ? true : false)
-          : (item.colspan = item.colspan)
-      );
-      formdomfields.filter((item) =>
         item.name === "ReferralReasonLevel2"
           ? (item.isAddButton = false)
-          : (item.name = item.name)
+          : item.name === "ReferralReasonLevel3"
+          ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
+          : (item.colspan = item.colspan)
       );
     } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
@@ -1665,14 +1537,11 @@ function AddEditForm(props) {
         ReferralReasonLevel4: true,
       });
       formdomfields.filter((item) =>
-        item.name === "ReferralReasonLevel4"
-          ? (item.colspan = 3, item.isAddButton = true)
-          : (item.colspan = item.colspan)
-      );
-      formdomfields.filter((item) =>
         item.name === "ReferralReasonLevel3"
           ? (item.isAddButton = false)
-          : (item.name = item.name)
+          : item.name === "ReferralReasonLevel4"
+          ? (item.colspan = 3, item.isAddButton = (reasonfields.ReferralReasonLevel5 === false ? true : false))
+          : (item.colspan = item.colspan)
       );
     } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
@@ -1680,14 +1549,11 @@ function AddEditForm(props) {
         ReferralReasonLevel5: true,
       });
       formdomfields.filter((item) =>
-        item.name === "ReferralReasonLevel5"
-          ? (item.colspan = 3)
-          : (item.colspan = item.colspan)
-      );
-      formdomfields.filter((item) =>
         item.name === "ReferralReasonLevel4"
           ? (item.isAddButton = false)
-          : (item.name = item.name)
+          : item.name === "ReferralReasonLevel5"
+          ? (item.colspan = 3)
+          : (item.colspan = item.colspan)
       );
     }
   };
@@ -2565,32 +2431,83 @@ function AddEditForm(props) {
     window.scrollTo({ top: scrollPosition, behavior: "smooth" });
   };
   const handleResetGermany = () => {
-    setReasonfields({
-      ...reasonfields,
-      ReferralReasonLevel2: false,
-      ReferralReasonLevel3: false,
-      ReferralReasonLevel4: false,
-      ReferralReasonLevel5: false,
-    });
-    setAccountNumberShow(false);
-    setButtonsDisable(true);
-    delete formIntialState.RequestForEmpowermentReason;
-    delete formIntialState.ReferralReasonLevel2;
-    delete formIntialState.ReferralReasonLevel3;
-    delete formIntialState.ReferralReasonLevel4;
-    delete formIntialState.ReferralReasonLevel5;
-    delete formIntialState.AccountNumber;
-    delete formIntialState.CustomerSegment;
-    setformfield({
-      ...formfield,
-      RequestForEmpowermentReason: null,
-      ReferralReasonLevel2: null,
-      ReferralReasonLevel3: null,
-      ReferralReasonLevel4: null,
-      ReferralReasonLevel5: null,
-      CustomerSegment: null,
-      AccountNumber: null,
-    });
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.GERMANY) {
+      if (selectedlanguage?.value === "DE001") {
+        formdomfields.filter((item) =>
+          item.name === "ReferralReasonLevel2"
+            ? (item.titlelinespace = false)
+            : item.name === "ReferralReasonLevel3"
+            ? (item.titlelinespace = false)
+            : item.name === "ReferralReasonLevel4"
+            ? (item.titlelinespace = false)
+            : item.name === "ReferralReasonLevel5"
+            ? (item.titlelinespace = false)
+            : item.name === "AccountNumber" && accountNumberShow && IncountryFlag === IncountryFlagConst.GERMANY
+            ? (item.colspan = 3)
+            : (item.colspan = item.colspan)
+        );
+      } else {
+        formdomfields.filter((item) =>
+          item.name === "ReferralReasonLevel2"
+            ? (item.titlelinespace = true)
+            : item.name === "ReferralReasonLevel3"
+            ? (item.titlelinespace = true)
+            : item.name === "ReferralReasonLevel4"
+            ? (item.titlelinespace = true)
+            : item.name === "ReferralReasonLevel5"
+            ? (item.titlelinespace = true)
+            : item.name === "AccountNumber" && accountNumberShow && IncountryFlag === IncountryFlagConst.GERMANY
+            ? (item.colspan = 3)
+            : (item.colspan = item.colspan)
+        );
+      }
+      if (IncountryFlag === IncountryFlagConst.GERMANY) {
+        delete formIntialState.ReferralReasonLevel4;
+        delete formIntialState.ReferralReasonLevel5;
+      }
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: !(formfield.ReferralReasonLevel2 === "" ||
+          formfield.ReferralReasonLevel2 === null ||
+          formfield.ReferralReasonLevel2 === undefined),
+        ReferralReasonLevel3: !(formfield.ReferralReasonLevel3 === "" ||
+          formfield.ReferralReasonLevel3 === null ||
+          formfield.ReferralReasonLevel3 === undefined),
+        ReferralReasonLevel4: !(formfield.ReferralReasonLevel4 === "" ||
+          formfield.ReferralReasonLevel4 === null ||
+          formfield.ReferralReasonLevel4 === undefined),
+        ReferralReasonLevel5: !(formfield.ReferralReasonLevel5 === "" ||
+          formfield.ReferralReasonLevel5 === null ||
+          formfield.ReferralReasonLevel5 === undefined),
+      });
+    } else {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+        ReferralReasonLevel4: false,
+        ReferralReasonLevel5: false,
+      });
+      setAccountNumberShow(false);
+      setButtonsDisable(true);
+      delete formIntialState.RequestForEmpowermentReason;
+      delete formIntialState.ReferralReasonLevel2;
+      delete formIntialState.ReferralReasonLevel3;
+      delete formIntialState.ReferralReasonLevel4;
+      delete formIntialState.ReferralReasonLevel5;
+      delete formIntialState.AccountNumber;
+      delete formIntialState.CustomerSegment;
+      setformfield({
+        ...formfield,
+        RequestForEmpowermentReason: null,
+        ReferralReasonLevel2: null,
+        ReferralReasonLevel3: null,
+        ReferralReasonLevel4: null,
+        ReferralReasonLevel5: null,
+        CustomerSegment: null,
+        AccountNumber: null,
+      });
+    }
   }
   const assignPeoplepikerUser = async (name, value, usertype) => {
     let displayname = [];
@@ -3890,7 +3807,7 @@ function AddEditForm(props) {
                   ? true
                   : false
               }
-              isAddButtonDisable={buttonsDisable}
+              isAddButtonDisable={false}
               handleClickButton={(value, name) =>
                 handleMultiDropdown(value, name)
               }
