@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Style.css";
+import { handlePermission } from "../../../permissions/Permission";
 function MoreActions({
   rowid,
   isSubmit,
@@ -8,6 +9,7 @@ function MoreActions({
   handleDeleteItem,
   userProfile,
   isDelete,
+  handleLinkItem,
 }) {
   let timeout;
   const [active, setActive] = useState(false);
@@ -33,6 +35,10 @@ function MoreActions({
     handleDeleteItem(rowid, isSubmit);
     hideMoreItems();
   };
+  const addItem = () => {
+    handleLinkItem(rowid, isSubmit);
+    hideMoreItems();
+  } 
   return (
     <div>
       <div
@@ -59,6 +65,14 @@ function MoreActions({
               ></div>
             ) : (
               ""
+            )}
+            {handlePermission(window.location.pathname.slice(1), "isAdd") &&
+              handleLinkItem && (
+              <div
+                className="moreaction-plus-icon icon"
+                onClick={() => addItem()}
+              >
+              </div>
             )}
           </div>
         )}
