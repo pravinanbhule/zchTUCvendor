@@ -33,7 +33,7 @@ function EmailRequest(props) {
         <div className="unauthorized-message">
             {isLodaing ? (
                 <>
-                    Please wait we processing your request....
+                    Please wait we are processing your request...
                 </>
             ) : (
                 <>
