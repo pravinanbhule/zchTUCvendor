@@ -1537,6 +1537,7 @@ function AddEditForm(props) {
                       selectopts={frmMaterialBreachCategory}
                       isToolTip={true}
                       tooltipmsg={tooltip["MaterialBreachCategory"]}
+                      validationmsg={"Mandatory field"}
                     />
                   </div>
                   : <></>
