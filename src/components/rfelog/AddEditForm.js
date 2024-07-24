@@ -3787,7 +3787,13 @@ function AddEditForm(props) {
               name={obj.name}
               value={formfield[obj.name]}
               handleChange={handleSelectChange}
-              isRequired={mandatoryFields.includes(obj.name)}
+              isRequired={
+                mandatoryFields.includes(obj.name) ||
+                obj.name === "ReferralReasonLevel2" ||
+                obj.name === "ReferralReasonLevel3" ||
+                obj.name === "ReferralReasonLevel4" ||
+                obj.name === "ReferralReasonLevel5"
+              }
               isReadMode={isReadMode}
               validationmsg={
                 AppLocale[
