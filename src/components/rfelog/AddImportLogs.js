@@ -490,7 +490,7 @@ function AddImportLogs(props) {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "RequestForEmpowermentReason",
     },
-    "Request for empowerment reason  2": {
+    "Request for empowerment reason 2": {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "ReferralReasonLevel2",
     },
