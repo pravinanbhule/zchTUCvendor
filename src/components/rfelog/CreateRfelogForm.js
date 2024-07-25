@@ -21,6 +21,7 @@ import { RFE_LOG_STATUS } from "../../constants";
 import VersionHistoryPopupRfe from "../versionhistorypopup/VersionHistoryPopupRfe";
 import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "./Rfelogconstants";
 import AppLocale from "../../IngProvider";
+import Loading from "../common-components/Loading";
 
 
 function CreateRfelogForm(props) {
@@ -208,7 +209,9 @@ function CreateRfelogForm(props) {
     };
 
     useEffect(() => {
-        if (queryparam.id) {
+        if (queryparam.status === "add") {
+            handleLinkLog(queryparam.id)
+        } else if (queryparam.id) {
             handleEdit(this, true);
         }
     }, [queryparam]);
@@ -375,10 +378,36 @@ function CreateRfelogForm(props) {
         }
     };
 
+    const [isFlow3, setIsFlow3] = useState(false);
+    const [linkSpecificDetails, setLinkSpecificDetails] = useState("")
+
+    const handleLinkLog = async(itemid) => {
+        let response = await getById({
+          rfeLogId: itemid,
+        });
+        setIsFlow3(true)
+        if (response.FieldValues) {
+          response = response.FieldValues;
+          let countryList = response.CountryList;
+          countryList = countryList.map((country) => ({
+            label: country.countryName,
+            value: country.countryID,
+            regionId: country.regionID,
+          }));
+          response["CountryList"] = [...countryList];
+          setLinkSpecificDetails(response.RFELogDetails)
+          setformIntialState({
+            ...response,
+            isdirty: false,
+          });
+          setloading(false)
+        }
+      }
+
     return (
         <>
             {loading ?
-                "Loading" :
+                <Loading /> :
                 <AddEditForm
                     title={isReadMode ? "View RfE Log" : "Add/Edit RfE Log"}
                     hideAddPopup={hideAddPopup}
@@ -396,6 +425,8 @@ function CreateRfelogForm(props) {
                     isDraft={isDraft}
                     sellogTabType={selLogType}
                     setInAddMode={setInAddMode}
+                    isFlow3={isFlow3}
+                    linkSpecificDetails={linkSpecificDetails}
                 ></AddEditForm>
             }
             {showVersionHistory ? (

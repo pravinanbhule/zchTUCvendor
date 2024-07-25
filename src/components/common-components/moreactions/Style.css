@@ -4,13 +4,25 @@
     justify-content: center;
 }
 
+.moreaction-plus-icon {
+    width: 100%;
+    height: 25px;
+    margin-top: 22%;
+    margin-left: -5%;
+    background: url("../../../assets/plus_more_normal.png") center no-repeat;
+}
+.moreaction-plus-icon:hover {
+    cursor: pointer;
+    background-image: url("../../../assets/plus_more_hover.png");
+}
+
 .moreaction-icon-container {
     width: 70px;
 }
 
 .moreaction-items-container {
     position: absolute;
-    width: 70px;
+    width: 90px;
     background-color: #fff;
     left: 70px;
     top: -20px;
@@ -42,4 +54,7 @@
 }
 .moreaction-container .delete-icon:hover::after {
     content: "Delete";
+}
+.moreaction-container .moreaction-plus-icon:hover::after {
+    content: "Add new RfE";
 }

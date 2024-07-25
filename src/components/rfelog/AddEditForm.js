@@ -95,7 +95,9 @@ function AddEditForm(props) {
     linkedLogLogs,
     referenceLog,
     getById,
-    setInAddMode
+    setInAddMode,
+    isFlow3,
+    linkSpecificDetails
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -3181,7 +3183,7 @@ function AddEditForm(props) {
   const [referenceRfEId, setReferenceRfEId] = useState("");
   const [linkedPopupDetails, setLinkedPopupDetails] = useState({})
   const [entryNumberRfE, setEntryNumberRfE] = useState('')
-  const [specificDetails, setSpecificDetails] = useState('')
+  const [specificDetails, setSpecificDetails] = useState(linkSpecificDetails)
   const [logTypes, setlogTypes] = useState([
     {
       label: "RfE Log",
@@ -3343,7 +3345,7 @@ function AddEditForm(props) {
   }
 
   useEffect(()=>{
-    if (!isEditMode && !isReadMode && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
+    if (!isEditMode && !isReadMode && !isFlow3 && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
         const delayDebounceFn = setTimeout(() => {
           handleReferenceRfE();
         }, 2000)
@@ -3351,6 +3353,12 @@ function AddEditForm(props) {
         return () => clearTimeout(delayDebounceFn)
     }
   },[formfield.AccountName, formfield.CountryList, formfield.LOBId])
+
+  useEffect(() => {
+    if (isFlow3 === true) {
+      handleCopyValueflow1()
+    }
+  }, [isFlow3])
 
   const handleReferenceRfE = async() =>{
     let selectedCountryItems = formfield?.CountryList?.map(
