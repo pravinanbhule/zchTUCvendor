@@ -1531,12 +1531,13 @@ function AddEditForm(props) {
                       name={"materialBreachCategory"}
                       value={formfield.materialBreachCategory}
                       handleChange={handleSelectChange}
-                      isRequired={false}
+                      isRequired={formfield.materialBreach === true ? true : false}
                       isReadMode={isReadMode}
                       issubmitted={issubmitted}
                       selectopts={frmMaterialBreachCategory}
                       isToolTip={true}
                       tooltipmsg={tooltip["MaterialBreachCategory"]}
+                      validationmsg={"Mandatory field"}
                     />
                   </div>
                   : <></>
