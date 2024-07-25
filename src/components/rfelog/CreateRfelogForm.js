@@ -397,12 +397,8 @@ function CreateRfelogForm(props) {
           response["CountryList"] = [...countryList];
           setLinkSpecificDetails(response.RFELogDetails)
           setformIntialState({
-            ...formInitialValue,
-            LinkedRFEEntryNumber: response.EntryNumber,
-            AccountName: response.AccountName,
-            CountryList: response.CountryList,
-            LOBId: response.LOBId,
-            CountryId: response.CountryId
+            ...response,
+            isdirty: false,
           });
           setloading(false)
         }

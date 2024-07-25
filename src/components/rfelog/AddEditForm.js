@@ -3352,6 +3352,12 @@ function AddEditForm(props) {
     }
   },[formfield.AccountName, formfield.CountryList, formfield.LOBId])
 
+  useEffect(() => {
+    if (isFlow3 === true) {
+      handleCopyValueflow1()
+    }
+  }, [isFlow3])
+
   const handleReferenceRfE = async() =>{
     let selectedCountryItems = formfield?.CountryList?.map(
       (item) => item.value
