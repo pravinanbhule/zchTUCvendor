@@ -1469,33 +1469,33 @@ function AddEditForm(props) {
         setButtonsDisable(true);
       }
     } 
-    if (IncountryFlag === IncountryFlagConst.UK) {
-      if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-          /\s/g,
-          ""
-        ) !== reasonOtherValueUK &&
-        formIntialState.RequestForEmpowermentReason !== "") {
-        setShowButtons(true);
-        setButtonsDisable(false);
-      }
-      if (
-        formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-          /\s/g,
-          ""
-        ) === reasonOtherValueUK
-      ) {
-        setShowButtons(false);
-        setButtonsDisable(true);
-        setShowTextBox(true);
-      }
-      if (
-        formIntialState?.RequestForEmpowermentReason === "" ||
-        formIntialState.RequestForEmpowermentReason === undefined
-      ) {
-        setShowButtons(true);
-        setButtonsDisable(true);
-      }
-    }
+    // if (IncountryFlag === IncountryFlagConst.UK) {
+    //   if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+    //       /\s/g,
+    //       ""
+    //     ) !== reasonOtherValueUK &&
+    //     formIntialState.RequestForEmpowermentReason !== "") {
+    //     setShowButtons(true);
+    //     setButtonsDisable(false);
+    //   }
+    //   if (
+    //     formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+    //       /\s/g,
+    //       ""
+    //     ) === reasonOtherValueUK
+    //   ) {
+    //     setShowButtons(false);
+    //     setButtonsDisable(true);
+    //     setShowTextBox(true);
+    //   }
+    //   if (
+    //     formIntialState?.RequestForEmpowermentReason === "" ||
+    //     formIntialState.RequestForEmpowermentReason === undefined
+    //   ) {
+    //     setShowButtons(true);
+    //     setButtonsDisable(true);
+    //   }
+    // }
     if (
       IncountryFlag !== undefined &&
       IncountryFlag !== IncountryFlagConst.GERMANY
@@ -3805,8 +3805,12 @@ function AddEditForm(props) {
                 (obj.disablecondition && eval(obj.disablecondition))
               }
               isAddButton={
-                (IncountryFlag === IncountryFlagConst.UK ||
-                IncountryFlag === IncountryFlagConst.GERMANY) &&
+                // (IncountryFlag === IncountryFlagConst.UK ||
+                // IncountryFlag === IncountryFlagConst.GERMANY) &&
+                // showButtons && obj.isAddButton === true
+                //   ? true
+                //   : false
+                IncountryFlag === IncountryFlagConst.GERMANY &&
                 showButtons && obj.isAddButton === true
                   ? true
                   : false
@@ -3819,7 +3823,8 @@ function AddEditForm(props) {
               isToolTip={obj.tooltipmsg ? true : false}
               isShowTextBox={
                 obj.name === "RequestForEmpowermentReason" &&
-                showTextBox 
+                showTextBox &&
+                IncountryFlag === IncountryFlagConst.GERMANY
                 // &&
                 // isGermany
               }
