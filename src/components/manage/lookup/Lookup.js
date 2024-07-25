@@ -498,7 +498,7 @@ function Lookup({ ...props }) {
                                   })
                                 }
                               ></td>
-                              {/* <td></td> */}
+                              <td></td>
                               <td>
                                 <FrmInlineInput
                                   placeholder={"Add value here"}

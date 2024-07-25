@@ -1397,15 +1397,6 @@ function Rfelog({ ...props }) {
       getLookupByType({
         LookupType: "ConditionApplicableTo",
       }),
-      getLookupByType({ 
-        LookupType: "DurationofApproval" 
-      }),
-      getLookupByType({ 
-        LookupType: "RFELogNewRenewal" 
-      }),
-      getLookupByType({ 
-        LookupType: "ConditionApplicableTo" 
-      }),
     ]);
 
     let tempStatus = lookupvalues[0];

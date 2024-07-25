@@ -100,7 +100,7 @@ function Navbar({ ...props }) {
                     </div>
                   </Link>
                 )}
-                {/* {userProfile && handlePermission("Navbar", "token") && (
+                {userProfile && handlePermission("Navbar", "token") && (
                   <Link to="/token">
                     <div
                       className={`menu-item ${
@@ -110,7 +110,7 @@ function Navbar({ ...props }) {
                       Token
                     </div>
                   </Link>
-                )} */}
+                )}
                 {userProfile && handlePermission("Navbar", "znaorganization1") && (
                   <Link to="/znaorganization1">
                     <div

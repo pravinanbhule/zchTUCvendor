@@ -133,6 +133,7 @@ function AddEditForm(props) {
   const [frmTypeOfBreach, setfrmTypeOfBreach] = useState([]);
   const [frmRootCauseBreach, setfrmRootCauseBreach] = useState([]);
   const [frmNatureOfBreach, setfrmNatureOfBreach] = useState([]);
+  const [frmMaterialBreachCategory, setfrmMaterialBreachCategory] = useState([]);
   const [frmRangeFinImpact, setfrmRangeFinImpact] = useState([]);
   const [frmHowDetected, setfrmHowDetected] = useState([]);
   const [frmOffice, setfrmOffice] = useState([]);
@@ -253,6 +254,7 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "BreachDetection" }),
       getLookupByType({ LookupType: "BreachStatus" }),
       getToolTip({ type: "BreachLogs" }),
+      getLookupByType({ LookupType: "MaterialBreachCategory" }),
     ]);
     let tempSeverity = dbvalues[0];
     let tempTypeOfBreach = dbvalues[1];
@@ -262,6 +264,7 @@ function AddEditForm(props) {
     let tempHowDetected = dbvalues[5];
     let tempBreachStatus = dbvalues[6];
     let tempToolTips = dbvalues[7];
+    let tempMaterialCategoryBreach = dbvalues[8];
     /*let tempSeverity = await getLookupByType({
       LookupType: "BreachClassification",
     });
@@ -443,6 +446,24 @@ function AddEditForm(props) {
         }
       }
     });
+    tempopts = [];
+    tempMaterialCategoryBreach.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || item.lookupID === formIntialState.materialBreachCategory) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    tempMaterialCategoryBreach = [...tempopts];
+    tempopts = [];
 
     setfrmSeverity([...tempSeverity]);
     setfrmTypeOfBreach([selectInitiVal, ...tempTypeOfBreach]);
@@ -451,6 +472,7 @@ function AddEditForm(props) {
     setfrmRangeFinImpact([selectInitiVal, ...tempRangeFinImpact]);
     setfrmHowDetected([selectInitiVal, ...tempHowDetected]);
     setfrmBreachStatus([selectInitiVal, ...frmbreachstatus]);
+    setfrmMaterialBreachCategory([selectInitiVal, ...tempMaterialCategoryBreach])
     setformfield(formIntialState);
     setloading(false);
   };
@@ -680,6 +702,13 @@ function AddEditForm(props) {
       setformfield({
         ...formfield,
         marketBasketId: "",
+        isdirty: true,
+        [name]: value,
+      });
+    } else if (name === "materialBreach") {
+      setformfield({
+        ...formfield,
+        materialBreachCategory: "",
         isdirty: true,
         [name]: value,
       });
@@ -1491,6 +1520,28 @@ function AddEditForm(props) {
                     isdisabled={isfrmdisabled}
                   />
                 </div>
+                {formfield.materialBreach === true ?
+                  <div className="col-md-3">
+                    <FrmSelect
+                      title={
+                        <>
+                          Material Breach category
+                        </>
+                      }
+                      name={"materialBreachCategory"}
+                      value={formfield.materialBreachCategory}
+                      handleChange={handleSelectChange}
+                      isRequired={formfield.materialBreach === true ? true : false}
+                      isReadMode={isReadMode}
+                      issubmitted={issubmitted}
+                      selectopts={frmMaterialBreachCategory}
+                      isToolTip={true}
+                      tooltipmsg={tooltip["MaterialBreachCategory"]}
+                      validationmsg={"Mandatory field"}
+                    />
+                  </div>
+                  : <></>
+                }
                 <div className="col-md-3">
                   <FrmDatePicker
                     title={"Date Breach Occurred"}

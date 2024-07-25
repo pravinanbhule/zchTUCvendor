@@ -140,6 +140,7 @@ function AddImportLogs(props) {
     officeObj: {},
     breachStatus: [],
     breachStatusObj: {},
+    materialBreachcategoryObj: [],
     materialBreachObj: { TRUE: true, FALSE: false },
     // nearMissesObj: { TRUE: true, FALSE: false },
   });
@@ -184,6 +185,9 @@ function AddImportLogs(props) {
     });
     let tempBreachStatus = await getLookupByType({
       LookupType: "BreachStatus",
+    });
+    let tempMaterialBreachcategory = await getLookupByType({
+      LookupType: "MaterialBreachCategory",
     });
 
     tempopts = [];
@@ -277,6 +281,19 @@ function AddImportLogs(props) {
     });
     tempBreachStatus = [...tempopts];
     let tempBreachStatusObj = { ...tempObj };
+    tempopts = [];
+    tempObj = {};
+    tempMaterialBreachcategory.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    tempMaterialBreachcategory = [...tempopts];
+    let tempMaterialBreachcategoryObj = { ...tempObj };
     setmasterdata((prevstate) => ({
       ...prevstate,
       classification: [...tempClassification],
@@ -293,6 +310,7 @@ function AddImportLogs(props) {
       howDetectedObj: { ...tempHowDetectedObj },
       breachStatus: [...tempBreachStatus],
       breachStatusObj: { ...tempBreachStatusObj },
+      materialBreachcategoryObj: { ...tempMaterialBreachcategoryObj}
     }));
 
     // setmandatoryFields([...commonMandatoryFields, ...regionMandotoryFields]);
@@ -573,6 +591,10 @@ function AddImportLogs(props) {
     "Material Breach": {
       lookupObj: "materialBreachObj",
       fieldname: "materialBreach",
+    },
+    "Material Breach category": {
+      lookupObj: "materialBreachcategoryObj",
+      fieldname: "materialBreachCategory",
     },
     "Date Breach Occurred": {
       lookupObj: "",

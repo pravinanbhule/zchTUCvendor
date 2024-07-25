@@ -490,13 +490,21 @@ function AddImportLogs(props) {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "RequestForEmpowermentReason",
     },
-    "Referral Reason Level 2": {
+    "Request for empowerment reason 2": {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "ReferralReasonLevel2",
     },
-    "Referral Reason Level 3": {
+    "Request for empowerment reason 3": {
       lookupObj: "rfeEmpourmentObj",
       fieldname: "ReferralReasonLevel3",
+    },
+    "Request for empowerment reason 4": {
+      lookupObj: "rfeEmpourmentObj",
+      fieldname: "ReferralReasonLevel4",
+    },
+    "Request for empowerment reason 5": {
+      lookupObj: "rfeEmpourmentObj",
+      fieldname: "ReferralReasonLevel5",
     },
     "Customer Segment": {
       lookupObj: "segmentObj",
@@ -864,9 +872,13 @@ function AddImportLogs(props) {
               }
               if (fieldname === "RequestForEmpowermentReason" ||
                 fieldname === "ReferralReasonLevel2" ||
-                fieldname === "ReferralReasonLevel3"
+                fieldname === "ReferralReasonLevel3" ||
+                fieldname === "ReferralReasonLevel4" ||
+                fieldname === "ReferralReasonLevel5"
               ) {
-                if (cellData?.toLowerCase().replace(/\s/g,"") === "others(indiesemfallbitteimkommentardenrfegrundeingeben)") {
+                if (cellData?.toLowerCase().replace(/\s/g,"") === "others" ||
+                cellData?.toLowerCase().replace(/\s/g,"") === "others(indiesemfallbitteimkommentardenrfegrundeingeben)"
+                ) {
                   selectedReasonOther = true
                 }
                 reasons.push(value);
@@ -1236,11 +1248,16 @@ function AddImportLogs(props) {
                   templogdata["UnderwriterGrantingEmpowermentComments"] = "";
                 }
                 if (selectedReasonOther) {
+                  if (IncountryFlag === IncountryFlagCost.UK) {
+                    templogdata["RequestForEmpowermentReason"] = "GEN65F18802-A109-4B7C-BBCF-20CF78B89142";
+                  } 
                   if (IncountryFlag === IncountryFlagCost.GERMANY) {
                     templogdata["RequestForEmpowermentReason"] = "00EBEE31-9CAE-4094-853F-D8F5EB1F124B";
                   }
                   delete templogdata["ReferralReasonLevel2"];
                   delete templogdata["ReferralReasonLevel3"];
+                  delete templogdata["ReferralReasonLevel4"];
+                  delete templogdata["ReferralReasonLevel5"];
                 } else {
                   delete templogdata["OtherReferralReason"];
                 }
@@ -1520,7 +1537,7 @@ function AddImportLogs(props) {
     if (IncountryFlag === IncountryFlagCost.LATAM) {
       setimportfieldscount(29);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
-      setimportfieldscount(22);
+      setimportfieldscount(27);
     } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else if (IncountryFlag === IncountryFlagCost.GERMANY) {
