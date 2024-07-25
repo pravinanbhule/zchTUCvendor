@@ -401,7 +401,8 @@ function CreateRfelogForm(props) {
             LinkedRFEEntryNumber: response.EntryNumber,
             AccountName: response.AccountName,
             CountryList: response.CountryList,
-            LOBId: response.LOBId
+            LOBId: response.LOBId,
+            CountryId: response.CountryId
           });
           setloading(false)
         }

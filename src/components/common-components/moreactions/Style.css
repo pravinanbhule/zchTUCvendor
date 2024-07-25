@@ -22,7 +22,7 @@
 
 .moreaction-items-container {
     position: absolute;
-    width: 70px;
+    width: 90px;
     background-color: #fff;
     left: 70px;
     top: -20px;
@@ -56,5 +56,5 @@
     content: "Delete";
 }
 .moreaction-container .moreaction-plus-icon:hover::after {
-    content: "Add";
+    content: "Add new RfE";
 }
