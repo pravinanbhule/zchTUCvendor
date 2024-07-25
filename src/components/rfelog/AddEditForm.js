@@ -843,7 +843,7 @@ function AddEditForm(props) {
   const [isFirst, setIsFirst] = useState(true);
 
   const fnloadcountryview = async () => {
-    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK)) {
+    if ((isEditMode || isReadMode) && isFirst && IncountryFlag === IncountryFlagConst.GERMANY) {
       setIsFirst(false);
     }
     if (!isFirst) {
@@ -3815,7 +3815,7 @@ function AddEditForm(props) {
                   ? true
                   : false
               }
-              isAddButtonDisable={false}
+              isAddButtonDisable={buttonsDisable}
               handleClickButton={(value, name) =>
                 handleMultiDropdown(value, name)
               }
