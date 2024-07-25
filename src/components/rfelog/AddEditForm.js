@@ -1531,6 +1531,7 @@ function AddEditForm(props) {
           ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
           : (item.colspan = item.colspan)
       );
+      setButtonsDisable(true);
     } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
         ...reasonfields,
@@ -1543,6 +1544,7 @@ function AddEditForm(props) {
           ? (item.colspan = 3, item.isAddButton = (reasonfields.ReferralReasonLevel5 === false ? true : false))
           : (item.colspan = item.colspan)
       );
+      setButtonsDisable(true);
     } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
         ...reasonfields,
@@ -3813,7 +3815,7 @@ function AddEditForm(props) {
                   ? true
                   : false
               }
-              isAddButtonDisable={false}
+              isAddButtonDisable={buttonsDisable}
               handleClickButton={(value, name) =>
                 handleMultiDropdown(value, name)
               }
