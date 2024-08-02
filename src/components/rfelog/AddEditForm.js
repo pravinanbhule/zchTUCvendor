@@ -48,6 +48,7 @@ import { handlePermission } from "../../permissions/Permission";
 import Pagination from "../common-components/pagination/Pagination";
 import RfELinkedPopupDetails from "./RfELinkedPopupDetails";
 import ConfirmPopup from "../common-components/confirmpopup/ConfirmPopup";
+import ChatDemo from "../chatDemo";
 
 function AddEditForm(props) {
   const {
@@ -5119,6 +5120,14 @@ function AddEditForm(props) {
           assignPeoplepikerUser={assignPeoplepikerUser}
           hideAddPopup={hidePeoplePickerPopup}
           singleSelection={true}
+        />
+      ) : (
+        ""
+      )}
+      {isNotEmptyValue(formfield?.EntryNumber) ? (
+        <ChatDemo 
+          userInfo={userProfile}
+          room={formfield?.EntryNumber}
         />
       ) : (
         ""
