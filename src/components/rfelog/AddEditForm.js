@@ -3373,6 +3373,7 @@ function AddEditForm(props) {
   
     let response = await referenceLog(reqParam)
     if (response.length !== 0) {
+      setEntryNumberRfE(response[0].entryNumber)
       setReferenceRfEId(response[0].rfeLogId)
       await handleLinkedRfEReason(response[0].incountryFlag);
       handleShowReferencebutton();
