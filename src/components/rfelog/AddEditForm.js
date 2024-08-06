@@ -3213,7 +3213,7 @@ function AddEditForm(props) {
       let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId });
       let linkedRfEId = response.filter((item) => item.entryNumber === formIntialState?.LinkedRFEEntryNumber);
       if (linkedRfEId.length > 0) {
-        setLinkedRfEId(linkedRfEId[0].rfeLogId);
+        setLinkedRfEId(linkedRfEId[0]?.rfeLogId);
       }
       setpaginationdata(response);
       setIsLoading(false);
@@ -3806,11 +3806,12 @@ function AddEditForm(props) {
               value={formfield[obj.name]}
               handleChange={handleSelectChange}
               isRequired={
-                mandatoryFields.includes(obj.name) ||
-                obj.name === "ReferralReasonLevel2" ||
-                obj.name === "ReferralReasonLevel3" ||
-                obj.name === "ReferralReasonLevel4" ||
-                obj.name === "ReferralReasonLevel5"
+                mandatoryFields.includes(obj.name) 
+                // ||
+                // obj.name === "ReferralReasonLevel2" ||
+                // obj.name === "ReferralReasonLevel3" ||
+                // obj.name === "ReferralReasonLevel4" ||
+                // obj.name === "ReferralReasonLevel5"
               }
               isReadMode={isReadMode}
               validationmsg={
