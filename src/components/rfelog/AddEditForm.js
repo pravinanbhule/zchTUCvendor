@@ -3503,6 +3503,13 @@ function AddEditForm(props) {
 
   const validateform = () => {
     let isvalidated = true;
+    for (let i = 0; i < mandatoryFields.length; i++) {
+      const element = mandatoryFields[i];
+      const keys = Object.keys(formfield)
+      if (keys.includes(element) === false && isvalidated) {
+          isvalidated = false;
+      }
+    }
     for (let key in formfield) {
       if (mandatoryFields.includes(key) && isvalidated) {
         let value = formfield[key];
