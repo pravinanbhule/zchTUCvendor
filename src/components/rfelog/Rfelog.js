@@ -2053,6 +2053,7 @@ function Rfelog({ ...props }) {
         setisEditMode(true);
       }
       if (mode === "edit" && !response.IsSubmit) {
+        setisEditMode(true);
         setisDraft(true);
     }
       if (mode === "view") {
