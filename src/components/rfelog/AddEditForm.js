@@ -3570,7 +3570,7 @@ function AddEditForm(props) {
   };
 
   const handleConfirmed = (value) =>{
-    if (value === 'no') {
+    if (value === 'yes') {
       setShowConfirmationMsg(false)
       postItem({
         ...formfield,
@@ -3578,7 +3578,7 @@ function AddEditForm(props) {
         IncountryFlag: IncountryFlag,
       });
       setisfrmdisabled(true);
-    } else if (value === 'yes') {
+    } else if (value === 'no') {
       setShowConfirmationMsg(false)
       postItem({
         ...formfield,
@@ -5029,7 +5029,7 @@ function AddEditForm(props) {
           title={"Are You Sure?"}
           hidePopup={() => handleConfirmed('no')}
           showPage={() => handleConfirmed('yes')}
-          itemDetails={`You are creating an RfE log without linking it to another RfE log. Please select 'Yes' to link it with another RfE log`}
+          itemDetails={`You are creating an RfE log without linking it to an existing RfE log. Please select Yes to continue without linking or No to link it with an existing account`}
         />
       }
 
