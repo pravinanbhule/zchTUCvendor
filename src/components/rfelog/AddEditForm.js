@@ -95,7 +95,9 @@ function AddEditForm(props) {
     linkedLogLogs,
     referenceLog,
     getById,
-    setInAddMode
+    setInAddMode,
+    isFlow3,
+    linkSpecificDetails
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -843,7 +845,7 @@ function AddEditForm(props) {
   const [isFirst, setIsFirst] = useState(true);
 
   const fnloadcountryview = async () => {
-    if ((isEditMode || isReadMode) && isFirst && IncountryFlag === IncountryFlagConst.GERMANY) {
+    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK)) {
       setIsFirst(false);
     }
     if (!isFirst) {
@@ -1469,33 +1471,33 @@ function AddEditForm(props) {
         setButtonsDisable(true);
       }
     } 
-    // if (IncountryFlag === IncountryFlagConst.UK) {
-    //   if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-    //       /\s/g,
-    //       ""
-    //     ) !== reasonOtherValueUK &&
-    //     formIntialState.RequestForEmpowermentReason !== "") {
-    //     setShowButtons(true);
-    //     setButtonsDisable(false);
-    //   }
-    //   if (
-    //     formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
-    //       /\s/g,
-    //       ""
-    //     ) === reasonOtherValueUK
-    //   ) {
-    //     setShowButtons(false);
-    //     setButtonsDisable(true);
-    //     setShowTextBox(true);
-    //   }
-    //   if (
-    //     formIntialState?.RequestForEmpowermentReason === "" ||
-    //     formIntialState.RequestForEmpowermentReason === undefined
-    //   ) {
-    //     setShowButtons(true);
-    //     setButtonsDisable(true);
-    //   }
-    // }
+    if (IncountryFlag === IncountryFlagConst.UK) {
+      if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+          /\s/g,
+          ""
+        ) !== reasonOtherValueUK &&
+        formIntialState.RequestForEmpowermentReason !== "") {
+        setShowButtons(true);
+        setButtonsDisable(false);
+      }
+      if (
+        formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+          /\s/g,
+          ""
+        ) === reasonOtherValueUK
+      ) {
+        setShowButtons(false);
+        setButtonsDisable(true);
+        setShowTextBox(true);
+      }
+      if (
+        formIntialState?.RequestForEmpowermentReason === "" ||
+        formIntialState.RequestForEmpowermentReason === undefined
+      ) {
+        setShowButtons(true);
+        setButtonsDisable(true);
+      }
+    }
     if (
       IncountryFlag !== undefined &&
       IncountryFlag !== IncountryFlagConst.GERMANY
@@ -1505,6 +1507,7 @@ function AddEditForm(props) {
   }, [IncountryFlag]);
 
   const handleMultiDropdown = (value, name) => {
+    
     if (name === "RequestForEmpowermentReason") {
       setReasonfields({
         ...reasonfields,
@@ -1530,6 +1533,7 @@ function AddEditForm(props) {
           ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
           : (item.colspan = item.colspan)
       );
+      setButtonsDisable(true);
     } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
         ...reasonfields,
@@ -1542,6 +1546,7 @@ function AddEditForm(props) {
           ? (item.colspan = 3, item.isAddButton = (reasonfields.ReferralReasonLevel5 === false ? true : false))
           : (item.colspan = item.colspan)
       );
+      setButtonsDisable(true);
     } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
         ...reasonfields,
@@ -3177,7 +3182,7 @@ function AddEditForm(props) {
   const [referenceRfEId, setReferenceRfEId] = useState("");
   const [linkedPopupDetails, setLinkedPopupDetails] = useState({})
   const [entryNumberRfE, setEntryNumberRfE] = useState('')
-  const [specificDetails, setSpecificDetails] = useState('')
+  const [specificDetails, setSpecificDetails] = useState(linkSpecificDetails)
   const [logTypes, setlogTypes] = useState([
     {
       label: "RfE Log",
@@ -3339,7 +3344,7 @@ function AddEditForm(props) {
   }
 
   useEffect(()=>{
-    if (!isEditMode && !isReadMode && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
+    if (!isEditMode && !isReadMode && !isFlow3 && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
         const delayDebounceFn = setTimeout(() => {
           handleReferenceRfE();
         }, 2000)
@@ -3347,6 +3352,12 @@ function AddEditForm(props) {
         return () => clearTimeout(delayDebounceFn)
     }
   },[formfield.AccountName, formfield.CountryList, formfield.LOBId])
+
+  useEffect(() => {
+    if (isFlow3 === true) {
+      handleCopyValueflow1()
+    }
+  }, [isFlow3])
 
   const handleReferenceRfE = async() =>{
     let selectedCountryItems = formfield?.CountryList?.map(
@@ -3360,6 +3371,7 @@ function AddEditForm(props) {
   
     let response = await referenceLog(reqParam)
     if (response.length !== 0) {
+      setEntryNumberRfE(response[0].entryNumber)
       setReferenceRfEId(response[0].rfeLogId)
       await handleLinkedRfEReason(response[0].incountryFlag);
       handleShowReferencebutton();
@@ -3491,6 +3503,13 @@ function AddEditForm(props) {
 
   const validateform = () => {
     let isvalidated = true;
+    for (let i = 0; i < mandatoryFields.length; i++) {
+      const element = mandatoryFields[i];
+      const keys = Object.keys(formfield)
+      if (keys.includes(element) === false && isvalidated) {
+          isvalidated = false;
+      }
+    }
     for (let key in formfield) {
       if (mandatoryFields.includes(key) && isvalidated) {
         let value = formfield[key];
@@ -3550,7 +3569,7 @@ function AddEditForm(props) {
   };
 
   const handleConfirmed = (value) =>{
-    if (value === 'no') {
+    if (value === 'yes') {
       setShowConfirmationMsg(false)
       postItem({
         ...formfield,
@@ -3558,7 +3577,7 @@ function AddEditForm(props) {
         IncountryFlag: IncountryFlag,
       });
       setisfrmdisabled(true);
-    } else if (value === 'yes') {
+    } else if (value === 'no') {
       setShowConfirmationMsg(false)
       postItem({
         ...formfield,
@@ -3806,12 +3825,8 @@ function AddEditForm(props) {
                 (obj.disablecondition && eval(obj.disablecondition))
               }
               isAddButton={
-                // (IncountryFlag === IncountryFlagConst.UK ||
-                // IncountryFlag === IncountryFlagConst.GERMANY) &&
-                // showButtons && obj.isAddButton === true
-                //   ? true
-                //   : false
-                IncountryFlag === IncountryFlagConst.GERMANY &&
+                (IncountryFlag === IncountryFlagConst.UK ||
+                IncountryFlag === IncountryFlagConst.GERMANY) &&
                 showButtons && obj.isAddButton === true
                   ? true
                   : false
@@ -3824,8 +3839,7 @@ function AddEditForm(props) {
               isToolTip={obj.tooltipmsg ? true : false}
               isShowTextBox={
                 obj.name === "RequestForEmpowermentReason" &&
-                showTextBox &&
-                IncountryFlag === IncountryFlagConst.GERMANY
+                showTextBox 
                 // &&
                 // isGermany
               }
@@ -5014,7 +5028,7 @@ function AddEditForm(props) {
           title={"Are You Sure?"}
           hidePopup={() => handleConfirmed('no')}
           showPage={() => handleConfirmed('yes')}
-          itemDetails={`You are creating an RfE log without linking it to another RfE log. Please select 'Yes' to link it with another RfE log`}
+          itemDetails={`You are creating a RfE log without linking it to an existing RfE log. Please select Yes to continue without linking or No to link it with an existing account`}
         />
       }
 

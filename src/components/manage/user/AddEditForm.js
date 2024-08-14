@@ -388,12 +388,6 @@ function AddEditForm(props) {
       ) {
         return;
       }
-      if (
-        frmuserTypeObj[formfield.userType] === "LoBAdmin" &&
-        !formfield.lobList.length
-      ) {
-        return;
-      }
       if (isEditMode) {
         putItem(formfield);
       } else {

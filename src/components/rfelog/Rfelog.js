@@ -636,6 +636,7 @@ function Rfelog({ ...props }) {
                       handleCopyItem={handleCopyItem}
                       handleShareItem={openShareItem}
                       handleDeleteItem={openDeleteItem}
+                      handleLinkItem={handleLinkLog}
                       userProfile={userProfile}
                       isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                     ></MoreActions>
@@ -1994,6 +1995,8 @@ function Rfelog({ ...props }) {
     invokedAPIFrom: "",
   };
   const [formIntialState, setformIntialState] = useState(formInitialValue);
+  const [isFlow3, setIsFlow3] = useState(false);
+  const [linkSpecificDetails, setLinkSpecificDetails] = useState("")
 
   const setInAddMode = (data) => {
     setformIntialState(data)
@@ -2262,6 +2265,28 @@ function Rfelog({ ...props }) {
     });
     setshowDeleteLog(true);
   };
+  const handleLinkLog = async(itemid) => {
+    let response = await getById({
+      rfeLogId: itemid,
+    });
+    setIsFlow3(true)
+    if (response.FieldValues) {
+      response = response.FieldValues;
+      let countryList = response.CountryList;
+      countryList = countryList.map((country) => ({
+        label: country.countryName,
+        value: country.countryID,
+        regionId: country.regionID,
+      }));
+      response["CountryList"] = [...countryList];
+      setLinkSpecificDetails(response.RFELogDetails)
+      setformIntialState({
+        ...response,
+        isdirty: false,
+      });
+      showAddPopup();
+    }
+  }
   const hidelogPopup = () => {
     setshowShareLog(false);
     setshowDeleteLog(false);
@@ -2515,6 +2540,8 @@ function Rfelog({ ...props }) {
           isDraft={isDraft}
           sellogTabType={sellogTabType}
           setInAddMode={setInAddMode}
+          isFlow3={isFlow3}
+          linkSpecificDetails={linkSpecificDetails}
         ></AddEditForm>
       )}
       {isshowImportLogsPopup && (

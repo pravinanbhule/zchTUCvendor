@@ -1537,7 +1537,7 @@ function AddImportLogs(props) {
     if (IncountryFlag === IncountryFlagCost.LATAM) {
       setimportfieldscount(29);
     } else if (IncountryFlag === IncountryFlagCost.UK) {
-      setimportfieldscount(22);
+      setimportfieldscount(27);
     } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else if (IncountryFlag === IncountryFlagCost.GERMANY) {

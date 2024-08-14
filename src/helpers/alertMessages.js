@@ -167,7 +167,7 @@ export const alertMessage = {
     fieldnameerror:
       "Error in Excel fields name. Please correct and re-import file.",
     fieldcounterror:
-      "Error in Excel fields. Some of fields are missing/incorrect in the excel file, please correct and re-import file.",
+      "There is an error in the Excel fields. Some of the fields are missing/incorrect in the excel file. Please correct them and re-import the file.",
     invalidDataMsg:
       "One or more entries have invalid data, please correct them and re-import file.",
     confirmImportDataMsg: "Are you sure you want to import this data?",
