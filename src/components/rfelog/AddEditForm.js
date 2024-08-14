@@ -5029,7 +5029,7 @@ function AddEditForm(props) {
           title={"Are You Sure?"}
           hidePopup={() => handleConfirmed('no')}
           showPage={() => handleConfirmed('yes')}
-          itemDetails={`You are creating an RfE log without linking it to an existing RfE log. Please select Yes to continue without linking or No to link it with an existing account`}
+          itemDetails={`You are creating a RfE log without linking it to an existing RfE log. Please select Yes to continue without linking or No to link it with an existing account`}
         />
       }
 
