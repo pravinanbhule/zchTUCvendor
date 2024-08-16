@@ -29,7 +29,7 @@ export const alertMessage = {
     delete: "The LoB is deleted.",
     deleteConfirm: "Are you sure you want to delete LoB?",
     isInUse: "You can not delete this LoB as it is in use.",
-    nameExist: "LoB name is already exist!",
+    nameExist: "The LoB name is already exist!",
   },
   sublob: {
     add: "The new Sub-LoB is successfully added.",
