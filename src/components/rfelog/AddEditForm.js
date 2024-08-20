@@ -3608,9 +3608,9 @@ function AddEditForm(props) {
     }
     let selectedCountryItems = formfield.CountryList.map((item) => item.value);
     formfield.CountryId = selectedCountryItems.join(",");
-    // if (formfield?.LinkedRFEEntryNumber) {
-    //   delete formfield?.LinkedRFEEntryNumber
-    // }
+    if (formfield?.LinkedRFEEntryNumber) {
+      delete formfield?.LinkedRFEEntryNumber
+    }
     if (formfield.AccountName) {
       //setissubmitted(true);
       postItem({ ...formfield, IsSubmit: false, IncountryFlag: IncountryFlag });
@@ -4225,7 +4225,8 @@ function AddEditForm(props) {
         </div>
       </div>
       {!isEditMode &&
-        isReadMode && (
+        isReadMode && 
+        sellogTabType === 'all' && (
           <div className="tabs-container">
           {logTypes.map((item) => (
             <div
