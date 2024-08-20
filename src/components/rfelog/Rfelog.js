@@ -1890,6 +1890,8 @@ function Rfelog({ ...props }) {
   };
   const hideAddPopup = () => {
     setshowAddPopup(false);
+    setIsFlow3(false);
+    setLinkSpecificDetails('');
     setformIntialState(formInitialValue);
     setisEditMode(false);
     setisReadMode(false);
