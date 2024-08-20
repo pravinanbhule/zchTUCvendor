@@ -636,7 +636,7 @@ function Rfelog({ ...props }) {
                       handleCopyItem={handleCopyItem}
                       handleShareItem={openShareItem}
                       handleDeleteItem={openDeleteItem}
-                      handleLinkItem={handleLinkLog}
+                      handleLinkItem={sellogTabType === "all" ? handleLinkLog : false}
                       userProfile={userProfile}
                       isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
                     ></MoreActions>
