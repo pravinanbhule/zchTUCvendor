@@ -4134,7 +4134,7 @@ function AddEditForm(props) {
           }
         </div>
         <div className="header-btn-container">
-          {handlePermission("rfelogs", "isAdd") &&
+          {handlePermission("rfelogs", "isAdd") && sellogTabType === "all" &&
             formIntialState.RequestForEmpowermentStatus !== rfelog_status.Withdrawn &&
             !isEditMode &&
             isReadMode && (
