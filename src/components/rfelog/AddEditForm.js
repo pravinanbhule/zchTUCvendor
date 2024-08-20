@@ -3207,8 +3207,8 @@ function AddEditForm(props) {
   }
 
   
-  useEffect(async()=>{
-    if (isReadMode) {
+  useEffect(async()=>{    
+    if ((isReadMode || isEditMode) && formIntialState?.RFELogId) {
       setIsLoading(true);
       let response = await linkedLogLogs({rfeLogId: formIntialState.RFELogId });
       let linkedRfEId = response.filter((item) => item.entryNumber === formIntialState?.LinkedRFEEntryNumber);
