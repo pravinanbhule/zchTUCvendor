@@ -55,9 +55,26 @@ const getMultiUserProfile = (requestParams) => {
     }
   };
 };
+const getAdUserProfile = (requestParams) => {
+  const request = () => {
+    return { type: userprofileConstants.GETPROFILE_REQUEST };
+  };
+  return async (dispatch) => {
+    dispatch(request());
+    try {
+      const response = await userProfileService.getADUserProfileService(
+        requestParams
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+};
 export const userprofileActions = {
   getUserProfile,
   getMultiUserProfile,
+  getAdUserProfile,
   setUserProfile,
   setOktaToken,
   setOktaAuthenticated,
@@ -74,7 +91,13 @@ const getMultiUserProfileService = async (requestParam) => {
   const response = await Axios.get(`user/getalluserdetailbyemail`, param);
   return response;
 };
+const getADUserProfileService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`user/getaduserdetailsbyemail`, param);
+  return response;
+};
 const userProfileService = {
   getUserProfileService,
   getMultiUserProfileService,
+  getADUserProfileService
 };

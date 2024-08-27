@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { userActions, countryActions, regionActions, lobActions, lookupActions, commonActions } from "../../../actions";
+import { userActions, countryActions, regionActions, lobActions, lookupActions, commonActions, userprofileActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
@@ -34,7 +34,8 @@ function User({ ...props }) {
     getAlllob,
     getLookupByType,
     getMasterVersion,
-    downloadExcel
+    downloadExcel,
+    getAdUserProfile
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "User.xlsx";
@@ -557,6 +558,9 @@ function User({ ...props }) {
   const handleEdit = async (e) => {
     let itemid = e.target.getAttribute("rowid");
     const response = await getById({ UserId: itemid });
+    await getAdUserProfile({
+      EmailAddress: response.emailAddress,
+    });
     let userCountry = await getUserCountry({ IsLog: true });
     let userRegions = await getUserRegions({ IsLog: true });
     const user = [
@@ -1019,7 +1023,8 @@ const mapActions = {
   getAlllob: lobActions.getAlllob,
   getLookupByType: lookupActions.getLookupByType,
   getMasterVersion: commonActions.getMasterVersion,
-  downloadExcel: commonActions.downloadExcel
+  downloadExcel: commonActions.downloadExcel,
+  getAdUserProfile: userprofileActions.getAdUserProfile
 };
 
 export default connect(mapStateToProp, mapActions)(User);
