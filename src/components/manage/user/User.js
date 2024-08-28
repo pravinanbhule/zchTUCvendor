@@ -558,7 +558,7 @@ function User({ ...props }) {
   const handleEdit = async (e) => {
     let itemid = e.target.getAttribute("rowid");
     const response = await getById({ UserId: itemid });
-    await getAdUserProfile({
+    const result = await getAdUserProfile({
       EmailAddress: response.emailAddress,
     });
     let userCountry = await getUserCountry({ IsLog: true });
@@ -566,8 +566,8 @@ function User({ ...props }) {
     const user = [
       {
         userId: response.userId,
-        firstName: response.firstName,
-        lastName: response.lastName,
+        firstName: result.firstName,
+        lastName: result.lastName,
         emailAddress: response.emailAddress,
       },
     ];
@@ -650,6 +650,8 @@ function User({ ...props }) {
     setformIntialState({
       ...response,
       user: user,
+      firstName: result.firstName,
+      lastName: result.lastName,
       regionList: regionList,
       countryList: countryList,
       lobList: lobList,
