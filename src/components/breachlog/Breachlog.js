@@ -253,6 +253,7 @@ function Breachlog({ ...props }) {
     ZNASBUOpts: [],
     ZNAMarketBasketOpts: [],
     views: [{ label: "All", value: null }],
+    materialBreachCategoryOpts: [],
   });
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
@@ -279,6 +280,7 @@ function Breachlog({ ...props }) {
     sublobid: [],
     typeOfBreach: [],
     materialBreach: "",
+    materialBreachCategory: [],
     nearMisses: "",
     howDetected: [],
     rootCauseOfTheBreach: [],
@@ -333,10 +335,18 @@ function Breachlog({ ...props }) {
   };
   const onSearchFilterSelect = (name, value) => {
     //const { name, value } = e.target;
-    setselfilter({
-      ...selfilter,
-      [name]: value,
-    });
+    if (name === 'materialBreach' && value !== '1') {
+      setselfilter({
+        ...selfilter,
+        [name]: value,
+        materialBreachCategory: []
+      });
+    } else {
+      setselfilter({
+        ...selfilter,
+        [name]: value,
+      });
+    }
 
     /*if (name === "regionId" && value !== "") {
       let countryopts = countryAllFilterOpts.filter(
@@ -1396,14 +1406,15 @@ function Breachlog({ ...props }) {
               key === "sublobid" || key === "typeOfBreach" ||
               key === "classification" || key === "customersegment" ||
               key === "natureofbreach" || key === "howDetected" ||
-              key === "rootCauseOfTheBreach" || key === "rangeOfFinancialImpact"
+              key === "rootCauseOfTheBreach" || key === "rangeOfFinancialImpact" ||
+              key === "materialBreachCategory"
           ) {
             const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
         }
       }
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
           if (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined) {
             reqParam = {
               ...reqParam,
@@ -1429,7 +1440,7 @@ function Breachlog({ ...props }) {
         };
       }
     } else {
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         reqParam = {
           ...reqParam,
           breachStatus: withoutClosed,
@@ -1624,6 +1635,7 @@ function Breachlog({ ...props }) {
       getLookupByType({ LookupType: "BreachRootCause" }),
       getLookupByType({ LookupType: "BreachFinancialRange" }),
       getLookupByType({ LookupType: "BreachDetection" }),
+      getLookupByType({ LookupType: "MaterialBreachCategory" }),
     ]);
     let tempClassification = lookupvalues[0];
     let tempNatureOfBreach = lookupvalues[1];
@@ -1632,6 +1644,7 @@ function Breachlog({ ...props }) {
     let tempRootCauseBreach = lookupvalues[4];
     let tempRangeFinImpact = lookupvalues[5];
     let tempHowDetected = lookupvalues[6];
+    let tempMaterialCategoryBreach = lookupvalues[7];
     /* let tempNatureOfBreach = await getLookupByType({
       LookupType: "BreachNature",
     });
@@ -1690,6 +1703,10 @@ function Breachlog({ ...props }) {
       label: item.lookUpValue,
       value: item.lookupID,
     }));
+    tempMaterialCategoryBreach = tempMaterialCategoryBreach.map((item) => ({
+      label: item.lookUpValue,
+      value: item.lookupID,
+    }));
     //tempClassification.sort(dynamicSort("label"));
     tempNatureOfBreach.sort(dynamicSort("label"));
     tempStatus.sort(dynamicSort("label"));
@@ -1697,6 +1714,7 @@ function Breachlog({ ...props }) {
     tempRootCauseBreach.sort(dynamicSort("label"));
     tempRangeFinImpact.sort(dynamicSort("label"));
     tempHowDetected.sort(dynamicSort("label"));
+    tempMaterialCategoryBreach.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
       classificationFilterOpts: [...tempClassification],
@@ -1706,6 +1724,7 @@ function Breachlog({ ...props }) {
       rootCauseBreachOpts: [...tempRootCauseBreach],
       rangeOfFinancialImpactOpts: [...tempRangeFinImpact],
       howDetectedOpts: [...tempHowDetected],
+      materialBreachCategoryOpts: [...tempMaterialCategoryBreach]
     }));
     if (dashboardState.status) {
       setisfilterApplied(true);
@@ -1899,6 +1918,15 @@ function Breachlog({ ...props }) {
         }
       }
       
+      let tempMaterialCategoryBreach = []
+      if (selectedViewData[0]?.materialBreachCategory?.length && selectedViewData[0]?.materialBreachCategory?.length !== 0 && typeof selectedViewData[0]?.materialBreachCategory === 'string') {
+        let selectedValueArray = selectedViewData[0]?.materialBreachCategory?.split(',')
+        if (selectedValueArray) {
+          let data = await getLookupByType({ LookupType: "MaterialBreachCategory" });
+          tempMaterialCategoryBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+        }
+      }
+      
       let tempRootCauseBreach = []
       if (selectedViewData[0]?.rootCauseOfTheBreach?.length && selectedViewData[0]?.rootCauseOfTheBreach?.length !== 0 && typeof selectedViewData[0]?.rootCauseOfTheBreach === 'string') {
         let selectedValueArray = selectedViewData[0]?.rootCauseOfTheBreach?.split(',')
@@ -1942,6 +1970,7 @@ function Breachlog({ ...props }) {
         sublobid: subLoBArray,
         typeOfBreach: tempTypeOfBreach,
         materialBreach: selectedViewData[0].materialBreach === true ? '1' : selectedViewData[0].materialBreach === false ? '0' : '',
+        materialBreachCategory: tempMaterialCategoryBreach,
         nearMisses: selectedViewData[0].nearMisses,
         howDetected: tempHowDetected,
         rootCauseOfTheBreach: tempRootCauseBreach,
@@ -2841,7 +2870,7 @@ function Breachlog({ ...props }) {
         isDelete: true,
       };
     }
-    if (nolonger === false) {
+    if (sellogTabType === 'all' && nolonger === false) {
       reqParam = {
         ...reqParam,
         breachStatus: withoutClosed,
@@ -2861,14 +2890,15 @@ function Breachlog({ ...props }) {
               key === "sublobid" || key === "typeOfBreach" ||
               key === "classification" || key === "customersegment" ||
               key === "natureofbreach" || key === "howDetected" ||
-              key === "rootCauseOfTheBreach" || key === "rangeOfFinancialImpact"
+              key === "rootCauseOfTheBreach" || key === "rangeOfFinancialImpact" ||
+              key === "materialBreachCategory"
           ) {
             const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
         }
       }
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         if (tempFilterOpts?.breachStatus === '' || tempFilterOpts?.breachStatus === undefined) {
           reqParam = {
             ...reqParam,
@@ -3092,6 +3122,20 @@ function Breachlog({ ...props }) {
                               selectopts={yesnoopts}
                             />
                           </div>
+                          {selfilter.materialBreach === '1' && (
+                            <div className="frm-filter col-md-3">
+                              <FrmMultiselect
+                                title={"Material Breach Category"}
+                                name={"materialBreachCategory"}
+                                selectopts={commonfilterOpts.materialBreachCategoryOpts}
+                                handleChange={handleMultiSelectChange}
+                                value={selfilter.materialBreachCategory}
+                                isAllOptNotRequired={true}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="row">
                           {selfilter.regionId !== REGION_ZNA && (
                             <div className="frm-filter col-md-3">
                               <FrmMultiselect
@@ -3104,8 +3148,6 @@ function Breachlog({ ...props }) {
                               />
                             </div>
                           )}
-                        </div>
-                        <div className="row">
                           <div className="frm-filter  col-md-3">
                             <FrmMultiselect
                               title={"Nature of Breach"}
