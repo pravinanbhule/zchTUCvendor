@@ -175,7 +175,8 @@ function AddEditForm(props) {
     isNormalUser: false,
     isCountrySuperAdmin: false,
     isDualRole: false,
-    isLoBAdmin: false
+    isLoBAdmin: false,
+    isGlobalUW: false
   };
 
   const [approverRole, setapproverRole] = useState(approverIntialRole);
@@ -2572,6 +2573,8 @@ function AddEditForm(props) {
       setapproverRole({ ...approverIntialRole, isDualRole: true });
     } else if (userRole.roleId === USER_ROLE.lobAdmin) {
       setapproverRole({ ...approverIntialRole, isLoBAdmin: true });
+    } else if (userRole.roleId === USER_ROLE.globalUW) {
+      setapproverRole({ ...approverIntialRole, isGlobalUW: true });
     }
   };
   useEffect(() => {
