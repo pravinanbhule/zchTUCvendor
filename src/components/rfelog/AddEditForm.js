@@ -800,22 +800,30 @@ function AddEditForm(props) {
           setfrmrfeempourment([selectInitiVal, ...temprfeempourment]);
           setCountryReasons([...temprfeempourment]);
           if (formfield.RequestForEmpowermentReason) {
-            // const isPresent = temprfeempourment.filter(
-            //   (item) => item.value === formfield.RequestForEmpowermentReason
-            // );
-            // if (!isPresent?.length) {
-            setformfield({ ...formfield, RequestForEmpowermentReason: "" });
-            // }
+            if (isEditMode || isReadMode) {
+              const isPresent = temprfeempourment.filter(
+                (item) => item.value === formfield.RequestForEmpowermentReason
+              );
+              if (!isPresent?.length && (isEditMode || isReadMode)) {
+                setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+              }
+            } else {
+             setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+            }
           }
         } else {
           setfrmrfeempourment([...frmrfeempourmentglobal]);
           if (formfield.RequestForEmpowermentReason) {
-            // const isPresent = frmrfeempourmentglobal.filter(
-            //   (item) => item.value === formfield.RequestForEmpowermentReason
-            // );
-            // if (!isPresent?.length) {
-            setformfield({ ...formfield, RequestForEmpowermentReason: "" });
-            // }
+            if (isEditMode || isReadMode) {
+              const isPresent = frmrfeempourmentglobal.filter(
+                (item) => item.value === formfield.RequestForEmpowermentReason
+              );
+              if (!isPresent?.length) {
+                setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+              } 
+            } else {
+              setformfield({ ...formfield, RequestForEmpowermentReason: "" });
+            }
           }
         }
         fnloadcountryview();
