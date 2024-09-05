@@ -408,11 +408,11 @@ function AddEditForm(props) {
       ) {
         return;
       }
-      // if (isEditMode) {
-      //   putItem(formfield);
-      // } else {
-      //   postItem(formfield);
-      // }
+      if (isEditMode) {
+        putItem(formfield);
+      } else {
+        postItem(formfield);
+      }
     }
   };
   const handleInputSearchChange = (e) => {
