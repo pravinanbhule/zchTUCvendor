@@ -355,11 +355,15 @@ function CreateRfelogForm(props) {
                 response.UnderwriterGrantingEmpowermentName = users.join(",");
             }
             let countryList = response.CountryList;
-            countryList = countryList.map((country) => ({
-                label: country.countryName,
-                value: country.countryID,
-                regionId: country.regionID,
-            }));
+            if (countryList) {
+                countryList = countryList.map((country) => ({
+                    label: country.countryName,
+                    value: country.countryID,
+                    regionId: country.regionID,
+                }));
+            } else {
+                countryList = []
+            }
             response["CountryList"] = [...countryList];
             if (mode === "edit" && response.IsSubmit) {
                 setisEditMode(true);
