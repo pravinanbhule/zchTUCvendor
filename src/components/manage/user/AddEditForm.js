@@ -380,6 +380,26 @@ function AddEditForm(props) {
       ) {
         return;
       }
+      if (frmuserTypeObj[formfield.userType] === "DualRole" && 
+        selecteddualRoleLabel === 'Global-Regional' &&
+        !formfield.regionList.length
+      ) {
+        return;
+      }
+      if (frmuserTypeObj[formfield.userType] === "DualRole" && 
+        selecteddualRoleLabel === 'Global-Country' &&
+        !formfield.countryList.length
+      ) {
+        return;
+      }
+      if (frmuserTypeObj[formfield.userType] === "DualRole" && 
+        (selecteddualRoleLabel === 'Global-Regional-Country' ||
+        selecteddualRoleLabel === 'Regional-Country') &&
+        (!formfield.countryList.length || 
+        !formfield.regionList.length)
+      ) {
+        return;
+      }
       if (
         (frmuserTypeObj[formfield.userType] === "LoBAdmin" ||
         frmuserTypeObj[formfield.userType] === "Auditor") &&
@@ -588,6 +608,7 @@ function AddEditForm(props) {
                     isRequired={true}
                     issubmitted={issubmitted}
                     selectopts={allCountryOpts}
+                    validationmsg={"Mandatory field"}
                     isAllOptNotRequired={true}
                   />
                 </div>
