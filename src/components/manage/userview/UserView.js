@@ -44,6 +44,7 @@ function UserView({ ...props }) {
     TypeofBreach: "Type of Breach",
     Classification: "Classification",
     MaterialBreach: "Material Breach",
+    MaterialBreachCategory: "Material Breach Category",
     CustomerSegment: "Customer Segment",
     Natureofbreach: "Nature of Breach",
     Howdetected: "How Detected",
