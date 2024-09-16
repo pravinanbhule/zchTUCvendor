@@ -266,6 +266,7 @@ function Segment({ ...props }) {
       if (coutrylist) {
         coutrylist = coutrylist.split(",");
         coutrylist.forEach((countryItem) => {
+          console.log("coutrylist>>", coutrylist);
           let tempItem = countryItem.trim();
           if (!tempCountryObj[tempItem]) {
             tempCountryFilterOpts.push({

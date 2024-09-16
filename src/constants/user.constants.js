@@ -9,6 +9,8 @@ export const userConstants = {
 };
 
 export const versionHistoryexportFieldTitles = {
+  FirstName: "First Name",
+  LastName: "Last Name",
   UserName: "User Name",
   UserType: "User Type",
   RegionNameList: "Region",

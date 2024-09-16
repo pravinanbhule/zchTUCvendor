@@ -175,7 +175,8 @@ function AddEditForm(props) {
     isNormalUser: false,
     isCountrySuperAdmin: false,
     isDualRole: false,
-    isLoBAdmin: false
+    isLoBAdmin: false,
+    isGlobalUW: false
   };
 
   const [approverRole, setapproverRole] = useState(approverIntialRole);
@@ -2534,6 +2535,7 @@ function AddEditForm(props) {
     let adfield = "";
     let selvalue = value;
     if (usertype === "approver") {
+
       namefield = "UnderwriterGrantingEmpowermentName";
       adfield = "UnderwriterGrantingEmpowermentAD";
       const tmpapprover = await getMultiUserProfile({
@@ -2579,6 +2581,8 @@ function AddEditForm(props) {
       setapproverRole({ ...approverIntialRole, isDualRole: true });
     } else if (userRole.roleId === USER_ROLE.lobAdmin) {
       setapproverRole({ ...approverIntialRole, isLoBAdmin: true });
+    } else if (userRole.roleId === USER_ROLE.globalUW) {
+      setapproverRole({ ...approverIntialRole, isGlobalUW: true });
     }
   };
   useEffect(() => {

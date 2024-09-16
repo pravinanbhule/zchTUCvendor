@@ -73,6 +73,7 @@ function BreachAddEditForm(props) {
         subLoB: [],
         typeofBreach: [],
         materialBreach: "",
+        materialBreachCategory: [],
         nearMisses: "",
         howdetected: [],
         rootCauseOfTheBreach: [],
@@ -135,6 +136,7 @@ function BreachAddEditForm(props) {
         ZNASegmentOpts: [],
         ZNASBUOpts: [],
         ZNAMarketBasketOpts: [],
+        materialBreachCategoryOpts: [],
     });
     const [switchOpts, setSwitchOpts] = useState([
         {
@@ -323,6 +325,18 @@ function BreachAddEditForm(props) {
                 response.typeofBreach = typeof response?.typeofBreach === 'string' && tempTypeOfBreach.length === 0 ? response?.typeofBreach : tempTypeOfBreach;
             } else if (response.typeofBreach === null || response.typeofBreach === undefined) {
                 response.typeofBreach = []
+            }
+            
+            let tempMaterialCategoryBreach = []
+            if (response?.materialBreachCategory?.length && response?.materialBreachCategory?.length !== 0 && typeof response?.materialBreachCategory === 'string') {
+                let selectedValueArray = response?.materialBreachCategory?.split(',')
+                if (selectedValueArray) {
+                    let data = await getLookupByType({ LookupType: "MaterialBreachCategory" });
+                    tempMaterialCategoryBreach = handleSelectedItemArray(selectedValueArray, data, 'lookupID', 'lookUpValue')
+                }
+                response.materialBreachCategory = typeof response?.materialBreachCategory === 'string' && tempMaterialCategoryBreach.length === 0 ? response?.materialBreachCategory : tempMaterialCategoryBreach;
+            } else if (response.materialBreachCategory === null || response.materialBreachCategory === undefined) {
+                response.materialBreachCategory = []
             }
 
             let tempRootCauseBreach = []
@@ -676,6 +690,7 @@ function BreachAddEditForm(props) {
             getLookupByType({ LookupType: "BreachRootCause" }),
             getLookupByType({ LookupType: "BreachFinancialRange" }),
             getLookupByType({ LookupType: "BreachDetection" }),
+            getLookupByType({ LookupType: "MaterialBreachCategory" }),
         ]);
         let tempClassification = lookupvalues[0];
         let tempNatureOfBreach = lookupvalues[1];
@@ -684,6 +699,7 @@ function BreachAddEditForm(props) {
         let tempRootCauseBreach = lookupvalues[4];
         let tempRangeFinImpact = lookupvalues[5];
         let tempHowDetected = lookupvalues[6];
+        let tempMaterialCategoryBreach = lookupvalues[7];
 
         tempClassification = tempClassification.map((item) => ({
             label: item.lookUpValue,
@@ -713,7 +729,10 @@ function BreachAddEditForm(props) {
             label: item.lookUpValue,
             value: item.lookupID,
         }));
-
+        tempMaterialCategoryBreach = tempMaterialCategoryBreach.map((item) => ({
+            label: item.lookUpValue,
+            value: item.lookupID,
+        }));
         //tempClassification.sort(dynamicSort("label"));
         tempNatureOfBreach.sort(dynamicSort("label"));
         tempStatus.sort(dynamicSort("label"));
@@ -721,6 +740,7 @@ function BreachAddEditForm(props) {
         tempRootCauseBreach.sort(dynamicSort("label"));
         tempRangeFinImpact.sort(dynamicSort("label"));
         tempHowDetected.sort(dynamicSort("label"));
+        tempMaterialCategoryBreach.sort(dynamicSort("label"));
         setcommonfilterOpts((prevstate) => ({
             ...prevstate,
             classificationFilterOpts: [...tempClassification],
@@ -730,6 +750,7 @@ function BreachAddEditForm(props) {
             rootCauseBreachOpts: [...tempRootCauseBreach],
             rangeOfFinancialImpactOpts: [...tempRangeFinImpact],
             howDetectedOpts: [...tempHowDetected],
+            materialBreachCategoryOpts: [...tempMaterialCategoryBreach]
         }));
         if (userProfile.isCountrySuperAdmin) {
             setUserRoles([
@@ -886,6 +907,13 @@ function BreachAddEditForm(props) {
                 isCountrySuperAdmin: false,
             })
             setShowUserRoles(false)
+        } if (name === 'materialBreach' && value !== '1') {
+            setformfield({
+                ...formfield,
+                [name]: value,
+                materialBreachCategory: []
+            });
+            setShowUserRoles(true)
         } else {
             setformfield({
                 ...formfield,
@@ -1061,7 +1089,8 @@ function BreachAddEditForm(props) {
                             key === "subLoB" || key === "typeofBreach" ||
                             key === "classification" || key === "customerSegment" ||
                             key === "natureofbreach" || key === "howdetected" ||
-                            key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact"
+                            key === "rootCauseOfTheBreach" || key === "rangeOfFinancialimpact" ||
+                            key === "materialBreachCategory"
                         ) {
                             const tmpval = value.map((item) => item.value);
                             tempFilterOpts[key] = tmpval.join(",");
@@ -1333,6 +1362,21 @@ function BreachAddEditForm(props) {
                                         isReadMode={isReadMode}
                                     />
                                 </div>
+                                {formfield.materialBreach === '1' && (
+                                    <div className="frm-filter col-md-3">
+                                         <FrmMultiselect
+                                            title={"Material Breach Category Segment"}
+                                            name={"materialBreachCategory"}
+                                            value={formfield.materialBreachCategory || []}
+                                            handleChange={handleMultiSelectChange}
+                                            isRequired={false}
+                                            issubmitted={issubmitted}
+                                            selectopts={commonfilterOpts.materialBreachCategoryOpts}
+                                            isReadMode={isReadMode}
+                                            isAllOptNotRequired={true}
+                                        />
+                                    </div>
+                                )}
                                 {formfield.region !== REGION_ZNA && (
                                     <div className="col-md-3">
                                         <FrmMultiselect
