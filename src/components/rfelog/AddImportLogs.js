@@ -1542,6 +1542,8 @@ function AddImportLogs(props) {
       setimportfieldscount(21);
     } else if (IncountryFlag === IncountryFlagCost.GERMANY) {
       setimportfieldscount(29);
+    } else if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
+      setimportfieldscount(27);
     } else {
       setimportfieldscount(20);
     }

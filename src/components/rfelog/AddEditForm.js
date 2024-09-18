@@ -255,6 +255,9 @@ function AddEditForm(props) {
   const [reasonOtherValueUK, setReasonOtherValueUK] = useState(
     "others"
   );
+  const [reasonOtherValueAustralia, setReasonOtherValueAustralia] = useState(
+    "other"
+  );
   const [selectedApprover, setSelectedApprover] = useState('')
 
   useEffect(async () => {
@@ -855,7 +858,7 @@ function AddEditForm(props) {
   const [isFirst, setIsFirst] = useState(true);
 
   const fnloadcountryview = async () => {
-    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK)) {
+    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setIsFirst(false);
     }
     if (!isFirst) {
@@ -963,7 +966,11 @@ function AddEditForm(props) {
                 formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                   /\s/g,
                   ""
-                ) === reasonOtherValueUK)
+                ) === reasonOtherValueUK ||
+                formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                  /\s/g,
+                  ""
+                ) === reasonOtherValueAustralia)
                   ? 0
                   : formIntialState.ReferralReasonLevel2 ||
                     (formfield.ReferralReasonLevel2 !== null &&
@@ -999,7 +1006,11 @@ function AddEditForm(props) {
               formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                 /\s/g,
                 ""
-              ) === reasonOtherValueUK)
+              ) === reasonOtherValueUK ||
+              formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValueAustralia)
                   ? 0
                   : formIntialState.ReferralReasonLevel3 ||
                     (formfield.ReferralReasonLevel3 !== null &&
@@ -1034,7 +1045,11 @@ function AddEditForm(props) {
               formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                 /\s/g,
                 ""
-              ) === reasonOtherValueUK)
+              ) === reasonOtherValueUK ||
+              formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValueAustralia)
                   ? 0
                   : formIntialState.ReferralReasonLevel4 ||
                     (formfield.ReferralReasonLevel4 !== null &&
@@ -1064,7 +1079,11 @@ function AddEditForm(props) {
               formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                 /\s/g,
                 ""
-              ) === reasonOtherValueUK)
+              ) === reasonOtherValueUK ||
+              formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                /\s/g,
+                ""
+              ) === reasonOtherValueAustralia)
                   ? 0
                   : formIntialState.ReferralReasonLevel5 ||
                     (formfield.ReferralReasonLevel5 !== null &&
@@ -1481,11 +1500,15 @@ function AddEditForm(props) {
         setButtonsDisable(true);
       }
     } 
-    if (IncountryFlag === IncountryFlagConst.UK) {
-      if ( formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+      if ((formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
           /\s/g,
           ""
-        ) !== reasonOtherValueUK &&
+        ) !== reasonOtherValueUK || 
+        formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+          /\s/g,
+          ""
+        ) !== reasonOtherValueAustralia) &&
         formIntialState.RequestForEmpowermentReason !== "") {
         setShowButtons(true);
         setButtonsDisable(false);
@@ -1494,7 +1517,11 @@ function AddEditForm(props) {
         formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
           /\s/g,
           ""
-        ) === reasonOtherValueUK
+        ) === reasonOtherValueUK ||
+        formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+          /\s/g,
+          ""
+        ) === reasonOtherValueAustralia
       ) {
         setShowButtons(false);
         setButtonsDisable(true);
@@ -1540,11 +1567,11 @@ function AddEditForm(props) {
         item.name === "ReferralReasonLevel2"
           ? (item.isAddButton = false)
           : item.name === "ReferralReasonLevel3"
-          ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
+          ? (item.colspan = 3, item.isAddButton = ((IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA) && reasonfields.ReferralReasonLevel4 === false ? true : false))
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel4: true,
@@ -1557,7 +1584,7 @@ function AddEditForm(props) {
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel5: true,
@@ -1596,7 +1623,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel3 &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1613,7 +1642,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK : 
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1630,7 +1661,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1647,7 +1680,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1721,7 +1756,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1738,7 +1775,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1755,7 +1794,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1795,7 +1836,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1812,7 +1855,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1829,7 +1874,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1869,7 +1916,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1886,7 +1935,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1903,7 +1954,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1943,7 +1996,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1960,7 +2015,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1977,7 +2034,9 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK) &&
+          IncountryFlag === IncountryFlagConst.UK ?
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -2078,7 +2137,7 @@ function AddEditForm(props) {
       });
     } else if (
       name === "RequestForEmpowermentReason" &&
-      (SelectedLabel === reasonOtherValue || SelectedLabel === reasonOtherValueUK)
+      (SelectedLabel === reasonOtherValue || SelectedLabel === reasonOtherValueUK || SelectedLabel === reasonOtherValueAustralia)
     ) {
       setShowTextBox(true);
       setShowButtons(false);
@@ -2127,7 +2186,8 @@ function AddEditForm(props) {
     } else if (
       name === "RequestForEmpowermentReason" &&
       ((SelectedLabel !== reasonOtherValue || value !== "") ||
-        (SelectedLabel !== reasonOtherValueUK || value !== ""))
+        (SelectedLabel !== reasonOtherValueUK || value !== "") ||
+        (SelectedLabel !== reasonOtherValueAustralia || value !== ""))
     ) {
       formdomfields.filter((item, i) =>
         item.name === "RequestForEmpowermentReason" &&
@@ -2191,28 +2251,28 @@ function AddEditForm(props) {
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
@@ -2445,7 +2505,7 @@ function AddEditForm(props) {
     window.scrollTo({ top: scrollPosition, behavior: "smooth" });
   };
   const handleResetGermany = () => {
-    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.GERMANY) {
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
       if (selectedlanguage?.value === "DE001") {
         formdomfields.filter((item) =>
           item.name === "ReferralReasonLevel2"
@@ -3841,7 +3901,8 @@ function AddEditForm(props) {
               }
               isAddButton={
                 (IncountryFlag === IncountryFlagConst.UK ||
-                IncountryFlag === IncountryFlagConst.GERMANY) &&
+                IncountryFlag === IncountryFlagConst.GERMANY ||
+                IncountryFlag === IncountryFlagConst.AUSTRALIA) &&
                 showButtons && obj.isAddButton === true
                   ? true
                   : false
@@ -5061,6 +5122,7 @@ function AddEditForm(props) {
           frmrfeempourment={resonForReference}
           reasonOtherValue={reasonOtherValue}
           reasonOtherValueUK={reasonOtherValueUK}
+          reasonOtherValueAustralia={reasonOtherValueAustralia}
           frmSublob={frmSublob}
           OrganizationalAlignment={OrganizationalAlignment}
           segmentAccount={segmentAccount}
