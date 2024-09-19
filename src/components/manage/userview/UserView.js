@@ -97,7 +97,6 @@ function UserView({ ...props }) {
     PolicyPeriod: "Policy Period",
     BoundFromDate: "Bound Date From",
     BoundToDate: "Bound Date To",
-    ReferenceID: "ReferenceID",
     GWP: "GWP",
     IsActive: "Active",
     CreatedDate: "Created Date",

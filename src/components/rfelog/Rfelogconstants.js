@@ -15,7 +15,6 @@ export const intialFilterState = {
   Creator: "",
   CreatedFromDate: "",
   CreatedToDate: "",
-  ReferenceID: "",
   BoundFromDate: "",
   BoundToDate: "",
   DurationofApproval: "",
@@ -192,12 +191,6 @@ export const filterfieldsmapping = {
     componenttype: "FrmMultiselect",
     options: "sublobFilterOpts",
     eventhandler: "handleMultiSelectChange",
-    filtertype: "Incountry",
-  },
-  ReferenceID: {
-    componenttype: "FrmInput",
-    options: "",
-    eventhandler: "onSearchFilterInput",
     filtertype: "Incountry",
   },
   BoundDate: {
@@ -403,11 +396,6 @@ export const formfieldsmapping = {
     eventhandler: "handleChange",
     colspan: 0,
     conditionaldisplay: "accountNumberShow",
-  },
-  ReferenceID: {
-    componenttype: "FrmInput",
-    eventhandler: "handleChange",
-    colspan: 3,
   },
   BoundDate: {
     componenttype: "FrmDatePicker",
