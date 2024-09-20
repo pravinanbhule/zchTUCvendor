@@ -989,7 +989,7 @@ function AddEditForm(props) {
           if (item.fieldName === "ReferralReasonLevel3") {
             tempobj = {
               ...tempobj,
-              isAddButton: IncountryFlag === IncountryFlagConst.GERMANY ? false :
+              isAddButton: (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.AUSTRALIA) ? false :
               formIntialState.ReferralReasonLevel4 ||
               (formfield.ReferralReasonLevel4 !== null &&
                 formfield.ReferralReasonLevel4 !== "" &&
@@ -1567,11 +1567,11 @@ function AddEditForm(props) {
         item.name === "ReferralReasonLevel2"
           ? (item.isAddButton = false)
           : item.name === "ReferralReasonLevel3"
-          ? (item.colspan = 3, item.isAddButton = ((IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA) && reasonfields.ReferralReasonLevel4 === false ? true : false))
+          ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel3" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel4: true,
@@ -1584,7 +1584,7 @@ function AddEditForm(props) {
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel4" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel5: true,
@@ -2251,28 +2251,28 @@ function AddEditForm(props) {
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    } else if (name === "ReferralReasonLevel3" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    } else if (name === "ReferralReasonLevel3" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    } else if (name === "ReferralReasonLevel4" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    } else if (name === "ReferralReasonLevel4" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
