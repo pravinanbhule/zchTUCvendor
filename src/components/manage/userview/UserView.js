@@ -95,8 +95,6 @@ function UserView({ ...props }) {
     AccountNumber: "Account Number",
     CustomerSegment: "Customer Segment",
     PolicyPeriod: "Policy Period",
-    BoundFromDate: "Bound Date From",
-    BoundToDate: "Bound Date To",
     GWP: "GWP",
     IsActive: "Active",
     CreatedDate: "Created Date",
