@@ -132,6 +132,7 @@ function AddEditForm(props) {
   const [frmSegmentOptsAll, setfrmSegmentOptsAll] = useState([]);
   const [frmBranchOpts, setfrmBranchOpts] = useState([]);
   const [frmBranchOptsAll, setfrmBranchOptsAll] = useState([]);
+  const [currencyList, setCurrencyList] = useState([]);
   const [frmCurrencyOpts, setfrmCurrencyOpts] = useState([]);
   const [policyaccountOpts, setpolicyaccountOpts] = useState([]);
   const [policyaccloader, setpolicyaccloader] = useState(false);
@@ -1348,7 +1349,35 @@ function AddEditForm(props) {
       }
     });
     //tempopts.sort(dynamicSort("label"));
-    setfrmCurrencyOpts([selectInitiVal, ...tempopts]);
+    setCurrencyList([...tempopts]);
+    if (IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+      let australiaCurrency = tempopts.filter((item, i) => item.countryID === INCOUNTRTY_IDS.AUSTRALIA)
+      setfrmCurrencyOpts([selectInitiVal, ...australiaCurrency])
+    } else {
+      let withOutAustraliaCurrency = tempopts.filter((item, i) => item.countryID !== INCOUNTRTY_IDS.AUSTRALIA)
+      setfrmCurrencyOpts([selectInitiVal, ...withOutAustraliaCurrency, {
+        "currencyID": "CURRENCYC0976EB3BD404194A2F6B8472D55AE36",
+        "currencyName": "USD-$",
+        "currencyDescription": null,
+        "isActive": true,
+        "countryList": null,
+        "currencyCountryList": null,
+        "createdDate": null,
+        "modifiedDate": null,
+        "createdBy": null,
+        "modifiedBy": null,
+        "countryID": "COU000002",
+        "isSuccess": false,
+        "totalCount": 0,
+        "creatorName": null,
+        "createdDateDisplay": null,
+        "lastModifiedDateDisplay": null,
+        "label": "USD-$",
+        "value": "CURRENCYC0976EB3BD404194A2F6B8472D55AE36"
+      }])
+    }
+    // setfrmCurrencyOpts([selectInitiVal, ...tempopts]);
+
   }, [currencyState.currencyItems]);
 
   useEffect(() => {
@@ -1534,6 +1563,32 @@ function AddEditForm(props) {
         setShowButtons(true);
         setButtonsDisable(true);
       }
+    }    
+    if (IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+        let australiaCurrency = currencyList.filter((item, i) => item.countryID === INCOUNTRTY_IDS.AUSTRALIA)
+        setfrmCurrencyOpts([selectInitiVal, ...australiaCurrency])
+    } else {
+        let withOutAustraliaCurrency = currencyList.filter((item, i) => item.countryID !== INCOUNTRTY_IDS.AUSTRALIA)
+        setfrmCurrencyOpts([selectInitiVal, ...withOutAustraliaCurrency, {
+          "currencyID": "CURRENCYC0976EB3BD404194A2F6B8472D55AE36",
+          "currencyName": "USD-$",
+          "currencyDescription": null,
+          "isActive": true,
+          "countryList": null,
+          "currencyCountryList": null,
+          "createdDate": null,
+          "modifiedDate": null,
+          "createdBy": null,
+          "modifiedBy": null,
+          "countryID": "COU000002",
+          "isSuccess": false,
+          "totalCount": 0,
+          "creatorName": null,
+          "createdDateDisplay": null,
+          "lastModifiedDateDisplay": null,
+          "label": "USD-$",
+          "value": "CURRENCYC0976EB3BD404194A2F6B8472D55AE36"
+      }])
     }
     if (
       IncountryFlag !== undefined &&
