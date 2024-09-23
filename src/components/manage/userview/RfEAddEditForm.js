@@ -166,8 +166,6 @@ function RfelogAddEditForm({ ...props }) {
             response.CHZ = response?.chzSustainabilityDeskCHZGICreditRis
             response.CreatedToDate = response?.createdDateTo
             response.CreatedFromDate = response?.createdDateFrom
-            response.BoundToDate = response?.boundToDate
-            response.BoundFromDate = response?.boundFromDate
             response.RequestForEmpowermentCC = response?.requestforempowermentCC
             response.Underwriter = response?.underwriter
             response.UnderwriterGrantingEmpowerment = response?.underwritergrantingempowerment
@@ -1353,8 +1351,6 @@ function RfelogAddEditForm({ ...props }) {
                 data.customerSegment = data?.CustomerSegment
                 data.createdDateTo = data?.CreatedToDate
                 data.createdDateFrom = data?.CreatedFromDate
-                data.boundToDate = data?.BoundToDate
-                data.boundFromDate = data?.BoundFromDate
                 data.requestforempowermentCC = data?.RequestForEmpowermentCC
                 data.requestforempowermentreason = data?.RequestForEmpowermentReason
                 data.requestforempowermentstatus = data?.RequestForEmpowermentStatus
@@ -1381,8 +1377,6 @@ function RfelogAddEditForm({ ...props }) {
                 data.gwp = data?.GWP
                 delete data?.CHZ
                 delete data?.CustomerSegment
-                delete data?.BoundFromDate
-                delete data?.BoundToDate
                 delete data?.CreatedToDate
                 delete data?.CreatedFromDate
                 delete data?.RequestForEmpowermentCC

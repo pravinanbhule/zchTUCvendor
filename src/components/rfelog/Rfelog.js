@@ -1298,8 +1298,6 @@ function Rfelog({ ...props }) {
         Creator: selectedViewData[0]?.creator,
         CreatedFromDate: selectedViewData[0]?.createdFromDate,
         CreatedToDate: selectedViewData[0]?.createdToDate,
-        BoundFromDate: selectedViewData[0]?.boundFromDate,
-        BoundToDate: selectedViewData[0]?.boundToDate,
         Currency: currencyArray,
         Branch: branchArray,
         DurationofApproval: duarationArray,
