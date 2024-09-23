@@ -15,6 +15,8 @@ export const intialFilterState = {
   Creator: "",
   CreatedFromDate: "",
   CreatedToDate: "",
+  BoundFromDate: "",
+  BoundToDate: "",
   DurationofApproval: "",
   ConditionApplicableTo: "",
 };
@@ -190,6 +192,18 @@ export const filterfieldsmapping = {
     options: "sublobFilterOpts",
     eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
+  },
+  BoundDate: {
+    componenttype: "FrmDatePicker",
+    options: "",
+    eventhandler: "handleDateSelectChange",
+    filtertype: "Incountry",
+    colspan: 6,
+    datefieldfrom: { fieldname: "BoundFromDate", minDate: "" },
+    datefieldto: {
+      fieldname: "BoundToDate",
+      minDate: "selfilter.boundFromDate",
+    },
   },
 };
 export const versionHistoryexportFieldTitles = {
@@ -382,6 +396,14 @@ export const formfieldsmapping = {
     eventhandler: "handleChange",
     colspan: 0,
     conditionaldisplay: "accountNumberShow",
+  },
+  BoundDate: {
+    componenttype: "FrmDatePicker",
+    eventhandler: "handleDateSelectChange",
+    minDate: "",
+    maxDate: "",
+    colspan: 3,
+    titlelinespace: false,
   },
   NewRenewal: {
     componenttype: "FrmSelect",

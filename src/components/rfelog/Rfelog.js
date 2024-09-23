@@ -191,7 +191,7 @@ function Rfelog({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
   const [isAdvfilterApplied, setisAdvfilterApplied] = useState(false);
-  const [isInCountryfilterApplied, setisInCountryfilterApplied] =useState(false);
+  const [isInCountryfilterApplied, setisInCountryfilterApplied] = useState(false);
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [countryAllFilterOpts, setcountryAllFilterOpts] = useState([]);
   const [regionFilterOpts, setregionFilterOpts] = useState([]);
@@ -505,67 +505,67 @@ function Rfelog({ ...props }) {
       columns = [
         sellogTabType !== "delete"
           ? {
-              dataField: "editaction",
-              text: "Edit",
-              hidden:
-                handlePermission(
-                  window.location.pathname.slice(1),
-                  "isEdit"
-                ) === true
-                  ? false
-                  : true,
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                let isedit = fnIsEditAccess(row);
+            dataField: "editaction",
+            text: "Edit",
+            hidden:
+              handlePermission(
+                window.location.pathname.slice(1),
+                "isEdit"
+              ) === true
+                ? false
+                : true,
+            formatter: (cell, row, rowIndex, formatExtraData) => {
+              let isedit = fnIsEditAccess(row);
 
-                return isedit ? (
-                  <div
-                    className={`edit-icon`}
-                    onClick={handleEdit}
-                    rowid={row.RFELogId}
-                    IncountryFLag={row.IncountryFLag}
-                    mode={"edit"}
-                  ></div>
-                ) : (
-                  ""
-                );
-              },
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return {
-                  width: "70px",
-                  textAlign: "center",
-                };
-              },
-            }
-          : {
-              dataField: "editaction",
-              text: "Restore",
-              hidden:
-                handlePermission(
-                  window.location.pathname.slice(1),
-                  "isEdit"
-                ) === true
-                  ? false
-                  : true,
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return (
-                  <div
-                    className="restore-icon"
-                    onClick={() =>
-                      handleRestoreItem(row.RFELogId, row.IsSubmit)
-                    }
-                    rowid={row.RFELogId}
-                  ></div>
-                );
-              },
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return {
-                  width: "90px",
-                  textAlign: "center",
-                };
-              },
+              return isedit ? (
+                <div
+                  className={`edit-icon`}
+                  onClick={handleEdit}
+                  rowid={row.RFELogId}
+                  IncountryFLag={row.IncountryFLag}
+                  mode={"edit"}
+                ></div>
+              ) : (
+                ""
+              );
             },
+            sort: false,
+            headerStyle: (colum, colIndex) => {
+              return {
+                width: "70px",
+                textAlign: "center",
+              };
+            },
+          }
+          : {
+            dataField: "editaction",
+            text: "Restore",
+            hidden:
+              handlePermission(
+                window.location.pathname.slice(1),
+                "isEdit"
+              ) === true
+                ? false
+                : true,
+            formatter: (cell, row, rowIndex, formatExtraData) => {
+              return (
+                <div
+                  className="restore-icon"
+                  onClick={() =>
+                    handleRestoreItem(row.RFELogId, row.IsSubmit)
+                  }
+                  rowid={row.RFELogId}
+                ></div>
+              );
+            },
+            sort: false,
+            headerStyle: (colum, colIndex) => {
+              return {
+                width: "90px",
+                textAlign: "center",
+              };
+            },
+          },
         {
           dataField: "viewaction",
           text: "View",
@@ -609,32 +609,32 @@ function Rfelog({ ...props }) {
         },
         sellogTabType !== "delete"
           ? {
-              dataField: "MoreActions",
-              text: "More Actions",
-              formatter: (cell, row, rowIndex, formatExtraData) => {
-                return (
-                  <>
-                    <MoreActions
-                      rowid={row.RFELogId}
-                      isSubmit={row.IsSubmit}
-                      handleCopyItem={handleCopyItem}
-                      handleShareItem={openShareItem}
-                      handleDeleteItem={openDeleteItem}
-                      handleLinkItem={sellogTabType === "all" ? handleLinkLog : false}
-                      userProfile={userProfile}
-                      isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
-                    ></MoreActions>
-                  </>
-                );
-              },
-              sort: false,
-              headerStyle: (colum, colIndex) => {
-                return {
-                  width: "100px",
-                  textAlign: "center",
-                };
-              },
-            }
+            dataField: "MoreActions",
+            text: "More Actions",
+            formatter: (cell, row, rowIndex, formatExtraData) => {
+              return (
+                <>
+                  <MoreActions
+                    rowid={row.RFELogId}
+                    isSubmit={row.IsSubmit}
+                    handleCopyItem={handleCopyItem}
+                    handleShareItem={openShareItem}
+                    handleDeleteItem={openDeleteItem}
+                    handleLinkItem={sellogTabType === "all" ? handleLinkLog : false}
+                    userProfile={userProfile}
+                    isDelete={fnIsEditAccess(row) && handlePermission(window.location.pathname.slice(1), "isDelete") === true ? true : false}
+                  ></MoreActions>
+                </>
+              );
+            },
+            sort: false,
+            headerStyle: (colum, colIndex) => {
+              return {
+                width: "100px",
+                textAlign: "center",
+              };
+            },
+          }
           : {},
       ];
       headers.forEach((item) => {
@@ -683,8 +683,8 @@ function Rfelog({ ...props }) {
                                     <br></br>
                                     {row.UnderwriterGrantingEmpowermentComments
                                       ? parse(
-                                          row.UnderwriterGrantingEmpowermentComments
-                                        )
+                                        row.UnderwriterGrantingEmpowermentComments
+                                      )
                                       : ""}
                                   </div>
                                 </td>
@@ -783,17 +783,17 @@ function Rfelog({ ...props }) {
           tempFilterOpts[key] = selfilter[key];
           let value = selfilter[key];
           if (key === "CountryId" || key === "RegionId" ||
-              key === "LOBId" || key === "RequestForEmpowermentStatus" ||
-              key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
-              key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
-              key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-              key === "ConditionApplicableTo") {
-              const tmpval = value.map((item) => item.value);
-              tempFilterOpts[key] = tmpval.join(",");
+            key === "LOBId" || key === "RequestForEmpowermentStatus" ||
+            key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
+            key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
+            key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
+            key === "ConditionApplicableTo") {
+            const tmpval = value.map((item) => item.value);
+            tempFilterOpts[key] = tmpval.join(",");
           }
         }
       }
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         if (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined) {
           reqParam = {
             ...reqParam,
@@ -809,7 +809,7 @@ function Rfelog({ ...props }) {
             ...tempFilterOpts,
             RequestForEmpowermentStatus: selectedStatus.length > 0 ? selectedStatus.toString() : "00000001",
             sortExp: selSortFiled.name + " " + selSortFiled.order,
-          }  
+          }
         }
       } else {
         reqParam = {
@@ -819,7 +819,7 @@ function Rfelog({ ...props }) {
         };
       }
     } else {
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         reqParam = {
           ...reqParam,
           RequestForEmpowermentStatus: withOutWithdrawn,
@@ -1058,20 +1058,20 @@ function Rfelog({ ...props }) {
   }, []);
 
 
-  
+
   const [selectedUserView, setSelectedUserview] = useState(null);
   const [viewData, setViewData] = useState([]);
   const [viewResponse, setViewResponse] = useState(false);
   const [isReset, setIsReset] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (userProfile?.rfeViewsId && viewResponse && viewData.length !== 0) {
-      onUserViewFilterSelect( "", userProfile?.rfeViewsId)
+      onUserViewFilterSelect("", userProfile?.rfeViewsId)
     } else if (viewResponse && (userProfile?.rfeViewsId && userProfile?.rfeViewsId !== 'null')) {
       pageIndex = 1;
       loadAPIData();
     }
-  },[viewData, sellogTabType, viewResponse])
+  }, [viewData, sellogTabType, viewResponse])
 
   useEffect(() => {
     if (selectedUserView && sellogTabType) {
@@ -1079,31 +1079,31 @@ function Rfelog({ ...props }) {
     }
   }, [selectedUserView, sellogTabType]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (selfilter && isReset) {
       setIsReset(false);
       setfilterbox(false);
       handleFilterSearch();
     }
-  },[selfilter, isReset])
+  }, [selfilter, isReset])
 
   const handleSelectedItemArray = (selectedArray, data, field, label) => {
     let arrayData = [];
     selectedArray.map((id, j) => {
       data.map((item, i) => {
-            if (item.isActive && id === item[field]) {
-              arrayData.push({
-                  ...item,
-                  label: item[label],
-                  value: item[field],
-                })
-            }
-        })
+        if (item.isActive && id === item[field]) {
+          arrayData.push({
+            ...item,
+            label: item[label],
+            value: item[field],
+          })
+        }
+      })
     })
     return arrayData
   }
 
-  const onUserViewFilterSelect = async(name, value) => {
+  const onUserViewFilterSelect = async (name, value) => {
     setselfilter(intialFilterState);
     let selectedViewData = viewData.filter((item, i) => {
       if (item.rfeViewsId === value) {
@@ -1116,16 +1116,16 @@ function Rfelog({ ...props }) {
         let selectedCountryArray = selectedViewData[0]?.countryId?.split(',')
         if (selectedCountryArray) {
           selectedCountryArray.map((id, j) => {
-              countryState.countryItems.map((item, i) => {
-                  if (item.isActive && id === item.countryID) {
-                      countryArray.push({
-                          ...item,
-                          label: item.countryName.trim(),
-                          value: item.countryID,
-                          regionId: item.regionID,
-                      })
-                  }
-              })
+            countryState.countryItems.map((item, i) => {
+              if (item.isActive && id === item.countryID) {
+                countryArray.push({
+                  ...item,
+                  label: item.countryName.trim(),
+                  value: item.countryID,
+                  regionId: item.regionID,
+                })
+              }
+            })
           })
         }
       }
@@ -1136,14 +1136,14 @@ function Rfelog({ ...props }) {
           let regionData = await getAllRegion();
           selectedRegionArray.map((id, j) => {
             regionData.map((item, i) => {
-                  if (item.isActive && id === item.regionID) {
-                      regionArray.push({
-                          ...item,
-                          label: item.regionName.trim(),
-                          value: item.regionID,
-                      })
-                  }
-              })
+              if (item.isActive && id === item.regionID) {
+                regionArray.push({
+                  ...item,
+                  label: item.regionName.trim(),
+                  value: item.regionID,
+                })
+              }
+            })
           })
         }
       }
@@ -1156,7 +1156,7 @@ function Rfelog({ ...props }) {
           loBArray = handleSelectedItemArray(selectedloBArray, loBData, 'lobid', 'lobName')
         }
       }
-      
+
       let statusArray = [];
       if (selectedViewData[0]?.requestForEmpowermentStatus?.length && selectedViewData[0]?.requestForEmpowermentStatus?.length !== 0 && typeof selectedViewData[0]?.requestForEmpowermentStatus === 'string') {
         let selectedstatusArray = selectedViewData[0]?.requestForEmpowermentStatus?.split(',')
@@ -1178,7 +1178,7 @@ function Rfelog({ ...props }) {
           orgArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-     
+
       let reasonArray = [];
       if (selectedViewData[0]?.requestForEmpowermentReason?.length && selectedViewData[0]?.requestForEmpowermentReason?.length !== 0 && typeof selectedViewData[0]?.requestForEmpowermentReason === 'string') {
         let selectedstatusArray = selectedViewData[0]?.requestForEmpowermentReason?.split(',')
@@ -1189,7 +1189,7 @@ function Rfelog({ ...props }) {
           reasonArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-   
+
       let duarationArray = [];
       if (selectedViewData[0]?.durationofApproval?.length && selectedViewData[0]?.durationofApproval?.length !== 0 && typeof selectedViewData[0]?.durationofApproval === 'string') {
         let selectedstatusArray = selectedViewData[0]?.durationofApproval?.split(',')
@@ -1200,7 +1200,7 @@ function Rfelog({ ...props }) {
           duarationArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-     
+
       let conditionArray = [];
       if (selectedViewData[0]?.conditionApplicableTo?.length && selectedViewData[0]?.conditionApplicableTo?.length !== 0 && typeof selectedViewData[0]?.conditionApplicableTo === 'string') {
         let selectedstatusArray = selectedViewData[0]?.conditionApplicableTo?.split(',')
@@ -1222,7 +1222,7 @@ function Rfelog({ ...props }) {
           newRenewalArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-      
+
       let currencyArray = [];
       if (selectedViewData[0]?.currency?.length && selectedViewData[0]?.currency?.length !== 0 && typeof selectedViewData[0]?.currency === 'string') {
         let selectedstatusArray = selectedViewData[0]?.currency?.split(',')
@@ -1231,7 +1231,7 @@ function Rfelog({ ...props }) {
           currencyArray = handleSelectedItemArray(selectedstatusArray, statusData, 'currencyID', 'currencyName')
         }
       }
-      
+
       let branchArray = [];
       if (selectedViewData[0]?.branch?.length && selectedViewData[0]?.branch?.length !== 0 && typeof selectedViewData[0]?.branch === 'string') {
         let selectedstatusArray = selectedViewData[0]?.branch?.split(',')
@@ -1248,14 +1248,14 @@ function Rfelog({ ...props }) {
           let statusData = await getAllSegment({ logType: "rfelogsAll" });
           selectedstatusArray.map((id, j) => {
             statusData?.map((item, i) => {
-                if (item.isActive && id === item.segmentID) {
-                  customerSegmentArray.push({
-                      ...item,
-                      label: item.segmentName,
-                      value: item.segmentID,
-                      country: item.countryList,
-                    })
-                }
+              if (item.isActive && id === item.segmentID) {
+                customerSegmentArray.push({
+                  ...item,
+                  label: item.segmentName,
+                  value: item.segmentID,
+                  country: item.countryList,
+                })
+              }
             })
           })
         }
@@ -1270,19 +1270,16 @@ function Rfelog({ ...props }) {
             sublobData?.map((item, i) => {
               if (item.isActive && id === item.subLOBID) {
                 subloBArray.push({
-                    ...item,
-                    label: item.subLOBName,
-                    value: item.subLOBID,
-                    lob: item.lobid,
+                  ...item,
+                  label: item.subLOBName,
+                  value: item.subLOBID,
+                  lob: item.lobid,
                 });
               }
             })
-        })
+          })
         }
       }
-
-
-      
 
       const FilterState = {
         EntryNumber: selectedViewData[0]?.entryNumber,
@@ -1301,6 +1298,8 @@ function Rfelog({ ...props }) {
         Creator: selectedViewData[0]?.creator,
         CreatedFromDate: selectedViewData[0]?.createdFromDate,
         CreatedToDate: selectedViewData[0]?.createdToDate,
+        BoundFromDate: selectedViewData[0]?.boundFromDate,
+        BoundToDate: selectedViewData[0]?.boundToDate,
         Currency: currencyArray,
         Branch: branchArray,
         DurationofApproval: duarationArray,
@@ -1331,9 +1330,9 @@ function Rfelog({ ...props }) {
     let data = commonfilterOpts.userViews.filter((item) => item.label !== "All")
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      userViews: value !== null ?  [{ label: "All", value: null }, ...data] : [...data] ,
+      userViews: value !== null ? [{ label: "All", value: null }, ...data] : [...data],
     }));
-    await addEditUserView({LogType: 'rfelogs', UserId: userProfile.userId, ViewId: value})
+    await addEditUserView({ LogType: 'rfelogs', UserId: userProfile.userId, ViewId: value })
     let updatedUserProfileData = userProfile
     updatedUserProfileData.rfeViewsId = value
     localStorage.setItem("UserProfile", JSON.stringify(updatedUserProfileData))
@@ -1343,7 +1342,7 @@ function Rfelog({ ...props }) {
     const response = await getViewsByUserId({ RequesterUserId: userProfile.userId, UserViewType: 'rfelog' })
     setViewData(response)
     let viewFilterOpts = []
-    response.map((item,i) => {
+    response.map((item, i) => {
       viewFilterOpts.push({
         label: item.viewName,
         value: item.rfeViewsId
@@ -1362,7 +1361,7 @@ function Rfelog({ ...props }) {
       cat: name,
       label: item.lookUpValue,
       value: item.lookupID,
-  })
+    })
   }
 
   const loadfilterdata = async () => {
@@ -1438,59 +1437,59 @@ function Rfelog({ ...props }) {
     temprfechz = [...tempopts];
     tempopts = [];
     temprfeempourment.forEach((item) => {
-        if (item.isActive) {
-          if (item.lookUpType.includes("Australia")) {
-            setOpts(tempopts, item, 'Australia')
-          }
-          if (item.lookUpType.includes("Benelux")) {
-              setOpts(tempopts, item, 'Benelux')
-          }
-          if (item.lookUpType.includes("China")) {
-              setOpts(tempopts, item, 'China')
-          }
-          if (item.lookUpType.includes("France")) {
-              setOpts(tempopts, item, 'France')
-          }
-          if (item.lookUpType.includes("Germany")) {
-              setOpts(tempopts, item, 'Germany')
-          }
-          if (item.lookUpType.includes("HongKong")) {
-              setOpts(tempopts, item, 'HongKong')
-          }
-          if (item.lookUpType.includes("India")) {
-              setOpts(tempopts, item, 'India')
-          }
-          if (item.lookUpType.includes("Indonesia")) {
-              setOpts(tempopts, item, 'Indonesia')
-          }
-          if (item.lookUpType.includes("Italy")) {
-              setOpts(tempopts, item, 'Italy')
-          }
-          if (item.lookUpType.includes("LatAm")) {
-              setOpts(tempopts, item, 'LatAm')
-          }
-          if (item.lookUpType.includes("Malaysia")) {
-              setOpts(tempopts, item, 'Malaysia')
-          }
-          if (item.lookUpType.includes("MiddleEast")) {
-              setOpts(tempopts, item, 'MiddleEast')
-          }
-          if (item.lookUpType.includes("Nordic")) {
-              setOpts(tempopts, item, 'Nordic')
-          }
-          if (item.lookUpType.includes("Singapore")) {
-              setOpts(tempopts, item, 'Singapore')
-          }
-          if (item.lookUpType.includes("Spain")) {
-              setOpts(tempopts, item, 'Spain')
-          }
-          if (item.lookUpType.includes("UK")) {
-              setOpts(tempopts, item, 'UK')
-          }
-          if (item.lookUpType.length === 27) {
-              setOpts(tempopts, item, 'Global')
-          }
+      if (item.isActive) {
+        if (item.lookUpType.includes("Australia")) {
+          setOpts(tempopts, item, 'Australia')
         }
+        if (item.lookUpType.includes("Benelux")) {
+          setOpts(tempopts, item, 'Benelux')
+        }
+        if (item.lookUpType.includes("China")) {
+          setOpts(tempopts, item, 'China')
+        }
+        if (item.lookUpType.includes("France")) {
+          setOpts(tempopts, item, 'France')
+        }
+        if (item.lookUpType.includes("Germany")) {
+          setOpts(tempopts, item, 'Germany')
+        }
+        if (item.lookUpType.includes("HongKong")) {
+          setOpts(tempopts, item, 'HongKong')
+        }
+        if (item.lookUpType.includes("India")) {
+          setOpts(tempopts, item, 'India')
+        }
+        if (item.lookUpType.includes("Indonesia")) {
+          setOpts(tempopts, item, 'Indonesia')
+        }
+        if (item.lookUpType.includes("Italy")) {
+          setOpts(tempopts, item, 'Italy')
+        }
+        if (item.lookUpType.includes("LatAm")) {
+          setOpts(tempopts, item, 'LatAm')
+        }
+        if (item.lookUpType.includes("Malaysia")) {
+          setOpts(tempopts, item, 'Malaysia')
+        }
+        if (item.lookUpType.includes("MiddleEast")) {
+          setOpts(tempopts, item, 'MiddleEast')
+        }
+        if (item.lookUpType.includes("Nordic")) {
+          setOpts(tempopts, item, 'Nordic')
+        }
+        if (item.lookUpType.includes("Singapore")) {
+          setOpts(tempopts, item, 'Singapore')
+        }
+        if (item.lookUpType.includes("Spain")) {
+          setOpts(tempopts, item, 'Spain')
+        }
+        if (item.lookUpType.includes("UK")) {
+          setOpts(tempopts, item, 'UK')
+        }
+        if (item.lookUpType.length === 27) {
+          setOpts(tempopts, item, 'Global')
+        }
+      }
     });
     temprfeempourment = [...tempopts];
     tempopts = [];
@@ -1541,7 +1540,7 @@ function Rfelog({ ...props }) {
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
     }));
-   
+
     let Flag = await handleUserIncountryFlag()
     const tempfilterfields = await getLogFields({
       IncountryFlag: Flag,
@@ -1559,15 +1558,15 @@ function Rfelog({ ...props }) {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     if (nolonger === true) {
       loadAPIData();
     } else {
       loadAPIData();
     }
-  },[nolonger])
+  }, [nolonger])
 
-  const handleUserIncountryFlag = async() => {
+  const handleUserIncountryFlag = async () => {
     let IncountryFlag = '';
     let CountryList = []
     if (countryState?.countryItems?.length !== 0) {
@@ -1579,9 +1578,9 @@ function Rfelog({ ...props }) {
       let userInCountryFlag = []
       userProfile?.scopeCountryList?.split(",")?.map((userCountry) => {
         CountryList.map((country, i) => {
-            if (country.countryID === userCountry) {
-              userInCountryFlag.push(country.incountryFlag)
-            }
+          if (country.countryID === userCountry) {
+            userInCountryFlag.push(country.incountryFlag)
+          }
         })
       })
       userInCountryFlag = userInCountryFlag.filter((item,
@@ -1793,29 +1792,29 @@ function Rfelog({ ...props }) {
     let temGermany = [];
     segmentState.segmentItems.forEach((item) => {
       if (item.isActive) {
-          if (item.logType && item.logType === "rfelogsGermany") {
-            temGermany.push({
-                ...item,
-                label: item.segmentName,
-                value: item.segmentID,
-                country: item.countryList,
-                cat: 'Germany'
-            })
+        if (item.logType && item.logType === "rfelogsGermany") {
+          temGermany.push({
+            ...item,
+            label: item.segmentName,
+            value: item.segmentID,
+            country: item.countryList,
+            cat: 'Germany'
+          })
         } else {
-            tempopts.push({
-                ...item,
-                label: item.segmentName,
-                value: item.segmentID,
-                country: item.countryList,
-                cat: 'Global'
-            });
+          tempopts.push({
+            ...item,
+            label: item.segmentName,
+            value: item.segmentID,
+            country: item.countryList,
+            cat: 'Global'
+          });
         }
       }
     });
     tempopts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      customerSegmentOpts:[...tempopts, ...temGermany],
+      customerSegmentOpts: [...tempopts, ...temGermany],
     }));
   }, [segmentState.segmentItems]);
 
@@ -1853,8 +1852,8 @@ function Rfelog({ ...props }) {
         sellogTabType === "draft"
           ? { ...reqparam, IsSubmit: false }
           : sellogTabType === "delete"
-          ? { ...reqparam, IsDelete: true }
-          : { ...reqparam, IsSubmit: true };
+            ? { ...reqparam, IsDelete: true }
+            : { ...reqparam, IsSubmit: true };
 
       let tempEntries = await getAllEntryNumbers(reqparam);
       if (tempEntries.length) {
@@ -2253,7 +2252,7 @@ function Rfelog({ ...props }) {
     });
     setshowDeleteLog(true);
   };
-  const handleLinkLog = async(itemid) => {
+  const handleLinkLog = async (itemid) => {
     localStorage.setItem("id", itemid);
     localStorage.setItem("status", 'add');
     showAddPopup();
@@ -2351,7 +2350,7 @@ function Rfelog({ ...props }) {
         isDelete: true,
       };
     }
-    if (nolonger === false) {
+    if (sellogTabType === 'all' && nolonger === false) {
       reqParam = {
         ...reqParam,
         RequestForEmpowermentStatus: withOutWithdrawn,
@@ -2365,18 +2364,18 @@ function Rfelog({ ...props }) {
           tempFilterOpts[key] = selfilter[key];
         }
         if (key === "CountryId" || key === "RegionId" ||
-            key === "LOBId" || key === "RequestForEmpowermentStatus" ||
-            key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
-            key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
-            key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-            key === "ConditionApplicableTo") {
-            if (value) {
-              const tmpval = value?.map((item) => item.value);
-              tempFilterOpts[key] = tmpval.join(",");
-            }
+          key === "LOBId" || key === "RequestForEmpowermentStatus" ||
+          key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
+          key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
+          key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
+          key === "ConditionApplicableTo") {
+          if (value) {
+            const tmpval = value?.map((item) => item.value);
+            tempFilterOpts[key] = tmpval.join(",");
+          }
         }
       }
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         if (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined) {
           reqParam = {
             ...reqParam,
@@ -2555,7 +2554,7 @@ function Rfelog({ ...props }) {
           <div className="">
             <div className="title-rfe">
               <div className="page-title-rfe">RfE Log</div>
-              <div className="" style={{display:'flex'}}>
+              <div className="" style={{ display: 'flex' }}>
                 {viewData.length > 0 && (
                   <div className="title-dropdown-rfe">
                     <FrmSelect
@@ -2566,7 +2565,7 @@ function Rfelog({ ...props }) {
                       value={selectedUserView}
                       inlinetitle={true}
                       isdisabled={isLoadingStarted}
-                      />
+                    />
                   </div>
                 )}
                 {userProfile.isAdminGroup && !isViewHide && commonfilterOpts.views.length > 1 && (
@@ -2594,12 +2593,12 @@ function Rfelog({ ...props }) {
                       <div className="row">
                         {filterdomfields.common.length
                           ? filterdomfields.common.map((item) => (
-                              <div
-                                className={`frm-filter col-md-${item.colspan}`}
-                              >
-                                {Filterdomobj(item)}
-                              </div>
-                            ))
+                            <div
+                              className={`frm-filter col-md-${item.colspan}`}
+                            >
+                              {Filterdomobj(item)}
+                            </div>
+                          ))
                           : "Loading..."}
                       </div>
                       {/*<div className="row">
@@ -2702,9 +2701,8 @@ function Rfelog({ ...props }) {
                   </div>
                   <div className="advance-filter-btn-container">
                     <div
-                      className={`advance-filter-btn ${
-                        isAdvfilterApplied ? "selected" : "normal"
-                      }`}
+                      className={`advance-filter-btn ${isAdvfilterApplied ? "selected" : "normal"
+                        }`}
                       onClick={handlesetAdvSearch}
                     >
                       Advance Search
@@ -2716,16 +2714,16 @@ function Rfelog({ ...props }) {
                         <div className="row">
                           {filterdomfields.advance.length
                             ? filterdomfields.advance.map((item) =>
-                                item.componenttype === "FrmDatePicker" ? (
-                                  Filterdomobj(item)
-                                ) : (
-                                  <div
-                                    className={`frm-filter col-md-${item.colspan}`}
-                                  >
-                                    {Filterdomobj(item)}
-                                  </div>
-                                )
+                              item.componenttype === "FrmDatePicker" ? (
+                                Filterdomobj(item)
+                              ) : (
+                                <div
+                                  className={`frm-filter col-md-${item.colspan}`}
+                                >
+                                  {Filterdomobj(item)}
+                                </div>
                               )
+                            )
                             : "Loading..."}
                         </div>
                         {/*<div className="row">
@@ -2822,14 +2820,13 @@ function Rfelog({ ...props }) {
                     ""
                   )}
                   {filterdomfields.common.length > 0 && filterdomfields.Incountry.length === 0 ?
-                    "" 
+                    ""
                     :
                     <>
                       <div className="advance-filter-btn-container mt-5">
                         <div
-                          className={`advance-filter-btn ${
-                            isInCountryfilterApplied ? "selected" : "normal"
-                          }`}
+                          className={`advance-filter-btn ${isInCountryfilterApplied ? "selected" : "normal"
+                            }`}
                           onClick={handlesetInCountrySearch}
                         >
                           Incountry Search
@@ -2841,20 +2838,20 @@ function Rfelog({ ...props }) {
                             <div className="row">
                               {filterdomfields.Incountry.length
                                 ? filterdomfields.Incountry.map((item) =>
-                                    item.componenttype === "FrmDatePicker" ? (
-                                      Filterdomobj(item)
-                                    ) : (
-                                      <div
-                                        className={`frm-filter col-md-${item.colspan}`}
-                                      >
-                                        {Filterdomobj(item)}
-                                        </div>
-                                    )
+                                  item.componenttype === "FrmDatePicker" ? (
+                                    Filterdomobj(item)
+                                  ) : (
+                                    <div
+                                      className={`frm-filter col-md-${item.colspan}`}
+                                    >
+                                      {Filterdomobj(item)}
+                                    </div>
                                   )
+                                )
                                 : filterdomfields.common.length > 0 && filterdomfields.Incountry.length === 0 ? "" : "Loading..."}
                             </div>
                           </div>
-                          </div>
+                        </div>
                       ) : (
                         ""
                       )}
@@ -2862,18 +2859,17 @@ function Rfelog({ ...props }) {
                   }
                   <div className="btn-container">
                     <div
-                      className={`btn-blue ${
-                        !isEmptyObjectKeys(selfilter) ? "" : "disable"
-                      }`}
+                      className={`btn-blue ${!isEmptyObjectKeys(selfilter) ? "" : "disable"
+                        }`}
                       onClick={handleFilterSearch}
                     >
                       Search
                     </div>
-                    {selectedUserView ? 
+                    {selectedUserView ?
                       <div className="btn-blue" onClick={() => onUserViewFilterSelect('', selectedUserView)}>
                         Reset
                       </div>
-                     :
+                      :
                       <div className="btn-blue" onClick={clearFilter}>
                         Clear
                       </div>
@@ -2888,9 +2884,8 @@ function Rfelog({ ...props }) {
               )}
 
               <div
-                className={`filter-btn-container ${
-                  filterbox ? "opencls" : "closecls"
-                }`}
+                className={`filter-btn-container ${filterbox ? "opencls" : "closecls"
+                  }`}
               >
                 <div className="filter-btn" onClick={handleFilterBoxState}>
                   {isfilterApplied ? "Filters Applied" : "Filters"}
@@ -2899,25 +2894,26 @@ function Rfelog({ ...props }) {
             </div>
             {sellogTabType === 'all' && alllogsloaded &&
               <div style={{
-                top: '12px', paddingLeft: "20px", 
-                paddingRight: '20px', display: 'flex', 
-                justifyContent: 'space-between', position:"absolute", 
-                right: '0', zIndex: '-1'}}
+                top: '12px', paddingLeft: "20px",
+                paddingRight: '20px', display: 'flex',
+                justifyContent: 'space-between', position: "absolute",
+                right: '0', zIndex: '-1'
+              }}
                 className={`${filterbox ? '' : 'toggle-button-zindex'}`}
-                >
+              >
                 <div className="frm-filter">
                 </div>
                 <div className="frm-filter toggle-btn-header">
-                    <FrmToggleSwitch
-                      title={"Show Withdrawn"}
-                      name={"withdrawn"}
-                      value={nolonger}
-                      handleChange={(name, value)=>{setnolonger(value)}}
-                      isRequired={false}
-                      selectopts={[{label: "No",value: "1",},{label: "Yes",value: "0",}]}
-                      isToolTip={true}
-                      tooltipmsg={"<p>By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
-                      />
+                  <FrmToggleSwitch
+                    title={"Show Withdrawn"}
+                    name={"withdrawn"}
+                    value={nolonger}
+                    handleChange={(name, value) => { setnolonger(value) }}
+                    isRequired={false}
+                    selectopts={[{ label: "No", value: "1", }, { label: "Yes", value: "0", }]}
+                    isToolTip={true}
+                    tooltipmsg={"<p>By default the withdrawn logs are not displayed. Please use the toggle button to view all logs.</p>"}
+                  />
                 </div>
               </div>
             }
@@ -2934,13 +2930,12 @@ function Rfelog({ ...props }) {
             {logTypes.map((item) => (
               <div
                 key={item.label}
-                className={`tab-btn ${
-                  sellogTabType === item.value
+                className={`tab-btn ${sellogTabType === item.value
                     ? "selected"
                     : isLoadingStarted
-                    ? "disabled"
-                    : "normal"
-                }`}
+                      ? "disabled"
+                      : "normal"
+                  }`}
                 onClick={() => openlogTab(item.value)}
               >
                 {item.label}
