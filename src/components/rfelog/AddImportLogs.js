@@ -139,6 +139,9 @@ function AddImportLogs(props) {
     isCountryAdmin: false,
     isNormalUser: false,
     isCountrySuperAdmin: false,
+    isDualRole: false,
+    isLoBAdmin: false,
+    isGlobalUW: false
   };
   /* const [incountryopts, setincountryopts] = useState([
     { label: "Global", value: "gn" },
@@ -1178,20 +1181,20 @@ function AddImportLogs(props) {
                 //for In country - if approver is set to global/superadmin - set it invalid
                 if (
                   IncountryFlag !== "gn" &&
-                  (approverRole.isGlobalAdmin || approverRole.isSuperAdmin)
+                  (approverRole?.isGlobalAdmin || approverRole?.isSuperAdmin || approverRole?.isDualRole || approverRole?.isGlobalUW || approverRole?.isLoBAdmin)
                 ) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
                 //for incountry log - set orgnization alignment based on the approvers roles
-                if (IncountryFlag !== "gn" && approverRole.isRegionAdmin) {
+                if (IncountryFlag !== "gn" && approverRole?.isRegionAdmin) {
                   templogdata["OrganizationalAlignment"] =
                     organizationalAlignment.region;
                 }
                 if (
                   IncountryFlag !== "gn" &&
-                  (approverRole.isCountryAdmin || approverRole.isNormalUser)
+                  (approverRole?.isCountryAdmin || approverRole?.isNormalUser)
                 ) {
                   templogdata["OrganizationalAlignment"] =
                     organizationalAlignment.country;
@@ -1394,6 +1397,12 @@ function AddImportLogs(props) {
         tmpapprover?.userRoles[0]?.roleId === USER_ROLE.countrySuperAdmin
       ) {
         return { ...approverIntialRole, isCountrySuperAdmin: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.dualRole) {
+        return { ...approverIntialRole, isDualRole: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.lobAdmin) {
+        return { ...approverIntialRole, isLoBAdmin: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.globalUW) {
+        return { ...approverIntialRole, isGlobalUW: true };
       }
     } else {
       return { ...approverIntialRole };
