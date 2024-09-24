@@ -608,6 +608,10 @@ function AddImportLogs(props) {
       lookupObj: "currencyObj",
       fieldname: "Currency",
     },
+    Currency: {
+      lookupObj: "currencyObj",
+      fieldname: "Currency",
+    },
     LatAm_Limit: {
       fieldname: "Limit",
     },
