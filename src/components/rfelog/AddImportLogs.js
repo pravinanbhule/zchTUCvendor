@@ -1261,6 +1261,9 @@ function AddImportLogs(props) {
                   if (IncountryFlag === IncountryFlagCost.GERMANY) {
                     templogdata["RequestForEmpowermentReason"] = "00EBEE31-9CAE-4094-853F-D8F5EB1F124B";
                   }
+                  if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
+                    templogdata["RequestForEmpowermentReason"] = "GEN8691A9FFC-BA75-48F4-AE38-2199BB8E50KP";
+                  }
                   delete templogdata["ReferralReasonLevel2"];
                   delete templogdata["ReferralReasonLevel3"];
                   delete templogdata["ReferralReasonLevel4"];
@@ -1539,6 +1542,9 @@ function AddImportLogs(props) {
     });
     if (IncountryFlag === IncountryFlagCost.GERMANY) {
       getAllSegment({ logType: "rfelogsGermany" });
+    }
+    if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
+      getAllSegment({ logType: "rfelogsAustralia" });
     }
   }, [IncountryFlag]);
 
