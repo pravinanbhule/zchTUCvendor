@@ -1565,6 +1565,7 @@ function AddEditForm(props) {
       }
     }    
     if (IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+        getAllSegment({ logType: "rfelogsAustralia" });
         let australiaCurrency = currencyList.filter((item, i) => item.countryID === INCOUNTRTY_IDS.AUSTRALIA)
         setfrmCurrencyOpts([selectInitiVal, ...australiaCurrency])
     } else {
@@ -1592,7 +1593,8 @@ function AddEditForm(props) {
     }
     if (
       IncountryFlag !== undefined &&
-      IncountryFlag !== IncountryFlagConst.GERMANY
+      IncountryFlag !== IncountryFlagConst.GERMANY &&
+      IncountryFlag !== IncountryFlagConst.AUSTRALIA
     ) {
       getAllSegment({ logType: "rfelogs" });
     }
