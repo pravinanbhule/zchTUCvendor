@@ -181,16 +181,16 @@ function Segment({ ...props }) {
       },
     },
     {
-      dataField: "logTypeList",
-      text: "Log Type",
+      dataField: "countryList",
+      text: "Country",
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "170px" };
       },
     },
     {
-      dataField: "countryList",
-      text: "Country",
+      dataField: "logTypeList",
+      text: "Log Type",
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "170px" };
@@ -398,7 +398,7 @@ function Segment({ ...props }) {
     }
     const selectedTypeObj = {}
     if (response.logType) {
-      let selectedType = response.logType.split(",")
+      let selectedType = response.logTypeList.split(",")
       selectedType.map((item, i) => {
         selectedTypeObj[item] = true
       })
