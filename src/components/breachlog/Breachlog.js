@@ -1617,7 +1617,7 @@ function Breachlog({ ...props }) {
   const fnOnInit = async () => {
     getAllCountry();
     getAllRegion();
-    getAllSegment({ isActive: true });
+    getAllSegment({ logType: "7A6294F2-F4CC-4136-AEDC-69056FE245EC" });
     getAlllob({ isActive: true });
     getAllSublob({ isActive: true });
     getAllOffice({ isActive: true });
@@ -1859,7 +1859,7 @@ function Breachlog({ ...props }) {
       let customerArray = [];
       if (selectedViewData[0]?.customersegment?.length && selectedViewData[0]?.customersegment?.length !== 0 &&  typeof selectedViewData[0].customersegment === 'string') {
           let selectedSubLoBArray = selectedViewData[0].customersegment.split(',')
-          let data = await getAllSegment({ isActive: true });
+          let data = await getAllSegment({ logType: "FECB51BC-6D06-405D-9415-80A4B92347A9" });
           selectedSubLoBArray.map((id, j) => {
               data.map((item, i) => {
                   if (id === item.segmentID) {

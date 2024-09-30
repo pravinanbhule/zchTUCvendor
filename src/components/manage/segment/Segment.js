@@ -276,7 +276,6 @@ function Segment({ ...props }) {
       if (coutrylist) {
         coutrylist = coutrylist.split(",");
         coutrylist.forEach((countryItem) => {
-          console.log("coutrylist>>", coutrylist);
           let tempItem = countryItem.trim();
           if (!tempCountryObj[tempItem]) {
             tempCountryFilterOpts.push({
@@ -368,6 +367,7 @@ function Segment({ ...props }) {
     segmentDescription: "",
     logType: "",
     isActive: false,
+    "Breach Segment": true
   };
   const [isEditMode, setisEditMode] = useState(false);
   const [formIntialState, setformIntialState] = useState(initvalstate);

@@ -22,6 +22,7 @@ function AddEditForm(props) {
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
   const [frmCountryOpts, setfrmCountryOpts] = useState([]);
+  const [isErrorCheck, setIsErrorCheck] = useState(false);
   const [frmLogTypeOpts, setfrmLogTypeOpts] = useState([
     { label: "Breach log", value: "breachlogs" },
     { label: "Rfe log", value: "rfelogs" },
@@ -55,6 +56,12 @@ function AddEditForm(props) {
     if (e.target.type === "checkbox") {
       value = e.target.checked;
     }
+    if (isErrorCheck && issubmitted && (name === 'Breach Segment' || name === 'RfE (Australia)' || name === 'RfE (Germany)' || name === 'RfE (LATAM)') && value === true ) {
+      setIsErrorCheck(false)
+    } 
+    if (!isErrorCheck && issubmitted && value === false && (name === 'Breach Segment' || name === 'RfE (Australia)' || name === 'RfE (Germany)' || name === 'RfE (LATAM)')) {
+      setIsErrorCheck(true)
+    }
     setformfield({ ...formfield, [name]: value });
   };
   const handleSelectChange = (name, value) => {
@@ -69,36 +76,38 @@ function AddEditForm(props) {
     setissubmitted(true);
     if (formfield.segmentName && formfield.countryList.length) {
       formfield.logType = ""
-      if (formfield.BreachSegment || formfield['RfE(Australia)'] || formfield['RfE(Germany)'] || formfield['RfE(LATAM)']) {
-        if (formfield.BreachSegment) {
-          formfield.logType = "7A6294F2-F4CC-4136-AEDC-69056FE245EC"
-        }
-        if (formfield['RfE(Australia)']) {
-          if (formfield.logType === "") {
-            formfield.logType = formfield.logType + "391141A0-468E-4462-917F-9F2620D5F51E"
-          } else {
-            formfield.logType = formfield.logType + ",391141A0-468E-4462-917F-9F2620D5F51E"
-          }
-        }
-        if (formfield['RfE(Germany)']) {
-          if (formfield.logType === "") {
-            formfield.logType = formfield.logType + "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82"
-          } else {
-            formfield.logType = formfield.logType + ",7202C3C8-D380-4F59-AA0B-A94FCF4D1A82"
-          }
-        }
-        if (formfield['RfE(LATAM)']) {
-          if (formfield.logType === "") {
-            formfield.logType = formfield.logType + "FECB51BC-6D06-405D-9415-80A4B92347A9"
-          } else {
-            formfield.logType = formfield.logType + ",FECB51BC-6D06-405D-9415-80A4B92347A9"
-          }
+      if (formfield['Breach Segment']) {
+        formfield.logType = "7A6294F2-F4CC-4136-AEDC-69056FE245EC"
+      }
+      if (formfield['RfE (Australia)']) {
+        if (formfield.logType === "") {
+          formfield.logType = formfield.logType + "391141A0-468E-4462-917F-9F2620D5F51E"
+        } else {
+          formfield.logType = formfield.logType + ",391141A0-468E-4462-917F-9F2620D5F51E"
         }
       }
-      if (isEditMode) {
-        putItem(formfield);
+      if (formfield['RfE (Germany)']) {
+        if (formfield.logType === "") {
+          formfield.logType = formfield.logType + "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82"
+        } else {
+          formfield.logType = formfield.logType + ",7202C3C8-D380-4F59-AA0B-A94FCF4D1A82"
+        }
+      }
+      if (formfield['RfE (LATAM)']) {
+        if (formfield.logType === "") {
+          formfield.logType = formfield.logType + "FECB51BC-6D06-405D-9415-80A4B92347A9"
+        } else {
+          formfield.logType = formfield.logType + ",FECB51BC-6D06-405D-9415-80A4B92347A9"
+        }
+      }
+      if (formfield.logType === "") {
+        setIsErrorCheck(true);
       } else {
-        postItem(formfield);
+        if (isEditMode) {
+          putItem(formfield);
+        } else {
+          postItem(formfield);
+        }
       }
     }
   };
@@ -160,6 +169,9 @@ function AddEditForm(props) {
                   ]}
                 />
               })}
+              {issubmitted && isErrorCheck && (
+               <div class="validationError" style={{marginTop: '-17px', marginBottom: '20px'}}>Mandatory field</div>
+              )}
             </div>
             <FrmTextArea
               title={"Description"}
