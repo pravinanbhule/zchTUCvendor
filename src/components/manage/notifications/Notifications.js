@@ -245,7 +245,6 @@ function Notifications({ ...props }) {
   }, []);
 
   useEffect(() => {
-    console.log("lookupState.lookupbytyps>>", lookupState.lookupbytyps);
     if (lookupState.lookupbytyps.length > 0) {
       let templookuptypes = [];
       lookupState.lookupbytyps.forEach((item) => {

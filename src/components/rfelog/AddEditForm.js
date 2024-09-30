@@ -1500,7 +1500,7 @@ function AddEditForm(props) {
     } 
     if (IncountryFlag === IncountryFlagConst.GERMANY) {
       setIsGermany(true);
-      getAllSegment({ logType: "rfelogsGermany" });
+      getAllSegment({ logType: "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82" });
       if (
         formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
           /\s/g,
@@ -1565,7 +1565,7 @@ function AddEditForm(props) {
       }
     }    
     if (IncountryFlag === IncountryFlagConst.AUSTRALIA) {
-        getAllSegment({ logType: "rfelogsAustralia" });
+        getAllSegment({ logType: "391141A0-468E-4462-917F-9F2620D5F51E" });
         let australiaCurrency = currencyList.filter((item, i) => item.countryID === INCOUNTRTY_IDS.AUSTRALIA)
         setfrmCurrencyOpts([selectInitiVal, ...australiaCurrency])
     } else {
@@ -1596,7 +1596,7 @@ function AddEditForm(props) {
       IncountryFlag !== IncountryFlagConst.GERMANY &&
       IncountryFlag !== IncountryFlagConst.AUSTRALIA
     ) {
-      getAllSegment({ logType: "rfelogs" });
+      getAllSegment({ logType: "FECB51BC-6D06-405D-9415-80A4B92347A9" });
     }
   }, [IncountryFlag]);
 

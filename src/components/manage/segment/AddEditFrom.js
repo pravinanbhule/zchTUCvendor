@@ -5,6 +5,8 @@ import FrmActiveCheckbox from "../../common-components/frmactivecheckbox/FrmActi
 import FrmTextArea from "../../common-components/frmtextarea/FrmTextArea";
 import FrmMultiselect from "../../common-components/frmmultiselect/FrmMultiselect";
 import Popup from "../../common-components/Popup";
+import FrmCheckbox from "../../common-components/frmcheckbox/FrmCheckbox";
+import './Segment.css'
 
 function AddEditForm(props) {
   const {
@@ -15,6 +17,7 @@ function AddEditForm(props) {
     isEditMode,
     formIntialState,
     frmCountrySelectOpts,
+    segmentTypeOpts
   } = props;
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
@@ -65,6 +68,33 @@ function AddEditForm(props) {
     e.preventDefault();
     setissubmitted(true);
     if (formfield.segmentName && formfield.countryList.length) {
+      formfield.logType = ""
+      if (formfield.BreachSegment || formfield['RfE(Australia)'] || formfield['RfE(Germany)'] || formfield['RfE(LATAM)']) {
+        if (formfield.BreachSegment) {
+          formfield.logType = "7A6294F2-F4CC-4136-AEDC-69056FE245EC"
+        }
+        if (formfield['RfE(Australia)']) {
+          if (formfield.logType === "") {
+            formfield.logType = formfield.logType + "391141A0-468E-4462-917F-9F2620D5F51E"
+          } else {
+            formfield.logType = formfield.logType + ",391141A0-468E-4462-917F-9F2620D5F51E"
+          }
+        }
+        if (formfield['RfE(Germany)']) {
+          if (formfield.logType === "") {
+            formfield.logType = formfield.logType + "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82"
+          } else {
+            formfield.logType = formfield.logType + ",7202C3C8-D380-4F59-AA0B-A94FCF4D1A82"
+          }
+        }
+        if (formfield['RfE(LATAM)']) {
+          if (formfield.logType === "") {
+            formfield.logType = formfield.logType + "FECB51BC-6D06-405D-9415-80A4B92347A9"
+          } else {
+            formfield.logType = formfield.logType + ",FECB51BC-6D06-405D-9415-80A4B92347A9"
+          }
+        }
+      }
       if (isEditMode) {
         putItem(formfield);
       } else {
@@ -113,6 +143,24 @@ function AddEditForm(props) {
               issubmitted={issubmitted}
               selectopts={frmLogTypeOpts}
   />*/}
+            <div className="lookup-country">
+              {segmentTypeOpts.map((item, i) => {
+                return <FrmCheckbox
+                  title={item.label}
+                  name={item.label}
+                  value={formfield[item.label]}
+                  handleChange={handleChange}
+                  isRequired={false}
+                  issubmitted={issubmitted}
+                  selectopts={[
+                    {
+                      label: "",
+                      value: true,
+                    },
+                  ]}
+                />
+              })}
+            </div>
             <FrmTextArea
               title={"Description"}
               name={"segmentDescription"}
