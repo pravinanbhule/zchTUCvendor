@@ -1859,7 +1859,7 @@ function Breachlog({ ...props }) {
       let customerArray = [];
       if (selectedViewData[0]?.customersegment?.length && selectedViewData[0]?.customersegment?.length !== 0 &&  typeof selectedViewData[0].customersegment === 'string') {
           let selectedSubLoBArray = selectedViewData[0].customersegment.split(',')
-          let data = await getAllSegment({ logType: "FECB51BC-6D06-405D-9415-80A4B92347A9" });
+          let data = await getAllSegment({ logType: "7A6294F2-F4CC-4136-AEDC-69056FE245EC" });
           selectedSubLoBArray.map((id, j) => {
               data.map((item, i) => {
                   if (id === item.segmentID) {
