@@ -177,7 +177,7 @@ function AddEditForm(props) {
 
   const fnOnInit = async () => {
     getAlllob();
-    getAllSegment();
+    getAllSegment({ logType: "7A6294F2-F4CC-4136-AEDC-69056FE245EC" });
     getAllOffice();
     getAllSublob();
     getallZNASegments();

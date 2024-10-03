@@ -4,6 +4,7 @@ import {
   segmentActions,
   countryActions,
   commonActions,
+  lookupActions,
 } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
@@ -16,7 +17,7 @@ import { handlePermission } from "../../../permissions/Permission";
 import VersionHistoryPopup from "../../versionhistorypopup/VersionHistoryPopup";
 import { versionHistoryExcludeFields, versionHistoryexportDateFields, versionHistoryexportFieldTitles, versionHistoryexportHtmlFields } from "../../../constants/segment.constants";
 function Segment({ ...props }) {
-  const { segmentState, countryState } = props.state;
+  const { segmentState, countryState, lookupState } = props.state;
   const {
     getAll,
     getAllCountry,
@@ -28,7 +29,8 @@ function Segment({ ...props }) {
     userProfile,
     setMasterdataActive,
     getMasterVersion,
-    downloadExcel
+    downloadExcel,
+    getLookupByType,
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "Segment.xlsx";
@@ -37,6 +39,7 @@ function Segment({ ...props }) {
   const [isfilterApplied, setisfilterApplied] = useState(false);
   const [countryFilterOpts, setcountryFilterOpts] = useState([]);
   const [segmentFilterOpts, setsegmentFilterOpts] = useState([]);
+  const [segmentTypeOpts, setSegmentTypeOpts] = useState([]);
   const intialfilterval = {
     segment: "",
     country: "",
@@ -177,10 +180,17 @@ function Segment({ ...props }) {
         return { width: "200px" };
       },
     },
-
     {
       dataField: "countryList",
       text: "Country",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "170px" };
+      },
+    },
+    {
+      dataField: "logTypeList",
+      text: "Log Type",
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "170px" };
@@ -318,6 +328,28 @@ function Segment({ ...props }) {
     setcountryObj(tempCountryObj);
   }, [countryState.countryItems]);
 
+
+  useEffect(() => {
+    getLookupByType({
+      LookupType: "SegmentType"
+    });
+  }, []);
+
+  useEffect(() => {
+    if (lookupState.lookupbytyps.length > 0) {
+      let templookuptypes = [];
+      lookupState.lookupbytyps.forEach((item) => {
+        templookuptypes.push({
+          label: item.lookUpName,
+          value: item.lookupID,
+        });
+      });
+      templookuptypes.sort(dynamicSort("label"));
+      setSegmentTypeOpts(templookuptypes);
+    }
+  }, [lookupState.lookupbytyps])
+
+
   /* Add Edit Delete functionality & show popup*/
 
   const [isshowAddPopup, setshowAddPopup] = useState(false);
@@ -336,6 +368,7 @@ function Segment({ ...props }) {
     segmentDescription: "",
     logType: "",
     isActive: false,
+    "Breach Segment": true
   };
   const [isEditMode, setisEditMode] = useState(false);
   const [formIntialState, setformIntialState] = useState(initvalstate);
@@ -364,6 +397,13 @@ function Segment({ ...props }) {
         ...selectedCountryList,
       ];
     }
+    const selectedTypeObj = {}
+    if (response.logType) {
+      let selectedType = response.logTypeList.split(",")
+      selectedType.map((item, i) => {
+        selectedTypeObj[item] = true
+      })
+    }
     setisEditMode(true);
     setformIntialState({
       ...response,
@@ -375,6 +415,7 @@ function Segment({ ...props }) {
         : "",
       requesterUserId: response.requesterUserId ? response.requesterUserId : "",
       isActive: response.isActive,
+      ...selectedTypeObj
     });
     seteditmodeName(response.segmentName);
     showAddPopup();
@@ -607,6 +648,7 @@ function Segment({ ...props }) {
           putItem={putItemHandler}
           isEditMode={isEditMode}
           formIntialState={formIntialState}
+          segmentTypeOpts={segmentTypeOpts}
         ></AddEditForm>
       ) : (
         ""
@@ -641,6 +683,7 @@ const mapActions = {
   deleteItem: segmentActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
-  downloadExcel: commonActions.downloadExcel
+  downloadExcel: commonActions.downloadExcel,
+  getLookupByType: lookupActions.getLookupByType,
 };
 export default connect(mapStateToProp, mapActions)(Segment);

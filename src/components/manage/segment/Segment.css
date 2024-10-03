@@ -1,0 +1,16 @@
+.lookup-country {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 370px !important;
+}
+
+.lookup-country .frm-field  {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.lookup-country .frm-field .frm-radiobtns-container  {
+    width: 35px;
+}

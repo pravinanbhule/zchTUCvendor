@@ -29,6 +29,7 @@ function RfELinkedPopupDetails(props) {
         frmrfeempourmentgermany,
         reasonOtherValue,
         reasonOtherValueUK,
+        reasonOtherValueAustralia,
         frmSublob,
         OrganizationalAlignment,
         segmentAccount,
@@ -138,7 +139,8 @@ function RfELinkedPopupDetails(props) {
                             options: IncountryFlag === IncountryFlagConst.GERMANY ? frmrfeempourmentgermany : item.options,
                         };
                         if (details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValue ||
-                            details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValueUK
+                            details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValueUK ||
+                            details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(/\s/g, "") === reasonOtherValueAustralia
                         ) {
                             setShowTextBox(true);
                         } else {
@@ -166,7 +168,11 @@ function RfELinkedPopupDetails(props) {
                                 details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                                     /\s/g,
                                     ""
-                                ) === reasonOtherValueUK)
+                                ) === reasonOtherValueUK ||
+                                details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValueAustralia)
                                     ? 0
                                     : details?.ReferralReasonLevel2 ||
                                         (details?.ReferralReasonLevel2 !== null &&
@@ -196,7 +202,11 @@ function RfELinkedPopupDetails(props) {
                                 details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                                     /\s/g,
                                     ""
-                                ) === reasonOtherValueUK)
+                                ) === reasonOtherValueUK ||
+                                details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValueAustralia)
                                     ? 0
                                     : details?.ReferralReasonLevel3 ||
                                         (details?.ReferralReasonLevel3 !== null &&
@@ -226,7 +236,11 @@ function RfELinkedPopupDetails(props) {
                                 details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                                     /\s/g,
                                     ""
-                                ) === reasonOtherValueUK)
+                                ) === reasonOtherValueUK ||
+                                details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValueAustralia)
                                     ? 0
                                     : details?.ReferralReasonLevel4 ||
                                         (details?.ReferralReasonLevel4 !== null &&
@@ -251,7 +265,11 @@ function RfELinkedPopupDetails(props) {
                                 details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
                                     /\s/g,
                                     ""
-                                ) === reasonOtherValueUK)
+                                ) === reasonOtherValueUK ||
+                                details?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
+                                    /\s/g,
+                                    ""
+                                ) === reasonOtherValueAustralia)
                                     ? 0
                                     : details?.ReferralReasonLevel5 ||
                                         (details?.ReferralReasonLevel5 !== null &&

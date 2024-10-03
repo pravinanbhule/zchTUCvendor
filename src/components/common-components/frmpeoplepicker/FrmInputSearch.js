@@ -201,7 +201,14 @@ function FrmInputSearch(props) {
             {inputSearchOptions.map((user) => (
               <div className="user-view">
                 <div className="user">
-                  {user.firstName + " " + user.lastName}
+                  <div>
+                    {user.firstName + " " + user.lastName}
+                  </div>
+                  {user && user.emailAddress && (
+                    <div style={{fontSize: '10px'}}>
+                      ({user?.emailAddress})
+                    </div>
+                  )}
                 </div>
                 <div
                   className="addbtn"
