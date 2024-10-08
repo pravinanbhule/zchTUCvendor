@@ -190,7 +190,7 @@ export const filterfieldsmapping = {
     options: "sublobFilterOpts",
     eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
-  },
+  }
 };
 export const versionHistoryexportFieldTitles = {
   "Entry Number": "Entry Number",

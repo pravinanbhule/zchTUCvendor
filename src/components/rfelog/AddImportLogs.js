@@ -139,6 +139,9 @@ function AddImportLogs(props) {
     isCountryAdmin: false,
     isNormalUser: false,
     isCountrySuperAdmin: false,
+    isDualRole: false,
+    isLoBAdmin: false,
+    isGlobalUW: false
   };
   /* const [incountryopts, setincountryopts] = useState([
     { label: "Global", value: "gn" },
@@ -155,7 +158,7 @@ function AddImportLogs(props) {
     getAllCountry();
     getAlllob();
     getAllSublob();
-    getAllSegment({ logType: "rfelogs" });
+    getAllSegment({ logType: "FECB51BC-6D06-405D-9415-80A4B92347A9" });
     getAllCurrency();
     getAllBranch();
     let tempopts = [];
@@ -605,6 +608,10 @@ function AddImportLogs(props) {
       fieldname: "PolicyPeriod",
     },
     LatAm_Currency: {
+      lookupObj: "currencyObj",
+      fieldname: "Currency",
+    },
+    Currency: {
       lookupObj: "currencyObj",
       fieldname: "Currency",
     },
@@ -1174,20 +1181,20 @@ function AddImportLogs(props) {
                 //for In country - if approver is set to global/superadmin - set it invalid
                 if (
                   IncountryFlag !== "gn" &&
-                  (approverRole.isGlobalAdmin || approverRole.isSuperAdmin)
+                  (approverRole?.isGlobalAdmin || approverRole?.isSuperAdmin || approverRole?.isDualRole || approverRole?.isGlobalUW || approverRole?.isLoBAdmin)
                 ) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
                 }
                 //for incountry log - set orgnization alignment based on the approvers roles
-                if (IncountryFlag !== "gn" && approverRole.isRegionAdmin) {
+                if (IncountryFlag !== "gn" && approverRole?.isRegionAdmin) {
                   templogdata["OrganizationalAlignment"] =
                     organizationalAlignment.region;
                 }
                 if (
                   IncountryFlag !== "gn" &&
-                  (approverRole.isCountryAdmin || approverRole.isNormalUser)
+                  (approverRole?.isCountryAdmin || approverRole?.isNormalUser)
                 ) {
                   templogdata["OrganizationalAlignment"] =
                     organizationalAlignment.country;
@@ -1253,6 +1260,9 @@ function AddImportLogs(props) {
                   } 
                   if (IncountryFlag === IncountryFlagCost.GERMANY) {
                     templogdata["RequestForEmpowermentReason"] = "00EBEE31-9CAE-4094-853F-D8F5EB1F124B";
+                  }
+                  if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
+                    templogdata["RequestForEmpowermentReason"] = "GEN8691A9FFC-BA75-48F4-AE38-2199BB8E50KP";
                   }
                   delete templogdata["ReferralReasonLevel2"];
                   delete templogdata["ReferralReasonLevel3"];
@@ -1390,6 +1400,12 @@ function AddImportLogs(props) {
         tmpapprover?.userRoles[0]?.roleId === USER_ROLE.countrySuperAdmin
       ) {
         return { ...approverIntialRole, isCountrySuperAdmin: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.dualRole) {
+        return { ...approverIntialRole, isDualRole: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.lobAdmin) {
+        return { ...approverIntialRole, isLoBAdmin: true };
+      } else if (tmpapprover?.userRoles[0]?.roleId === USER_ROLE.globalUW) {
+        return { ...approverIntialRole, isGlobalUW: true };
       }
     } else {
       return { ...approverIntialRole };
@@ -1525,7 +1541,10 @@ function AddImportLogs(props) {
       }
     });
     if (IncountryFlag === IncountryFlagCost.GERMANY) {
-      getAllSegment({ logType: "rfelogsGermany" });
+      getAllSegment({ logType: "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82" });
+    }
+    if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
+      getAllSegment({ logType: "391141A0-468E-4462-917F-9F2620D5F51E" });
     }
   }, [IncountryFlag]);
 
@@ -1541,6 +1560,8 @@ function AddImportLogs(props) {
     } else if (IncountryFlag === IncountryFlagCost.ITALY) {
       setimportfieldscount(21);
     } else if (IncountryFlag === IncountryFlagCost.GERMANY) {
+      setimportfieldscount(29);
+    } else if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
       setimportfieldscount(29);
     } else {
       setimportfieldscount(20);

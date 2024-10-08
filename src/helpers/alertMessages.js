@@ -85,7 +85,7 @@ export const alertMessage = {
     delete: "The User is deleted.",
     deleteConfirm: "Are you sure you want to delete User?",
     isInUse: "You can not delete this User as it is in use.",
-    nameExist: "User name is already exist!",
+    nameExist: "The User name already exists.",
   },
   lookup: {
     add: "The new lookup value is successfully added.",

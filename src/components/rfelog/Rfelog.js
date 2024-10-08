@@ -803,7 +803,7 @@ function Rfelog({ ...props }) {
           }
         }
       }
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         if (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined) {
           reqParam = {
             ...reqParam,
@@ -829,7 +829,7 @@ function Rfelog({ ...props }) {
         };
       }
     } else {
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         reqParam = {
           ...reqParam,
           RequestForEmpowermentStatus: withOutWithdrawn,
@@ -2362,7 +2362,7 @@ function Rfelog({ ...props }) {
         isDelete: true,
       };
     }
-    if (nolonger === false) {
+    if (sellogTabType === 'all' && nolonger === false) {
       reqParam = {
         ...reqParam,
         RequestForEmpowermentStatus: withOutWithdrawn,
@@ -2387,7 +2387,7 @@ function Rfelog({ ...props }) {
             }
         }
       }
-      if (nolonger === false) {
+      if (sellogTabType === 'all' && nolonger === false) {
         if (tempFilterOpts?.RequestForEmpowermentStatus === '' || tempFilterOpts?.RequestForEmpowermentStatus === undefined) {
           reqParam = {
             ...reqParam,

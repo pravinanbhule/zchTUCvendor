@@ -9,6 +9,7 @@ export const segmentConstants = {
 export const versionHistoryexportFieldTitles = {
   SegmentName: "Segment Name",
   CountryList: "Country",
+  LogType: "Log Type",
   SegmentDescription: "Description",
   SubLOB: "Sub-LoB Name",
   IsActive: "Active",
