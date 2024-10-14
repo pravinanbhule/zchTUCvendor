@@ -117,6 +117,7 @@ function CreateRfelogForm(props) {
     const [loading, setloading] = useState(true)
     const history = useHistory();
     const location = useLocation()
+    const [redirectURL, setRedirectURL] = useState(null)
 
     useEffect(() => {
         const handleTabClose = event => {
@@ -150,15 +151,26 @@ function CreateRfelogForm(props) {
     useEffect(async () => {
         let itemid;
         let status;
-        if (getUrlParameter("invokeAppId")) {
-            let invokeAppId = getUrlParameter("invokeAppId")
+        if (getUrlParameter("lob")) {
+            let accountName = getUrlParameter("accountName")
             let lob = getUrlParameter("lob")
+            let countryName = getUrlParameter("countryName")
+            setRedirectURL(getUrlParameter("redirectURL"))
             let tempcountryItems = [];
             let countryObj = {}
             let lobId = ""
             tempcountryItems = await getAllCountry({ profileCountryId: userProfile.profileCountry })
             tempcountryItems.forEach((item) => {
-                if (item.countryID === userProfile.profileCountry) {
+                console.log(countryName, item);
+                
+                if (countryName && countryName.toLocaleLowerCase() === item.countryName.toLocaleLowerCase()) {
+                    countryObj = {
+                        label: item.countryName.trim(),
+                        value: item.countryID,
+                        regionId: item.regionID,
+                        countryCode: item.countryCode,
+                    };
+                } else if (item.countryID === userProfile.profileCountry) {
                     countryObj = {
                         label: item.countryName.trim(),
                         value: item.countryID,
@@ -179,7 +191,7 @@ function CreateRfelogForm(props) {
                     CountryList: [countryObj],
                     CountryId: countryObj.countryID,
                     countryCode: countryObj.countryCode,
-                    invokedAPIFrom: invokeAppId,
+                    AccountName: accountName,
                     LOBId: lobId
                 });
             }
@@ -189,13 +201,16 @@ function CreateRfelogForm(props) {
             status = getUrlParameter("status");
             localStorage.setItem("id", itemid);
             localStorage.setItem("status", status)
+            setRedirectURL(null);
             setqueryparam({ id: itemid, status: status });
             removeQueryParams()
         } else if (localStorage.getItem("id")) {
             itemid = localStorage.getItem("id");
             status = localStorage.getItem("status")
+            setRedirectURL(null);
             setqueryparam({ id: itemid, status: status });
         } else {
+            setRedirectURL(null);
             setloading(false)
         }
     }, []);
@@ -259,12 +274,17 @@ function CreateRfelogForm(props) {
         });
 
         if (response) {
-            if (item.IsSubmit) {
-                alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.addmsg"]);
+            if (redirectURL) {
+                setRedirectURL(null);
+                window.location.href = redirectURL + `?rfeid=${response}`
             } else {
-                alert(alertMessage.rfelog.draft);
+                if (item.IsSubmit) {
+                    alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.addmsg"]);
+                } else {
+                    alert(alertMessage.rfelog.draft);
+                }
+                hideAddPopup();
             }
-            hideAddPopup();
         }
     };
 
@@ -407,7 +427,7 @@ function CreateRfelogForm(props) {
           });
           setloading(false)
         }
-      }
+    }
 
     return (
         <>
