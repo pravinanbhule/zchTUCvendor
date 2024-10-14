@@ -2240,6 +2240,9 @@ function Rfelog({ ...props }) {
       splink = rfelogGermanyActiveSharePointLink;
       link = `${splink}?ID=${id}`;
     }
+    if (itemid.indexOf("GI-") !== -1) {
+      link = `https://apps.powerapps.com/play/e/6c477b0d-de3f-4698-96b5-1f55000794bf/a/fe1a79ec-1bb2-4529-b48f-f26191b77032?FormID=${itemid}`;
+    }
     window.open(link);
   };
 
