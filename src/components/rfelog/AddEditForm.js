@@ -97,7 +97,8 @@ function AddEditForm(props) {
     getById,
     setInAddMode,
     isFlow3,
-    linkSpecificDetails
+    linkSpecificDetails,
+    redirectURL
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -4328,17 +4329,19 @@ function AddEditForm(props) {
             </div>
             )
           }
-          <div
-            className="addedit-close btn-blue"
-            style={{ marginRight: "10px" }}
-            onClick={() => hidePopup()}
-          >
-            {
-              AppLocale[
-                selectedlanguage?.value ? selectedlanguage.value : "EN001"
-              ].messages["button.back"]
-            }
-          </div>
+          {redirectURL === null && (
+            <div
+              className="addedit-close btn-blue"
+              style={{ marginRight: "10px" }}
+              onClick={() => hidePopup()}
+            >
+              {
+                AppLocale[
+                  selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                ].messages["button.back"]
+              }
+            </div>
+          )}
           <div>
             <FrmSelect
               title={""}
@@ -5130,13 +5133,15 @@ function AddEditForm(props) {
                 ].messages["button.submit"]
               }
             </button>
-            <div className={`btn-blue`} onClick={() => hidePopup()}>
-              {
-                AppLocale[
-                  selectedlanguage?.value ? selectedlanguage.value : "EN001"
-                ].messages["button.cancel"]
-              }
-            </div>
+            {redirectURL === null && (
+              <div className={`btn-blue`} onClick={() => hidePopup()}>
+                {
+                  AppLocale[
+                    selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                  ].messages["button.cancel"]
+                }
+              </div>
+            )}
           </div>
         </div>
       ) : (
