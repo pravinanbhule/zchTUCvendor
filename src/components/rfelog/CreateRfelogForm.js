@@ -452,6 +452,7 @@ function CreateRfelogForm(props) {
                     setInAddMode={setInAddMode}
                     isFlow3={isFlow3}
                     linkSpecificDetails={linkSpecificDetails}
+                    redirectURL={redirectURL}
                 ></AddEditForm>
             }
             {showVersionHistory ? (
