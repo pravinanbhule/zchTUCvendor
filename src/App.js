@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -41,28 +41,13 @@ import Co from "./components/manage/co/Co";
 import UserView from "./components/manage/userview/UserView";
 import Notifications from "./components/manage/notifications/Notifications";
 import Emailrequest from "./components/emailrequest/EmailRequest";
-import Generic from "./genericApi";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
   return null;
 }
 function App({ state, menuClick }) {
-  const [isCheck, setIsCheck] = useState(false);
-  const [isGenericPath, setIsGernericPath] = useState(false);
-  useEffect(() => {
-    let pastPath = sessionStorage.getItem('path');
-    if (window.location.pathname.search('generic') === 1 || pastPath === 'generic') {
-      if (pastPath === 'generic') {
-        window.location.href = window.location.origin + '/generic'
-      }
-      setIsGernericPath(true)
-      setIsCheck(true)
-    }
-    setTimeout(() => {
-      setIsCheck(true)
-    }, 2000);
-  }, [window.location.pathname])
+
   // const { oktaAuth, authState } = useOktaAuth();
   let userProfile;
   if (window.location.pathname === "/login") {
@@ -83,190 +68,179 @@ function App({ state, menuClick }) {
 
   return (
     <>
-      {isCheck ?
-        <>
-          {isGenericPath ?
+      <div className="container-fluid">
+        <div className="main-container">
+          <Router>
             <>
-              <Generic />
-            </>
-            :
-            <div className="container-fluid">
-              <div className="main-container">
-                <Router>
-                  <>
-                    <AppWithRouterAccess state={state} menuClick={menuClick} />
-                    {state.userprofileState.isAuthenticated ? (
-                      <>
-                        <ScrollToTop />
-                        <div className="site-container">
-                          <Route
-                            path="/"
-                            render={(routeParams) => {
-                              if (window.location.search) {
-                                return;
-                              } else if (window.location.pathname === "/rfelogs/create-rfelog" && !localStorage.getItem('in-app')) {
-                                return;
-                              } else {
-                                return <Navbar
-                                  userProfile={state.userprofileState.userProfile}
-                                  state={state}
-                                  {...routeParams}
-                                />
-                              }
-                            }}
+              <AppWithRouterAccess state={state} menuClick={menuClick} />
+              {state.userprofileState.isAuthenticated ? (
+                <>
+                  <ScrollToTop />
+                  <div className="site-container">
+                    <Route
+                      path="/"
+                      render={(routeParams) => {
+                        if (window.location.search) {
+                          return;
+                        } else if (window.location.pathname === "/rfelogs/create-rfelog" && !localStorage.getItem('in-app')) {
+                          return;
+                        } else {
+                          return <Navbar
+                            userProfile={state.userprofileState.userProfile}
+                            state={state}
+                            {...routeParams}
                           />
-                          <div className="pageview-container">
-                            <Switch>
-                              <PrivateRoute
-                                path="/"
-                                exact
-                                component={Dashboard}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/region"
-                                component={Region}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/email-request"
-                                component={Emailrequest}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/country"
-                                component={Country}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/token"
-                                component={Token}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/segment"
-                                component={Segment}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/lob"
-                                component={Lob}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/sublob"
-                                component={Sublob}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/lobchapter"
-                                component={Lobchapter}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/znaorganization1"
-                                component={ZNAOrgnization1}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/znaorganization2"
-                                component={ZNAOrgnization2}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/znaorganization3"
-                                component={ZNAOrgnization3}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/znaorganization4"
-                                component={ZNAOrgnization4}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/office"
-                                component={Office}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/branch"
-                                component={Branch}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/currency"
-                                component={Currency}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/user"
-                                component={User}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/lookup"
-                                component={Lookup}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/notifications"
-                                component={Notifications}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/co"
-                                component={Co}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/userview"
-                                component={UserView}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/breachlogs"
-                                component={Breachlog}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/rfelogs"
-                                exact
-                                component={Rfelog}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/rfelogs/create-rfelog"
-                                exact
-                                component={AddRfelogForm}
-                                menuClick={menuClick}
-                              />
-                              <PrivateRoute
-                                path="/exemptionlogs"
-                                component={Exemptionlog}
-                                menuClick={menuClick}
-                              />
-                              <Route
-                                path="/unauthorizedaccess"
-                                component={Unauthorized}
-                                state={state}
-                                menuClick={menuClick}
-                              />
-                              <Redirect from="*" to="/" />
-                            </Switch>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      state.userprofileState.loading && <Loader />
-                    )}
-                  </>
-                </Router>
-              </div>
-            </div>
-          }
-        </> :
-        <Loader />
-      }
+                        }
+                      }}
+                    />
+                    <div className="pageview-container">
+                      <Switch>
+                        <PrivateRoute
+                          path="/"
+                          exact
+                          component={Dashboard}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/region"
+                          component={Region}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/email-request"
+                          component={Emailrequest}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/country"
+                          component={Country}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/token"
+                          component={Token}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/segment"
+                          component={Segment}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/lob"
+                          component={Lob}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/sublob"
+                          component={Sublob}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/lobchapter"
+                          component={Lobchapter}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/znaorganization1"
+                          component={ZNAOrgnization1}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/znaorganization2"
+                          component={ZNAOrgnization2}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/znaorganization3"
+                          component={ZNAOrgnization3}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/znaorganization4"
+                          component={ZNAOrgnization4}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/office"
+                          component={Office}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/branch"
+                          component={Branch}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/currency"
+                          component={Currency}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/user"
+                          component={User}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/lookup"
+                          component={Lookup}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/notifications"
+                          component={Notifications}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/co"
+                          component={Co}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/userview"
+                          component={UserView}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/breachlogs"
+                          component={Breachlog}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/rfelogs"
+                          exact
+                          component={Rfelog}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/rfelogs/create-rfelog"
+                          exact
+                          component={AddRfelogForm}
+                          menuClick={menuClick}
+                        />
+                        <PrivateRoute
+                          path="/exemptionlogs"
+                          component={Exemptionlog}
+                          menuClick={menuClick}
+                        />
+                        <Route
+                          path="/unauthorizedaccess"
+                          component={Unauthorized}
+                          state={state}
+                          menuClick={menuClick}
+                        />
+                        <Redirect from="*" to="/" />
+                      </Switch>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                state.userprofileState.loading && <Loader />
+              )}
+            </>
+          </Router>
+        </div>
+      </div>
     </>
   );
 }
