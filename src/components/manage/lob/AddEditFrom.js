@@ -20,6 +20,7 @@ function AddEditForm(props) {
     getAllApprover,
     lobState,
     getLookupByType,
+    frmMapLobOpts
   } = props;
 
   const [formfield, setformfield] = useState({});
@@ -160,6 +161,36 @@ function AddEditForm(props) {
                   validationmsg={"Mandatory field"}
                   issubmitted={issubmitted}
                   selectopts={frmDurationOpts}
+                />
+                {/* <FrmMultiselect
+                  title={"Mapping For"}
+                  name={"MappingFor"}
+                  value={formfield?.MappingFor ? formfield.MappingFor : []}
+                  handleChange={handleMultiSelectChange}
+                  isRequired={true}
+                  validationmsg={"Mandatory field"}
+                  issubmitted={issubmitted}
+                  selectopts={frmMapLobOpts}
+                /> */}
+                <FrmSelect
+                  title={"Mapping For"}
+                  name={"MappingFor"}
+                  value={formfield.MappingFor}
+                  handleChange={handleSelectChange}
+                  isRequired={false}
+                  // isReadMode={isReadMode}
+                  validationmsg={"Mandatory field"}
+                  issubmitted={issubmitted}
+                  selectopts={frmMapLobOpts}
+                />
+                <FrmTextArea
+                  title={"Mapped LoBs"}
+                  name={"MappedLOBs"}
+                  value={formfield.MappedLOBs}
+                  handleChange={handleChange}
+                  isRequired={false}
+                  validationmsg={""}
+                  issubmitted={issubmitted}
                 />
                 <FrmTextArea
                   title={"Description"}

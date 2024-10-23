@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { lobActions, countryActions, commonActions } from "../../../actions";
+import { lobActions, countryActions, commonActions, lookupActions } from "../../../actions";
 import Loading from "../../common-components/Loading";
 import useSetNavMenu from "../../../customhooks/useSetNavMenu";
 import FrmSelect from "../../common-components/frmselect/FrmSelect";
@@ -27,7 +27,8 @@ function Lob({ ...props }) {
     userProfile,
     setMasterdataActive,
     getMasterVersion,
-    downloadExcel
+    downloadExcel,
+    getLookupByType,
   } = props;
   const FileDownload = require("js-file-download");
   const templateName = "LoB.xlsx";
@@ -189,6 +190,22 @@ function Lob({ ...props }) {
       sort: false,
       headerStyle: (colum, colIndex) => {
         return { width: "150px" };
+      },
+    },
+    {
+      dataField: "mappedLOBs",
+      text: "Mapped LOBs",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "150px" };
+      },
+    },
+    {
+      dataField: "mappingFor",
+      text: "Mapping For",
+      sort: false,
+      headerStyle: (colum, colIndex) => {
+        return { width: "350px" };
       },
     },
     {
@@ -367,6 +384,22 @@ function Lob({ ...props }) {
     setcountryObj(tempCountryObj);
   }, [countryState.countryItems]);
 
+  const [frmMapLobOpts, setMapLobOpts] = useState([]);
+  useEffect(async() => {
+    let tempoptsMappedLOBs = [];
+    let tempMappedLOBs = await getLookupByType({
+      LookupType: "MappingFor",
+    });
+    tempMappedLOBs.forEach((item) => {
+      tempoptsMappedLOBs.push({
+        label: item.lookUpValue,
+        value: item.lookupID,
+      });
+    });
+    tempMappedLOBs = [...tempoptsMappedLOBs];
+    setMapLobOpts(tempMappedLOBs);
+  }, [])
+
   /* Add Edit Delete functionality & show popup*/
 
   const [isshowAddPopup, setshowAddPopup] = useState(false);
@@ -387,6 +420,8 @@ function Lob({ ...props }) {
     countryList: [],
     lobApproverList: [],
     lobDescription: "",
+    MappedLOBs: "",
+    MappingFor: "",
     isActive: false,
   };
   const [formIntialState, setformIntialState] = useState(initvalstate);
@@ -412,6 +447,15 @@ function Lob({ ...props }) {
         ...selectedCountryList,
       ];
     }
+    // let selectedMappingFor = [];
+    // if (response.mappedLOBs) {
+    //   selectedMappingFor = response.mappedLOBs.map((item) => {
+    //     return {
+    //       label: item.countryName,
+    //       value: item.countryID,
+    //     };
+    //   });
+    // }
     setisEditMode(true);
     setformIntialState({
       lobid: response.lobid,
@@ -421,6 +465,9 @@ function Lob({ ...props }) {
       lobDescription: response.lobDescription ? response.lobDescription : "",
       durationofApproval: response.durationofApproval,
       requesterUserId: response.requesterUserId ? response.requesterUserId : "",
+      MappedLOBs: response.mappedLOBs ? response.mappedLOBs : "",
+      // MappedLOBs: selectedMappingFor,
+      MappingFor: response.mappingFor ? response.mappingFor : "",
       isActive: response.isActive,
     });
     seteditmodeName(response.lobName);
@@ -665,6 +712,7 @@ function Lob({ ...props }) {
           putItem={putItemHandler}
           isEditMode={isEditMode}
           formIntialState={formIntialState}
+          frmMapLobOpts={frmMapLobOpts}
         ></AddEditForm>
       ) : (
         ""
@@ -700,7 +748,8 @@ const mapActions = {
   deleteItem: lobActions.deleteItem,
   setMasterdataActive: commonActions.setMasterdataActive,
   getMasterVersion: commonActions.getMasterVersion,
-  downloadExcel: commonActions.downloadExcel
+  downloadExcel: commonActions.downloadExcel,
+  getLookupByType: lookupActions.getLookupByType,
 };
 
 export default connect(mapStateToProp, mapActions)(Lob);
