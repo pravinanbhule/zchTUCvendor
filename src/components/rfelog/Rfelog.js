@@ -57,6 +57,7 @@ import CopyItem from "../common-components/copyitem/CopyItem";
 import { useHistory } from "react-router-dom";
 import { handlePermission } from "../../permissions/Permission";
 import FrmToggleSwitch from "../common-components/frmtoggelswitch/FrmToggleSwitch";
+import AppLocale from "../../IngProvider";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
