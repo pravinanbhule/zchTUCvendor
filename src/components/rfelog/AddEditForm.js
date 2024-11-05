@@ -97,7 +97,8 @@ function AddEditForm(props) {
     getById,
     setInAddMode,
     isFlow3,
-    linkSpecificDetails
+    linkSpecificDetails,
+    redirectURL
   } = props;
   const selectInitiVal = { label: "Select", value: "" };
   const [formfield, setformfield] = useState({});
@@ -4328,17 +4329,19 @@ function AddEditForm(props) {
             </div>
             )
           }
-          <div
-            className="addedit-close btn-blue"
-            style={{ marginRight: "10px" }}
-            onClick={() => hidePopup()}
-          >
-            {
-              AppLocale[
-                selectedlanguage?.value ? selectedlanguage.value : "EN001"
-              ].messages["button.back"]
-            }
-          </div>
+          {redirectURL === null && (
+            <div
+              className="addedit-close btn-blue"
+              style={{ marginRight: "10px" }}
+              onClick={() => hidePopup()}
+            >
+              {
+                AppLocale[
+                  selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                ].messages["button.back"]
+              }
+            </div>
+          )}
           <div>
             <FrmSelect
               title={""}
@@ -5103,22 +5106,26 @@ function AddEditForm(props) {
       {!isReadMode && selctedTab === 'rfelog' ? (
         <div className="popup-footer-container">
           <div className="btn-container">
-            {(!isEditMode || sellogTabType === 'draft') ? (
+            {redirectURL === null &&(
               <>
-                <button
-                  className={`btn-blue ${isfrmdisabled && "disable"}`}
-                  onClick={handleSaveLog}
-                >
-                  {
-                    AppLocale[
-                      selectedlanguage?.value ? selectedlanguage.value : "EN001"
-                    ].messages["button.save"]
-                  }
-                </button>
+                {(!isEditMode || sellogTabType === 'draft') ? (
+                  <>
+                    <button
+                      className={`btn-blue ${isfrmdisabled && "disable"}`}
+                      onClick={handleSaveLog}
+                    >
+                      {
+                        AppLocale[
+                          selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                        ].messages["button.save"]
+                      }
+                    </button>
+                  </>
+                ) : (
+                  ""
+                )}
               </>
-            ) : (
-              ""
-            )}
+            )} 
             <button
               className={`btn-blue ${isfrmdisabled && "disable"}`}
               type="submit"
@@ -5130,13 +5137,23 @@ function AddEditForm(props) {
                 ].messages["button.submit"]
               }
             </button>
-            <div className={`btn-blue`} onClick={() => hidePopup()}>
-              {
-                AppLocale[
-                  selectedlanguage?.value ? selectedlanguage.value : "EN001"
-                ].messages["button.cancel"]
-              }
-            </div>
+            {redirectURL === null ? 
+              <div className={`btn-blue`} onClick={() => hidePopup()}>
+                {
+                  AppLocale[
+                    selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                  ].messages["button.cancel"]
+                }
+              </div>
+              :
+              <div className={`btn-blue`} onClick={() => {window.location.href = redirectURL}}>
+                {
+                  AppLocale[
+                    selectedlanguage?.value ? selectedlanguage.value : "EN001"
+                  ].messages["button.cancel"]
+                }
+              </div>
+            }
           </div>
         </div>
       ) : (
