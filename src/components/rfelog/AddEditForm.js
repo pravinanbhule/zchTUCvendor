@@ -142,7 +142,13 @@ function AddEditForm(props) {
   const policyURL = "https://insight360.zurich.com/policy360/?policy_term_id=";
   const [inCountryOptsLATAM, setinCountryOptsLATAM] = useState({
     frmNewRenewalOpts: [],
+    globalRenewalOpts: []
   });
+
+  const [frmActurisCode, setfrmActurisCode] = useState([]);
+  const [frmCustomerWellbeing, setfrmCustomerWellbeing] = useState([]);
+  const [frmRequiredAuthority , setfrmRequiredAuthority ] = useState([]);
+  const [frmSubmitterAuthority , setfrmSubmitterAuthority ] = useState([]);
 
   const [frmselectedRegion, setfrmselectedRegion] = useState([]);
   const [IncountryFlag, setIncountryFlag] = useState(undefined);
@@ -341,7 +347,12 @@ function AddEditForm(props) {
         LookupType: "RFEEmpowermentReasonRequest",
       }),
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
-      getLookupByType({ LookupType: "RFELogNewRenewal" }),
+      getLookupByType({ 
+        LookupType: "RFELogNewRenewal",
+        IncountryFlag: formIntialState?.IncountryFlag
+        ? formIntialState.IncountryFlag
+        : "",
+      }),
       getToolTip({ type: "RFELogs" }),
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
@@ -349,6 +360,10 @@ function AddEditForm(props) {
           ? formIntialState.IncountryFlag
           : "",
       }),
+      getLookupByType({ LookupType: "ActurisCode" }),
+      getLookupByType({ LookupType: "CustomerWellbeing" }),
+      getLookupByType({ LookupType: "RequiredAuthority" }),
+      getLookupByType({ LookupType: "SubmitterAuthority" }),
       //getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
     ]);
     //tempcountryItems = await getAllCountry();
@@ -505,6 +520,11 @@ function AddEditForm(props) {
     let temNewRenewal = dbvalues[8];
     let tempToolTips = dbvalues[9];
     let temprfeempourmentcountry = dbvalues[10];
+    let temprfeempourmentActurisCode = dbvalues[11];
+    let temprfeempourmentCustomerWellbeing = dbvalues[12];
+    let temprfeempourmentRequiredAuthority = dbvalues[13];
+    let temprfeempourmentSubmitterAuthority = dbvalues[14];
+
     let tooltipObj = {};
     tempToolTips.forEach((item) => {
       tooltipObj[item.toolTipField] = item.toolTipText;
@@ -694,6 +714,126 @@ function AddEditForm(props) {
       })
     });
 
+    tempopts = [];
+    let selectedActurisCode = [];
+    temprfeempourmentActurisCode.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState.ActurisCode.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState.ActurisCode.includes(item.lookupID)) {      
+          selectedActurisCode.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    setformfield({ ...formfield, 
+      isdirty: true, 
+      ActurisCode : selectedActurisCode 
+    });
+    tempopts.sort(dynamicSort("label"));
+    temprfeempourmentActurisCode = [...tempopts];
+ 
+    tempopts = [];
+    let selectedCustomerWellbeing = [];
+    temprfeempourmentCustomerWellbeing.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState.CustomerWellbeing.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState.CustomerWellbeing.includes(item.lookupID)) {      
+          selectedCustomerWellbeing.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    setformfield({ ...formfield, 
+      isdirty: true, 
+      CustomerWellbeing : selectedCustomerWellbeing  
+    });
+    tempopts.sort(dynamicSort("label"));
+    temprfeempourmentCustomerWellbeing = [...tempopts];
+    
+    tempopts = [];
+    let selectedRequiredAuthority = [];
+    temprfeempourmentRequiredAuthority.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState.RequiredAuthority.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState.RequiredAuthority.includes(item.lookupID)) {      
+          selectedRequiredAuthority.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    setformfield({ ...formfield, 
+      isdirty: true, 
+      RequiredAuthority : selectedRequiredAuthority  
+    });
+    tempopts.sort(dynamicSort("label"));
+    temprfeempourmentRequiredAuthority = [...tempopts];
+   
+    tempopts = [];
+    let selectedSubmitterAuthority = [];
+    temprfeempourmentSubmitterAuthority.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState.SubmitterAuthority.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState.SubmitterAuthority.includes(item.lookupID)) {      
+          selectedSubmitterAuthority.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    setformfield({ ...formfield, 
+      isdirty: true, 
+      SubmitterAuthority : selectedSubmitterAuthority 
+    });
+    tempopts.sort(dynamicSort("label"));
+    temprfeempourmentSubmitterAuthority = [...tempopts];
+
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourmentcountry]);
@@ -702,10 +842,16 @@ function AddEditForm(props) {
     //setfrmrfeempourmentuk([selectInitiVal, ...temprfeempourmentuk]);
     setfrmstatus([...frmstatus]);
     setPopupFrmStatus([...popupstatus])
+    
+    setfrmActurisCode([...temprfeempourmentActurisCode])
+    setfrmCustomerWellbeing([...temprfeempourmentCustomerWellbeing])
+    setfrmRequiredAuthority([...temprfeempourmentRequiredAuthority])
+    setfrmSubmitterAuthority([...temprfeempourmentSubmitterAuthority])
 
     setinCountryOptsLATAM((prevstate) => ({
       ...prevstate,
       frmNewRenewalOpts: [selectInitiVal, ...temNewRenewal],
+      globalRenewalOpts: [...temNewRenewal]
     }));
 
     if (formIntialState.IsSubmit) {
@@ -744,7 +890,13 @@ function AddEditForm(props) {
       }
     }
     setIncountryFlag(formIntialState.IncountryFlag);
-    setformfield(formIntialState);
+    setformfield({
+      ...formIntialState,
+      ActurisCode : selectedActurisCode,
+      CustomerWellbeing : selectedCustomerWellbeing,
+      RequiredAuthority : selectedRequiredAuthority,
+      SubmitterAuthority : selectedSubmitterAuthority,
+    });
     if (formIntialState.PolicyTermId) {
       const tempIds = await getPolicyTermId({
         policyId: formIntialState.PolicyTermId,
@@ -817,8 +969,37 @@ function AddEditForm(props) {
              setformfield({ ...formfield, RequestForEmpowermentReason: "" });
             }
           }
+          let temNewRenewal = await getLookupByType({ 
+            LookupType: "RFELogNewRenewal",
+            IncountryFlag: IncountryFlag,
+          })
+          tempopts = [];
+          temNewRenewal.forEach((item) => {
+            if (isEditMode || isReadMode) {
+              if (item.isActive || item.lookupID === formIntialState.NewRenewal) {
+                tempopts.push({
+                  label: item.lookUpValue,
+                  value: item.lookupID,
+                });
+              }
+            } else if (item.isActive) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          });
+          temNewRenewal = [...tempopts];
+          setinCountryOptsLATAM((prevstate) => ({
+            ...prevstate,
+            frmNewRenewalOpts: [selectInitiVal, ...temNewRenewal],
+          }));
         } else {
           setfrmrfeempourment([...frmrfeempourmentglobal]);
+          setinCountryOptsLATAM((prevstate) => ({
+            ...prevstate,
+            frmNewRenewalOpts: [selectInitiVal, ...inCountryOptsLATAM.globalRenewalOpts],
+          }));
           if (formfield.RequestForEmpowermentReason) {
             if (isEditMode || isReadMode) {
               const isPresent = frmrfeempourmentglobal.filter(
@@ -860,7 +1041,7 @@ function AddEditForm(props) {
   const [isFirst, setIsFirst] = useState(true);
 
   const fnloadcountryview = async () => {
-    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UKZM || IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setIsFirst(false);
     }
     if (!isFirst) {
@@ -1530,7 +1711,7 @@ function AddEditForm(props) {
         setButtonsDisable(true);
       }
     } 
-    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA || IncountryFlag === IncountryFlagConst.UKZM) {
       if ((formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
           /\s/g,
           ""
@@ -1625,11 +1806,11 @@ function AddEditForm(props) {
         item.name === "ReferralReasonLevel2"
           ? (item.isAddButton = false)
           : item.name === "ReferralReasonLevel3"
-          ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
+          ? (item.colspan = 3, item.isAddButton = ((IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) && reasonfields.ReferralReasonLevel4 === false ? true : false))
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel4: true,
@@ -1642,7 +1823,7 @@ function AddEditForm(props) {
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel5: true,
@@ -1681,7 +1862,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1700,7 +1881,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK : 
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1719,7 +1900,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1738,7 +1919,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1814,7 +1995,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1833,7 +2014,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1852,7 +2033,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1894,7 +2075,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1913,7 +2094,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1932,7 +2113,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1974,7 +2155,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -1993,7 +2174,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -2012,7 +2193,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -2054,7 +2235,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -2073,7 +2254,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -2092,7 +2273,7 @@ function AddEditForm(props) {
       (item) => {
         if ((IncountryFlag === IncountryFlagConst.GERMANY ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
-          IncountryFlag === IncountryFlagConst.UK ?
+          (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
           item.value !== value &&
@@ -2309,28 +2490,28 @@ function AddEditForm(props) {
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
@@ -2392,6 +2573,11 @@ function AddEditForm(props) {
     }
   }, [formfield?.CountryList]);
 
+  const [selectedActurisCode, setSelectedActurisCode] = useState('');
+  const [selectedCustomerWellbeing, setSelectedCustomerWellbeing] = useState('');
+  const [selectedRequiredAuthority, setSelectedRequiredAuthority] = useState('');
+  const [selectedSubmitterAuthority, setSelectedSubmitterAuthority] = useState('');
+
   const handleMultiSelectChange = (name, value) => {
     //const tempval = value.map((item) => item.value);
     if (name === "CountryList") {
@@ -2442,8 +2628,36 @@ function AddEditForm(props) {
         Branch: "",
         countryCode: countrycode.join(","),
       });
+    } else {
+      setformfield({ ...formfield, 
+        isdirty: true, 
+        [name]: value 
+      });
     }
-    //setformfield({ ...formfield, isdirty: true, [name]: value });
+    let updatedValue = ''    
+    value.map((item)=> {
+      if (updatedValue === '') {
+        updatedValue = item.value
+      } else {
+        updatedValue = updatedValue + ',' + item.value
+      }
+    })
+    if (name === 'ActurisCode') {
+      setSelectedActurisCode(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'CustomerWellbeing') {
+      setSelectedCustomerWellbeing(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'RequiredAuthority') {
+      setSelectedRequiredAuthority(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'SubmitterAuthority') {
+      setSelectedSubmitterAuthority(updatedValue);
+      updatedValue = ''
+    }
   };
   const handleDateSelectChange = (name, value) => {
     let dateval = value ? moment(value).format("YYYY-MM-DD") : "";
@@ -2563,7 +2777,7 @@ function AddEditForm(props) {
     window.scrollTo({ top: scrollPosition, behavior: "smooth" });
   };
   const handleResetGermany = () => {
-    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM || IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
       if (selectedlanguage?.value === "DE001") {
         formdomfields.filter((item) =>
           item.name === "ReferralReasonLevel2"
@@ -2712,6 +2926,7 @@ function AddEditForm(props) {
       let isUKcountry = true;
       let isSingaporecountry = true;
       let isIndiacountry = true;
+      let isUKZMcountry = true;
       let isChinacountry = true;
       let isHongKongcountry = true;
       let isMalaysiacountry = true;
@@ -2753,6 +2968,11 @@ function AddEditForm(props) {
           isIndiacountry = isIndiacountry ? true : false;
         } else {
           isIndiacountry = false;
+        }
+        if (item.value === IncountryIds.UKZM) {
+          isUKZMcountry = isUKZMcountry ? true : false;
+        } else {
+          isUKZMcountry = false;
         }
         if (item.value === IncountryIds.CHINA) {
           isChinacountry = isChinacountry ? true : false;
@@ -2903,7 +3123,8 @@ function AddEditForm(props) {
         } else if (approverRole.isDualRole) {
           handleAlignmentForDualRole(IncountryFlagConst.SINGAPORE)
         }
-      } else if (
+      } 
+      else if (
         isIndiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
@@ -2925,6 +3146,29 @@ function AddEditForm(props) {
           setIncountryFlag(IncountryFlagConst.INDIA);
         } else if (approverRole.isDualRole) {
           handleAlignmentForDualRole(IncountryFlagConst.INDIA)
+        }
+      } else if (
+        isUKZMcountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser ||
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
+      ) {
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+          });
+          setIncountryFlag(IncountryFlagConst.UKZM);
+        } else if (approverRole.isDualRole) {
+          handleAlignmentForDualRole(IncountryFlagConst.UKZM)
         }
       } else if (
         isChinacountry &&
@@ -3690,6 +3934,10 @@ function AddEditForm(props) {
             ...formfield,
             IsSubmit: true,
             IncountryFlag: IncountryFlag,
+            ActurisCode :selectedActurisCode,
+            CustomerWellbeing :selectedCustomerWellbeing,
+            RequiredAuthority :selectedRequiredAuthority,
+            SubmitterAuthority :selectedSubmitterAuthority,
           });
           setisfrmdisabled(true);
         } else {
@@ -3708,6 +3956,10 @@ function AddEditForm(props) {
         ...formfield,
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
       });
       setisfrmdisabled(true);
     } else if (value === 'no') {
@@ -3717,6 +3969,10 @@ function AddEditForm(props) {
         LinkedRFEEntryNumber: entryNumberRfE,
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
       });
       setisfrmdisabled(true);
     }
@@ -3730,6 +3986,10 @@ function AddEditForm(props) {
         ...formfield,
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
       });
       setisfrmdisabled(true);
     }
@@ -3746,7 +4006,15 @@ function AddEditForm(props) {
     }
     if (formfield.AccountName) {
       //setissubmitted(true);
-      postItem({ ...formfield, IsSubmit: false, IncountryFlag: IncountryFlag });
+      postItem({ 
+        ...formfield, 
+        IsSubmit: false, 
+        IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
+      });
       setisfrmdisabled(true);
     } else {
       alert(alertMessage.rfelog.draftInvalid);
@@ -3960,7 +4228,8 @@ function AddEditForm(props) {
               isAddButton={
                 (IncountryFlag === IncountryFlagConst.UK ||
                 IncountryFlag === IncountryFlagConst.GERMANY ||
-                IncountryFlag === IncountryFlagConst.AUSTRALIA) &&
+                IncountryFlag === IncountryFlagConst.AUSTRALIA || 
+                IncountryFlag === IncountryFlagConst.UKZM) &&
                 showButtons && obj.isAddButton === true
                   ? true
                   : false
@@ -4059,6 +4328,8 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
+                  IncountryFlag === IncountryFlagConst.UKZM ||
+                  IncountryFlag === IncountryFlagConst.INDIA ||
                   IncountryFlag === IncountryFlagConst.CHINA ||
                   IncountryFlag === IncountryFlagConst.MALAYSIA ||
                   IncountryFlag === IncountryFlagConst.FRANCE ||
