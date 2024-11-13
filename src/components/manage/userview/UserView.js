@@ -99,6 +99,13 @@ function UserView({ ...props }) {
     IsActive: "Active",
     CreatedDate: "Created Date",
     ModifiedDate: "Modified Date",
+    InceptionRenewalToDate: 'Inception/Renewal To Date',
+    InceptionRenewalFromDate: 'Inception/Renewal From Date',
+    ActurisCode: 'Acturis Code',
+    CustomerWellbeing: 'Customer Wellbeing',
+    RequiredAuthority: 'Required Authority',
+    SubmitterAuthority: 'SubmitterAuthority',
+    PolicyNumberQuoteId: 'Policy Number / QuoteId'
   };
 
   const versionHistoryexportFieldTitlesExemptionZUG = {

@@ -342,7 +342,12 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "DurationofApproval" }),
       getLookupByType({ LookupType: "ConditionApplicableTo" }),
       getLookupByType({ LookupType: "RFEOrganizationalAlignment" }),
-      getLookupByType({ LookupType: "RFECHZ" }),
+      getLookupByType({ 
+        LookupType: "RFECHZ",
+        IncountryFlag: formIntialState?.IncountryFlag
+        ? formIntialState.IncountryFlag
+        : "",
+       }),
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
       }),
@@ -1013,6 +1018,28 @@ function AddEditForm(props) {
             }
           }
         }
+        let temprfechz = await  getLookupByType({ 
+          LookupType: "RFECHZ",
+          IncountryFlag: IncountryFlag,
+         })
+        let tempopts = [];
+        temprfechz.forEach((item) => {
+          if (isEditMode || isReadMode) {
+            if (item.isActive || item.lookupID === formIntialState.CHZ) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          } else if (item.isActive) {
+            tempopts.push({
+              label: item.lookUpValue,
+              value: item.lookupID,
+            });
+          }
+        });
+        temprfechz = [...tempopts];
+        setfrmrfechz([selectInitiVal, ...temprfechz]);
         fnloadcountryview();
       };
       fnonIncountryFlagChange();
@@ -1776,9 +1803,13 @@ function AddEditForm(props) {
     if (
       IncountryFlag !== undefined &&
       IncountryFlag !== IncountryFlagConst.GERMANY &&
-      IncountryFlag !== IncountryFlagConst.AUSTRALIA
+      IncountryFlag !== IncountryFlagConst.AUSTRALIA &&
+      IncountryFlag !== IncountryFlagConst.UKZM
     ) {
       getAllSegment({ logType: "FECB51BC-6D06-405D-9415-80A4B92347A9" });
+    }
+    if (IncountryFlag === IncountryFlagConst.UKZM) {
+      getAllSegment({ logType: "060191P0-2212-2018-222H-7V2620D5I6M" });
     }
   }, [IncountryFlag]);
 
