@@ -146,6 +146,7 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.MIDDLEEAST,
     INCOUNTRY_FLAG_OPTS.GERMANY,
     INCOUNTRY_FLAG_OPTS.SPAIN,
+    INCOUNTRY_FLAG_OPTS.UKZM,
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);
   useSetNavMenu({ currentMenu: "Rfelog", isSubmenu: false }, props.menuClick);
@@ -187,6 +188,10 @@ function Rfelog({ ...props }) {
     newRenewalOpts: [],
     customerSegmentOpts: [],
     conditionApplicableToOpts: [],
+    acturisCode: [],
+    customerWellbeing: [],
+    requiredAuthority: [],
+    submitterAuthority: []
   });
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
@@ -787,7 +792,8 @@ function Rfelog({ ...props }) {
             key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-            key === "ConditionApplicableTo") {
+            key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+            key === "RequiredAuthority" || key === "SubmitterAuthority") {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -1211,6 +1217,50 @@ function Rfelog({ ...props }) {
           conditionArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
+      
+      let acturisCodeArray = [];
+      if (selectedViewData[0]?.acturisCode?.length && selectedViewData[0]?.acturisCode?.length !== 0 && typeof selectedViewData[0]?.acturisCode === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.acturisCode?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "ActurisCode",
+          });
+          acturisCodeArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let customerWellbeingArray = [];
+      if (selectedViewData[0]?.customerWellbeing?.length && selectedViewData[0]?.customerWellbeing?.length !== 0 && typeof selectedViewData[0]?.customerWellbeing === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.customerWellbeing?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "CustomerWellbeing",
+          });
+          customerWellbeingArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let requiredAuthorityArray = [];
+      if (selectedViewData[0]?.requiredAuthority?.length && selectedViewData[0]?.requiredAuthority?.length !== 0 && typeof selectedViewData[0]?.requiredAuthority === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.requiredAuthority?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "RequiredAuthority",
+          });
+          requiredAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let submitterAuthorityArray = [];
+      if (selectedViewData[0]?.submitterAuthority?.length && selectedViewData[0]?.submitterAuthority?.length !== 0 && typeof selectedViewData[0]?.submitterAuthority === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.submitterAuthority?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "SubmitterAuthority",
+          });
+          submitterAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
 
       let newRenewalArray = [];
       if (selectedViewData[0]?.newRenewal?.length && selectedViewData[0]?.newRenewal?.length !== 0 && typeof selectedViewData[0]?.newRenewal === 'string') {
@@ -1309,7 +1359,14 @@ function Rfelog({ ...props }) {
         PolicyPeriod: selectedViewData[0]?.policyPeriod,
         ConditionApplicableTo: conditionArray,
         GWP: selectedViewData[0]?.gwp,
-        SUBLOBID: subloBArray
+        SUBLOBID: subloBArray,
+        ActurisCode: acturisCodeArray,
+        CustomerWellbeing: customerWellbeingArray,
+        RequiredAuthority: requiredAuthorityArray,
+        SubmitterAuthority: submitterAuthorityArray,
+        InceptionRenewalFromDate: selectedViewData[0].inceptionRenewalFromDate,
+        InceptionRenewalToDate: selectedViewData[0].inceptionRenewalToDate,
+        PolicyNumberQuoteId: selectedViewData[0].policyNumberQuoteId,
       };
       setselfilter(FilterState)
       if (value !== selectedUserView) {
@@ -1385,6 +1442,18 @@ function Rfelog({ ...props }) {
       getLookupByType({
         LookupType: "ConditionApplicableTo",
       }),
+      getLookupByType({
+        LookupType: "ActurisCode"
+      }),
+      getLookupByType({
+          LookupType: "CustomerWellbeing"
+      }),
+      getLookupByType({
+          LookupType: "RequiredAuthority"
+      }),
+      getLookupByType({
+          LookupType: "SubmitterAuthority"
+      }), 
     ]);
 
     let tempStatus = lookupvalues[0];
@@ -1394,6 +1463,10 @@ function Rfelog({ ...props }) {
     let tempDurationOfApproval = lookupvalues[4];
     let tempNewRenewal = lookupvalues[5];
     let tempCondition = lookupvalues[6];
+    let temprfeempourmentActurisCode = lookupvalues[7];
+    let temprfeempourmentCustomerWellbeing = lookupvalues[8];
+    let temprfeempourmentRequiredAuthority = lookupvalues[9];
+    let temprfeempourmentSubmitterAuthority = lookupvalues[10];
 
     let tempopts = [];
     let statusWithdrawn = [];
@@ -1522,6 +1595,49 @@ function Rfelog({ ...props }) {
     tempCondition = [...tempopts];
     tempopts = [];
 
+    temprfeempourmentActurisCode.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentActurisCode = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentCustomerWellbeing.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentCustomerWellbeing = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentRequiredAuthority.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentRequiredAuthority = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentSubmitterAuthority.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentSubmitterAuthority = [...tempopts];
+
     tempStatus.sort(dynamicSort("label"));
     temporgnizationalalignment.sort(dynamicSort("label"));
     temprfechz.sort(dynamicSort("label"));
@@ -1537,6 +1653,10 @@ function Rfelog({ ...props }) {
       durationofApprovalOpts: [...tempDurationOfApproval],
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
+      acturisCode: [...temprfeempourmentActurisCode],
+      customerWellbeing: [...temprfeempourmentCustomerWellbeing],
+      requiredAuthority: [...temprfeempourmentRequiredAuthority],
+      submitterAuthority: [...temprfeempourmentSubmitterAuthority]
     }));
 
     let Flag = await handleUserIncountryFlag()
@@ -2369,7 +2489,8 @@ function Rfelog({ ...props }) {
           key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
           key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
           key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-          key === "ConditionApplicableTo") {
+          key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+          key === "RequiredAuthority" || key === "SubmitterAuthority") {
           if (value) {
             const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");

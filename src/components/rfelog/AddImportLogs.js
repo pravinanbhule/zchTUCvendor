@@ -128,6 +128,14 @@ function AddImportLogs(props) {
     currencyObj: {},
     newRenewal: [],
     newRenewalObj: {},
+    acturisCode: [],
+    acturisCodeObj: {},
+    customerWellbeing: [],
+    customerWellbeingObj: {},
+    requiredAuthority: [],
+    requiredAuthorityObj: {},
+    submitterAuthority: [],
+    submitterAuthorityObj: {},
   });
   const [loading, setloading] = useState(true);
   const [logType, setlogType] = useState("rfelogs");
@@ -183,6 +191,18 @@ function AddImportLogs(props) {
     });
     let temNewRenewal = await getLookupByType({
       LookupType: "RFELogNewRenewal",
+    });
+    let tempActurisCode = await getLookupByType({
+      LookupType: "ActurisCode"
+    });
+    let tempCustomerWellbeing = await getLookupByType({
+        LookupType: "CustomerWellbeing"
+    });
+    let tempRequiredAuthority = await getLookupByType({
+        LookupType: "RequiredAuthority"
+    });
+    let tempSubmitterAuthority = await getLookupByType({
+        LookupType: "SubmitterAuthority"
     });
     tempopts = [];
     tempObj = {};
@@ -280,6 +300,63 @@ function AddImportLogs(props) {
     });
     tempDurationofapprvl = [...tempopts];
     let tempDurationofapprvlObj = { ...tempObj };
+   
+    tempopts = [];
+    tempObj = {};
+    tempActurisCode.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    tempActurisCode = [...tempopts];
+    let tempActurisCodeObj = { ...tempObj };
+   
+    tempopts = [];
+    tempObj = {};
+    tempCustomerWellbeing.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    tempCustomerWellbeing = [...tempopts];
+    let tempCustomerWellbeingObj = { ...tempObj };
+  
+    tempopts = [];
+    tempObj = {};
+    tempRequiredAuthority.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    tempRequiredAuthority = [...tempopts];
+    let tempRequiredAuthorityObj = { ...tempObj };
+   
+    tempopts = [];
+    tempObj = {};
+    tempSubmitterAuthority.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    tempSubmitterAuthority = [...tempopts];
+    let tempSubmitterAuthorityObj = { ...tempObj };
+    
     setmasterdata((prevstate) => ({
       ...prevstate,
       orgnizationalalignment: [...temporgnizationalalignment],
@@ -296,6 +373,14 @@ function AddImportLogs(props) {
       durationofApprovalObj: { ...tempDurationofapprvlObj },
       newRenewal: [...temNewRenewal],
       newRenewalObj: { ...temNewRenewalObj },
+      acturisCode: [...tempActurisCode],
+      acturisCodeObj: { ...tempActurisCodeObj },
+      customerWellbeing: [...tempCustomerWellbeing],
+      customerWellbeingObj: { ...tempCustomerWellbeingObj },
+      requiredAuthority: [...tempRequiredAuthority],
+      requiredAuthorityObj: { ...tempRequiredAuthorityObj },
+      submitterAuthority: [...tempSubmitterAuthority],
+      submitterAuthorityObj: { ...tempSubmitterAuthorityObj },
     }));
 
     // setmandatoryFields([...commonMandatoryFields, ...regionMandotoryFields]);
@@ -629,6 +714,35 @@ function AddImportLogs(props) {
       lookupObj: "newRenewalObj",
       fieldname: "NewRenewal",
     },
+    "Acturis Code": {
+      lookupObj: "acturisCodeObj",
+      fieldname: "ActurisCode",
+      multival: true,
+    },
+    "Customer Wellbeing": {
+      lookupObj: "customerWellbeingObj",
+      fieldname: "CustomerWellbeing",
+      multival: true,
+    },
+    "Required Authority": {
+      lookupObj: "requiredAuthorityObj",
+      fieldname: "RequiredAuthority",
+      multival: true,
+    },
+    "Submitter Authority": {
+      lookupObj: "submitterAuthorityObj",
+      fieldname: "SubmitterAuthority",
+      multival: true,
+    },
+    "Policy Number / QuoteId": {
+      lookupObj: "",
+      fieldname: "PolicyNumberQuoteId",
+    },
+    "Inception/Renewal Date": {
+      lookupObj: "",
+      fieldname: "InceptionRenewalDate",
+      date: true,
+    },
   };
   const [isSubmitted, setisSubmitted] = useState(false);
   const [insertResponesData, setinsertResponesData] = useState([]);
@@ -655,6 +769,7 @@ function AddImportLogs(props) {
     let isItalycountry = true;
     let isBeneluxcountry = true;
     let isNordiccountry = true;
+    let isUKZMcountry = true;
     let isIndonesiacountry = true;
     let isLatamregion = true;
     regionList.forEach((item) => {
@@ -673,6 +788,12 @@ function AddImportLogs(props) {
         isUKcountry = isUKcountry ? true : false;
       } else {
         isUKcountry = false;
+      }
+      if (
+        item === INCOUNTRTY_IDS.UKZM) {
+        isUKZMcountry = isUKZMcountry ? true : false;
+      } else {
+        isUKZMcountry = false;
       }
       if (item === INCOUNTRTY_IDS.SINGAPORE) {
         isSingaporecountry = isSingaporecountry ? true : false;
@@ -758,6 +879,7 @@ function AddImportLogs(props) {
     return {
       isLatamregion: isLatamregion,
       isUKcountry: isUKcountry,
+      isUKZMcountry: isUKZMcountry,
       isSingaporecountry: isSingaporecountry,
       isIndiacountry: isIndiacountry,
       isChinacountry: isChinacountry,
@@ -971,6 +1093,7 @@ function AddImportLogs(props) {
                 const {
                   isLatamregion,
                   isUKcountry,
+                  isUKZMcountry,
                   isSingaporecountry,
                   isIndiacountry,
                   isChinacountry,
@@ -996,6 +1119,11 @@ function AddImportLogs(props) {
                   reportdata["invalidfields"].push(excelfieldname);
                 }
                 if (IncountryFlag === IncountryFlagCost.UK && !isUKcountry) {
+                  isvalid = false;
+                  reportdata["isvalid"] = false;
+                  reportdata["invalidfields"].push(excelfieldname);
+                }
+                if (IncountryFlag === IncountryFlagCost.UKZM && !isUKZMcountry) {
                   isvalid = false;
                   reportdata["isvalid"] = false;
                   reportdata["invalidfields"].push(excelfieldname);
@@ -1123,6 +1251,7 @@ function AddImportLogs(props) {
                 const {
                   isLatamregion,
                   isUKcountry,
+                  isUKZMcountry,
                   isSingaporecountry,
                   isIndiacountry,
                   isChinacountry,
@@ -1143,6 +1272,7 @@ function AddImportLogs(props) {
                   IncountryFlag === "gn" &&
                   (isLatamregion ||
                     isUKcountry ||
+                    isUKZMcountry ||
                     isSingaporecountry ||
                     isIndiacountry ||
                     isChinacountry ||
@@ -1263,6 +1393,9 @@ function AddImportLogs(props) {
                   }
                   if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
                     templogdata["RequestForEmpowermentReason"] = "GEN8691A9FFC-BA75-48F4-AE38-2199BB8E50KP";
+                  }
+                  if (IncountryFlag === IncountryFlagCost.UKZM) {
+                    templogdata["RequestForEmpowermentReason"] = "C686B4F3-052D-424A-9F12-10CFAE4FB9DD";
                   }
                   delete templogdata["ReferralReasonLevel2"];
                   delete templogdata["ReferralReasonLevel3"];
@@ -1522,6 +1655,9 @@ function AddImportLogs(props) {
         rfeEmpourmentObj: { ...temprfeempourmentObj },
       }));
     }
+    if (IncountryFlag === IncountryFlagCost.UKZM) {
+      
+    }
   }, [IncountryFlag]);
 
   useEffect(async () => {
@@ -1546,6 +1682,51 @@ function AddImportLogs(props) {
     if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
       getAllSegment({ logType: "rfelogsAustralia" });
     }
+    if (IncountryFlag === IncountryFlagCost.UKZM) {
+      getAllSegment({ logType: "060191P0-2212-2018-222H-7V2620D5I6M" });
+
+    }
+    let temprfechz = await getLookupByType({
+      LookupType: "RFECHZ",
+      IncountryFlag: IncountryFlag,
+    });
+    let tempopts = [];
+    let tempObj = {};
+    temprfechz.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    temprfechz = [...tempopts];
+    let temprfechzObj = { ...tempObj };
+    let temNewRenewal = await getLookupByType({
+      LookupType: "RFELogNewRenewal",
+      IncountryFlag: IncountryFlag,
+    });
+    tempopts = [];
+    tempObj = {};
+    temNewRenewal.forEach((item) => {
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+        tempObj[item.lookUpValue] = item.lookupID;
+      }
+    });
+    temNewRenewal = [...tempopts];
+    let temNewRenewalObj = { ...tempObj };
+    setmasterdata((prevstate) => ({
+      ...prevstate,
+      rfechz: [...temprfechz],
+      rfechzObj: { ...temprfechzObj },
+      newRenewal: [...temNewRenewal],
+      newRenewalObj: { ...temNewRenewalObj },
+    }));
   }, [IncountryFlag]);
 
   const onSelectChange = (name, value) => {
@@ -1563,6 +1744,8 @@ function AddImportLogs(props) {
       setimportfieldscount(29);
     } else if (IncountryFlag === IncountryFlagCost.AUSTRALIA) {
       setimportfieldscount(29);
+    } else if (IncountryFlag === IncountryFlagCost.UKZM) {
+      setimportfieldscount(20);
     } else {
       setimportfieldscount(20);
     }
