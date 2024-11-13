@@ -723,13 +723,13 @@ function AddEditForm(props) {
     let selectedActurisCode = [];
     temprfeempourmentActurisCode.forEach((item) => {
       if (isEditMode || isReadMode) {
-        if (item.isActive || formIntialState.ActurisCode.includes(item.lookupID)) {
+        if (item.isActive || formIntialState?.ActurisCode?.includes(item.lookupID)) {
           tempopts.push({
             label: item.lookUpValue,
             value: item.lookupID,
           });
         }
-        if (formIntialState.ActurisCode.includes(item.lookupID)) {      
+        if (formIntialState?.ActurisCode?.includes(item.lookupID)) {      
           selectedActurisCode.push({
             label: item.lookUpValue,
             value: item.lookupID,
@@ -746,20 +746,20 @@ function AddEditForm(props) {
       isdirty: true, 
       ActurisCode : selectedActurisCode 
     });
-    tempopts.sort(dynamicSort("label"));
+    // tempopts.sort(dynamicSort("label"));
     temprfeempourmentActurisCode = [...tempopts];
  
     tempopts = [];
     let selectedCustomerWellbeing = [];
     temprfeempourmentCustomerWellbeing.forEach((item) => {
       if (isEditMode || isReadMode) {
-        if (item.isActive || formIntialState.CustomerWellbeing.includes(item.lookupID)) {
+        if (item.isActive || formIntialState?.CustomerWellbeing?.includes(item.lookupID)) {
           tempopts.push({
             label: item.lookUpValue,
             value: item.lookupID,
           });
         }
-        if (formIntialState.CustomerWellbeing.includes(item.lookupID)) {      
+        if (formIntialState?.CustomerWellbeing?.includes(item.lookupID)) {      
           selectedCustomerWellbeing.push({
             label: item.lookUpValue,
             value: item.lookupID,
@@ -776,20 +776,20 @@ function AddEditForm(props) {
       isdirty: true, 
       CustomerWellbeing : selectedCustomerWellbeing  
     });
-    tempopts.sort(dynamicSort("label"));
+    // tempopts.sort(dynamicSort("label"));
     temprfeempourmentCustomerWellbeing = [...tempopts];
     
     tempopts = [];
     let selectedRequiredAuthority = [];
     temprfeempourmentRequiredAuthority.forEach((item) => {
       if (isEditMode || isReadMode) {
-        if (item.isActive || formIntialState.RequiredAuthority.includes(item.lookupID)) {
+        if (item.isActive || formIntialState?.RequiredAuthority?.includes(item.lookupID)) {
           tempopts.push({
             label: item.lookUpValue,
             value: item.lookupID,
           });
         }
-        if (formIntialState.RequiredAuthority.includes(item.lookupID)) {      
+        if (formIntialState?.RequiredAuthority?.includes(item.lookupID)) {      
           selectedRequiredAuthority.push({
             label: item.lookUpValue,
             value: item.lookupID,
@@ -806,20 +806,20 @@ function AddEditForm(props) {
       isdirty: true, 
       RequiredAuthority : selectedRequiredAuthority  
     });
-    tempopts.sort(dynamicSort("label"));
+    // tempopts.sort(dynamicSort("label"));
     temprfeempourmentRequiredAuthority = [...tempopts];
    
     tempopts = [];
     let selectedSubmitterAuthority = [];
     temprfeempourmentSubmitterAuthority.forEach((item) => {
       if (isEditMode || isReadMode) {
-        if (item.isActive || formIntialState.SubmitterAuthority.includes(item.lookupID)) {
+        if (item.isActive || formIntialState?.SubmitterAuthority?.includes(item.lookupID)) {
           tempopts.push({
             label: item.lookUpValue,
             value: item.lookupID,
           });
         }
-        if (formIntialState.SubmitterAuthority.includes(item.lookupID)) {      
+        if (formIntialState?.SubmitterAuthority?.includes(item.lookupID)) {      
           selectedSubmitterAuthority.push({
             label: item.lookUpValue,
             value: item.lookupID,
@@ -836,8 +836,22 @@ function AddEditForm(props) {
       isdirty: true, 
       SubmitterAuthority : selectedSubmitterAuthority 
     });
-    tempopts.sort(dynamicSort("label"));
+    
+    // tempopts.sort(dynamicSort("label"));
     temprfeempourmentSubmitterAuthority = [...tempopts];
+
+    if (formIntialState?.ActurisCode) {
+      setSelectedActurisCode(formIntialState.ActurisCode)
+    }
+    if (formIntialState?.CustomerWellbeing) {
+      setSelectedCustomerWellbeing(formIntialState.CustomerWellbeing)
+    }
+    if (formIntialState?.RequiredAuthority) {
+      setSelectedRequiredAuthority(formIntialState.RequiredAuthority)
+    }
+    if (formIntialState?.SubmitterAuthority) {
+      setSelectedSubmitterAuthority(formIntialState.SubmitterAuthority)
+    }
 
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
@@ -3965,7 +3979,7 @@ function AddEditForm(props) {
             ...formfield,
             IsSubmit: true,
             IncountryFlag: IncountryFlag,
-            ActurisCode :selectedActurisCode,
+            ActurisCode : selectedActurisCode,
             CustomerWellbeing :selectedCustomerWellbeing,
             RequiredAuthority :selectedRequiredAuthority,
             SubmitterAuthority :selectedSubmitterAuthority,
