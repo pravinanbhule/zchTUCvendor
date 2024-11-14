@@ -381,6 +381,7 @@ function BreachAddEditForm(props) {
             response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
             response.isNormalUser = response?.userRoles?.split(',').includes('8')
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
+            response.isLoBAdmin = response?.userRoles?.split(',').includes('12')
             if (typeof response.materialBreach === 'boolean') {
                 response.materialBreach = response.materialBreach === true ? '1' : response.materialBreach === false ? '0' : response.materialBreach
             }
@@ -801,6 +802,11 @@ function BreachAddEditForm(props) {
                     label: "Normal User",
                     name: "isNormalUser",
                     filedValue: '8'
+                },
+                {
+                    label: "LoB Admin",
+                    name: "isLoBAdmin",
+                    filedValue: '12'
                 },
             ])
         }
