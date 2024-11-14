@@ -172,6 +172,7 @@ function RfelogAddEditForm({ ...props }) {
             response.isCountryAdmin = response?.userRoles?.split(',').includes('4')
             response.isNormalUser = response?.userRoles?.split(',').includes('8')
             response.isCountrySuperAdmin = response?.userRoles?.split(',').includes('9')
+            response.isLoBAdmin = response?.userRoles?.split(',').includes('12')
             response.CHZ = response?.chzSustainabilityDeskCHZGICreditRis
             response.CreatedToDate = response?.createdDateTo
             response.CreatedFromDate = response?.createdDateFrom
@@ -469,6 +470,11 @@ function RfelogAddEditForm({ ...props }) {
                         label: "Normal User",
                         name: "isNormalUser",
                         filedValue: '8'
+                    },
+                    {
+                        label: "LoB Admin",
+                        name: "isLoBAdmin",
+                        filedValue: '12'
                     },
                 ])
             }
