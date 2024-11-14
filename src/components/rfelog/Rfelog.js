@@ -1554,8 +1554,11 @@ function Rfelog({ ...props }) {
         if (item.lookUpType.includes("Spain")) {
           setOpts(tempopts, item, 'Spain')
         }
-        if (item.lookUpType.includes("UK")) {
+        if (item.lookUpType.substr(item.lookUpType.length - 2 ) ===  "UK") {
           setOpts(tempopts, item, 'UK')
+        }
+        if (item.lookUpType.includes("UKZM")) {
+          setOpts(tempopts, item, 'UKZM')
         }
         if (item.lookUpType.length === 27) {
           setOpts(tempopts, item, 'Global')
@@ -1908,9 +1911,10 @@ function Rfelog({ ...props }) {
   useEffect(() => {
     let tempopts = [];
     let temGermany = [];
+    let temUKZM = [];
     segmentState.segmentItems.forEach((item) => {
       if (item.isActive) {
-        if (item.logType && item.logType === "rfelogsGermany") {
+        if (item.logType && item.logType === "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82") {
           temGermany.push({
             ...item,
             label: item.segmentName,
@@ -1918,7 +1922,16 @@ function Rfelog({ ...props }) {
             country: item.countryList,
             cat: 'Germany'
           })
-        } else {
+        } if (item.logType && item.logType === "060191P0-2212-2018-222H-7V2620D5I6M") {
+          temUKZM.push({
+            ...item,
+            label: item.segmentName,
+            value: item.segmentID,
+            country: item.countryList,
+            cat: 'UKZM'
+          })
+        } 
+        else {
           tempopts.push({
             ...item,
             label: item.segmentName,
@@ -1932,7 +1945,7 @@ function Rfelog({ ...props }) {
     tempopts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      customerSegmentOpts: [...tempopts, ...temGermany],
+      customerSegmentOpts: [...tempopts, ...temGermany, ...temUKZM],
     }));
   }, [segmentState.segmentItems]);
 
