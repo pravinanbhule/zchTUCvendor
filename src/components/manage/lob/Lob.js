@@ -369,12 +369,14 @@ function Lob({ ...props }) {
     let tempCountryObj = {};
 
     countryState.countryItems.forEach((item) => {
-      countryselectOpts.push({
-        ...item,
-        label: item.countryName.trim(),
-        value: item.countryID,
-      });
-      tempCountryObj[item.countryID] = item.countryName.trim();
+      if (item.isActive) {
+        countryselectOpts.push({
+          ...item,
+          label: item.countryName.trim(),
+          value: item.countryID,
+        });
+        tempCountryObj[item.countryID] = item.countryName.trim();
+      }
     });
     setfrmCountrySelectOpts([
       { label: "All", value: "*", isActive: true },
