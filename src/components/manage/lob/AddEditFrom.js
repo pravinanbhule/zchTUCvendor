@@ -73,8 +73,20 @@ function AddEditForm(props) {
     setformfield({ ...formfield, [name]: value });
   };
   const handleMultiSelectChange = (name, value) => {
+    if (name === 'countryList') {
+      let isAll = false;
+      value.map((item, i) => {
+        if (item.label === "All") {
+          isAll = true
+        }
+      })
+      if (isAll === true) {
+        setformfield({ ...formfield, [name]: frmCountryOpts });
+      } else {
+        setformfield({ ...formfield, [name]: value });
+      }
+    }
     //const tempval = value.map((item) => item.value);
-    setformfield({ ...formfield, [name]: value });
   };
   const handleApproverChange = (name, value) => {
     setformfield({ ...formfield, [name]: value });
