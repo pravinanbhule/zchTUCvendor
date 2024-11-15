@@ -115,7 +115,8 @@ function RfelogAddEditForm({ ...props }) {
         acturisCode: [],
         customerWellbeing: [],
         requiredAuthority: [],
-        submitterAuthority: []
+        submitterAuthority: [],
+        zmSubLoBProduct: []
     });
     const [isfilterApplied, setisfilterApplied] = useState();
     const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
@@ -192,6 +193,7 @@ function RfelogAddEditForm({ ...props }) {
             response.CustomerWellbeing = response.customerWellbeing
             response.RequiredAuthority = response.requiredAuthority
             response.SubmitterAuthority = response.submitterAuthority
+            response.ZMSubLoBProduct = response.zmSubLoBProduct
             response.PolicyNumberQuoteId = response.policyNumberQuoteId
             response.InceptionRenewalFromDate = response.inceptionRenewalFromDate
             response.InceptionRenewalToDate = response.inceptionRenewalToDate
@@ -505,6 +507,7 @@ function RfelogAddEditForm({ ...props }) {
             }),
             getLookupByType({
                 LookupType: "RFECHZ",
+                IncountryFLag: 'UKZM001'
             }),
             getLookupByType({
                 LookupType: "RFEEmpowermentReasonRequestAll",
@@ -513,7 +516,8 @@ function RfelogAddEditForm({ ...props }) {
                 LookupType: "DurationofApproval"
             }),
             getLookupByType({
-                LookupType: "RFELogNewRenewal"
+                LookupType: "RFELogNewRenewal",
+                IncountryFLag: 'UKZM001'
             }),
             getLookupByType({
                 LookupType: "ConditionApplicableTo"
@@ -530,6 +534,9 @@ function RfelogAddEditForm({ ...props }) {
             getLookupByType({
                 LookupType: "SubmitterAuthority"
             }),
+            getLookupByType({ 
+                LookupType: "ZMSubLoBProduct" 
+            }),
         ]);
 
         let tempStatus = lookupvalues[0];
@@ -543,6 +550,8 @@ function RfelogAddEditForm({ ...props }) {
         let temprfeempourmentCustomerWellbeing = lookupvalues[8];
         let temprfeempourmentRequiredAuthority = lookupvalues[9];
         let temprfeempourmentSubmitterAuthority = lookupvalues[10];
+        let temprfeempourmentZMSubLoBProduct = lookupvalues[11];
+
         let tempopts = [];
         let selectedArray = [];
         tempStatus.forEach((item) => {
@@ -862,6 +871,32 @@ function RfelogAddEditForm({ ...props }) {
             SubmitterAuthority: selectedArray,
         }));
         temprfeempourmentSubmitterAuthority = [...tempopts];
+       
+        tempopts = [];
+        selectedArray = [];
+        temprfeempourmentZMSubLoBProduct.forEach((item) => {
+            if (item.isActive) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.zmSubLoBProduct === 'string' && formIntialState?.zmSubLoBProduct !== null) {
+                    formIntialState?.zmSubLoBProduct?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            ZMSubLoBProduct: selectedArray,
+        }));
+        temprfeempourmentZMSubLoBProduct = [...tempopts];
 
         tempopts = [];
 
@@ -883,7 +918,8 @@ function RfelogAddEditForm({ ...props }) {
             acturisCode: [...temprfeempourmentActurisCode],
             customerWellbeing: [...temprfeempourmentCustomerWellbeing],
             requiredAuthority: [...temprfeempourmentRequiredAuthority],
-            submitterAuthority: [...temprfeempourmentSubmitterAuthority]
+            submitterAuthority: [...temprfeempourmentSubmitterAuthority],
+            zmSubLoBProduct: [...temprfeempourmentZMSubLoBProduct]
         }));
         const tempfilterfields = await getLogFields({
             IncountryFlag: "",
@@ -1483,7 +1519,7 @@ function RfelogAddEditForm({ ...props }) {
                             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
                             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
                             key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
-                            key === "RequiredAuthority" || key === "SubmitterAuthority") {
+                            key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
                             const tmpval = value.map((item) => item.value);
                             tempFilterOpts[key] = tmpval.join(",");
                         }
@@ -1532,6 +1568,8 @@ function RfelogAddEditForm({ ...props }) {
                 data.submitterAuthority = data.SubmitterAuthority
                 data.inceptionRenewalToDate = data?.InceptionRenewalToDate
                 data.inceptionRenewalFromDate = data?.InceptionRenewalFromDate
+                data.zmSubLoBProduct = data?.ZMSubLoBProduct
+                delete data?.ZMSubLoBProduct
                 delete data?.InceptionRenewalToDate
                 delete data?.InceptionRenewalFromDate
                 delete data?.CHZ

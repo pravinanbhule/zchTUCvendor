@@ -105,7 +105,8 @@ function UserView({ ...props }) {
     CustomerWellbeing: 'Customer Wellbeing',
     RequiredAuthority: 'Required Authority',
     SubmitterAuthority: 'SubmitterAuthority',
-    PolicyNumberQuoteId: 'Policy Number / QuoteId'
+    PolicyNumberQuoteId: 'Policy Number / QuoteId',
+    ZMSubLoBProduct: 'ZM Sub-LoB / Product'
   };
 
   const versionHistoryexportFieldTitlesExemptionZUG = {
