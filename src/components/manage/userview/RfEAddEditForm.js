@@ -438,6 +438,11 @@ function RfelogAddEditForm({ ...props }) {
                         name: "isNormalUser",
                         filedValue: '8'
                     },
+                    {
+                        label: "LoB Admin",
+                        name: "isLoBAdmin",
+                        filedValue: '12'
+                    },
                 ])
             } else {
                 setUserRoles([
