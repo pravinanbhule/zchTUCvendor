@@ -191,7 +191,8 @@ function Rfelog({ ...props }) {
     acturisCode: [],
     customerWellbeing: [],
     requiredAuthority: [],
-    submitterAuthority: []
+    submitterAuthority: [],
+    zmSubLoBProduct: []
   });
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
@@ -793,7 +794,7 @@ function Rfelog({ ...props }) {
             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
             key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
-            key === "RequiredAuthority" || key === "SubmitterAuthority") {
+            key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -1261,6 +1262,17 @@ function Rfelog({ ...props }) {
           submitterAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
+     
+      let zMSubLoBProductArray = [];
+      if (selectedViewData[0]?.zmSubLoBProduct?.length && selectedViewData[0]?.zmSubLoBProduct?.length !== 0 && typeof selectedViewData[0]?.zmSubLoBProduct === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.zmSubLoBProduct?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "ZMSubLoBProduct",
+          });
+          zMSubLoBProductArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
 
       let newRenewalArray = [];
       if (selectedViewData[0]?.newRenewal?.length && selectedViewData[0]?.newRenewal?.length !== 0 && typeof selectedViewData[0]?.newRenewal === 'string') {
@@ -1367,6 +1379,7 @@ function Rfelog({ ...props }) {
         InceptionRenewalFromDate: selectedViewData[0].inceptionRenewalFromDate,
         InceptionRenewalToDate: selectedViewData[0].inceptionRenewalToDate,
         PolicyNumberQuoteId: selectedViewData[0].policyNumberQuoteId,
+        ZMSubLoBProduct: zMSubLoBProductArray
       };
       setselfilter(FilterState)
       if (value !== selectedUserView) {
@@ -1429,6 +1442,7 @@ function Rfelog({ ...props }) {
       }),
       getLookupByType({
         LookupType: "RFECHZ",
+        IncountryFLag: 'UKZM001'
       }),
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequestAll",
@@ -1438,6 +1452,7 @@ function Rfelog({ ...props }) {
       }),
       getLookupByType({
         LookupType: "RFELogNewRenewal",
+        IncountryFLag: 'UKZM001'
       }),
       getLookupByType({
         LookupType: "ConditionApplicableTo",
@@ -1454,6 +1469,9 @@ function Rfelog({ ...props }) {
       getLookupByType({
           LookupType: "SubmitterAuthority"
       }), 
+      getLookupByType({ 
+        LookupType: "ZMSubLoBProduct" 
+      }),
     ]);
 
     let tempStatus = lookupvalues[0];
@@ -1467,7 +1485,8 @@ function Rfelog({ ...props }) {
     let temprfeempourmentCustomerWellbeing = lookupvalues[8];
     let temprfeempourmentRequiredAuthority = lookupvalues[9];
     let temprfeempourmentSubmitterAuthority = lookupvalues[10];
-
+    let temprfeempourmentZMSubLoBProduct = lookupvalues[11];
+    
     let tempopts = [];
     let statusWithdrawn = [];
     tempStatus.forEach((item) => {
@@ -1641,6 +1660,17 @@ function Rfelog({ ...props }) {
     });
     temprfeempourmentSubmitterAuthority = [...tempopts];
 
+    tempopts = [];
+    temprfeempourmentZMSubLoBProduct.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentZMSubLoBProduct = [...tempopts];
+
     tempStatus.sort(dynamicSort("label"));
     temporgnizationalalignment.sort(dynamicSort("label"));
     temprfechz.sort(dynamicSort("label"));
@@ -1659,7 +1689,8 @@ function Rfelog({ ...props }) {
       acturisCode: [...temprfeempourmentActurisCode],
       customerWellbeing: [...temprfeempourmentCustomerWellbeing],
       requiredAuthority: [...temprfeempourmentRequiredAuthority],
-      submitterAuthority: [...temprfeempourmentSubmitterAuthority]
+      submitterAuthority: [...temprfeempourmentSubmitterAuthority],
+      zmSubLoBProduct: [...temprfeempourmentZMSubLoBProduct]
     }));
 
     let Flag = await handleUserIncountryFlag()
@@ -2503,7 +2534,7 @@ function Rfelog({ ...props }) {
           key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
           key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
           key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
-          key === "RequiredAuthority" || key === "SubmitterAuthority") {
+          key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
           if (value) {
             const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
