@@ -675,8 +675,11 @@ function RfelogAddEditForm({ ...props }) {
                 if (item.lookUpType.includes("Spain")) {
                     setOpts(tempopts, item, 'Spain')
                 }
-                if (item.lookUpType.includes("UK")) {
+                if (item.lookUpType.substr(item.lookUpType.length - 2 ) ===  "UK") {
                     setOpts(tempopts, item, 'UK')
+                }
+                if (item.lookUpType.includes("UKZM")) {
+                setOpts(tempopts, item, 'UKZM')
                 }
                 if (item.lookUpType.length === 27) {
                     setOpts(tempopts, item, 'Global')
