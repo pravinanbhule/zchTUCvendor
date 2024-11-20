@@ -759,10 +759,6 @@ function AddEditForm(props) {
         });
       }
     });
-    setformfield({ ...formfield, 
-      isdirty: true, 
-      ActurisCode : selectedActurisCode 
-    });
     // tempopts.sort(dynamicSort("label"));
     temprfeempourmentActurisCode = [...tempopts];
  
@@ -788,10 +784,6 @@ function AddEditForm(props) {
           value: item.lookupID,
         });
       }
-    });
-    setformfield({ ...formfield, 
-      isdirty: true, 
-      CustomerWellbeing : selectedCustomerWellbeing  
     });
     // tempopts.sort(dynamicSort("label"));
     temprfeempourmentCustomerWellbeing = [...tempopts];
@@ -819,10 +811,6 @@ function AddEditForm(props) {
         });
       }
     });
-    setformfield({ ...formfield, 
-      isdirty: true, 
-      RequiredAuthority : selectedRequiredAuthority  
-    });
     // tempopts.sort(dynamicSort("label"));
     temprfeempourmentRequiredAuthority = [...tempopts];
    
@@ -849,10 +837,6 @@ function AddEditForm(props) {
         });
       }
     });
-    setformfield({ ...formfield, 
-      isdirty: true, 
-      SubmitterAuthority : selectedSubmitterAuthority 
-    });
     temprfeempourmentSubmitterAuthority = [...tempopts];
 
     tempopts = [];
@@ -877,10 +861,6 @@ function AddEditForm(props) {
           value: item.lookupID,
         });
       }
-    });
-    setformfield({ ...formfield, 
-      isdirty: true, 
-      ZMSubLoBProduct : selectedZMSubLoBProduct 
     });
     
     // tempopts.sort(dynamicSort("label"));
@@ -958,19 +938,13 @@ function AddEditForm(props) {
         setapproverRole({ ...approverIntialRole });
       }
     }
-    setIncountryFlag(formIntialState.IncountryFlag);
-    if ((isEditMode || isReadMode) && formIntialState.IncountryFlag === IncountryFlagConst.UKZM) {
-      setformfield({
-        ...formIntialState,
-        ActurisCode : selectedActurisCode,
-        CustomerWellbeing : selectedCustomerWellbeing,
-        RequiredAuthority : selectedRequiredAuthority,
-        SubmitterAuthority : selectedSubmitterAuthority,
-        ZMSubLoBProduct: selectedZMSubLoBProduct,
-      });
-    } else {
-      setformfield({...formIntialState});
-    }
+    formIntialState.ActurisCode = selectedActurisCode
+    formIntialState.CustomerWellbeing = selectedCustomerWellbeing
+    formIntialState.RequiredAuthority = selectedRequiredAuthority
+    formIntialState.SubmitterAuthority = selectedSubmitterAuthority
+    formIntialState.ZMSubLoBProduct = selectedZMSubLoBProduct
+    setIncountryFlag(formIntialState.IncountryFlag);    
+    setformfield(formIntialState);
     if (formIntialState.PolicyTermId) {
       const tempIds = await getPolicyTermId({
         policyId: formIntialState.PolicyTermId,
@@ -1780,22 +1754,26 @@ function AddEditForm(props) {
       value = e.target.checked;
     }
     if (name === 'RequestForEmpowermentReasonorActurisCode') {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+        ReferralReasonLevel4: false,
+        ReferralReasonLevel5: false,
+      });
+
+      delete formIntialState?.ActurisCode;
+      delete formIntialState?.RequestForEmpowermentReason;
+      delete formIntialState?.OtherReferralReason;   
+      delete formIntialState?.ReferralReasonLevel2;
+      delete formIntialState?.ReferralReasonLevel3;
+      delete formIntialState?.ReferralReasonLevel4;
+      delete formIntialState?.ReferralReasonLevel5;
+
+      setSelectedActurisCode('');
       if (value === "false") {
-        setReasonfields({
-          ...reasonfields,
-          ReferralReasonLevel2: false,
-          ReferralReasonLevel3: false,
-          ReferralReasonLevel4: false,
-          ReferralReasonLevel5: false,
-        });
-        delete formIntialState?.ReferralReasonLevel2;
-        delete formIntialState?.ReferralReasonLevel3;
-        delete formIntialState?.ReferralReasonLevel4;
-        delete formIntialState?.ReferralReasonLevel5;
-        delete formfield?.ReferralReasonLevel2;
-        delete formfield?.ReferralReasonLevel3;
-        delete formfield?.ReferralReasonLevel4;
-        delete formfield?.ReferralReasonLevel5;
+        setShowButtons(true);
+        setButtonsDisable(true);
         setformfield({
           ...formfield,
           RequestForEmpowermentReason: 'C686B4F3-052D-424A-9F12-10CFAE4FB9DD',
@@ -1809,16 +1787,28 @@ function AddEditForm(props) {
         });
       } 
       if (value === "true") {
-        delete formIntialState?.ActurisCode;
-        delete formIntialState?.RequestForEmpowermentReason;
-        delete formIntialState?.OtherReferralReason;
-        delete formfield?.ActurisCode;
-        delete formfield?.RequestForEmpowermentReason;
-        delete formfield?.OtherReferralReason;
-        setSelectedActurisCode('');
+        formdomfields.filter((item) =>
+          item.name === "RequestForEmpowermentReason"
+            ? (item.isAddButton = true)
+            : item.name === "ReferralReasonLevel2"
+            ? (item.colspan = 0)
+            : item.name === "ReferralReasonLevel3"
+            ? (item.colspan = 0)
+            : item.name === "ReferralReasonLevel4"
+            ? (item.colspan = 0)
+            : item.name === "ReferralReasonLevel5"
+            ? (item.colspan = 0)
+            : (item.colspan = item.colspan)
+        );
         setformfield({
           ...formfield,
           ActurisCode: null,
+          RequestForEmpowermentReason: null,
+          OtherReferralReason: null,
+          ReferralReasonLevel2: null,
+          ReferralReasonLevel3: null,
+          ReferralReasonLevel4: null,
+          ReferralReasonLevel5: null,
           isdirty: true,
           [name]: value,
         });
@@ -3958,7 +3948,6 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow1 = () => {
-    setSelectedTab('rfelog')
     setLinkedRfEId(formIntialState.RFELogId)
     const referenceRfEData = {
       LinkedRFEEntryNumber: formIntialState.EntryNumber,
@@ -4012,12 +4001,26 @@ function AddEditForm(props) {
       PolicyTermId: "",
       invokedAPIFrom: "",
       ReferralReasonLevel2: null,
-      ReferralReasonLevel3: null
+      ReferralReasonLevel3: null,
+      ReferralReasonLevel4: null,
+      ReferralReasonLevel5: null,
     }
+    setSelectedActurisCode('')
+    setSelectedCustomerWellbeing('')
+    setSelectedRequiredAuthority('')
+    setSelectedSubmitterAuthority('')
+    setSelectedZMSubLoBProduct('')
     setSpecificDetails(formIntialState.RFELogDetails)
     setInAddMode(referenceRfEData);
     setSelectedApprover('');
     setapproverRole({ ...approverIntialRole });
+    setSelectedTab('rfelog')
+    setformfield({
+      ...formfield,
+      UnderwriterGrantingEmpowerment: '',
+      UnderwriterGrantingEmpowermentAD: [],
+      UnderwriterGrantingEmpowermentName: "",
+    });
   }
 
   const handleCopyValueflow2 = () =>{
@@ -5678,6 +5681,12 @@ function AddEditForm(props) {
           inCountryOptsLATAM={inCountryOptsLATAM}
           frmCurrencyOpts={frmCurrencyOpts}
           linkedRfEId={linkedRfEId}
+          radioOpt={radioOpt}
+          frmZMSubLoBProduct={frmZMSubLoBProduct}
+          frmActurisCode={frmActurisCode}
+          frmCustomerWellbeing={frmCustomerWellbeing}
+          frmRequiredAuthority={frmRequiredAuthority}
+          frmSubmitterAuthority={frmSubmitterAuthority}
         />
       ) : (
         ""
