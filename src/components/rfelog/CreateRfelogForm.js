@@ -119,6 +119,7 @@ function CreateRfelogForm(props) {
     const history = useHistory();
     const location = useLocation()
     const [redirectURL, setRedirectURL] = useState(null)
+    const [technicalId, setTechnicalId] = useState(null)
 
     useEffect(() => {
         const handleTabClose = event => {
@@ -157,6 +158,7 @@ function CreateRfelogForm(props) {
             let lob = getUrlParameter("lob")
             let countryName = getUrlParameter("countryName")
             setRedirectURL(getUrlParameter("redirectURL"))
+            setTechnicalId(getUrlParameter("technicalid"))
             let tempcountryItems = [];
             let countryObj = {}
             let lobId = ""
@@ -203,15 +205,18 @@ function CreateRfelogForm(props) {
             localStorage.setItem("id", itemid);
             localStorage.setItem("status", status)
             setRedirectURL(null);
+            setTechnicalId(null);
             setqueryparam({ id: itemid, status: status });
             removeQueryParams()
         } else if (localStorage.getItem("id")) {
             itemid = localStorage.getItem("id");
             status = localStorage.getItem("status")
             setRedirectURL(null);
+            setTechnicalId(null);
             setqueryparam({ id: itemid, status: status });
         } else {
             setRedirectURL(null);
+            setTechnicalId(null);
             setloading(false)
         }
     }, []);
@@ -279,8 +284,9 @@ function CreateRfelogForm(props) {
 
         if (response) {
             if (redirectURL) {
+                window.location.href = redirectURL + `?technicalid=${technicalId}` + `&rfeid=${response}`
                 setRedirectURL(null);
-                window.location.href = redirectURL + `?rfeid=${response}`
+                setTechnicalId(null);
             } else {
                 if (item.IsSubmit) {
                     alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.addmsg"]);
