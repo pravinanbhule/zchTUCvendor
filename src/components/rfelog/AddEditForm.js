@@ -1042,10 +1042,28 @@ function AddEditForm(props) {
             ...prevstate,
             frmNewRenewalOpts: [selectInitiVal, ...temNewRenewal],
           }));
-          if (IncountryFlag === IncountryFlagConst.UKZM) {
-            let isFirst = true;
-        
-          }
+          let temprfechz = await  getLookupByType({ 
+          LookupType: "RFECHZ",
+          IncountryFlag: IncountryFlag,
+         })
+          tempopts = [];
+          temprfechz.forEach((item) => {
+            if (isEditMode || isReadMode) {
+              if (item.isActive || item.lookupID === formIntialState.CHZ) {
+                tempopts.push({
+                  label: item.lookUpValue,
+                  value: item.lookupID,
+                });
+              }
+            } else if (item.isActive) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          });
+          temprfechz = [...tempopts];
+          setfrmrfechz([selectInitiVal, ...temprfechz]);
         } else {
           setfrmrfeempourment([...frmrfeempourmentglobal]);
           setinCountryOptsLATAM((prevstate) => ({
@@ -1065,28 +1083,6 @@ function AddEditForm(props) {
             }
           }
         }
-        let temprfechz = await  getLookupByType({ 
-          LookupType: "RFECHZ",
-          IncountryFlag: IncountryFlag,
-         })
-        let tempopts = [];
-        temprfechz.forEach((item) => {
-          if (isEditMode || isReadMode) {
-            if (item.isActive || item.lookupID === formIntialState.CHZ) {
-              tempopts.push({
-                label: item.lookUpValue,
-                value: item.lookupID,
-              });
-            }
-          } else if (item.isActive) {
-            tempopts.push({
-              label: item.lookUpValue,
-              value: item.lookupID,
-            });
-          }
-        });
-        temprfechz = [...tempopts];
-        setfrmrfechz([selectInitiVal, ...temprfechz]);
         fnloadcountryview();
       };
       fnonIncountryFlagChange();
@@ -3292,8 +3288,7 @@ function AddEditForm(props) {
         } else if (approverRole.isDualRole) {
           handleAlignmentForDualRole(IncountryFlagConst.SINGAPORE)
         }
-      } 
-      else if (
+      } else if (
         isIndiacountry &&
         (approverRole.isRegionAdmin ||
           approverRole.isCountryAdmin ||
@@ -3882,6 +3877,51 @@ function AddEditForm(props) {
           regionId: country.regionID,
       }));
       response["CountryList"] = [...countryList];
+      if (response?.ActurisCode) {
+        let ActurisCode = []
+        frmActurisCode.map((item, i) => {
+          if (response?.ActurisCode.includes(item.value)) {
+            ActurisCode.push(item)
+          }
+        })
+        response["ActurisCode"] = ActurisCode;
+      }
+      if (response?.CustomerWellbeing) {
+        let CustomerWellbeing = []
+        frmCustomerWellbeing.map((item, i) => {
+          if (response?.CustomerWellbeing.includes(item.value)) {
+            CustomerWellbeing.push(item)
+          }
+        })
+        response["CustomerWellbeing"] = CustomerWellbeing;
+      }
+      if (response?.SubmitterAuthority) {
+        let SubmitterAuthority = []
+        frmSubmitterAuthority.map((item, i) => {
+          if (response?.SubmitterAuthority.includes(item.value)) {
+            SubmitterAuthority.push(item)
+          }
+        })
+        response["SubmitterAuthority"] = SubmitterAuthority;
+      }
+      if (response?.RequiredAuthority) {
+        let RequiredAuthority = []
+        frmRequiredAuthority.map((item, i) => {
+          if (response?.RequiredAuthority.includes(item.value)) {
+            RequiredAuthority.push(item)
+          }
+        })
+        response["RequiredAuthority"] = RequiredAuthority;
+      }
+      if (response?.ZMSubLoBProduct) {
+        let ZMSubLoBProduct = []
+        frmZMSubLoBProduct.map((item, i) => {
+          if (response?.ZMSubLoBProduct.includes(item.value)) {
+            ZMSubLoBProduct.push(item)
+          }
+        })
+        response["ZMSubLoBProduct"] = ZMSubLoBProduct;
+      }
       setLinkedPopupDetails(response);
       setEntryNumberRfE(response.EntryNumber)
       await handleLinkedRfEReason(response?.IncountryFlag);
@@ -3948,6 +3988,7 @@ function AddEditForm(props) {
   }
 
   const handleCopyValueflow1 = () => {
+    setSelectedTab('rfelog')
     setLinkedRfEId(formIntialState.RFELogId)
     const referenceRfEData = {
       LinkedRFEEntryNumber: formIntialState.EntryNumber,
@@ -4014,13 +4055,6 @@ function AddEditForm(props) {
     setInAddMode(referenceRfEData);
     setSelectedApprover('');
     setapproverRole({ ...approverIntialRole });
-    setSelectedTab('rfelog')
-    setformfield({
-      ...formfield,
-      UnderwriterGrantingEmpowerment: '',
-      UnderwriterGrantingEmpowermentAD: [],
-      UnderwriterGrantingEmpowermentName: "",
-    });
   }
 
   const handleCopyValueflow2 = () =>{
