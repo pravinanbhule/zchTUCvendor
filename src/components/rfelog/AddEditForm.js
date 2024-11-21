@@ -159,12 +159,12 @@ function AddEditForm(props) {
 
   const [radioOpt, setRadioOpt] = useState([
     {
-      label: "RfE's Reasons",
+      label: "RfE Reason",
       value: "true",
       isdisabled: false
     },
     {
-      label: "Acturic Code",
+      label: "Acturis Code",
       value: "false",
       isdisabled: false
     }
