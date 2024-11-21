@@ -51,7 +51,13 @@ function RfELinkedPopupDetails(props) {
         inCountryOptsLATAM,
         frmCurrencyOpts,
         linkedRfEId,
-        frmSegmentOpts
+        frmSegmentOpts,
+        radioOpt,
+        frmZMSubLoBProduct,
+        frmActurisCode,
+        frmCustomerWellbeing,
+        frmRequiredAuthority,
+        frmSubmitterAuthority
     } = props;
     const [fieldDetails, setFieldDetails] = useState([])
     const [accountNumberShow, setAccountNumberShow] = useState(false);
