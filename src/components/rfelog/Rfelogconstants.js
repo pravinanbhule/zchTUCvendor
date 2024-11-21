@@ -568,9 +568,9 @@ export const formfieldsmapping = {
   InceptionRenewalDate: {
     componenttype: "FrmDatePicker",
     eventhandler: "handleDateSelectChange",
-    minDate:
-      "formfield.InceptionRenewalDate ? moment(formfield.InceptionRenewalDate).toDate() : ''",
-    maxDate: "moment().toDate()",
+    // minDate:
+    //   "formfield.InceptionRenewalDate ? moment(formfield.InceptionRenewalDate).toDate() : ''",
+    // maxDate: "moment().toDate()",
     colspan: 3,
     titlelinespace: true,
     endbgcls: "frm-container-bggray",
