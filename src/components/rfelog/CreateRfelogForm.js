@@ -42,6 +42,7 @@ function CreateRfelogForm(props) {
     const formInitialValue = {
         AccountName: "",
         OrganizationalAlignment: "",
+        RequestForEmpowermentReasonorActurisCode: "true",
         CountryId: "",
         CountryList: [],
         countryCode: "",
@@ -272,6 +273,9 @@ function CreateRfelogForm(props) {
         ) {
             item.ConditionApplicableTo = "";
         }
+        if (item?.RequestForEmpowermentReasonorActurisCode) {
+            item.RequestForEmpowermentReasonorActurisCode = item.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false
+        }
         let response = await postItem({
             ...item,
             CreatedByID: userProfile.userId,
@@ -324,6 +328,9 @@ function CreateRfelogForm(props) {
             rfelog_status.Empowerment_granted_with_conditions
         ) {
             item.ConditionApplicableTo = "";
+        }
+        if (item?.RequestForEmpowermentReasonorActurisCode) {
+            item.RequestForEmpowermentReasonorActurisCode = item.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false
         }
         let response = await postItem({
             ...item,
@@ -390,6 +397,14 @@ function CreateRfelogForm(props) {
             } else {
                 countryList = []
             }
+            if (response.RequestForEmpowermentReasonorActurisCode === true) {
+                response.RequestForEmpowermentReasonorActurisCode = 'true'
+            }
+
+            if (response.RequestForEmpowermentReasonorActurisCode === false) {
+                response.RequestForEmpowermentReasonorActurisCode = 'false'
+            }
+
             response["CountryList"] = [...countryList];
             if (mode === "edit" && response.IsSubmit) {
                 setisEditMode(true);

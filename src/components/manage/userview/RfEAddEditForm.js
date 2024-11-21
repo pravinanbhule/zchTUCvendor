@@ -112,6 +112,11 @@ function RfelogAddEditForm({ ...props }) {
         newRenewalOpts: [],
         customerSegmentOpts: [],
         conditionApplicableToOpts: [],
+        acturisCode: [],
+        customerWellbeing: [],
+        requiredAuthority: [],
+        submitterAuthority: [],
+        zmSubLoBProduct: []
     });
     const [isfilterApplied, setisfilterApplied] = useState();
     const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
@@ -143,7 +148,12 @@ function RfelogAddEditForm({ ...props }) {
     ]);
     const [userRoles, setUserRoles] = useState([])
 
-    const [formfield, setformfield] = useState({viewName: '', isPrivate: false, ...intialFilterState});
+    const [formfield, setformfield] = useState({ viewName: '', isPrivate: false, ...intialFilterState });
+
+    const [frmActurisCode, setfrmActurisCode] = useState([]);
+    const [frmCustomerWellbeing, setfrmCustomerWellbeing] = useState([]);
+    const [frmRequiredAuthority, setfrmRequiredAuthority] = useState([]);
+    const [frmSubmitterAuthority, setfrmSubmitterAuthority] = useState([]);
 
     const [filterdomfields, setfilterdomfields] = useState({
         common: [],
@@ -179,7 +189,14 @@ function RfelogAddEditForm({ ...props }) {
             response.AccountNumber = response?.accountNumber
             response.PolicyPeriod = response?.policyPeriod
             response.GWP = response?.gwp
-
+            response.ActurisCode = response.acturisCode
+            response.CustomerWellbeing = response.customerWellbeing
+            response.RequiredAuthority = response.requiredAuthority
+            response.SubmitterAuthority = response.submitterAuthority
+            response.ZMSubLoBProduct = response.zmSubLoBProduct
+            response.PolicyNumberQuoteId = response.policyNumberQuoteId
+            response.InceptionRenewalFromDate = response.inceptionRenewalFromDate
+            response.InceptionRenewalToDate = response.inceptionRenewalToDate
             if (response.isPrivate === true) {
                 setShowUserRoles(false)
             } else {
@@ -490,6 +507,7 @@ function RfelogAddEditForm({ ...props }) {
             }),
             getLookupByType({
                 LookupType: "RFECHZ",
+                IncountryFLag: 'UKZM001'
             }),
             getLookupByType({
                 LookupType: "RFEEmpowermentReasonRequestAll",
@@ -498,10 +516,26 @@ function RfelogAddEditForm({ ...props }) {
                 LookupType: "DurationofApproval"
             }),
             getLookupByType({
-                LookupType: "RFELogNewRenewal"
+                LookupType: "RFELogNewRenewal",
+                IncountryFLag: 'UKZM001'
             }),
             getLookupByType({
                 LookupType: "ConditionApplicableTo"
+            }),
+            getLookupByType({
+                LookupType: "ActurisCode"
+            }),
+            getLookupByType({
+                LookupType: "CustomerWellbeing"
+            }),
+            getLookupByType({
+                LookupType: "RequiredAuthority"
+            }),
+            getLookupByType({
+                LookupType: "SubmitterAuthority"
+            }),
+            getLookupByType({ 
+                LookupType: "ZMSubLoBProduct" 
             }),
         ]);
 
@@ -512,6 +546,12 @@ function RfelogAddEditForm({ ...props }) {
         let tempDurationOfApproval = lookupvalues[4];
         let tempNewRenewal = lookupvalues[5];
         let tempCondition = lookupvalues[6];
+        let temprfeempourmentActurisCode = lookupvalues[7];
+        let temprfeempourmentCustomerWellbeing = lookupvalues[8];
+        let temprfeempourmentRequiredAuthority = lookupvalues[9];
+        let temprfeempourmentSubmitterAuthority = lookupvalues[10];
+        let temprfeempourmentZMSubLoBProduct = lookupvalues[11];
+
         let tempopts = [];
         let selectedArray = [];
         tempStatus.forEach((item) => {
@@ -635,8 +675,11 @@ function RfelogAddEditForm({ ...props }) {
                 if (item.lookUpType.includes("Spain")) {
                     setOpts(tempopts, item, 'Spain')
                 }
-                if (item.lookUpType.includes("UK")) {
+                if (item.lookUpType.substr(item.lookUpType.length - 2 ) ===  "UK") {
                     setOpts(tempopts, item, 'UK')
+                }
+                if (item.lookUpType.includes("UKZM")) {
+                setOpts(tempopts, item, 'UKZM')
                 }
                 if (item.lookUpType.length === 27) {
                     setOpts(tempopts, item, 'Global')
@@ -729,6 +772,136 @@ function RfelogAddEditForm({ ...props }) {
         tempCondition = [...tempopts];
 
         tempopts = [];
+        selectedArray = [];
+        temprfeempourmentActurisCode.forEach((item) => {
+            if (item.isActive) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.acturisCode === 'string' && formIntialState?.acturisCode !== null) {
+                    formIntialState?.acturisCode?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            ActurisCode: selectedArray,
+        }));
+        temprfeempourmentActurisCode = [...tempopts];
+
+        tempopts = [];
+        selectedArray = [];
+        temprfeempourmentCustomerWellbeing.forEach((item) => {
+            if (item.isActive) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.customerWellbeing === 'string' && formIntialState?.customerWellbeing !== null) {
+                    formIntialState?.customerWellbeing?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            CustomerWellbeing: selectedArray,
+        }));
+        temprfeempourmentCustomerWellbeing = [...tempopts];
+
+        tempopts = [];
+        selectedArray = [];
+        temprfeempourmentRequiredAuthority.forEach((item) => {
+            if (item.isActive) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.requiredAuthority === 'string' && formIntialState?.requiredAuthority !== null) {
+                    formIntialState?.requiredAuthority?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            RequiredAuthority: selectedArray,
+        }));
+        temprfeempourmentRequiredAuthority = [...tempopts];
+
+        tempopts = [];
+        selectedArray = [];
+        temprfeempourmentSubmitterAuthority.forEach((item) => {
+            if (item.isActive) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.submitterAuthority === 'string' && formIntialState?.submitterAuthority !== null) {
+                    formIntialState?.submitterAuthority?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            SubmitterAuthority: selectedArray,
+        }));
+        temprfeempourmentSubmitterAuthority = [...tempopts];
+       
+        tempopts = [];
+        selectedArray = [];
+        temprfeempourmentZMSubLoBProduct.forEach((item) => {
+            if (item.isActive) {
+                if ((isEditMode || isReadMode) && typeof formIntialState?.zmSubLoBProduct === 'string' && formIntialState?.zmSubLoBProduct !== null) {
+                    formIntialState?.zmSubLoBProduct?.split(',')?.map((id) => {
+                        if (id === item.lookupID) {
+                            selectedArray.push({
+                                label: item.lookUpValue,
+                                value: item.lookupID,
+                            });
+                        }
+                    })
+                }
+                tempopts.push({
+                    label: item.lookUpValue,
+                    value: item.lookupID,
+                });
+            }
+        });
+        setformfield((prevfilter) => ({
+            ...prevfilter,
+            ZMSubLoBProduct: selectedArray,
+        }));
+        temprfeempourmentZMSubLoBProduct = [...tempopts];
+
+        tempopts = [];
 
         tempStatus.sort(dynamicSort("label"));
         temporgnizationalalignment.sort(dynamicSort("label"));
@@ -744,7 +917,12 @@ function RfelogAddEditForm({ ...props }) {
             chzOpts: [selectInitiVal, ...temprfechz],
             durationofApprovalOpts: [...tempDurationOfApproval],
             newRenewalOpts: [...tempNewRenewal],
-            conditionApplicableToOpts: [...tempCondition]
+            conditionApplicableToOpts: [...tempCondition],
+            acturisCode: [...temprfeempourmentActurisCode],
+            customerWellbeing: [...temprfeempourmentCustomerWellbeing],
+            requiredAuthority: [...temprfeempourmentRequiredAuthority],
+            submitterAuthority: [...temprfeempourmentSubmitterAuthority],
+            zmSubLoBProduct: [...temprfeempourmentZMSubLoBProduct]
         }));
         const tempfilterfields = await getLogFields({
             IncountryFlag: "",
@@ -1266,7 +1444,7 @@ function RfelogAddEditForm({ ...props }) {
             })
             if (issubmitted && showError === false && selectedValue.length === 0) {
                 setShowError(true)
-            } else if(issubmitted && showError && selectedValue.length > 0 ){
+            } else if (issubmitted && showError && selectedValue.length > 0) {
                 setShowError(false)
             }
             setSelectedUserRoles(selectedValue)
@@ -1343,7 +1521,8 @@ function RfelogAddEditForm({ ...props }) {
                             key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
                             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
                             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-                            key === "ConditionApplicableTo") {
+                            key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+                            key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
                             const tmpval = value.map((item) => item.value);
                             tempFilterOpts[key] = tmpval.join(",");
                         }
@@ -1386,6 +1565,16 @@ function RfelogAddEditForm({ ...props }) {
                 data.conditionApplicableTo = data?.ConditionApplicableTo
                 data.sublobid = data?.SUBLOBID
                 data.gwp = data?.GWP
+                data.acturisCode = data.ActurisCode
+                data.customerWellbeing = data.CustomerWellbeing
+                data.requiredAuthority = data.RequiredAuthority
+                data.submitterAuthority = data.SubmitterAuthority
+                data.inceptionRenewalToDate = data?.InceptionRenewalToDate
+                data.inceptionRenewalFromDate = data?.InceptionRenewalFromDate
+                data.zmSubLoBProduct = data?.ZMSubLoBProduct
+                delete data?.ZMSubLoBProduct
+                delete data?.InceptionRenewalToDate
+                delete data?.InceptionRenewalFromDate
                 delete data?.CHZ
                 delete data?.CustomerSegment
                 delete data?.CreatedToDate
@@ -1414,6 +1603,10 @@ function RfelogAddEditForm({ ...props }) {
                 delete data?.ConditionApplicableTo
                 delete data?.SUBLOBID
                 delete data?.GWP
+                delete data.ActurisCode
+                delete data.CustomerWellbeing
+                delete data.RequiredAuthority
+                delete data.SubmitterAuthority
                 let response = await postItem(data)
                 if (response) {
                     if (data.rfeViewsId) {
@@ -1478,9 +1671,9 @@ function RfelogAddEditForm({ ...props }) {
                                 <div className="mb-4"> User Roles</div>
                                 {showError ?
                                     <div className="validationError">Please select at least one user role</div>
-                                :(
-                                    ""
-                                )}
+                                    : (
+                                        ""
+                                    )}
                             </div>
                             <div className="border-bottom border-top frm-container-bggray">
                                 <div className="m-1 mt-4 d-flex" style={userProfile.isCountrySuperAdmin ? {} : { justifyContent: 'space-between' }}>

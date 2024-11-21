@@ -142,13 +142,34 @@ function AddEditForm(props) {
   const policyURL = "https://insight360.zurich.com/policy360/?policy_term_id=";
   const [inCountryOptsLATAM, setinCountryOptsLATAM] = useState({
     frmNewRenewalOpts: [],
+    globalRenewalOpts: []
   });
+
+  const [frmActurisCode, setfrmActurisCode] = useState([]);
+  const [frmCustomerWellbeing, setfrmCustomerWellbeing] = useState([]);
+  const [frmRequiredAuthority , setfrmRequiredAuthority ] = useState([]);
+  const [frmSubmitterAuthority , setfrmSubmitterAuthority ] = useState([]);
+  const [frmZMSubLoBProduct , setfrmZMSubLoBProduct ] = useState([]);
 
   const [frmselectedRegion, setfrmselectedRegion] = useState([]);
   const [IncountryFlag, setIncountryFlag] = useState(undefined);
   const [fromfieldsdblist, setfromfieldsdblist] = useState();
   const [formdomfields, setformdomfields] = useState([]);
   const [isorgalignmentdisabled, setisorgalignmentdisabled] = useState(false);
+
+  const [radioOpt, setRadioOpt] = useState([
+    {
+      label: "RfE Reason",
+      value: "true",
+      isdisabled: false
+    },
+    {
+      label: "Acturis Code",
+      value: "false",
+      isdisabled: false
+    }
+  ]);
+
   const OrganizationalAlignment = {
     global: RFE_LOG_ORGALINMENT.Global,
     region: RFE_LOG_ORGALINMENT.Region,
@@ -336,12 +357,22 @@ function AddEditForm(props) {
       getLookupByType({ LookupType: "DurationofApproval" }),
       getLookupByType({ LookupType: "ConditionApplicableTo" }),
       getLookupByType({ LookupType: "RFEOrganizationalAlignment" }),
-      getLookupByType({ LookupType: "RFECHZ" }),
+      getLookupByType({ 
+        LookupType: "RFECHZ",
+        IncountryFlag: formIntialState?.IncountryFlag
+        ? formIntialState.IncountryFlag
+        : "",
+       }),
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
       }),
       getLookupByType({ LookupType: "RFEEmpowermentStatusRequest" }),
-      getLookupByType({ LookupType: "RFELogNewRenewal" }),
+      getLookupByType({ 
+        LookupType: "RFELogNewRenewal",
+        IncountryFlag: formIntialState?.IncountryFlag
+        ? formIntialState.IncountryFlag
+        : "",
+      }),
       getToolTip({ type: "RFELogs" }),
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequest",
@@ -349,6 +380,11 @@ function AddEditForm(props) {
           ? formIntialState.IncountryFlag
           : "",
       }),
+      getLookupByType({ LookupType: "ActurisCode" }),
+      getLookupByType({ LookupType: "CustomerWellbeing" }),
+      getLookupByType({ LookupType: "RequiredAuthority" }),
+      getLookupByType({ LookupType: "SubmitterAuthority" }),
+      getLookupByType({ LookupType: "ZMSubLoBProduct" }),
       //getLookupByType({ LookupType: "RFEEmpowermentReasonRequestUK" }),
     ]);
     //tempcountryItems = await getAllCountry();
@@ -505,6 +541,12 @@ function AddEditForm(props) {
     let temNewRenewal = dbvalues[8];
     let tempToolTips = dbvalues[9];
     let temprfeempourmentcountry = dbvalues[10];
+    let temprfeempourmentActurisCode = dbvalues[11];
+    let temprfeempourmentCustomerWellbeing = dbvalues[12];
+    let temprfeempourmentRequiredAuthority = dbvalues[13];
+    let temprfeempourmentSubmitterAuthority = dbvalues[14];
+    let temprfeempourmentZMSubLoBProduct = dbvalues[15];
+
     let tooltipObj = {};
     tempToolTips.forEach((item) => {
       tooltipObj[item.toolTipField] = item.toolTipText;
@@ -694,6 +736,152 @@ function AddEditForm(props) {
       })
     });
 
+    tempopts = [];
+    let selectedActurisCode = [];
+    temprfeempourmentActurisCode.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState?.ActurisCode?.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState?.ActurisCode?.includes(item.lookupID)) {      
+          selectedActurisCode.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    // tempopts.sort(dynamicSort("label"));
+    temprfeempourmentActurisCode = [...tempopts];
+ 
+    tempopts = [];
+    let selectedCustomerWellbeing = [];
+    temprfeempourmentCustomerWellbeing.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState?.CustomerWellbeing?.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState?.CustomerWellbeing?.includes(item.lookupID)) {      
+          selectedCustomerWellbeing.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    // tempopts.sort(dynamicSort("label"));
+    temprfeempourmentCustomerWellbeing = [...tempopts];
+    
+    tempopts = [];
+    let selectedRequiredAuthority = [];
+    temprfeempourmentRequiredAuthority.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState?.RequiredAuthority?.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState?.RequiredAuthority?.includes(item.lookupID)) {      
+          selectedRequiredAuthority.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    // tempopts.sort(dynamicSort("label"));
+    temprfeempourmentRequiredAuthority = [...tempopts];
+   
+    tempopts = [];
+    let selectedSubmitterAuthority = [];
+    temprfeempourmentSubmitterAuthority.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState?.SubmitterAuthority?.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState?.SubmitterAuthority?.includes(item.lookupID)) {      
+          selectedSubmitterAuthority.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    temprfeempourmentSubmitterAuthority = [...tempopts];
+
+    tempopts = [];
+    let selectedZMSubLoBProduct = [];
+    temprfeempourmentZMSubLoBProduct.forEach((item) => {
+      if (isEditMode || isReadMode) {
+        if (item.isActive || formIntialState?.ZMSubLoBProduct?.includes(item.lookupID)) {
+          tempopts.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+        if (formIntialState?.ZMSubLoBProduct?.includes(item.lookupID)) {      
+          selectedZMSubLoBProduct.push({
+            label: item.lookUpValue,
+            value: item.lookupID,
+          });
+        }
+      } else if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
+    });
+    
+    // tempopts.sort(dynamicSort("label"));
+    temprfeempourmentZMSubLoBProduct = [...tempopts];
+
+    if (formIntialState?.ActurisCode) {
+      setSelectedActurisCode(formIntialState.ActurisCode)
+    }
+    if (formIntialState?.CustomerWellbeing) {
+      setSelectedCustomerWellbeing(formIntialState.CustomerWellbeing)
+    }
+    if (formIntialState?.RequiredAuthority) {
+      setSelectedRequiredAuthority(formIntialState.RequiredAuthority)
+    }
+    if (formIntialState?.SubmitterAuthority) {
+      setSelectedSubmitterAuthority(formIntialState.SubmitterAuthority)
+    }
+    if (formIntialState?.ZMSubLoBProduct) {
+      setSelectedZMSubLoBProduct(formIntialState.ZMSubLoBProduct)
+    }
+
     setfrmorgnizationalalignment([...temporgnizationalalignment]);
     setfrmrfechz([selectInitiVal, ...temprfechz]);
     setfrmrfeempourment([selectInitiVal, ...temprfeempourmentcountry]);
@@ -703,9 +891,16 @@ function AddEditForm(props) {
     setfrmstatus([...frmstatus]);
     setPopupFrmStatus([...popupstatus])
 
+    setfrmActurisCode([...temprfeempourmentActurisCode])
+    setfrmCustomerWellbeing([...temprfeempourmentCustomerWellbeing])
+    setfrmRequiredAuthority([...temprfeempourmentRequiredAuthority])
+    setfrmSubmitterAuthority([...temprfeempourmentSubmitterAuthority])
+    setfrmZMSubLoBProduct([...temprfeempourmentZMSubLoBProduct])
+
     setinCountryOptsLATAM((prevstate) => ({
       ...prevstate,
       frmNewRenewalOpts: [selectInitiVal, ...temNewRenewal],
+      globalRenewalOpts: [...temNewRenewal]
     }));
 
     if (formIntialState.IsSubmit) {
@@ -743,7 +938,12 @@ function AddEditForm(props) {
         setapproverRole({ ...approverIntialRole });
       }
     }
-    setIncountryFlag(formIntialState.IncountryFlag);
+    formIntialState.ActurisCode = selectedActurisCode
+    formIntialState.CustomerWellbeing = selectedCustomerWellbeing
+    formIntialState.RequiredAuthority = selectedRequiredAuthority
+    formIntialState.SubmitterAuthority = selectedSubmitterAuthority
+    formIntialState.ZMSubLoBProduct = selectedZMSubLoBProduct
+    setIncountryFlag(formIntialState.IncountryFlag);    
     setformfield(formIntialState);
     if (formIntialState.PolicyTermId) {
       const tempIds = await getPolicyTermId({
@@ -817,8 +1017,59 @@ function AddEditForm(props) {
              setformfield({ ...formfield, RequestForEmpowermentReason: "" });
             }
           }
+          let temNewRenewal = await getLookupByType({ 
+            LookupType: "RFELogNewRenewal",
+            IncountryFlag: IncountryFlag,
+          })
+          tempopts = [];
+          temNewRenewal.forEach((item) => {
+            if (isEditMode || isReadMode) {
+              if (item.isActive || item.lookupID === formIntialState.NewRenewal) {
+                tempopts.push({
+                  label: item.lookUpValue,
+                  value: item.lookupID,
+                });
+              }
+            } else if (item.isActive) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          });
+          temNewRenewal = [...tempopts];
+          setinCountryOptsLATAM((prevstate) => ({
+            ...prevstate,
+            frmNewRenewalOpts: [selectInitiVal, ...temNewRenewal],
+          }));
+          let temprfechz = await  getLookupByType({ 
+          LookupType: "RFECHZ",
+          IncountryFlag: IncountryFlag,
+         })
+          tempopts = [];
+          temprfechz.forEach((item) => {
+            if (isEditMode || isReadMode) {
+              if (item.isActive || item.lookupID === formIntialState.CHZ) {
+                tempopts.push({
+                  label: item.lookUpValue,
+                  value: item.lookupID,
+                });
+              }
+            } else if (item.isActive) {
+              tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+              });
+            }
+          });
+          temprfechz = [...tempopts];
+          setfrmrfechz([selectInitiVal, ...temprfechz]);
         } else {
           setfrmrfeempourment([...frmrfeempourmentglobal]);
+          setinCountryOptsLATAM((prevstate) => ({
+            ...prevstate,
+            frmNewRenewalOpts: [selectInitiVal, ...inCountryOptsLATAM.globalRenewalOpts],
+          }));
           if (formfield.RequestForEmpowermentReason) {
             if (isEditMode || isReadMode) {
               const isPresent = frmrfeempourmentglobal.filter(
@@ -860,7 +1111,7 @@ function AddEditForm(props) {
   const [isFirst, setIsFirst] = useState(true);
 
   const fnloadcountryview = async () => {
-    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
+    if ((isEditMode || isReadMode) && isFirst && (IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.UKZM || IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA)) {
       setIsFirst(false);
     }
     if (!isFirst) {
@@ -930,6 +1181,29 @@ function AddEditForm(props) {
               : "",
             ismandatory: item.isMandatory,
           };
+          if (item.fieldName === "LOBId" && IncountryFlag === IncountryFlagConst.UKZM) {
+            tempobj = {
+              ...tempobj,
+              colspan: 0
+            };
+            if (!isEditMode && !isReadMode) {
+              setformfield({ 
+                ...formfield, 
+                LOBId: '441599652036479',
+                DurationofApproval: '547V7D10-3334-064H-N831-H225743690RD',
+                mappedLOBs: 'Group Protection,Health,Accident',
+                RequestForEmpowermentReasonorActurisCode: formIntialState.RequestForEmpowermentReasonorActurisCode,
+                Underwriter: userProfile.emailAddress,
+                UnderwriterName: userProfile.firstName + " " + userProfile.lastName,
+                UnderwriterAD: {
+                    firstName: userProfile.firstName,
+                    lastName: userProfile.lastName,
+                    userName: userProfile.firstName + " " + userProfile.lastName,
+                    emailAddress: userProfile.emailAddress,
+                },
+              }); 
+            }
+          }
           if (item.fieldName === "RequestForEmpowermentReason") {
             tempobj = {
               ...tempobj,
@@ -1475,6 +1749,69 @@ function AddEditForm(props) {
     if (e.target.type === "checkbox") {
       value = e.target.checked;
     }
+    if (name === 'RequestForEmpowermentReasonorActurisCode') {
+      setReasonfields({
+        ...reasonfields,
+        ReferralReasonLevel2: false,
+        ReferralReasonLevel3: false,
+        ReferralReasonLevel4: false,
+        ReferralReasonLevel5: false,
+      });
+
+      delete formIntialState?.ActurisCode;
+      delete formIntialState?.RequestForEmpowermentReason;
+      delete formIntialState?.OtherReferralReason;   
+      delete formIntialState?.ReferralReasonLevel2;
+      delete formIntialState?.ReferralReasonLevel3;
+      delete formIntialState?.ReferralReasonLevel4;
+      delete formIntialState?.ReferralReasonLevel5;
+
+      setSelectedActurisCode('');
+      if (value === "false") {
+        setShowButtons(true);
+        setButtonsDisable(true);
+        setformfield({
+          ...formfield,
+          RequestForEmpowermentReason: 'C686B4F3-052D-424A-9F12-10CFAE4FB9DD',
+          OtherReferralReason: 'Acturis code selected',
+          ReferralReasonLevel2: null,
+          ReferralReasonLevel3: null,
+          ReferralReasonLevel4: null,
+          ReferralReasonLevel5: null,
+          isdirty: true,
+          [name]: value,
+        });
+      } 
+      if (value === "true") {
+        formdomfields.filter((item) =>
+          item.name === "RequestForEmpowermentReason"
+            ? (item.isAddButton = true)
+            : item.name === "ReferralReasonLevel2"
+            ? (item.colspan = 0)
+            : item.name === "ReferralReasonLevel3"
+            ? (item.colspan = 0)
+            : item.name === "ReferralReasonLevel4"
+            ? (item.colspan = 0)
+            : item.name === "ReferralReasonLevel5"
+            ? (item.colspan = 0)
+            : (item.colspan = item.colspan)
+        );
+        setformfield({
+          ...formfield,
+          ActurisCode: null,
+          RequestForEmpowermentReason: null,
+          OtherReferralReason: null,
+          ReferralReasonLevel2: null,
+          ReferralReasonLevel3: null,
+          ReferralReasonLevel4: null,
+          ReferralReasonLevel5: null,
+          isdirty: true,
+          [name]: value,
+        });
+      }
+    } else {
+      setformfield({ ...formfield, isdirty: true, [name]: value });
+    }
     // if (
     //   name === "OrganizationalAlignment" &&
     //   value === OrganizationalAlignment.country
@@ -1489,7 +1826,7 @@ function AddEditForm(props) {
     //   setisfrmdisabled(false);
     //   // hidelogPopup();
     // }
-    setformfield({ ...formfield, isdirty: true, [name]: value });
+    // setformfield({ ...formfield, isdirty: true, [name]: value });
   };
 
   useEffect(() => {
@@ -1530,7 +1867,7 @@ function AddEditForm(props) {
         setButtonsDisable(true);
       }
     } 
-    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.AUSTRALIA || IncountryFlag === IncountryFlagConst.UKZM) {
       if ((formIntialState?.RequestForEmpowermentReasonValue?.toLowerCase().replace(
           /\s/g,
           ""
@@ -1595,9 +1932,13 @@ function AddEditForm(props) {
     if (
       IncountryFlag !== undefined &&
       IncountryFlag !== IncountryFlagConst.GERMANY &&
-      IncountryFlag !== IncountryFlagConst.AUSTRALIA
+      IncountryFlag !== IncountryFlagConst.AUSTRALIA &&
+      IncountryFlag !== IncountryFlagConst.UKZM
     ) {
       getAllSegment({ logType: "FECB51BC-6D06-405D-9415-80A4B92347A9" });
+    }
+    if (IncountryFlag === IncountryFlagConst.UKZM) {
+      getAllSegment({ logType: "060191P0-2212-2018-222H-7V2620D5I6M" });
     }
   }, [IncountryFlag]);
 
@@ -1625,11 +1966,11 @@ function AddEditForm(props) {
         item.name === "ReferralReasonLevel2"
           ? (item.isAddButton = false)
           : item.name === "ReferralReasonLevel3"
-          ? (item.colspan = 3, item.isAddButton = (IncountryFlag === IncountryFlagConst.UK && reasonfields.ReferralReasonLevel4 === false ? true : false))
+          ? (item.colspan = 3, item.isAddButton = ((IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM) && reasonfields.ReferralReasonLevel4 === false ? true : false))
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel3" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel4: true,
@@ -1642,7 +1983,7 @@ function AddEditForm(props) {
           : (item.colspan = item.colspan)
       );
       setButtonsDisable(true);
-    } else if (name === "ReferralReasonLevel4" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setReasonfields({
         ...reasonfields,
         ReferralReasonLevel5: true,
@@ -1683,7 +2024,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel3 &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1702,7 +2043,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK : 
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1721,7 +2062,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1740,7 +2081,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.ReferralReasonLevel2 &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1816,7 +2157,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1835,7 +2176,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1854,7 +2195,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1896,7 +2237,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel4 &&
@@ -1915,7 +2256,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1934,7 +2275,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -1976,7 +2317,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -1995,7 +2336,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -2014,7 +2355,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -2056,7 +2397,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel3 &&
@@ -2075,7 +2416,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -2094,7 +2435,7 @@ function AddEditForm(props) {
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValue :
           IncountryFlag === IncountryFlagConst.UK ?
           item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueUK :
-          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia) &&
+          item.label.toLowerCase().replace(/\s/g, "") !== reasonOtherValueAustralia || IncountryFlag === IncountryFlagConst.UKZM) &&
           item.value !== value &&
           item.value !== formfield.RequestForEmpowermentReason &&
           item.value !== formfield.ReferralReasonLevel2 &&
@@ -2309,28 +2650,28 @@ function AddEditForm(props) {
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel3" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel3" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value === "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && value === "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(true);
       setformfield({
         ...formfield,
         isdirty: true,
         [name]: value,
       });
-    } else if (name === "ReferralReasonLevel4" && value !== "" && IncountryFlag === IncountryFlagConst.UK) {
+    } else if (name === "ReferralReasonLevel4" && value !== "" && (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM)) {
       setButtonsDisable(false);
       setformfield({
         ...formfield,
@@ -2392,6 +2733,12 @@ function AddEditForm(props) {
     }
   }, [formfield?.CountryList]);
 
+  const [selectedActurisCode, setSelectedActurisCode] = useState('');
+  const [selectedCustomerWellbeing, setSelectedCustomerWellbeing] = useState('');
+  const [selectedRequiredAuthority, setSelectedRequiredAuthority] = useState('');
+  const [selectedSubmitterAuthority, setSelectedSubmitterAuthority] = useState('');
+  const [selectedZMSubLoBProduct, setSelectedZMSubLoBProduct] = useState('');
+
   const handleMultiSelectChange = (name, value) => {
     //const tempval = value.map((item) => item.value);
     if (name === "CountryList") {
@@ -2442,8 +2789,40 @@ function AddEditForm(props) {
         Branch: "",
         countryCode: countrycode.join(","),
       });
+    } else {
+      setformfield({ ...formfield, 
+        isdirty: true, 
+        [name]: value 
+      });
     }
-    //setformfield({ ...formfield, isdirty: true, [name]: value });
+    let updatedValue = ''    
+    value.map((item)=> {
+      if (updatedValue === '') {
+        updatedValue = item.value
+      } else {
+        updatedValue = updatedValue + ',' + item.value
+      }
+    })
+    if (name === 'ActurisCode') {
+      setSelectedActurisCode(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'CustomerWellbeing') {
+      setSelectedCustomerWellbeing(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'RequiredAuthority') {
+      setSelectedRequiredAuthority(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'SubmitterAuthority') {
+      setSelectedSubmitterAuthority(updatedValue);
+      updatedValue = ''
+    }
+    if (name === 'ZMSubLoBProduct') {
+      setSelectedZMSubLoBProduct(updatedValue);
+      updatedValue = ''
+    }
   };
   const handleDateSelectChange = (name, value) => {
     let dateval = value ? moment(value).format("YYYY-MM-DD") : "";
@@ -2563,7 +2942,7 @@ function AddEditForm(props) {
     window.scrollTo({ top: scrollPosition, behavior: "smooth" });
   };
   const handleResetGermany = () => {
-    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
+    if (IncountryFlag === IncountryFlagConst.UK || IncountryFlag === IncountryFlagConst.UKZM || IncountryFlag === IncountryFlagConst.GERMANY || IncountryFlag === IncountryFlagConst.AUSTRALIA) {
       if (selectedlanguage?.value === "DE001") {
         formdomfields.filter((item) =>
           item.name === "ReferralReasonLevel2"
@@ -2712,6 +3091,7 @@ function AddEditForm(props) {
       let isUKcountry = true;
       let isSingaporecountry = true;
       let isIndiacountry = true;
+      let isUKZMcountry = true;
       let isChinacountry = true;
       let isHongKongcountry = true;
       let isMalaysiacountry = true;
@@ -2753,6 +3133,11 @@ function AddEditForm(props) {
           isIndiacountry = isIndiacountry ? true : false;
         } else {
           isIndiacountry = false;
+        }
+        if (item.value === IncountryIds.UKZM) {
+          isUKZMcountry = isUKZMcountry ? true : false;
+        } else {
+          isUKZMcountry = false;
         }
         if (item.value === IncountryIds.CHINA) {
           isChinacountry = isChinacountry ? true : false;
@@ -2925,6 +3310,29 @@ function AddEditForm(props) {
           setIncountryFlag(IncountryFlagConst.INDIA);
         } else if (approverRole.isDualRole) {
           handleAlignmentForDualRole(IncountryFlagConst.INDIA)
+        }
+      } else if (
+        isUKZMcountry &&
+        (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser ||
+          approverRole.isDualRole || 
+          approverRole.isCountrySuperAdmin
+        )
+      ) {
+        if (approverRole.isRegionAdmin ||
+          approverRole.isCountryAdmin ||
+          approverRole.isNormalUser || 
+          approverRole.isCountrySuperAdmin) {
+          setformfield({
+            ...formfield,
+            OrganizationalAlignment: approverRole.isRegionAdmin
+            ? OrganizationalAlignment.region
+            : OrganizationalAlignment.country,
+          });
+          setIncountryFlag(IncountryFlagConst.UKZM);
+        } else if (approverRole.isDualRole) {
+          handleAlignmentForDualRole(IncountryFlagConst.UKZM)
         }
       } else if (
         isChinacountry &&
@@ -3469,6 +3877,51 @@ function AddEditForm(props) {
           regionId: country.regionID,
       }));
       response["CountryList"] = [...countryList];
+      if (response?.ActurisCode) {
+        let ActurisCode = []
+        frmActurisCode.map((item, i) => {
+          if (response?.ActurisCode.includes(item.value)) {
+            ActurisCode.push(item)
+          }
+        })
+        response["ActurisCode"] = ActurisCode;
+      }
+      if (response?.CustomerWellbeing) {
+        let CustomerWellbeing = []
+        frmCustomerWellbeing.map((item, i) => {
+          if (response?.CustomerWellbeing.includes(item.value)) {
+            CustomerWellbeing.push(item)
+          }
+        })
+        response["CustomerWellbeing"] = CustomerWellbeing;
+      }
+      if (response?.SubmitterAuthority) {
+        let SubmitterAuthority = []
+        frmSubmitterAuthority.map((item, i) => {
+          if (response?.SubmitterAuthority.includes(item.value)) {
+            SubmitterAuthority.push(item)
+          }
+        })
+        response["SubmitterAuthority"] = SubmitterAuthority;
+      }
+      if (response?.RequiredAuthority) {
+        let RequiredAuthority = []
+        frmRequiredAuthority.map((item, i) => {
+          if (response?.RequiredAuthority.includes(item.value)) {
+            RequiredAuthority.push(item)
+          }
+        })
+        response["RequiredAuthority"] = RequiredAuthority;
+      }
+      if (response?.ZMSubLoBProduct) {
+        let ZMSubLoBProduct = []
+        frmZMSubLoBProduct.map((item, i) => {
+          if (response?.ZMSubLoBProduct.includes(item.value)) {
+            ZMSubLoBProduct.push(item)
+          }
+        })
+        response["ZMSubLoBProduct"] = ZMSubLoBProduct;
+      }
       setLinkedPopupDetails(response);
       setEntryNumberRfE(response.EntryNumber)
       await handleLinkedRfEReason(response?.IncountryFlag);
@@ -3477,7 +3930,7 @@ function AddEditForm(props) {
   }
 
   useEffect(()=>{
-    if (!isEditMode && !isReadMode && !isFlow3 && formfield.AccountName && formfield.CountryList.length > 0 && formfield.LOBId) {
+    if (!isEditMode && !isReadMode && !isFlow3 && formfield.AccountName && formfield?.CountryList?.length > 0 && formfield.LOBId) {
         const delayDebounceFn = setTimeout(() => {
           handleReferenceRfE();
         }, 2000)
@@ -3589,8 +4042,15 @@ function AddEditForm(props) {
       PolicyTermId: "",
       invokedAPIFrom: "",
       ReferralReasonLevel2: null,
-      ReferralReasonLevel3: null
+      ReferralReasonLevel3: null,
+      ReferralReasonLevel4: null,
+      ReferralReasonLevel5: null,
     }
+    setSelectedActurisCode('')
+    setSelectedCustomerWellbeing('')
+    setSelectedRequiredAuthority('')
+    setSelectedSubmitterAuthority('')
+    setSelectedZMSubLoBProduct('')
     setSpecificDetails(formIntialState.RFELogDetails)
     setInAddMode(referenceRfEData);
     setSelectedApprover('');
@@ -3690,6 +4150,11 @@ function AddEditForm(props) {
             ...formfield,
             IsSubmit: true,
             IncountryFlag: IncountryFlag,
+            ActurisCode : selectedActurisCode,
+            CustomerWellbeing :selectedCustomerWellbeing,
+            RequiredAuthority :selectedRequiredAuthority,
+            SubmitterAuthority :selectedSubmitterAuthority,
+            ZMSubLoBProduct: selectedZMSubLoBProduct
           });
           setisfrmdisabled(true);
         } else {
@@ -3708,6 +4173,11 @@ function AddEditForm(props) {
         ...formfield,
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
+        ZMSubLoBProduct: selectedZMSubLoBProduct
       });
       setisfrmdisabled(true);
     } else if (value === 'no') {
@@ -3717,6 +4187,11 @@ function AddEditForm(props) {
         LinkedRFEEntryNumber: entryNumberRfE,
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
+        ZMSubLoBProduct: selectedZMSubLoBProduct
       });
       setisfrmdisabled(true);
     }
@@ -3730,6 +4205,11 @@ function AddEditForm(props) {
         ...formfield,
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
+        ZMSubLoBProduct: selectedZMSubLoBProduct
       });
       setisfrmdisabled(true);
     }
@@ -3746,7 +4226,16 @@ function AddEditForm(props) {
     }
     if (formfield.AccountName) {
       //setissubmitted(true);
-      postItem({ ...formfield, IsSubmit: false, IncountryFlag: IncountryFlag });
+      postItem({ 
+        ...formfield, 
+        IsSubmit: false, 
+        IncountryFlag: IncountryFlag,
+        ActurisCode :selectedActurisCode,
+        CustomerWellbeing :selectedCustomerWellbeing,
+        RequiredAuthority :selectedRequiredAuthority,
+        SubmitterAuthority :selectedSubmitterAuthority,
+        ZMSubLoBProduct: selectedZMSubLoBProduct
+      });
       setisfrmdisabled(true);
     } else {
       alert(alertMessage.rfelog.draftInvalid);
@@ -3960,7 +4449,8 @@ function AddEditForm(props) {
               isAddButton={
                 (IncountryFlag === IncountryFlagConst.UK ||
                 IncountryFlag === IncountryFlagConst.GERMANY ||
-                IncountryFlag === IncountryFlagConst.AUSTRALIA) &&
+                IncountryFlag === IncountryFlagConst.AUSTRALIA || 
+                IncountryFlag === IncountryFlagConst.UKZM) &&
                 showButtons && obj.isAddButton === true
                   ? true
                   : false
@@ -3991,7 +4481,7 @@ function AddEditForm(props) {
             : ""
           : tempelement;
       case "FrmMultiselect":
-        return (
+        tempelement = (
           <div className={`col-md-${obj.colspan}`}>
             <FrmMultiselect
               title={
@@ -4027,6 +4517,11 @@ function AddEditForm(props) {
             />
           </div>
         );
+        return obj.conditionaldisplay
+          ? eval(obj.conditionaldisplay)
+            ? tempelement
+            : ""
+          : tempelement;
       case "FrmRadio":
         return (
           <>
@@ -4038,7 +4533,7 @@ function AddEditForm(props) {
                 value={
                   formfield[obj.name]
                     ? formfield[obj.name]
-                    : OrganizationalAlignment.global
+                    : obj.name === "RequestForEmpowermentReasonorActurisCode" ? 'true' : OrganizationalAlignment.global
                 }
                 handleChange={handleChange}
                 isRequired={mandatoryFields.includes(obj.name)}
@@ -4053,12 +4548,14 @@ function AddEditForm(props) {
                 issubmitted={issubmitted}
                 selectopts={eval(obj.options)}
                 isclickDisable={true}
-                isdisabled={
+                isdisabled={obj.name  === "RequestForEmpowermentReasonorActurisCode" ? false : (
                   (isfrmdisabled && isshowlocallink) ||
                   IncountryFlag === IncountryFlagConst.LATAM ||
                   IncountryFlag === IncountryFlagConst.UK ||
                   IncountryFlag === IncountryFlagConst.INDONESIA ||
                   IncountryFlag === IncountryFlagConst.SINGAPORE ||
+                  IncountryFlag === IncountryFlagConst.UKZM ||
+                  IncountryFlag === IncountryFlagConst.INDIA ||
                   IncountryFlag === IncountryFlagConst.CHINA ||
                   IncountryFlag === IncountryFlagConst.MALAYSIA ||
                   IncountryFlag === IncountryFlagConst.FRANCE ||
@@ -4070,7 +4567,7 @@ function AddEditForm(props) {
                   IncountryFlag === IncountryFlagConst.BENELUX ||
                   IncountryFlag === IncountryFlagConst.NORDIC ||
                   isorgalignmentdisabled ||
-                  obj.name === "OrganizationalAlignment"
+                  obj.name === "OrganizationalAlignment")
                 }
               />
             </div>
@@ -5218,6 +5715,12 @@ function AddEditForm(props) {
           inCountryOptsLATAM={inCountryOptsLATAM}
           frmCurrencyOpts={frmCurrencyOpts}
           linkedRfEId={linkedRfEId}
+          radioOpt={radioOpt}
+          frmZMSubLoBProduct={frmZMSubLoBProduct}
+          frmActurisCode={frmActurisCode}
+          frmCustomerWellbeing={frmCustomerWellbeing}
+          frmRequiredAuthority={frmRequiredAuthority}
+          frmSubmitterAuthority={frmSubmitterAuthority}
         />
       ) : (
         ""

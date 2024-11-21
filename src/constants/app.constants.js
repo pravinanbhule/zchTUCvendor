@@ -26,6 +26,7 @@ export const INCOUNTRTY_IDS = {
   MIDDLEEAST: "COU000022",
   GERMANY: "COU000013",
   INDIA: "COU630B72A0CC50400886209AE0344752E7",
+  UKZM: "8D54B159-BF25-45A9-872A-FCCAB3F00898",
 };
 export const BREACH_LOG_STATUS = {
   Pending: "ECA8E493-1750-4546-9BC1-A1E8DA8A1B58",
@@ -93,6 +94,7 @@ export const INCOUNTRY_FLAG = {
   MIDDLEEAST: "ME001",
   SPAIN: "ES001",
   GERMANY: "DE001",
+  UKZM: "UKZM001",
 };
 export const INCOUNTRY_FLAG_OPTS = {
   Indonesia: {
@@ -174,6 +176,11 @@ export const INCOUNTRY_FLAG_OPTS = {
     label: "Germany",
     value: INCOUNTRY_FLAG.GERMANY,
     id: INCOUNTRTY_IDS.GERMANY,
+  },
+  UKZM: {
+    label: "UKZM",
+    value: INCOUNTRY_FLAG.UKZM,
+    id: INCOUNTRTY_IDS.UKZM,
   },
 };
 export const SHAREPOINT_LINKS = {

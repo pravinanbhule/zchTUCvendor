@@ -146,6 +146,7 @@ function Rfelog({ ...props }) {
     INCOUNTRY_FLAG_OPTS.MIDDLEEAST,
     INCOUNTRY_FLAG_OPTS.GERMANY,
     INCOUNTRY_FLAG_OPTS.SPAIN,
+    INCOUNTRY_FLAG_OPTS.UKZM,
   ];
   const [logsDraftData, setlogsDraftData] = useState([]);
   useSetNavMenu({ currentMenu: "Rfelog", isSubmenu: false }, props.menuClick);
@@ -187,6 +188,11 @@ function Rfelog({ ...props }) {
     newRenewalOpts: [],
     customerSegmentOpts: [],
     conditionApplicableToOpts: [],
+    acturisCode: [],
+    customerWellbeing: [],
+    requiredAuthority: [],
+    submitterAuthority: [],
+    zmSubLoBProduct: []
   });
   const [isfilterApplied, setisfilterApplied] = useState();
   const [dashboardStateApplied, setdashboardStateApplied] = useState(false);
@@ -787,7 +793,8 @@ function Rfelog({ ...props }) {
             key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-            key === "ConditionApplicableTo") {
+            key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+            key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
           }
@@ -1211,6 +1218,61 @@ function Rfelog({ ...props }) {
           conditionArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
+      
+      let acturisCodeArray = [];
+      if (selectedViewData[0]?.acturisCode?.length && selectedViewData[0]?.acturisCode?.length !== 0 && typeof selectedViewData[0]?.acturisCode === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.acturisCode?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "ActurisCode",
+          });
+          acturisCodeArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let customerWellbeingArray = [];
+      if (selectedViewData[0]?.customerWellbeing?.length && selectedViewData[0]?.customerWellbeing?.length !== 0 && typeof selectedViewData[0]?.customerWellbeing === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.customerWellbeing?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "CustomerWellbeing",
+          });
+          customerWellbeingArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let requiredAuthorityArray = [];
+      if (selectedViewData[0]?.requiredAuthority?.length && selectedViewData[0]?.requiredAuthority?.length !== 0 && typeof selectedViewData[0]?.requiredAuthority === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.requiredAuthority?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "RequiredAuthority",
+          });
+          requiredAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+      
+      let submitterAuthorityArray = [];
+      if (selectedViewData[0]?.submitterAuthority?.length && selectedViewData[0]?.submitterAuthority?.length !== 0 && typeof selectedViewData[0]?.submitterAuthority === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.submitterAuthority?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "SubmitterAuthority",
+          });
+          submitterAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
+     
+      let zMSubLoBProductArray = [];
+      if (selectedViewData[0]?.zmSubLoBProduct?.length && selectedViewData[0]?.zmSubLoBProduct?.length !== 0 && typeof selectedViewData[0]?.zmSubLoBProduct === 'string') {
+        let selectedstatusArray = selectedViewData[0]?.zmSubLoBProduct?.split(',')
+        if (selectedstatusArray) {
+          let statusData = await getLookupByType({
+            LookupType: "ZMSubLoBProduct",
+          });
+          zMSubLoBProductArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
+        }
+      }
 
       let newRenewalArray = [];
       if (selectedViewData[0]?.newRenewal?.length && selectedViewData[0]?.newRenewal?.length !== 0 && typeof selectedViewData[0]?.newRenewal === 'string') {
@@ -1309,7 +1371,15 @@ function Rfelog({ ...props }) {
         PolicyPeriod: selectedViewData[0]?.policyPeriod,
         ConditionApplicableTo: conditionArray,
         GWP: selectedViewData[0]?.gwp,
-        SUBLOBID: subloBArray
+        SUBLOBID: subloBArray,
+        ActurisCode: acturisCodeArray,
+        CustomerWellbeing: customerWellbeingArray,
+        RequiredAuthority: requiredAuthorityArray,
+        SubmitterAuthority: submitterAuthorityArray,
+        InceptionRenewalFromDate: selectedViewData[0].inceptionRenewalFromDate,
+        InceptionRenewalToDate: selectedViewData[0].inceptionRenewalToDate,
+        PolicyNumberQuoteId: selectedViewData[0].policyNumberQuoteId,
+        ZMSubLoBProduct: zMSubLoBProductArray
       };
       setselfilter(FilterState)
       if (value !== selectedUserView) {
@@ -1372,6 +1442,7 @@ function Rfelog({ ...props }) {
       }),
       getLookupByType({
         LookupType: "RFECHZ",
+        IncountryFLag: 'UKZM001'
       }),
       getLookupByType({
         LookupType: "RFEEmpowermentReasonRequestAll",
@@ -1381,9 +1452,25 @@ function Rfelog({ ...props }) {
       }),
       getLookupByType({
         LookupType: "RFELogNewRenewal",
+        IncountryFLag: 'UKZM001'
       }),
       getLookupByType({
         LookupType: "ConditionApplicableTo",
+      }),
+      getLookupByType({
+        LookupType: "ActurisCode"
+      }),
+      getLookupByType({
+          LookupType: "CustomerWellbeing"
+      }),
+      getLookupByType({
+          LookupType: "RequiredAuthority"
+      }),
+      getLookupByType({
+          LookupType: "SubmitterAuthority"
+      }), 
+      getLookupByType({ 
+        LookupType: "ZMSubLoBProduct" 
       }),
     ]);
 
@@ -1394,7 +1481,12 @@ function Rfelog({ ...props }) {
     let tempDurationOfApproval = lookupvalues[4];
     let tempNewRenewal = lookupvalues[5];
     let tempCondition = lookupvalues[6];
-
+    let temprfeempourmentActurisCode = lookupvalues[7];
+    let temprfeempourmentCustomerWellbeing = lookupvalues[8];
+    let temprfeempourmentRequiredAuthority = lookupvalues[9];
+    let temprfeempourmentSubmitterAuthority = lookupvalues[10];
+    let temprfeempourmentZMSubLoBProduct = lookupvalues[11];
+    
     let tempopts = [];
     let statusWithdrawn = [];
     tempStatus.forEach((item) => {
@@ -1481,8 +1573,11 @@ function Rfelog({ ...props }) {
         if (item.lookUpType.includes("Spain")) {
           setOpts(tempopts, item, 'Spain')
         }
-        if (item.lookUpType.includes("UK")) {
+        if (item.lookUpType.substr(item.lookUpType.length - 2 ) ===  "UK") {
           setOpts(tempopts, item, 'UK')
+        }
+        if (item.lookUpType.includes("UKZM")) {
+          setOpts(tempopts, item, 'UKZM')
         }
         if (item.lookUpType.length === 27) {
           setOpts(tempopts, item, 'Global')
@@ -1522,6 +1617,60 @@ function Rfelog({ ...props }) {
     tempCondition = [...tempopts];
     tempopts = [];
 
+    temprfeempourmentActurisCode.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentActurisCode = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentCustomerWellbeing.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentCustomerWellbeing = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentRequiredAuthority.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentRequiredAuthority = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentSubmitterAuthority.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentSubmitterAuthority = [...tempopts];
+
+    tempopts = [];
+    temprfeempourmentZMSubLoBProduct.forEach((item) => {
+        if (item.isActive) {
+            tempopts.push({
+                label: item.lookUpValue,
+                value: item.lookupID,
+            });
+        }
+    });
+    temprfeempourmentZMSubLoBProduct = [...tempopts];
+
     tempStatus.sort(dynamicSort("label"));
     temporgnizationalalignment.sort(dynamicSort("label"));
     temprfechz.sort(dynamicSort("label"));
@@ -1537,6 +1686,11 @@ function Rfelog({ ...props }) {
       durationofApprovalOpts: [...tempDurationOfApproval],
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
+      acturisCode: [...temprfeempourmentActurisCode],
+      customerWellbeing: [...temprfeempourmentCustomerWellbeing],
+      requiredAuthority: [...temprfeempourmentRequiredAuthority],
+      submitterAuthority: [...temprfeempourmentSubmitterAuthority],
+      zmSubLoBProduct: [...temprfeempourmentZMSubLoBProduct]
     }));
 
     let Flag = await handleUserIncountryFlag()
@@ -1788,9 +1942,10 @@ function Rfelog({ ...props }) {
   useEffect(() => {
     let tempopts = [];
     let temGermany = [];
+    let temUKZM = [];
     segmentState.segmentItems.forEach((item) => {
       if (item.isActive) {
-        if (item.logType && item.logType === "rfelogsGermany") {
+        if (item.logType && item.logType === "7202C3C8-D380-4F59-AA0B-A94FCF4D1A82") {
           temGermany.push({
             ...item,
             label: item.segmentName,
@@ -1798,7 +1953,16 @@ function Rfelog({ ...props }) {
             country: item.countryList,
             cat: 'Germany'
           })
-        } else {
+        } if (item.logType && item.logType === "060191P0-2212-2018-222H-7V2620D5I6M") {
+          temUKZM.push({
+            ...item,
+            label: item.segmentName,
+            value: item.segmentID,
+            country: item.countryList,
+            cat: 'UKZM'
+          })
+        } 
+        else {
           tempopts.push({
             ...item,
             label: item.segmentName,
@@ -1812,7 +1976,7 @@ function Rfelog({ ...props }) {
     tempopts.sort(dynamicSort("label"));
     setcommonfilterOpts((prevstate) => ({
       ...prevstate,
-      customerSegmentOpts: [...tempopts, ...temGermany],
+      customerSegmentOpts: [...tempopts, ...temGermany, ...temUKZM],
     }));
   }, [segmentState.segmentItems]);
 
@@ -2369,7 +2533,8 @@ function Rfelog({ ...props }) {
           key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
           key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
           key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-          key === "ConditionApplicableTo") {
+          key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+          key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
           if (value) {
             const tmpval = value?.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");

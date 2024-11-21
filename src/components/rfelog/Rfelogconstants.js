@@ -17,6 +17,13 @@ export const intialFilterState = {
   CreatedToDate: "",
   DurationofApproval: "",
   ConditionApplicableTo: "",
+  InceptionRenewalFromDate: "",
+  InceptionRenewalToDate: "",
+  ActurisCode: "",
+  CustomerWellbeing: "",
+  RequiredAuthority: "",
+  SubmitterAuthority: "",
+  PolicyNumberQuoteId: "",
 };
 export const filterfieldsmapping = {
   EntryNumber: {
@@ -190,7 +197,55 @@ export const filterfieldsmapping = {
     options: "sublobFilterOpts",
     eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
-  }
+  },
+  ActurisCode: {
+    componenttype: "FrmMultiselect",
+    options: "commonfilterOpts.acturisCode",
+    eventhandler: "handleMultiSelectChange",
+    filtertype: "Incountry",
+  },
+  CustomerWellbeing: {
+    componenttype: "FrmMultiselect",
+    options: "commonfilterOpts.customerWellbeing",
+    eventhandler: "handleMultiSelectChange",
+    filtertype: "Incountry",
+  },
+  RequiredAuthority: {
+    componenttype: "FrmMultiselect",
+    options: "commonfilterOpts.requiredAuthority",
+    eventhandler: "handleMultiSelectChange",
+    filtertype: "Incountry",
+  },
+  SubmitterAuthority: {
+    componenttype: "FrmMultiselect",
+    options: "commonfilterOpts.submitterAuthority",
+    eventhandler: "handleMultiSelectChange",
+    filtertype: "Incountry",
+  },
+  PolicyNumberQuoteId: {
+    componenttype: "FrmInput",
+    options: "",
+    eventhandler: "onSearchFilterInput",
+    filtertype: "Incountry",
+  },
+  ZMSubLoBProduct: {
+    componenttype: "FrmMultiselect",
+    options: "commonfilterOpts.zmSubLoBProduct",
+    eventhandler: "handleMultiSelectChange",
+    filtertype: "Incountry",
+  },
+  InceptionRenewalDate: {
+    componenttype: "FrmDatePicker",
+    options: "",
+    eventhandler: "handleDateSelectChange",
+    filtertype: "Incountry",
+    colspan: 6,
+    datefieldfrom: { fieldname: "InceptionRenewalFromDate", minDate: "" },
+    datefieldto: {
+      fieldname: "InceptionRenewalToDate",
+      minDate: "selfilter.InceptionRenewalFromDate",
+    },
+  },
 };
 export const versionHistoryexportFieldTitles = {
   "Entry Number": "Entry Number",
@@ -272,6 +327,8 @@ export const formfieldsmapping = {
     eventhandler: "handleSelectChange",
     titlelinespace: true,
     colspan: 3,
+    startbgcls: "frm-field-bggray",
+    conditionaldisplay: "IncountryFlag !== IncountryFlagConst.UKZM ? true : false",
   },
   SUBLOBID: {
     componenttype: "FrmSelect",
@@ -288,6 +345,7 @@ export const formfieldsmapping = {
     tooltipmsg: "tooltip.RequestForEmpowermentReason",
     colspan: 3,
     fieldTitleHtml: true,
+    conditionaldisplay: "IncountryFlag !== IncountryFlagConst.UKZM ? true : IncountryFlag === IncountryFlagConst.UKZM && formfield.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false",
   },
   ReferralReasonLevel2: {
     componenttype: "FrmSelect",
@@ -296,7 +354,7 @@ export const formfieldsmapping = {
     titlelinespace: true,
     colspan: 0,
     startbgcls: "frm-field-bggray",
-    conditionaldisplay: "reasonfields.ReferralReasonLevel2 ? true : false",
+    conditionaldisplay: "IncountryFlag !== IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel2 ? true : IncountryFlag === IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel2 && formfield.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false",
   },
   ReferralReasonLevel3: {
     componenttype: "FrmSelect",
@@ -305,7 +363,7 @@ export const formfieldsmapping = {
     titlelinespace: true,
     colspan: 0,
     startbgcls: "frm-field-bggray",
-    conditionaldisplay: "reasonfields.ReferralReasonLevel3 ? true : false",
+    conditionaldisplay: "IncountryFlag !== IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel3 ? true : IncountryFlag === IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel3 && formfield.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false",
   },
   ReferralReasonLevel4: {
     componenttype: "FrmSelect",
@@ -314,7 +372,7 @@ export const formfieldsmapping = {
     titlelinespace: true,
     colspan: 0,
     startbgcls: "frm-field-bggray",
-    conditionaldisplay: "reasonfields.ReferralReasonLevel4 ? true : false",
+    conditionaldisplay: "IncountryFlag !== IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel4 ? true : IncountryFlag === IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel4 && formfield.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false",
   },
   ReferralReasonLevel5: {
     componenttype: "FrmSelect",
@@ -323,7 +381,7 @@ export const formfieldsmapping = {
     titlelinespace: true,
     colspan: 0,
     startbgcls: "frm-field-bggray",
-    conditionaldisplay: "reasonfields.ReferralReasonLevel5 ? true : false",
+    conditionaldisplay: "IncountryFlag !== IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel5 ? true : IncountryFlag === IncountryFlagConst.UKZM && reasonfields.ReferralReasonLevel5 && formfield.RequestForEmpowermentReasonorActurisCode === 'true' ? true : false",
   },
   UnderwriterGrantingEmpowerment: {
     componenttype: "FrmInput",
@@ -506,5 +564,70 @@ export const formfieldsmapping = {
     endbgcls: "frm-container-bggray",
     disablecondition:
       "isstatusdisabled || formfield.RequestForEmpowermentStatus === rfelog_status.Pending",
+  },
+  InceptionRenewalDate: {
+    componenttype: "FrmDatePicker",
+    eventhandler: "handleDateSelectChange",
+    // minDate:
+    //   "formfield.InceptionRenewalDate ? moment(formfield.InceptionRenewalDate).toDate() : ''",
+    // maxDate: "moment().toDate()",
+    colspan: 3,
+    titlelinespace: true,
+    endbgcls: "frm-container-bggray",
+  },
+  PolicyNumberQuoteId: {
+    componenttype: "FrmInput",
+    eventhandler: "handleChange",
+    colspan: 3,
+    titlelinespace: true,
+  },
+  RequestForEmpowermentReasonorActurisCode: {
+    componenttype: "FrmRadio",
+    options: "radioOpt",
+    eventhandler: "handleChange",
+    // tooltipmsg: "tooltip.RequestForEmpowermentReasonorActurisCode",
+    colspan: 3,
+    titlelinespace: true,
+  },
+  ZMSubLoBProduct: {
+    componenttype: "FrmMultiselect",
+    options: "frmZMSubLoBProduct",
+    eventhandler: "handleSelectChange",
+    colspan: 3,
+    titlelinespace: true,
+    fieldname: "ZMSubLoBProduct",
+  },
+  ActurisCode: {
+    componenttype: "FrmMultiselect",
+    options: "frmActurisCode",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 3,
+    fieldname: "ActurisCode",
+    conditionaldisplay: "IncountryFlag === IncountryFlagConst.UKZM && formfield.RequestForEmpowermentReasonorActurisCode === 'false' ? true : false"
+  },
+  CustomerWellbeing: {
+    componenttype: "FrmMultiselect",
+    options: "frmCustomerWellbeing",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 3,
+    fieldname: "CustomerWellbeing",
+  },
+  RequiredAuthority: {
+    componenttype: "FrmMultiselect",
+    options: "frmRequiredAuthority",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 3,
+    fieldname: "RequiredAuthority",
+  },
+  SubmitterAuthority: {
+    componenttype: "FrmMultiselect",
+    options: "frmSubmitterAuthority",
+    eventhandler: "handleSelectChange",
+    titlelinespace: true,
+    colspan: 3,
+    fieldname: "SubmitterAuthority",
   },
 };
