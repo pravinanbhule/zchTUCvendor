@@ -1192,7 +1192,7 @@ function AddEditForm(props) {
                 LOBId: '441599652036479',
                 DurationofApproval: '547V7D10-3334-064H-N831-H225743690RD',
                 mappedLOBs: 'Group Protection,Health,Accident',
-                RequestForEmpowermentReasonorActurisCode: formIntialState.RequestForEmpowermentReasonorActurisCode,
+                RequestForEmpowermentReasonorActurisCode: 'true',
                 Underwriter: userProfile.emailAddress,
                 UnderwriterName: userProfile.firstName + " " + userProfile.lastName,
                 UnderwriterAD: {
