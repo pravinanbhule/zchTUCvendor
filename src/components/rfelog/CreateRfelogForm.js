@@ -119,6 +119,7 @@ function CreateRfelogForm(props) {
     const location = useLocation()
     const [redirectURL, setRedirectURL] = useState(null)
     const [technicalId, setTechnicalId] = useState(null)
+    const [allQuery, setAllQuery] = useState(null)
 
     useEffect(() => {
         const handleTabClose = event => {
@@ -157,14 +158,11 @@ function CreateRfelogForm(props) {
             let lob = getUrlParameter("lob")
             let countryName = getUrlParameter("countryName")
             setRedirectURL(getUrlParameter("redirectURL"))
-            setTechnicalId(getUrlParameter("technicalid"))
             let tempcountryItems = [];
             let countryObj = {}
             let lobId = ""
             tempcountryItems = await getAllCountry({ profileCountryId: userProfile.profileCountry })
             tempcountryItems.forEach((item) => {
-                console.log(countryName, item);
-                
                 if (countryName && countryName.toLocaleLowerCase() === item.countryName.toLocaleLowerCase()) {
                     countryObj = {
                         label: item.countryName.trim(),
@@ -198,28 +196,52 @@ function CreateRfelogForm(props) {
                 });
             }
             setloading(false)
+            let removePeramsName = ['lob', 'accountName', 'countryName', 'redirectURL']
+            removeURLParameter(window.location.search, removePeramsName)
         } else if (getUrlParameter("id")) {
             itemid = getUrlParameter("id");
             status = getUrlParameter("status");
             localStorage.setItem("id", itemid);
             localStorage.setItem("status", status)
             setRedirectURL(null);
-            setTechnicalId(null);
+            setAllQuery(null);
             setqueryparam({ id: itemid, status: status });
             removeQueryParams()
         } else if (localStorage.getItem("id")) {
             itemid = localStorage.getItem("id");
             status = localStorage.getItem("status")
             setRedirectURL(null);
-            setTechnicalId(null);
+            setAllQuery(null);
             setqueryparam({ id: itemid, status: status });
         } else {
             setRedirectURL(null);
-            setTechnicalId(null);
+            setAllQuery(null);
             setloading(false)
         }
     }, []);
 
+    const removeURLParameter = (url, removePeramsName) => {
+        var urlparts = url.split('?');
+        if (urlparts.length >= 2) {
+
+            var pars = urlparts[1].split(/[&;]/g);
+            for (var i = pars.length; i-- > 0;) {
+                removePeramsName.map((parameter, k) => {
+                    var prefix = encodeURIComponent(parameter) + '=';
+                    if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                        pars.splice(i, 1);
+                    }
+                })
+            }
+            let returnvalue = urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+            setAllQuery(returnvalue)
+            history.replace({
+                pathname: location.pathname,
+                search: returnvalue,
+            })
+        }
+        return url;
+    }
 
     const removeQueryParams = () => {
         history.replace({
@@ -280,9 +302,9 @@ function CreateRfelogForm(props) {
 
         if (response) {
             if (redirectURL) {
-                window.location.href = redirectURL + `?technicalid=${technicalId}` + `&rfeid=${response}`
+                window.location.href = redirectURL + allQuery
                 setRedirectURL(null);
-                setTechnicalId(null);
+                setAllQuery(null);
             } else {
                 if (item.IsSubmit) {
                     alert(AppLocale[language ? language : 'EN001'].messages["rfelog.alert.addmsg"]);
@@ -341,7 +363,7 @@ function CreateRfelogForm(props) {
         setisEditMode(true);
         setisReadMode(false);
     };
-    
+
     const setInAddMode = (data) => {
         setformIntialState(data)
         setisEditMode(false);
@@ -412,26 +434,26 @@ function CreateRfelogForm(props) {
     const [isFlow3, setIsFlow3] = useState(false);
     const [linkSpecificDetails, setLinkSpecificDetails] = useState("")
 
-    const handleLinkLog = async(itemid) => {
+    const handleLinkLog = async (itemid) => {
         let response = await getById({
-          rfeLogId: itemid,
+            rfeLogId: itemid,
         });
         setIsFlow3(true)
         if (response.FieldValues) {
-          response = response.FieldValues;
-          let countryList = response.CountryList;
-          countryList = countryList.map((country) => ({
-            label: country.countryName,
-            value: country.countryID,
-            regionId: country.regionID,
-          }));
-          response["CountryList"] = [...countryList];
-          setLinkSpecificDetails(response.RFELogDetails)
-          setformIntialState({
-            ...response,
-            isdirty: false,
-          });
-          setloading(false)
+            response = response.FieldValues;
+            let countryList = response.CountryList;
+            countryList = countryList.map((country) => ({
+                label: country.countryName,
+                value: country.countryID,
+                regionId: country.regionID,
+            }));
+            response["CountryList"] = [...countryList];
+            setLinkSpecificDetails(response.RFELogDetails)
+            setformIntialState({
+                ...response,
+                isdirty: false,
+            });
+            setloading(false)
         }
     }
 
