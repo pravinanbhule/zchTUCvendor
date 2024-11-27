@@ -306,7 +306,7 @@ function CreateRfelogForm(props) {
 
         if (response) {
             if (redirectURL) {
-                window.location.href = redirectURL + allQuery
+                window.location.href = redirectURL + allQuery + `&rfeid=${response}`
                 setRedirectURL(null);
                 setAllQuery(null);
             } else {
