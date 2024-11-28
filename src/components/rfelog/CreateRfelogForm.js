@@ -229,7 +229,7 @@ function CreateRfelogForm(props) {
             for (var i = pars.length; i-- > 0;) {
                 removePeramsName.map((parameter, k) => {
                     var prefix = encodeURIComponent(parameter) + '=';
-                    if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                    if (pars[i]?.lastIndexOf(prefix, 0) !== -1) {
                         pars.splice(i, 1);
                     }
                 })
@@ -306,7 +306,11 @@ function CreateRfelogForm(props) {
 
         if (response) {
             if (redirectURL) {
-                window.location.href = redirectURL + allQuery + `&rfeid=${response}`
+                if(allQuery) {
+                    window.location.href = redirectURL + allQuery + `&rfeid=${response}`
+                } else {
+                    window.location.href = redirectURL + `?rfeid=${response}`
+                }
                 setRedirectURL(null);
                 setAllQuery(null);
             } else {
