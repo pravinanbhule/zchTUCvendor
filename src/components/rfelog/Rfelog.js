@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import {
   rfelogActions,
@@ -57,6 +57,8 @@ import CopyItem from "../common-components/copyitem/CopyItem";
 import { useHistory } from "react-router-dom";
 import { handlePermission } from "../../permissions/Permission";
 import FrmToggleSwitch from "../common-components/frmtoggelswitch/FrmToggleSwitch";
+import { handleGetChatToken } from "./chatFunction";
+import axios from "axios";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -2389,6 +2391,35 @@ function Rfelog({ ...props }) {
     window.open(link);
   };
 
+  // chat 
+  const [isRunning, setIsRunning] = useState(false);
+  const newWindowRef = useRef();
+  const handleChat = async () => {
+      localStorage.removeItem('code')
+      // axios.get(`${window.App_Config.API_Base_URL}login?UserEmail=dl_azure@delphianlogic.com`)
+      axios.get(`${window.App_Config.API_Base_URL}login?UserEmail=${userProfile.emailAddress}`)
+          .then(async (res) => {
+              setIsRunning(true)
+              newWindowRef.current = window.open(res.data, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
+          })
+  }
+
+  useEffect(() => {
+      let intervalId = setInterval(() => {
+          if (isRunning) {
+              // console.log("function is Running", newWindowRef.current);
+              if (localStorage.getItem('code')) {
+                  setIsRunning(false);
+                  newWindowRef.current.close()
+                  handleGetChatToken();
+              }
+          }
+      }, 1000);
+      return () => clearInterval(intervalId)
+  }, [isRunning])
+
+
+
   //more action functionality
   const [showShareLog, setshowShareLog] = useState(false);
   const [showDeleteLog, setshowDeleteLog] = useState(false);
@@ -3134,6 +3165,8 @@ function Rfelog({ ...props }) {
                   hidesearch={true}
                   onPaginationPagechange={onPaginationPageChange}
                   onPageSizeChange={onPageSizeChange}
+                  isChatBtns={true}
+                  handleChat={handleChat}
                 />
               )
             )}

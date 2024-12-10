@@ -32,6 +32,8 @@ function Pagination(props) {
     importLogsTitle,
     exportReportTitle,
     exportReportLogsHandler,
+    isChatBtns,
+    handleChat
   } = props;
 
   const [pageSizeOpts, setpageSizeOpts] = useState([
@@ -95,6 +97,17 @@ function Pagination(props) {
     <div className="site-pagination-table container-fluid">
       <div className="pagination-top-container row">
         <div className="btn-container ">
+
+        {isChatBtns && (
+             <div
+              className={`btn-blue import-icon`}
+              onClick={() => handleChat()}
+            >
+              Chat
+            </div>
+          )}
+
+
           {isImportLogs && (
             <div
               className={`btn-blue import-icon ${
