@@ -41,6 +41,8 @@ import Co from "./components/manage/co/Co";
 import UserView from "./components/manage/userview/UserView";
 import Notifications from "./components/manage/notifications/Notifications";
 import Emailrequest from "./components/emailrequest/EmailRequest";
+import { getUrlParameter } from "./helpers";
+import ChatPage from "./components/rfelog/ChatPage";
 
 function ScrollToTop() {
   window.scrollTo(0, 0);
@@ -66,6 +68,11 @@ function App({ state, menuClick }) {
     state.userprofileState.isUnAuthenticated = true
   }
 
+  if (window.location.pathname === '/chat/login/callback' || window.location.pathname === '/.auth/login/aad/callback') {
+    let code = getUrlParameter("code")
+    localStorage.setItem('code', code)
+  }
+
   return (
     <>
       <div className="container-fluid">
@@ -82,7 +89,7 @@ function App({ state, menuClick }) {
                       render={(routeParams) => {
                         if (window.location.search) {
                           return;
-                        } else if (window.location.pathname === "/rfelogs/create-rfelog" && !localStorage.getItem('in-app')) {
+                        } else if ((window.location.pathname === "/rfelogs/create-rfelog" && !localStorage.getItem('in-app')) || window.location.pathname === '/chat/login/callback' || window.location.pathname === '/.auth/login/aad/callback') {
                           return;
                         } else {
                           return <Navbar
@@ -226,6 +233,18 @@ function App({ state, menuClick }) {
                         <Route
                           path="/unauthorizedaccess"
                           component={Unauthorized}
+                          state={state}
+                          menuClick={menuClick}
+                        />
+                        <Route
+                          path="/chat/login/callback"
+                          component={ChatPage}
+                          state={state}
+                          menuClick={menuClick}
+                        />
+                        <Route
+                          path="/.auth/login/aad/callback"
+                          component={ChatPage}
                           state={state}
                           menuClick={menuClick}
                         />
