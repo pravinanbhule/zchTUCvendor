@@ -104,6 +104,13 @@ function Rfelog({ ...props }) {
     getAllBranch,
     getAllSublob,
     getAllSegment,
+    groupDetailsBaseOnEntryNumber,
+    groupChatAccessTokenDetails,
+    groupChatAuthentication,
+    generateTokenForGroupChat,
+    createGroupChat,
+    getGroupchatDetailsWithMembers,
+    addMemberToGroupChat
   } = props;
   const [logstate, setlogstate] = useState({
     loading: true,
@@ -604,6 +611,26 @@ function Rfelog({ ...props }) {
                 className="versionhistory-icon"
                 onClick={() => handleDataVersion(row.RFELogId, row.IsSubmit)}
                 mode={"view"}
+              ></div>
+            );
+          },
+          sort: false,
+          headerStyle: (colum, colIndex) => {
+            return {
+              width: "100px",
+              textAlign: "center",
+            };
+          },
+        },
+        {
+          dataField: "Chat",
+          text: "Chat",
+          formatter: (cell, row, rowIndex, formatExtraData) => {
+            return (
+              <div
+                className="chat-icon"
+                onClick={() => handleChat(row.EntryNumber)}
+                mode={"chat"}
               ></div>
             );
           },
@@ -2393,30 +2420,72 @@ function Rfelog({ ...props }) {
 
   // chat 
   const [isRunning, setIsRunning] = useState(false);
+  const [tokenGenerate, setTokenGenerate] = useState(false);
+  const [selectedChatTopic, setSelectedChatTopic] = useState('');
+  const [chatMembers, setChatMembers] = useState([])
   const newWindowRef = useRef();
-  const handleChat = async () => {
+  // Check Existing Group Chat
+  const handleChat = async (id) => {
       localStorage.removeItem('code')
-      // axios.get(`${window.App_Config.API_Base_URL}login?UserEmail=dl_azure@delphianlogic.com`)
-      axios.get(`${window.App_Config.API_Base_URL}login?UserEmail=${userProfile.emailAddress}`)
-          .then(async (res) => {
-              setIsRunning(true)
-              newWindowRef.current = window.open(res.data, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
-          })
+      setSelectedChatTopic(id)
+      let chatMemebers = await getGroupchatDetailsWithMembers({chatId: id})
+      setChatMembers(chatMemebers)
+      // let requestParam = {
+      //   EntryNumber: id
+      // };
+      // const response = await groupDetailsBaseOnEntryNumber(requestParam);
+      // // If the group chat does not exist: Returns null.
+      // if (response === null) {
+      //   const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
+        
+      //   // If a token does not exist: Return null.
+      //   if (accessTokenDetails === null) {
+      //     const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
+      //     setIsRunning(true)
+      //     newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
+      //   }
+      // } else {
+      //   // If the group chat exists: Return the group chat details.
+      //   let chatMemebers = await getGroupchatDetailsWithMembers({chatId: id})
+      //   setChatMembers(chatMemebers)
+      // }
   }
-
+    
   useEffect(() => {
-      let intervalId = setInterval(() => {
+      let intervalId = setInterval(async() => {
           if (isRunning) {
               // console.log("function is Running", newWindowRef.current);
               if (localStorage.getItem('code')) {
                   setIsRunning(false);
                   newWindowRef.current.close()
-                  handleGetChatToken();
+                  let code = localStorage.getItem('code')
+                  const resonse = await generateTokenForGroupChat({authorizationCode: code});
+                  if (resonse) {
+                    setTokenGenerate(true)
+                  }
               }
           }
       }, 1000);
       return () => clearInterval(intervalId)
   }, [isRunning])
+
+  useEffect(() => {
+    if (tokenGenerate === true) {
+        handleCreateGroupChat()
+    }
+  },[tokenGenerate])
+
+  const handleCreateGroupChat = async() => {
+    const response = await createGroupChat({
+      emails: userProfile.emailAddress,
+      chatTopic: selectedChatTopic
+    })
+  } 
+
+  const handleAddMemberToGroup = async() => {
+    let response = await addMemberToGroupChat()
+  }
+
 
 
 
@@ -3259,6 +3328,13 @@ const mapActions = {
   getAllBranch: branchActions.getAllBranch,
   getAllSublob: sublobActions.getAllSublob,
   getAllSegment: segmentActions.getAllSegment,
+  groupDetailsBaseOnEntryNumber: rfelogActions.groupDetailsBaseOnEntryNumber,
+  groupChatAccessTokenDetails: rfelogActions.groupChatAccessTokenDetails,
+  groupChatAuthentication: rfelogActions.groupChatAuthentication,
+  generateTokenForGroupChat: rfelogActions.generateTokenForGroupChat,
+  createGroupChat: rfelogActions.createGroupChat,
+  getGroupchatDetailsWithMembers: rfelogActions.getGroupchatDetailsWithMembers,
+  addMemberToGroupChat: rfelogActions.addMemberToGroupChat
 };
 
 export default connect(mapStateToProp, mapActions)(Rfelog);
