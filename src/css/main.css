@@ -785,6 +785,15 @@ button:not(:last-child) {
   cursor: pointer;
   background: url("../assets/Version history hover.png") center no-repeat;
 }
+.chat-icon {
+  cursor: pointer;
+  background: url("../assets/Chat.png") center no-repeat;
+  width: 80px;
+  height: 32px;
+}
+.chat-icon:hover {
+  opacity: 0.5;
+}
 .plus-icon {
   background-image: url("../assets/plus.png");
   background-position: 10px center;

@@ -16,16 +16,15 @@ export const handleCloseWindows = () => {
     handleGetChatToken()
 }
 
-export const handleGetChatToken = () => {
+export const handleGetChatToken = (topic) => {
     let code = localStorage.getItem('code')
     axios.post(`${window.App_Config.API_Base_URL}get-token?authorizationCode=${code}`)
     .then(res => {
-        handleCreateRoom();
+        // handleCreateRoom(topic);
     })
 } 
 
-export const handleCreateRoom = () => {
-    let topic = 'RFE_17374903'
+export const handleCreateRoom = (topic) => {
     let emails = "prashant.sawant@zurich.com,shashikant.gundewar@uk.zurich.com,Jayesh.bhavsar@zurich.com,jessica.loveday@delphianlogic.com"
     axios.get(`${window.App_Config.API_Base_URL}create-chat-group?emails=${emails}&chatTopic=${topic}`)
     .then(res => {
