@@ -111,7 +111,8 @@ function Rfelog({ ...props }) {
     generateTokenForGroupChat,
     createGroupChat,
     getGroupchatDetailsWithMembers,
-    addMemberToGroupChat
+    addMemberToGroupChat,
+    getinvolveuserlist
   } = props;
   const [logstate, setlogstate] = useState({
     loading: true,
@@ -2435,7 +2436,7 @@ function Rfelog({ ...props }) {
         "firstName": "Patti1",
         "lastName": "Fernandez1",
         "userName": "Patti1 Fernandez1",
-        "emailAddress": "1PattiF@2k0hmr.onmicrosoft.com",
+        "emailAddress": "PattiF@2k0hmr.onmicrosoft.com",
         "profileImagePath": null,
         "isActive": null,
         "accountEnabled": null,
@@ -2461,7 +2462,7 @@ function Rfelog({ ...props }) {
         "firstName": "Grady",
         "lastName": "Archie",
         "userName": "Grady Archie",
-        "emailAddress": "2GradyA@2k0hmr.onmicrosoft.com",
+        "emailAddress": "GradyA@2k0hmr.onmicrosoft.com",
         "profileImagePath": null,
         "isActive": true,
         "accountEnabled": null,
@@ -2487,7 +2488,7 @@ function Rfelog({ ...props }) {
         "firstName": "Megan1",
         "lastName": "Bowen1",
         "userName": "Megan1 Bowen1",
-        "emailAddress": "3MeganB@2k0hmr.onmicrosoft.com",
+        "emailAddress": "MeganB@2k0hmr.onmicrosoft.com",
         "profileImagePath": null,
         "isActive": true,
         "accountEnabled": null,
@@ -2513,7 +2514,7 @@ function Rfelog({ ...props }) {
         "firstName": "Jan Test",
         "lastName": "Loh",
         "userName": "Jan Test Loh",
-        "emailAddress": "4janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
+        "emailAddress": "janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
         "profileImagePath": null,
         "isActive": true,
         "accountEnabled": null,
@@ -2539,267 +2540,7 @@ function Rfelog({ ...props }) {
         "firstName": "Patti1",
         "lastName": "Fernandez1",
         "userName": "Patti1 Fernandez1",
-        "emailAddress": "5PattiF@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": null,
-        "accountEnabled": null,
-        "createdDate": "05/10/2022 11:55:53",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "CreatedBy"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Patti1",
-        "lastName": "Fernandez1",
-        "userName": "Patti1 Fernandez1",
-        "emailAddress": "6PattiF@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": null,
-        "accountEnabled": null,
-        "createdDate": "05/10/2022 11:55:53",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "Underwriter"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "412decc9-0eb2-4dae-84a0-59e78d806479",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Grady",
-        "lastName": "Archie",
-        "userName": "Grady Archie",
-        "emailAddress": "7GradyA@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "07/01/2022 08:09:48",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "UnderwriterGrantingEmpowerment"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": null,
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Megan1",
-        "lastName": "Bowen1",
-        "userName": "Megan1 Bowen1",
-        "emailAddress": "8MeganB@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "07/01/2022 08:07:12",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "UnderwriterGrantingEmpowerment"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": null,
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Jan Test",
-        "lastName": "Loh",
-        "userName": "Jan Test Loh",
-        "emailAddress": "9janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "03/02/2023 11:43:42",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "RequestForEmpowermentCC"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Patti1",
-        "lastName": "Fernandez1",
-        "userName": "Patti1 Fernandez1",
-        "emailAddress": "10PattiF@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": null,
-        "accountEnabled": null,
-        "createdDate": "05/10/2022 11:55:53",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "CreatedBy"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Patti1",
-        "lastName": "Fernandez1",
-        "userName": "Patti1 Fernandez1",
-        "emailAddress": "11PattiF@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": null,
-        "accountEnabled": null,
-        "createdDate": "05/10/2022 11:55:53",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "Underwriter"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "412decc9-0eb2-4dae-84a0-59e78d806479",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Grady",
-        "lastName": "Archie",
-        "userName": "Grady Archie",
-        "emailAddress": "12GradyA@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "07/01/2022 08:09:48",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "UnderwriterGrantingEmpowerment"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": null,
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Megan1",
-        "lastName": "Bowen1",
-        "userName": "Megan1 Bowen1",
-        "emailAddress": "13MeganB@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "07/01/2022 08:07:12",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "UnderwriterGrantingEmpowerment"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": null,
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Jan Test",
-        "lastName": "Loh",
-        "userName": "Jan Test Loh",
-        "emailAddress": "15janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "03/02/2023 11:43:42",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "RequestForEmpowermentCC"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Patti1",
-        "lastName": "Fernandez1",
-        "userName": "Patti1 Fernandez1",
-        "emailAddress": "16PattiF@2k0hmr.onmicrosoft.com",
+        "emailAddress": "PattiF@2k0hmr.onmicrosoft.com",
         "profileImagePath": null,
         "isActive": null,
         "accountEnabled": null,
@@ -2818,6 +2559,7 @@ function Rfelog({ ...props }) {
     ]
   );
   const [openChatPopup, setOpenChatPopup] = useState(false);
+  const [groupChatId, setGroupChatId] = useState('')
   const newWindowRef = useRef();
   // Check Existing Group Chat
   const handleChat = async (id) => {
@@ -2828,6 +2570,7 @@ function Rfelog({ ...props }) {
         EntryNumber: id
       };
       const response = await groupDetailsBaseOnEntryNumber(requestParam);
+      setGroupChatId(response.groupChatId)
       // If the group chat does not exist: Returns null.
       if (response === null) {
         const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
@@ -2837,10 +2580,17 @@ function Rfelog({ ...props }) {
           const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
           setIsRunning(true)
           newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
+        } else {
+          // If the token exists: Return the group chat details.
+          // let chatMemebers = await getGroupchatDetailsWithMembers({chatId: groupChatId})
+          let chatMemebers = await getinvolveuserlist({RFELogId: id})
+          setChatMembers(chatMemebers)
+          setOpenChatPopup(true)
         }
       } else {
         // If the group chat exists: Return the group chat details.
-        let chatMemebers = await getGroupchatDetailsWithMembers({chatId: id})
+        // let chatMemebers = await getGroupchatDetailsWithMembers({chatId: groupChatId})
+        let chatMemebers = await getinvolveuserlist({RFELogId: id})
         setChatMembers(chatMemebers)
         setOpenChatPopup(true)
       }
@@ -2875,10 +2625,26 @@ function Rfelog({ ...props }) {
       emails: userProfile.emailAddress,
       chatTopic: selectedChatTopic
     })
+    if (response) {
+      let requestParam = {
+        EntryNumber: selectedChatTopic
+      };
+      const chatData = await groupDetailsBaseOnEntryNumber(requestParam);
+      setGroupChatId(chatData.groupChatId)
+      // let chatMemebers = await getGroupchatDetailsWithMembers({chatId: groupChatId})
+      let chatMemebers = await getinvolveuserlist({RFELogId: id})
+      setChatMembers(chatMemebers)
+      setOpenChatPopup(true)
+    }
   } 
 
-  const handleAddMemberToGroup = async() => {
-    let response = await addMemberToGroupChat()
+  const handleAddMemberToGroup = async(email) => {
+    let response = await addMemberToGroupChat({
+      chatId: groupChatId,
+      chatTopic: selectedChatTopic,
+      emails: email
+    })
+    setOpenChatPopup(false)
   }
 
 
@@ -3630,8 +3396,6 @@ function Rfelog({ ...props }) {
                   hidesearch={true}
                   onPaginationPagechange={onPaginationPageChange}
                   onPageSizeChange={onPageSizeChange}
-                  isChatBtns={true}
-                  handleChat={handleChat}
                 />
               )
             )}
@@ -3694,6 +3458,7 @@ function Rfelog({ ...props }) {
           hideAddPopup={hidelogPopup}
           id={selectedChatTopic}
           chatMembers={chatMembers}
+          handleAddMemberToGroup={handleAddMemberToGroup}
         />
       ) : (
         ""
@@ -3739,7 +3504,8 @@ const mapActions = {
   generateTokenForGroupChat: rfelogActions.generateTokenForGroupChat,
   createGroupChat: rfelogActions.createGroupChat,
   getGroupchatDetailsWithMembers: rfelogActions.getGroupchatDetailsWithMembers,
-  addMemberToGroupChat: rfelogActions.addMemberToGroupChat
+  addMemberToGroupChat: rfelogActions.addMemberToGroupChat,
+  getinvolveuserlist: rfelogActions.getinvolveuserlist
 };
 
 export default connect(mapStateToProp, mapActions)(Rfelog);

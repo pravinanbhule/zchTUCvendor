@@ -272,6 +272,18 @@ const addMemberToGroupChat = (requestParam) => {
     }
   };
 }
+const getinvolveuserlist = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.getinvolveuserlistService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
 export const rfelogActions = {
   getAll,
   getAllPolicyAccounts,
@@ -293,7 +305,8 @@ export const rfelogActions = {
   generateTokenForGroupChat,
   createGroupChat,
   getGroupchatDetailsWithMembers,
-  addMemberToGroupChat
+  addMemberToGroupChat,
+  getinvolveuserlist
 };
 const getAllService = async (requestParam) => {
   const param = { params: requestParam };
@@ -404,6 +417,11 @@ const addMemberToGroupChatService = async (requestParam) => {
   const response = await Axios.get(`rfelog/addmembertogroupchat`, param);
   return response;
 };
+const getinvolveuserlistService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/getinvolveuserlistforrfelog`, param);
+  return response;
+};
 const rfelogService = {
   getAllService,
   getAllAccountService,
@@ -425,5 +443,6 @@ const rfelogService = {
   generateTokenForGroupChatService,
   createGroupChatService,
   getGroupchatDetailsWithMembersService,
-  addMemberToGroupChatService
+  addMemberToGroupChatService,
+  getinvolveuserlistService
 };
