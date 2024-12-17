@@ -59,6 +59,7 @@ import { handlePermission } from "../../permissions/Permission";
 import FrmToggleSwitch from "../common-components/frmtoggelswitch/FrmToggleSwitch";
 import { handleGetChatToken } from "./chatFunction";
 import axios from "axios";
+import ChatUserList from "./ChatUserList";
 let pageIndex = 1;
 let pagesize = 10;
 let totalLogCount = 0;
@@ -2422,33 +2423,427 @@ function Rfelog({ ...props }) {
   const [isRunning, setIsRunning] = useState(false);
   const [tokenGenerate, setTokenGenerate] = useState(false);
   const [selectedChatTopic, setSelectedChatTopic] = useState('');
-  const [chatMembers, setChatMembers] = useState([])
+  const [chatMembers, setChatMembers] = useState(
+    [
+      {
+        "appUserId": null,
+        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Patti1",
+        "lastName": "Fernandez1",
+        "userName": "Patti1 Fernandez1",
+        "emailAddress": "1PattiF@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": null,
+        "accountEnabled": null,
+        "createdDate": "05/10/2022 11:55:53",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "Underwriter"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "412decc9-0eb2-4dae-84a0-59e78d806479",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Grady",
+        "lastName": "Archie",
+        "userName": "Grady Archie",
+        "emailAddress": "2GradyA@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "07/01/2022 08:09:48",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "UnderwriterGrantingEmpowerment"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": null,
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Megan1",
+        "lastName": "Bowen1",
+        "userName": "Megan1 Bowen1",
+        "emailAddress": "3MeganB@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "07/01/2022 08:07:12",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "UnderwriterGrantingEmpowerment"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": null,
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Jan Test",
+        "lastName": "Loh",
+        "userName": "Jan Test Loh",
+        "emailAddress": "4janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "03/02/2023 11:43:42",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "RequestForEmpowermentCC"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Patti1",
+        "lastName": "Fernandez1",
+        "userName": "Patti1 Fernandez1",
+        "emailAddress": "5PattiF@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": null,
+        "accountEnabled": null,
+        "createdDate": "05/10/2022 11:55:53",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "CreatedBy"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Patti1",
+        "lastName": "Fernandez1",
+        "userName": "Patti1 Fernandez1",
+        "emailAddress": "6PattiF@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": null,
+        "accountEnabled": null,
+        "createdDate": "05/10/2022 11:55:53",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "Underwriter"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "412decc9-0eb2-4dae-84a0-59e78d806479",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Grady",
+        "lastName": "Archie",
+        "userName": "Grady Archie",
+        "emailAddress": "7GradyA@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "07/01/2022 08:09:48",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "UnderwriterGrantingEmpowerment"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": null,
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Megan1",
+        "lastName": "Bowen1",
+        "userName": "Megan1 Bowen1",
+        "emailAddress": "8MeganB@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "07/01/2022 08:07:12",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "UnderwriterGrantingEmpowerment"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": null,
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Jan Test",
+        "lastName": "Loh",
+        "userName": "Jan Test Loh",
+        "emailAddress": "9janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "03/02/2023 11:43:42",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "RequestForEmpowermentCC"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Patti1",
+        "lastName": "Fernandez1",
+        "userName": "Patti1 Fernandez1",
+        "emailAddress": "10PattiF@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": null,
+        "accountEnabled": null,
+        "createdDate": "05/10/2022 11:55:53",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "CreatedBy"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Patti1",
+        "lastName": "Fernandez1",
+        "userName": "Patti1 Fernandez1",
+        "emailAddress": "11PattiF@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": null,
+        "accountEnabled": null,
+        "createdDate": "05/10/2022 11:55:53",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "Underwriter"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "412decc9-0eb2-4dae-84a0-59e78d806479",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Grady",
+        "lastName": "Archie",
+        "userName": "Grady Archie",
+        "emailAddress": "12GradyA@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "07/01/2022 08:09:48",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "UnderwriterGrantingEmpowerment"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": null,
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Megan1",
+        "lastName": "Bowen1",
+        "userName": "Megan1 Bowen1",
+        "emailAddress": "13MeganB@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "07/01/2022 08:07:12",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "UnderwriterGrantingEmpowerment"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": null,
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Jan Test",
+        "lastName": "Loh",
+        "userName": "Jan Test Loh",
+        "emailAddress": "15janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": true,
+        "accountEnabled": null,
+        "createdDate": "03/02/2023 11:43:42",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "RequestForEmpowermentCC"
+      },
+      {
+        "appUserId": null,
+        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
+        "displayName": null,
+        "businessPhones": null,
+        "jobTitle": null,
+        "mobilePhone": null,
+        "firstName": "Patti1",
+        "lastName": "Fernandez1",
+        "userName": "Patti1 Fernandez1",
+        "emailAddress": "16PattiF@2k0hmr.onmicrosoft.com",
+        "profileImagePath": null,
+        "isActive": null,
+        "accountEnabled": null,
+        "createdDate": "05/10/2022 11:55:53",
+        "lobApproverId": null,
+        "lobid": null,
+        "lobChapterApproverId": null,
+        "lobChapterID": null,
+        "profileCountry": null,
+        "profileCountryAD": null,
+        "logType": null,
+        "fieldName": null,
+        "userId": null,
+        "associatedUserRole": "CreatedBy"
+      }
+    ]
+  );
+  const [openChatPopup, setOpenChatPopup] = useState(false);
   const newWindowRef = useRef();
   // Check Existing Group Chat
   const handleChat = async (id) => {
       localStorage.removeItem('code')
       setSelectedChatTopic(id)
-      let chatMemebers = await getGroupchatDetailsWithMembers({chatId: id})
-      setChatMembers(chatMemebers)
-      // let requestParam = {
-      //   EntryNumber: id
-      // };
-      // const response = await groupDetailsBaseOnEntryNumber(requestParam);
-      // // If the group chat does not exist: Returns null.
-      // if (response === null) {
-      //   const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
+      // setOpenChatPopup(true)
+      let requestParam = {
+        EntryNumber: id
+      };
+      const response = await groupDetailsBaseOnEntryNumber(requestParam);
+      // If the group chat does not exist: Returns null.
+      if (response === null) {
+        const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
         
-      //   // If a token does not exist: Return null.
-      //   if (accessTokenDetails === null) {
-      //     const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
-      //     setIsRunning(true)
-      //     newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
-      //   }
-      // } else {
-      //   // If the group chat exists: Return the group chat details.
-      //   let chatMemebers = await getGroupchatDetailsWithMembers({chatId: id})
-      //   setChatMembers(chatMemebers)
-      // }
+        // If a token does not exist: Return null.
+        if (accessTokenDetails === null) {
+          const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
+          setIsRunning(true)
+          newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
+        }
+      } else {
+        // If the group chat exists: Return the group chat details.
+        let chatMemebers = await getGroupchatDetailsWithMembers({chatId: id})
+        setChatMembers(chatMemebers)
+        setOpenChatPopup(true)
+      }
   }
     
   useEffect(() => {
@@ -2550,6 +2945,7 @@ function Rfelog({ ...props }) {
     setshowShareLog(false);
     setshowDeleteLog(false);
     setshowCopyLog(false);
+    setOpenChatPopup(false);
   };
   const handleDeleteItem = async (itemid, isSubmit) => {
     /*if (!window.confirm(alertMessage.commonmsg.deleteConfirm)) {
@@ -3289,6 +3685,15 @@ function Rfelog({ ...props }) {
           title={"Copy a RfE Link"}
           hidePopup={hidelogPopup}
           itemDetails={shareitemDetails}
+        />
+      ) : (
+        ""
+      )}
+      {openChatPopup ? (
+        <ChatUserList
+          hideAddPopup={hidelogPopup}
+          id={selectedChatTopic}
+          chatMembers={chatMembers}
         />
       ) : (
         ""
