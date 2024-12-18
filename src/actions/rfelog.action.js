@@ -408,7 +408,7 @@ const createGroupChatService = async (requestParam) => {
 
 const getGroupchatDetailsWithMembersService = async (requestParam) => {
   const param = { params: requestParam };
-  const response = await Axios.get(`rfelog/getgroupchatdetailswithmembers`, param);
+  const response = await Axios.get(`rfelog/getgroupchatdetailswithallmembers`, param);
   return response;
 };
 
