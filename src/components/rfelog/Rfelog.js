@@ -2469,13 +2469,17 @@ function Rfelog({ ...props }) {
   }, [selectedChatTopic])
     
   useEffect(() => {
-      let intervalId = setInterval(() => {
+      let intervalId = setInterval(async() => {
           if (isRunning) {
               // console.log("function is Running", newWindowRef.current);
               if (localStorage.getItem('code')) {
                   setIsRunning(false);
                   newWindowRef.current.close()
-                  handleGetChatToken();
+                  let code = localStorage.getItem('code')
+                  const resonse = await generateTokenForGroupChat({authorizationCode: code});
+                  if (resonse) {
+                    setTokenGenerate(true)
+                  }
               }
           }
       }, 1000);
