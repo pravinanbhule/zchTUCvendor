@@ -1167,7 +1167,6 @@ function AddEditForm(props) {
         if (key === "actionPlan") {
           value = formfield[key].replace(/<\/?[^>]+(>|$)/g, "");
         }
-        debugger
         if (!isNotEmptyValue(value)) {
           isvalidated = false;
         }
