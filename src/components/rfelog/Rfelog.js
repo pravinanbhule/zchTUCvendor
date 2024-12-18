@@ -2434,7 +2434,7 @@ function Rfelog({ ...props }) {
   const newWindowRef = useRef();
   // Check Existing Group Chat
   const handleChat = async (row) => {
-      localStorage.removeItem('code')
+      localStorage.removeItem('code')      
       setSelectedRfE(row)
       setSelectedChatTopic(row.EntryNumber)
   }
@@ -2445,25 +2445,23 @@ function Rfelog({ ...props }) {
         EntryNumber: selectedChatTopic
       };
       const response = await groupDetailsBaseOnEntryNumber(requestParam);
-      setGroupChatId(response.groupChatId)
       // If the group chat does not exist: Returns null.
-      if (response === null) {
+      if (response == null) {
         const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
-        
         // If a token does not exist: Return null.
-        if (accessTokenDetails === null) {
+        if (accessTokenDetails == null) {
           const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
           setIsRunning(true)
           newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
         } else {
-          // If the token exists: Return the group chat details.
-          handleMemebersList()
+          handleCreateGroupChat();
         }
       } else {
+        // If the group chat exists: Return the group chat details.
+        setGroupChatId(response?.groupChatId)
         setTimeout(() => {
           handleMemebersList()
         }, 1000);
-        // If the group chat exists: Return the group chat details.
       }
     }
   }, [selectedChatTopic])
@@ -2509,7 +2507,7 @@ function Rfelog({ ...props }) {
 
   const handleMemebersList = async() => {
     let details = await getGroupchatDetailsWithMembers({chatId: groupChatId})
-    let logMemebers = await getinvolveuserlist({RFELogId: selectedChatTopic})
+    let logMemebers = await getinvolveuserlist({RFELogId: selectedRfE.RFELogId})
     setGroupDetails(details)
     setMicroSoftURL(details.webUrl)
     let groupAddedMembers = details.members
