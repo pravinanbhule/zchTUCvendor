@@ -155,7 +155,8 @@ function AddEditForm(props) {
     "dueDate",
     "actionResponsibleName",
     "breachStatus",
-    "breachDetails"
+    "breachDetails",
+    "classification"
   ]);
   const [znaMandotoryFields, setznaMandotoryFields] = useState([
     "znaSegmentId",
