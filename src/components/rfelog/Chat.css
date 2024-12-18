@@ -47,6 +47,9 @@
     height: 50px;
     display: flex;
     align-items: center;
+    width: 368px;
+    margin-left: -20px;
+    padding: 28px;
 }
 
 .chat-list {

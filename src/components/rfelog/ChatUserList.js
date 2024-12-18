@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Popup from "../common-components/Popup";
 import './Chat.css'
+import moment from "moment";
 
 function ChatUserList(props) {
-  const { hideAddPopup, id, postItem, putItem, isEditMode, formIntialState, chatMembers, handleAddMemberToGroup } =
+  const { hideAddPopup, id, postItem, putItem, isEditMode, formIntialState, chatMembers, handleAddMemberToGroup, microSoftURL, groupDetails } =
     props;
 
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
   const [listMembers, setListMember] = useState(chatMembers)
   const [addUserList, setAddUserList] = useState([])
+  // const formattedDate = moment(groupDetails.lastUpdatedDateTime).format("MMMM Do YYYY, h:mm:ss A");
+  const formattedDate = moment('2021-04-21T17:13:44.033Z').format("MMMM Do YYYY, h:mm:ss A");
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -25,6 +28,9 @@ function ChatUserList(props) {
   const handleAddItem = (user) => {
     let res = listMembers.filter((item) => (item.emailAddress !== user.emailAddress))
     setListMember(res)
+    res.map((item, i) => {
+      document.getElementsByClassName('addbtn')[i].style.setProperty("display", "none")
+    })
     setAddUserList([...addUserList, user])
   }
   const handleRemoveItem = (user) => {
@@ -36,14 +42,11 @@ function ChatUserList(props) {
   const handleSubmit = () => {
     let emails = []
     addUserList.map((item) => {
-      emails.push(item.emailAddress) 
+      emails.push(item.emailAddress)
     })
     handleAddMemberToGroup(emails)
   }
 
-  useEffect(() => {
-    console.log("addUserList>>", addUserList, chatMembers);
-  }, [addUserList])
   return (
     <Popup {...props}>
       <div className="popup-box">
@@ -86,7 +89,7 @@ function ChatUserList(props) {
             <div className="chat-list">
               {addUserList?.map((user) => {
                 return <div className="user-view-list">
-                  <div className="user" style={{ width: '100% !important'}}>
+                  <div className="user" style={{ width: '100% !important' }}>
                     <div>
                       {user.firstName + " " + user.lastName}
                     </div>
@@ -104,8 +107,12 @@ function ChatUserList(props) {
             </div>
           </div>
         </div>
+        <div style={{ marginLeft: '24px' }}>Last update on teams: {formattedDate}</div>
         <div className="popup-footer-container">
-          <div className="btn-container">
+          <div className="btn-container" style={{ alignItems: 'center' }}>
+            <div>
+              <a href={microSoftURL} target="_blank">Microsoft Teams</a>
+            </div>
             <button className="btn-blue" onClick={handleSubmit}>
               {isEditMode ? "Apply" : "Submit"}
             </button>

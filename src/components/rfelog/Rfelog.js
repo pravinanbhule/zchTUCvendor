@@ -631,7 +631,7 @@ function Rfelog({ ...props }) {
             return (
               <div
                 className="chat-icon"
-                onClick={() => handleChat(row.EntryNumber)}
+                onClick={() => handleChat(row)}
                 mode={"chat"}
               ></div>
             );
@@ -2424,150 +2424,28 @@ function Rfelog({ ...props }) {
   const [isRunning, setIsRunning] = useState(false);
   const [tokenGenerate, setTokenGenerate] = useState(false);
   const [selectedChatTopic, setSelectedChatTopic] = useState('');
-  const [chatMembers, setChatMembers] = useState(
-    [
-      {
-        "appUserId": null,
-        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Patti1",
-        "lastName": "Fernandez1",
-        "userName": "Patti1 Fernandez1",
-        "emailAddress": "PattiF@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": null,
-        "accountEnabled": null,
-        "createdDate": "05/10/2022 11:55:53",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "Underwriter"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "412decc9-0eb2-4dae-84a0-59e78d806479",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Grady",
-        "lastName": "Archie",
-        "userName": "Grady Archie",
-        "emailAddress": "GradyA@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "07/01/2022 08:09:48",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "UnderwriterGrantingEmpowerment"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": null,
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Megan1",
-        "lastName": "Bowen1",
-        "userName": "Megan1 Bowen1",
-        "emailAddress": "MeganB@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "07/01/2022 08:07:12",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "UnderwriterGrantingEmpowerment"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": null,
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Jan Test",
-        "lastName": "Loh",
-        "userName": "Jan Test Loh",
-        "emailAddress": "janine.loh@dlazuredelphianlogic116.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": true,
-        "accountEnabled": null,
-        "createdDate": "03/02/2023 11:43:42",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "RequestForEmpowermentCC"
-      },
-      {
-        "appUserId": null,
-        "zurichADUserId": "7142f0fa-cec9-4e8b-bb97-f816fa488c04",
-        "displayName": null,
-        "businessPhones": null,
-        "jobTitle": null,
-        "mobilePhone": null,
-        "firstName": "Patti1",
-        "lastName": "Fernandez1",
-        "userName": "Patti1 Fernandez1",
-        "emailAddress": "PattiF@2k0hmr.onmicrosoft.com",
-        "profileImagePath": null,
-        "isActive": null,
-        "accountEnabled": null,
-        "createdDate": "05/10/2022 11:55:53",
-        "lobApproverId": null,
-        "lobid": null,
-        "lobChapterApproverId": null,
-        "lobChapterID": null,
-        "profileCountry": null,
-        "profileCountryAD": null,
-        "logType": null,
-        "fieldName": null,
-        "userId": null,
-        "associatedUserRole": "CreatedBy"
-      }
-    ]
-  );
+  const [selectedRfE, setSelectedRfE] = useState({});
+  const [chatMembers, setChatMembers] = useState([]);
   const [openChatPopup, setOpenChatPopup] = useState(false);
   const [groupChatId, setGroupChatId] = useState('')
+  const [microSoftURL, setMicroSoftURL] = useState('https://teams.microsoft.com/l/chat/19%3Ab8577894a63548969c5c92bb9c80c5e1@thread.v2/0?tenantId=b33cbe9f-8ebe-4f2a-912b-7e2a427f477f')
+  const [groupDetails, setGroupDetails] = useState({})
+
   const newWindowRef = useRef();
   // Check Existing Group Chat
-  const handleChat = async (id) => {
+  const handleChat = async (row) => {
       localStorage.removeItem('code')
-      setSelectedChatTopic(id)
-      // setOpenChatPopup(true)
+      console.log("id>>", row);
+      debugger
+      setSelectedRfE(row)
+      setSelectedChatTopic(row.EntryNumber)
+  }
+
+  useEffect(async() => {
+    console.log("selectedChatTopic>>", selectedChatTopic);
+    if (selectedChatTopic) {
       let requestParam = {
-        EntryNumber: id
+        EntryNumber: selectedChatTopic
       };
       const response = await groupDetailsBaseOnEntryNumber(requestParam);
       setGroupChatId(response.groupChatId)
@@ -2582,19 +2460,16 @@ function Rfelog({ ...props }) {
           newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
         } else {
           // If the token exists: Return the group chat details.
-          // let chatMemebers = await getGroupchatDetailsWithMembers({chatId: groupChatId})
-          let chatMemebers = await getinvolveuserlist({RFELogId: id})
-          setChatMembers(chatMemebers)
-          setOpenChatPopup(true)
+          handleMemebersList()
         }
       } else {
+        setTimeout(() => {
+          handleMemebersList()
+        }, 1000);
         // If the group chat exists: Return the group chat details.
-        // let chatMemebers = await getGroupchatDetailsWithMembers({chatId: groupChatId})
-        let chatMemebers = await getinvolveuserlist({RFELogId: id})
-        setChatMembers(chatMemebers)
-        setOpenChatPopup(true)
       }
-  }
+    }
+  }, [selectedChatTopic])
     
   useEffect(() => {
       let intervalId = setInterval(async() => {
@@ -2631,12 +2506,30 @@ function Rfelog({ ...props }) {
       };
       const chatData = await groupDetailsBaseOnEntryNumber(requestParam);
       setGroupChatId(chatData.groupChatId)
-      // let chatMemebers = await getGroupchatDetailsWithMembers({chatId: groupChatId})
-      let chatMemebers = await getinvolveuserlist({RFELogId: id})
-      setChatMembers(chatMemebers)
-      setOpenChatPopup(true)
+      handleMemebersList()
     }
   } 
+
+  const handleMemebersList = async() => {
+    console.log(selectedRfE);
+    debugger
+    
+    let details = await getGroupchatDetailsWithMembers({chatId: groupChatId})
+    let logMemebers = await getinvolveuserlist({RFELogId: selectedChatTopic})
+    setGroupDetails(details)
+    setMicroSoftURL(details.webUrl)
+    let groupAddedMembers = details.members
+    if (logMemebers.length) {
+      const array1Emails = new Set(logMemebers?.map((item) => item.emailAddress));
+      const emailsToRemove = new Set(
+        groupAddedMembers.filter((item) => array1Emails.has(item.email)).map((item) => item.email)
+      );
+  
+      const filteredArray = logMemebers.filter((item) => !emailsToRemove.has(item.emailAddress));
+      setChatMembers(filteredArray)
+    }
+    setOpenChatPopup(true)
+  }
 
   const handleAddMemberToGroup = async(email) => {
     let response = await addMemberToGroupChat({
@@ -2644,6 +2537,16 @@ function Rfelog({ ...props }) {
       chatTopic: selectedChatTopic,
       emails: email
     })
+    handleCloseChat()
+  }
+
+  const handleCloseChat = () => {
+    setTokenGenerate(false)
+    setSelectedChatTopic(null)
+    setChatMembers([])
+    setGroupChatId(null)
+    setMicroSoftURL(null)
+    setGroupDetails(null)
     setOpenChatPopup(false)
   }
 
@@ -2711,7 +2614,6 @@ function Rfelog({ ...props }) {
     setshowShareLog(false);
     setshowDeleteLog(false);
     setshowCopyLog(false);
-    setOpenChatPopup(false);
   };
   const handleDeleteItem = async (itemid, isSubmit) => {
     /*if (!window.confirm(alertMessage.commonmsg.deleteConfirm)) {
@@ -3455,10 +3357,12 @@ function Rfelog({ ...props }) {
       )}
       {openChatPopup ? (
         <ChatUserList
-          hideAddPopup={hidelogPopup}
+          hideAddPopup={handleCloseChat}
           id={selectedChatTopic}
           chatMembers={chatMembers}
           handleAddMemberToGroup={handleAddMemberToGroup}
+          microSoftURL={microSoftURL}
+          groupDetails={groupDetails}
         />
       ) : (
         ""
