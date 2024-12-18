@@ -1,0 +1,70 @@
+.user-view-list {
+    padding: 5px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.user{
+    width: 265px;
+}
+
+.useremail-line{
+    font-size: 12px;
+    text-decoration: underline;
+    word-wrap: break-word;
+}
+
+.addbtn {
+    width: 22px;
+    height: 15px;
+    color: #fff;
+    background-color: rgba(33, 103, 173, 1);
+    text-align: center;
+    line-height: 15px;
+    color: #fff;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.member-list {
+    height: 44%;
+    overflow: auto;
+}
+
+.add-member-list {
+    position: absolute;
+    top: 50%;
+}
+
+.add-member-list {
+    width: 330px;
+}
+
+.invited-chat-header {
+    border-top: 1px solid #2167ad;
+    border-bottom: 1px solid #2167ad;
+    font-size: 22px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    width: 368px;
+    margin-left: -20px;
+    padding: 28px;
+}
+
+.chat-list {
+    height: 348px;
+    overflow: auto;
+}
+
+.delete-icon {
+    width: 22px;
+    height: 30px;
+    /* color: #fff;
+    background-color: rgba(33, 103, 173, 1);
+    text-align: center;
+    line-height: 15px;
+    color: #fff;
+    border-radius: 7px;
+    cursor: pointer; */
+}

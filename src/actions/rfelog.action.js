@@ -181,6 +181,109 @@ const referenceLog = (requestParam) => {
     }
   };
 }
+
+const groupDetailsBaseOnEntryNumber = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.getGroupDetailsBaseOnEntryNumberService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+
+const groupChatAccessTokenDetails = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.getGroupChatAccessTokenWithDetailsService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+
+const groupChatAuthentication = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.groupChatAuthenticationService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+
+const generateTokenForGroupChat = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.generateTokenForGroupChatService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+
+const createGroupChat = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.createGroupChatService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+
+const getGroupchatDetailsWithMembers = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.getGroupchatDetailsWithMembersService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+
+const addMemberToGroupChat = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.addMemberToGroupChatService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
+const getinvolveuserlist = (requestParam) => {
+  return async (dispatch) => {
+    try {
+      const response = await rfelogService.getinvolveuserlistService(
+        requestParam
+      );
+      return response.data;
+    } catch (err) {
+      return false;
+    }
+  };
+}
 export const rfelogActions = {
   getAll,
   getAllPolicyAccounts,
@@ -195,7 +298,15 @@ export const rfelogActions = {
   deleteItem,
   exportReportLogs,
   linkedLogLogs,
-  referenceLog
+  referenceLog,
+  groupDetailsBaseOnEntryNumber,
+  groupChatAccessTokenDetails,
+  groupChatAuthentication,
+  generateTokenForGroupChat,
+  createGroupChat,
+  getGroupchatDetailsWithMembers,
+  addMemberToGroupChat,
+  getinvolveuserlist
 };
 const getAllService = async (requestParam) => {
   const param = { params: requestParam };
@@ -266,6 +377,56 @@ const referenceLogsService = async (requestParam) => {
   const response = await Axios.get(`rfelog/getdatabaseonaccountcountrylob`, param);
   return response;
 };
+
+
+const getGroupDetailsBaseOnEntryNumberService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/getgroupchatdetailsbasedonentrynumber`, param);
+  return response;
+};
+const getGroupChatAccessTokenWithDetailsService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/getgroupchataccesstokenwithdetails`, param);
+  return response;
+};
+const groupChatAuthenticationService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/groupchatauthentication`, param);
+  return response;
+};
+const generateTokenForGroupChatService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/generatetokenforgroupchat`, param);
+  return response;
+};
+
+const createGroupChatService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/creategroupchat`, param);
+  return response;
+};
+
+const getGroupchatDetailsWithMembersService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/getgroupchatdetailswithmembers`, param);
+  return response;
+};
+
+// const addMemberToGroupChatService = async (requestParam) => {
+//   const param = { params: requestParam };
+//   const response = await Axios.get(`rfelog/addmembertogroupchat`, param);
+//   return response;
+// };
+const addMemberToGroupChatService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/addsinglemembertogroupchat`, param);
+  return response;
+};
+const getinvolveuserlistService = async (requestParam) => {
+  const param = { params: requestParam };
+  const response = await Axios.get(`rfelog/getinvolveuserlistforrfelog`, param);
+  return response;
+};
 const rfelogService = {
   getAllService,
   getAllAccountService,
@@ -280,5 +441,13 @@ const rfelogService = {
   getallLocalLinksService,
   exportReportLogsService,
   linkedLogsService,
-  referenceLogsService
+  referenceLogsService,
+  getGroupDetailsBaseOnEntryNumberService,
+  getGroupChatAccessTokenWithDetailsService,
+  groupChatAuthenticationService,
+  generateTokenForGroupChatService,
+  createGroupChatService,
+  getGroupchatDetailsWithMembersService,
+  addMemberToGroupChatService,
+  getinvolveuserlistService
 };
