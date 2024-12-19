@@ -4,7 +4,7 @@ import './Chat.css'
 import moment from "moment";
 
 function ChatUserList(props) {
-  const { hideAddPopup, id, postItem, putItem, isEditMode, formIntialState, chatMembers, handleAddMemberToGroup, microSoftURL, groupDetails } =
+  const { hideAddPopup, id, postItem, putItem, isEditMode, formIntialState, chatMembers, handleAddMemberToGroup, microSoftURL, groupDetails, isGroupExist } =
     props;
 
   const [formfield, setformfield] = useState(formIntialState);
@@ -28,9 +28,11 @@ function ChatUserList(props) {
   const handleAddItem = (user) => {
     let res = listMembers.filter((item) => (item.emailAddress !== user.emailAddress))
     setListMember(res)
-    res.map((item, i) => {
-      document.getElementsByClassName('addbtn')[i].style.setProperty("display", "none")
-    })
+    if (isGroupExist) {
+      res.map((item, i) => {
+        document.getElementsByClassName('addbtn')[i].style.setProperty("display", "none")
+      })
+    }
     setAddUserList([...addUserList, user])
   }
   const handleRemoveItem = (user) => {
@@ -46,7 +48,6 @@ function ChatUserList(props) {
     })
     handleAddMemberToGroup(emails)
   }
-
   return (
     <Popup {...props}>
       <div className="popup-box">
@@ -107,13 +108,16 @@ function ChatUserList(props) {
             </div>
           </div>
         </div>
-        <div style={{ marginLeft: '24px' }}>Last update on teams: {formattedDate}</div>
+        {groupDetails?.lastUpdatedDateTime && (<div style={{ marginLeft: '24px' }}>Last update on teams: {formattedDate}</div>)}
         <div className="popup-footer-container">
           <div className="btn-container" style={{ alignItems: 'center' }}>
             <div>
               <a href={microSoftURL} target="_blank">Microsoft Teams</a>
             </div>
-            <button className="btn-blue" onClick={handleSubmit}>
+            <button
+              className={addUserList.length === 0 ? "btn-blue disable" : "btn-blue"}
+              onClick={handleSubmit}
+            >
               {isEditMode ? "Apply" : "Submit"}
             </button>
             <div className="btn-blue" onClick={() => hideAddPopup()}>
