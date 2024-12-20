@@ -130,8 +130,6 @@ function AddImportLogs(props) {
     newRenewalObj: {},
     acturisCode: [],
     acturisCodeObj: {},
-    customerWellbeing: [],
-    customerWellbeingObj: {},
     requiredAuthority: [],
     requiredAuthorityObj: {},
     submitterAuthority: [],
@@ -194,9 +192,6 @@ function AddImportLogs(props) {
     });
     let tempActurisCode = await getLookupByType({
       LookupType: "ActurisCode"
-    });
-    let tempCustomerWellbeing = await getLookupByType({
-        LookupType: "CustomerWellbeing"
     });
     let tempRequiredAuthority = await getLookupByType({
         LookupType: "RequiredAuthority"
@@ -314,20 +309,6 @@ function AddImportLogs(props) {
     });
     tempActurisCode = [...tempopts];
     let tempActurisCodeObj = { ...tempObj };
-   
-    tempopts = [];
-    tempObj = {};
-    tempCustomerWellbeing.forEach((item) => {
-      if (item.isActive) {
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
-        tempObj[item.lookUpValue] = item.lookupID;
-      }
-    });
-    tempCustomerWellbeing = [...tempopts];
-    let tempCustomerWellbeingObj = { ...tempObj };
   
     tempopts = [];
     tempObj = {};
@@ -375,8 +356,6 @@ function AddImportLogs(props) {
       newRenewalObj: { ...temNewRenewalObj },
       acturisCode: [...tempActurisCode],
       acturisCodeObj: { ...tempActurisCodeObj },
-      customerWellbeing: [...tempCustomerWellbeing],
-      customerWellbeingObj: { ...tempCustomerWellbeingObj },
       requiredAuthority: [...tempRequiredAuthority],
       requiredAuthorityObj: { ...tempRequiredAuthorityObj },
       submitterAuthority: [...tempSubmitterAuthority],
@@ -717,11 +696,6 @@ function AddImportLogs(props) {
     "Acturis Code": {
       lookupObj: "acturisCodeObj",
       fieldname: "ActurisCode",
-      multival: true,
-    },
-    "Customer Wellbeing": {
-      lookupObj: "customerWellbeingObj",
-      fieldname: "CustomerWellbeing",
       multival: true,
     },
     "Required Authority": {

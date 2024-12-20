@@ -113,7 +113,6 @@ function RfelogAddEditForm({ ...props }) {
         customerSegmentOpts: [],
         conditionApplicableToOpts: [],
         acturisCode: [],
-        customerWellbeing: [],
         requiredAuthority: [],
         submitterAuthority: [],
         zmSubLoBProduct: []
@@ -151,7 +150,6 @@ function RfelogAddEditForm({ ...props }) {
     const [formfield, setformfield] = useState({ viewName: '', isPrivate: false, ...intialFilterState });
 
     const [frmActurisCode, setfrmActurisCode] = useState([]);
-    const [frmCustomerWellbeing, setfrmCustomerWellbeing] = useState([]);
     const [frmRequiredAuthority, setfrmRequiredAuthority] = useState([]);
     const [frmSubmitterAuthority, setfrmSubmitterAuthority] = useState([]);
 
@@ -190,7 +188,6 @@ function RfelogAddEditForm({ ...props }) {
             response.PolicyPeriod = response?.policyPeriod
             response.GWP = response?.gwp
             response.ActurisCode = response.acturisCode
-            response.CustomerWellbeing = response.customerWellbeing
             response.RequiredAuthority = response.requiredAuthority
             response.SubmitterAuthority = response.submitterAuthority
             response.ZMSubLoBProduct = response.zmSubLoBProduct
@@ -526,9 +523,6 @@ function RfelogAddEditForm({ ...props }) {
                 LookupType: "ActurisCode"
             }),
             getLookupByType({
-                LookupType: "CustomerWellbeing"
-            }),
-            getLookupByType({
                 LookupType: "RequiredAuthority"
             }),
             getLookupByType({
@@ -547,10 +541,9 @@ function RfelogAddEditForm({ ...props }) {
         let tempNewRenewal = lookupvalues[5];
         let tempCondition = lookupvalues[6];
         let temprfeempourmentActurisCode = lookupvalues[7];
-        let temprfeempourmentCustomerWellbeing = lookupvalues[8];
-        let temprfeempourmentRequiredAuthority = lookupvalues[9];
-        let temprfeempourmentSubmitterAuthority = lookupvalues[10];
-        let temprfeempourmentZMSubLoBProduct = lookupvalues[11];
+        let temprfeempourmentRequiredAuthority = lookupvalues[8];
+        let temprfeempourmentSubmitterAuthority = lookupvalues[9];
+        let temprfeempourmentZMSubLoBProduct = lookupvalues[10];
 
         let tempopts = [];
         let selectedArray = [];
@@ -799,32 +792,6 @@ function RfelogAddEditForm({ ...props }) {
 
         tempopts = [];
         selectedArray = [];
-        temprfeempourmentCustomerWellbeing.forEach((item) => {
-            if (item.isActive) {
-                if ((isEditMode || isReadMode) && typeof formIntialState?.customerWellbeing === 'string' && formIntialState?.customerWellbeing !== null) {
-                    formIntialState?.customerWellbeing?.split(',')?.map((id) => {
-                        if (id === item.lookupID) {
-                            selectedArray.push({
-                                label: item.lookUpValue,
-                                value: item.lookupID,
-                            });
-                        }
-                    })
-                }
-                tempopts.push({
-                    label: item.lookUpValue,
-                    value: item.lookupID,
-                });
-            }
-        });
-        setformfield((prevfilter) => ({
-            ...prevfilter,
-            CustomerWellbeing: selectedArray,
-        }));
-        temprfeempourmentCustomerWellbeing = [...tempopts];
-
-        tempopts = [];
-        selectedArray = [];
         temprfeempourmentRequiredAuthority.forEach((item) => {
             if (item.isActive) {
                 if ((isEditMode || isReadMode) && typeof formIntialState?.requiredAuthority === 'string' && formIntialState?.requiredAuthority !== null) {
@@ -919,7 +886,6 @@ function RfelogAddEditForm({ ...props }) {
             newRenewalOpts: [...tempNewRenewal],
             conditionApplicableToOpts: [...tempCondition],
             acturisCode: [...temprfeempourmentActurisCode],
-            customerWellbeing: [...temprfeempourmentCustomerWellbeing],
             requiredAuthority: [...temprfeempourmentRequiredAuthority],
             submitterAuthority: [...temprfeempourmentSubmitterAuthority],
             zmSubLoBProduct: [...temprfeempourmentZMSubLoBProduct]
@@ -1521,7 +1487,7 @@ function RfelogAddEditForm({ ...props }) {
                             key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
                             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
                             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-                            key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+                            key === "ConditionApplicableTo" || key === 'ActurisCode' ||
                             key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
                             const tmpval = value.map((item) => item.value);
                             tempFilterOpts[key] = tmpval.join(",");
@@ -1566,7 +1532,6 @@ function RfelogAddEditForm({ ...props }) {
                 data.sublobid = data?.SUBLOBID
                 data.gwp = data?.GWP
                 data.acturisCode = data.ActurisCode
-                data.customerWellbeing = data.CustomerWellbeing
                 data.requiredAuthority = data.RequiredAuthority
                 data.submitterAuthority = data.SubmitterAuthority
                 data.inceptionRenewalToDate = data?.InceptionRenewalToDate
@@ -1604,7 +1569,6 @@ function RfelogAddEditForm({ ...props }) {
                 delete data?.SUBLOBID
                 delete data?.GWP
                 delete data.ActurisCode
-                delete data.CustomerWellbeing
                 delete data.RequiredAuthority
                 delete data.SubmitterAuthority
                 let response = await postItem(data)

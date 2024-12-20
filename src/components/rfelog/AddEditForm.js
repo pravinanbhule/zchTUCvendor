@@ -146,7 +146,6 @@ function AddEditForm(props) {
   });
 
   const [frmActurisCode, setfrmActurisCode] = useState([]);
-  const [frmCustomerWellbeing, setfrmCustomerWellbeing] = useState([]);
   const [frmRequiredAuthority , setfrmRequiredAuthority ] = useState([]);
   const [frmSubmitterAuthority , setfrmSubmitterAuthority ] = useState([]);
   const [frmZMSubLoBProduct , setfrmZMSubLoBProduct ] = useState([]);
@@ -381,7 +380,6 @@ function AddEditForm(props) {
           : "",
       }),
       getLookupByType({ LookupType: "ActurisCode" }),
-      getLookupByType({ LookupType: "CustomerWellbeing" }),
       getLookupByType({ LookupType: "RequiredAuthority" }),
       getLookupByType({ LookupType: "SubmitterAuthority" }),
       getLookupByType({ LookupType: "ZMSubLoBProduct" }),
@@ -542,10 +540,9 @@ function AddEditForm(props) {
     let tempToolTips = dbvalues[9];
     let temprfeempourmentcountry = dbvalues[10];
     let temprfeempourmentActurisCode = dbvalues[11];
-    let temprfeempourmentCustomerWellbeing = dbvalues[12];
-    let temprfeempourmentRequiredAuthority = dbvalues[13];
-    let temprfeempourmentSubmitterAuthority = dbvalues[14];
-    let temprfeempourmentZMSubLoBProduct = dbvalues[15];
+    let temprfeempourmentRequiredAuthority = dbvalues[12];
+    let temprfeempourmentSubmitterAuthority = dbvalues[13];
+    let temprfeempourmentZMSubLoBProduct = dbvalues[14];
 
     let tooltipObj = {};
     tempToolTips.forEach((item) => {
@@ -761,33 +758,7 @@ function AddEditForm(props) {
     });
     // tempopts.sort(dynamicSort("label"));
     temprfeempourmentActurisCode = [...tempopts];
- 
-    tempopts = [];
-    let selectedCustomerWellbeing = [];
-    temprfeempourmentCustomerWellbeing.forEach((item) => {
-      if (isEditMode || isReadMode) {
-        if (item.isActive || formIntialState?.CustomerWellbeing?.includes(item.lookupID)) {
-          tempopts.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
-        }
-        if (formIntialState?.CustomerWellbeing?.includes(item.lookupID)) {      
-          selectedCustomerWellbeing.push({
-            label: item.lookUpValue,
-            value: item.lookupID,
-          });
-        }
-      } else if (item.isActive) {
-        tempopts.push({
-          label: item.lookUpValue,
-          value: item.lookupID,
-        });
-      }
-    });
-    // tempopts.sort(dynamicSort("label"));
-    temprfeempourmentCustomerWellbeing = [...tempopts];
-    
+     
     tempopts = [];
     let selectedRequiredAuthority = [];
     temprfeempourmentRequiredAuthority.forEach((item) => {
@@ -869,9 +840,6 @@ function AddEditForm(props) {
     if (formIntialState?.ActurisCode) {
       setSelectedActurisCode(formIntialState.ActurisCode)
     }
-    if (formIntialState?.CustomerWellbeing) {
-      setSelectedCustomerWellbeing(formIntialState.CustomerWellbeing)
-    }
     if (formIntialState?.RequiredAuthority) {
       setSelectedRequiredAuthority(formIntialState.RequiredAuthority)
     }
@@ -892,7 +860,6 @@ function AddEditForm(props) {
     setPopupFrmStatus([...popupstatus])
 
     setfrmActurisCode([...temprfeempourmentActurisCode])
-    setfrmCustomerWellbeing([...temprfeempourmentCustomerWellbeing])
     setfrmRequiredAuthority([...temprfeempourmentRequiredAuthority])
     setfrmSubmitterAuthority([...temprfeempourmentSubmitterAuthority])
     setfrmZMSubLoBProduct([...temprfeempourmentZMSubLoBProduct])
@@ -939,7 +906,6 @@ function AddEditForm(props) {
       }
     }
     formIntialState.ActurisCode = selectedActurisCode
-    formIntialState.CustomerWellbeing = selectedCustomerWellbeing
     formIntialState.RequiredAuthority = selectedRequiredAuthority
     formIntialState.SubmitterAuthority = selectedSubmitterAuthority
     formIntialState.ZMSubLoBProduct = selectedZMSubLoBProduct
@@ -1189,7 +1155,7 @@ function AddEditForm(props) {
             if (!isEditMode && !isReadMode) {
               setformfield({ 
                 ...formfield, 
-                LOBId: '441599652036479',
+                LOBId: 'LOBA92A7C37CBAB4317BEC06E2137E275C4',
                 DurationofApproval: '547V7D10-3334-064H-N831-H225743690RD',
                 mappedLOBs: 'Group Protection,Health,Accident',
                 RequestForEmpowermentReasonorActurisCode: 'true',
@@ -2734,7 +2700,6 @@ function AddEditForm(props) {
   }, [formfield?.CountryList]);
 
   const [selectedActurisCode, setSelectedActurisCode] = useState('');
-  const [selectedCustomerWellbeing, setSelectedCustomerWellbeing] = useState('');
   const [selectedRequiredAuthority, setSelectedRequiredAuthority] = useState('');
   const [selectedSubmitterAuthority, setSelectedSubmitterAuthority] = useState('');
   const [selectedZMSubLoBProduct, setSelectedZMSubLoBProduct] = useState('');
@@ -2805,10 +2770,6 @@ function AddEditForm(props) {
     })
     if (name === 'ActurisCode') {
       setSelectedActurisCode(updatedValue);
-      updatedValue = ''
-    }
-    if (name === 'CustomerWellbeing') {
-      setSelectedCustomerWellbeing(updatedValue);
       updatedValue = ''
     }
     if (name === 'RequiredAuthority') {
@@ -3886,15 +3847,6 @@ function AddEditForm(props) {
         })
         response["ActurisCode"] = ActurisCode;
       }
-      if (response?.CustomerWellbeing) {
-        let CustomerWellbeing = []
-        frmCustomerWellbeing.map((item, i) => {
-          if (response?.CustomerWellbeing.includes(item.value)) {
-            CustomerWellbeing.push(item)
-          }
-        })
-        response["CustomerWellbeing"] = CustomerWellbeing;
-      }
       if (response?.SubmitterAuthority) {
         let SubmitterAuthority = []
         frmSubmitterAuthority.map((item, i) => {
@@ -4047,7 +3999,6 @@ function AddEditForm(props) {
       ReferralReasonLevel5: null,
     }
     setSelectedActurisCode('')
-    setSelectedCustomerWellbeing('')
     setSelectedRequiredAuthority('')
     setSelectedSubmitterAuthority('')
     setSelectedZMSubLoBProduct('')
@@ -4151,7 +4102,6 @@ function AddEditForm(props) {
             IsSubmit: true,
             IncountryFlag: IncountryFlag,
             ActurisCode : selectedActurisCode,
-            CustomerWellbeing :selectedCustomerWellbeing,
             RequiredAuthority :selectedRequiredAuthority,
             SubmitterAuthority :selectedSubmitterAuthority,
             ZMSubLoBProduct: selectedZMSubLoBProduct
@@ -4174,7 +4124,6 @@ function AddEditForm(props) {
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
         ActurisCode :selectedActurisCode,
-        CustomerWellbeing :selectedCustomerWellbeing,
         RequiredAuthority :selectedRequiredAuthority,
         SubmitterAuthority :selectedSubmitterAuthority,
         ZMSubLoBProduct: selectedZMSubLoBProduct
@@ -4188,7 +4137,6 @@ function AddEditForm(props) {
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
         ActurisCode :selectedActurisCode,
-        CustomerWellbeing :selectedCustomerWellbeing,
         RequiredAuthority :selectedRequiredAuthority,
         SubmitterAuthority :selectedSubmitterAuthority,
         ZMSubLoBProduct: selectedZMSubLoBProduct
@@ -4206,7 +4154,6 @@ function AddEditForm(props) {
         IsSubmit: true,
         IncountryFlag: IncountryFlag,
         ActurisCode :selectedActurisCode,
-        CustomerWellbeing :selectedCustomerWellbeing,
         RequiredAuthority :selectedRequiredAuthority,
         SubmitterAuthority :selectedSubmitterAuthority,
         ZMSubLoBProduct: selectedZMSubLoBProduct
@@ -4231,7 +4178,6 @@ function AddEditForm(props) {
         IsSubmit: false, 
         IncountryFlag: IncountryFlag,
         ActurisCode :selectedActurisCode,
-        CustomerWellbeing :selectedCustomerWellbeing,
         RequiredAuthority :selectedRequiredAuthority,
         SubmitterAuthority :selectedSubmitterAuthority,
         ZMSubLoBProduct: selectedZMSubLoBProduct
@@ -5718,7 +5664,6 @@ function AddEditForm(props) {
           radioOpt={radioOpt}
           frmZMSubLoBProduct={frmZMSubLoBProduct}
           frmActurisCode={frmActurisCode}
-          frmCustomerWellbeing={frmCustomerWellbeing}
           frmRequiredAuthority={frmRequiredAuthority}
           frmSubmitterAuthority={frmSubmitterAuthority}
         />

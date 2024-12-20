@@ -200,7 +200,6 @@ function Rfelog({ ...props }) {
     customerSegmentOpts: [],
     conditionApplicableToOpts: [],
     acturisCode: [],
-    customerWellbeing: [],
     requiredAuthority: [],
     submitterAuthority: [],
     zmSubLoBProduct: []
@@ -824,7 +823,7 @@ function Rfelog({ ...props }) {
             key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
             key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
             key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-            key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+            key === "ConditionApplicableTo" || key === 'ActurisCode' ||
             key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
             const tmpval = value.map((item) => item.value);
             tempFilterOpts[key] = tmpval.join(",");
@@ -1261,17 +1260,6 @@ function Rfelog({ ...props }) {
         }
       }
       
-      let customerWellbeingArray = [];
-      if (selectedViewData[0]?.customerWellbeing?.length && selectedViewData[0]?.customerWellbeing?.length !== 0 && typeof selectedViewData[0]?.customerWellbeing === 'string') {
-        let selectedstatusArray = selectedViewData[0]?.customerWellbeing?.split(',')
-        if (selectedstatusArray) {
-          let statusData = await getLookupByType({
-            LookupType: "CustomerWellbeing",
-          });
-          customerWellbeingArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
-        }
-      }
-      
       let requiredAuthorityArray = [];
       if (selectedViewData[0]?.requiredAuthority?.length && selectedViewData[0]?.requiredAuthority?.length !== 0 && typeof selectedViewData[0]?.requiredAuthority === 'string') {
         let selectedstatusArray = selectedViewData[0]?.requiredAuthority?.split(',')
@@ -1404,7 +1392,6 @@ function Rfelog({ ...props }) {
         GWP: selectedViewData[0]?.gwp,
         SUBLOBID: subloBArray,
         ActurisCode: acturisCodeArray,
-        CustomerWellbeing: customerWellbeingArray,
         RequiredAuthority: requiredAuthorityArray,
         SubmitterAuthority: submitterAuthorityArray,
         InceptionRenewalFromDate: selectedViewData[0].inceptionRenewalFromDate,
@@ -1492,9 +1479,6 @@ function Rfelog({ ...props }) {
         LookupType: "ActurisCode"
       }),
       getLookupByType({
-          LookupType: "CustomerWellbeing"
-      }),
-      getLookupByType({
           LookupType: "RequiredAuthority"
       }),
       getLookupByType({
@@ -1513,10 +1497,9 @@ function Rfelog({ ...props }) {
     let tempNewRenewal = lookupvalues[5];
     let tempCondition = lookupvalues[6];
     let temprfeempourmentActurisCode = lookupvalues[7];
-    let temprfeempourmentCustomerWellbeing = lookupvalues[8];
-    let temprfeempourmentRequiredAuthority = lookupvalues[9];
-    let temprfeempourmentSubmitterAuthority = lookupvalues[10];
-    let temprfeempourmentZMSubLoBProduct = lookupvalues[11];
+    let temprfeempourmentRequiredAuthority = lookupvalues[8];
+    let temprfeempourmentSubmitterAuthority = lookupvalues[9];
+    let temprfeempourmentZMSubLoBProduct = lookupvalues[10];
     
     let tempopts = [];
     let statusWithdrawn = [];
@@ -1659,17 +1642,6 @@ function Rfelog({ ...props }) {
     temprfeempourmentActurisCode = [...tempopts];
 
     tempopts = [];
-    temprfeempourmentCustomerWellbeing.forEach((item) => {
-        if (item.isActive) {
-            tempopts.push({
-                label: item.lookUpValue,
-                value: item.lookupID,
-            });
-        }
-    });
-    temprfeempourmentCustomerWellbeing = [...tempopts];
-
-    tempopts = [];
     temprfeempourmentRequiredAuthority.forEach((item) => {
         if (item.isActive) {
             tempopts.push({
@@ -1718,7 +1690,6 @@ function Rfelog({ ...props }) {
       newRenewalOpts: [...tempNewRenewal],
       conditionApplicableToOpts: [...tempCondition],
       acturisCode: [...temprfeempourmentActurisCode],
-      customerWellbeing: [...temprfeempourmentCustomerWellbeing],
       requiredAuthority: [...temprfeempourmentRequiredAuthority],
       submitterAuthority: [...temprfeempourmentSubmitterAuthority],
       zmSubLoBProduct: [...temprfeempourmentZMSubLoBProduct]
@@ -2697,7 +2668,7 @@ function Rfelog({ ...props }) {
           key === "OrganizationalAlignment" || key === "RequestForEmpowermentReason" ||
           key === "DurationofApproval" || key === "Currency" || key === "Branch" ||
           key === "NewRenewal" || key === "CustomerSegment" || key === "SUBLOBID" ||
-          key === "ConditionApplicableTo" || key === 'ActurisCode' || key === 'CustomerWellbeing' ||
+          key === "ConditionApplicableTo" || key === 'ActurisCode' ||
           key === "RequiredAuthority" || key === "SubmitterAuthority" || key === 'ZMSubLoBProduct') {
           if (value) {
             const tmpval = value?.map((item) => item.value);

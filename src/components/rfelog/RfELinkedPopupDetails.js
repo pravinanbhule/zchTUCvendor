@@ -55,7 +55,6 @@ function RfELinkedPopupDetails(props) {
         radioOpt,
         frmZMSubLoBProduct,
         frmActurisCode,
-        frmCustomerWellbeing,
         frmRequiredAuthority,
         frmSubmitterAuthority
     } = props;
