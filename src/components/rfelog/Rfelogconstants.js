@@ -20,7 +20,6 @@ export const intialFilterState = {
   InceptionRenewalFromDate: "",
   InceptionRenewalToDate: "",
   ActurisCode: "",
-  CustomerWellbeing: "",
   RequiredAuthority: "",
   SubmitterAuthority: "",
   PolicyNumberQuoteId: "",
@@ -201,12 +200,6 @@ export const filterfieldsmapping = {
   ActurisCode: {
     componenttype: "FrmMultiselect",
     options: "commonfilterOpts.acturisCode",
-    eventhandler: "handleMultiSelectChange",
-    filtertype: "Incountry",
-  },
-  CustomerWellbeing: {
-    componenttype: "FrmMultiselect",
-    options: "commonfilterOpts.customerWellbeing",
     eventhandler: "handleMultiSelectChange",
     filtertype: "Incountry",
   },
@@ -502,6 +495,7 @@ export const formfieldsmapping = {
     minDate: "",
     maxDate: "",
     colspan: 3,
+    tooltipmsg: "tooltip.DecisionDate",
     titlelinespace: true,
     breakblock: true,
     startbgcls: "frm-container-bggray",
@@ -605,14 +599,6 @@ export const formfieldsmapping = {
     colspan: 3,
     fieldname: "ActurisCode",
     conditionaldisplay: "IncountryFlag === IncountryFlagConst.UKZM && formfield.RequestForEmpowermentReasonorActurisCode === 'false' ? true : false"
-  },
-  CustomerWellbeing: {
-    componenttype: "FrmMultiselect",
-    options: "frmCustomerWellbeing",
-    eventhandler: "handleSelectChange",
-    titlelinespace: true,
-    colspan: 3,
-    fieldname: "CustomerWellbeing",
   },
   RequiredAuthority: {
     componenttype: "FrmMultiselect",
