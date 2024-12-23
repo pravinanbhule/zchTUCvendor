@@ -2482,7 +2482,7 @@ function Rfelog({ ...props }) {
     let details = await getGroupchatDetailsWithMembers({chatId: groupChatId})
     let logMemebers = await getinvolveuserlist({RFELogId: selectedRfE.RFELogId})
     setGroupDetails(details)
-    setMicroSoftURL(details?.webUrl)
+    setMicroSoftURL(details?.chatDetails.webUrl)
     let groupAddedMembers = details?.members
     if (logMemebers?.length && groupAddedMembers?.length) {
       const array1Emails = new Set(logMemebers?.map((item) => item.emailAddress));
@@ -2500,22 +2500,27 @@ function Rfelog({ ...props }) {
   }
 
   const handleAddMemberToGroup = async(email) => {
+    let newEmailsData = email.join(",");
     if (isGroupExist) {
       let response = await addMemberToGroupChat({
         chatId: groupChatId,
         chatTopic: selectedChatTopic,
-        emails: email
+        emails: newEmailsData
       })
     }
     if (!isGroupExist) {
       const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
       // If a token does not exist: Return null.
+      let newEmails = newEmailsData + ',' + userProfile.emailAddress
       if (accessTokenDetails == null) {
-        const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
+        const chatAuthentication = await groupChatAuthentication({UserEmail: newEmails});
         setIsRunning(true)
         newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
       } else {
-        handleCreateGroupChat();
+        const response = await createGroupChat({
+          emails: newEmails,
+          chatTopic: selectedChatTopic
+        })
       }
     }
     handleCloseChat()
