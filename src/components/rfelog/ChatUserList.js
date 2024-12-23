@@ -70,8 +70,8 @@ function ChatUserList(props) {
                       {user?.emailAddress}
                     </div>
                   )}
-                  <div style={{ fontSize: '14px', textDecoration: 'underline' }}>
-                    {user?.associatedUserRole}
+                  <div style={{ fontSize: '14px' }}>
+                    ({user?.associatedUserRole})
                   </div>
                 </div>
                 <div
@@ -99,8 +99,8 @@ function ChatUserList(props) {
                         {user?.emailAddress}
                       </div>
                     )}
-                    <div style={{ fontSize: '14px', textDecoration: 'underline' }}>
-                      {user?.associatedUserRole}
+                    <div style={{ fontSize: '14px' }}>
+                      ({user?.associatedUserRole})
                     </div>
                   </div>
                 </div>
