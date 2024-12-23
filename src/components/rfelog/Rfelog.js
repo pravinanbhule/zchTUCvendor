@@ -2483,7 +2483,7 @@ function Rfelog({ ...props }) {
     let logMemebers = await getinvolveuserlist({RFELogId: selectedRfE.RFELogId})
     setGroupDetails(details)
     setMicroSoftURL(details?.chatDetails.webUrl)
-    let groupAddedMembers = details?.members
+    let groupAddedMembers = details?.chatDetails?.members
     if (logMemebers?.length && groupAddedMembers?.length) {
       const array1Emails = new Set(logMemebers?.map((item) => item.emailAddress));
       const emailsToRemove = new Set(
