@@ -419,7 +419,7 @@ const getGroupchatDetailsWithMembersService = async (requestParam) => {
 // };
 const addMemberToGroupChatService = async (requestParam) => {
   const param = { params: requestParam };
-  const response = await Axios.get(`rfelog/addsinglemembertogroupchat`, param);
+  const response = await Axios.post(`rfelog/addsinglemembertogroupchat`, param);
   return response;
 };
 const getinvolveuserlistService = async (requestParam) => {

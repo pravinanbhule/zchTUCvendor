@@ -111,9 +111,11 @@ function ChatUserList(props) {
         {groupDetails?.lastUpdatedDateTime && (<div style={{ marginLeft: '24px' }}>Last update on teams: {formattedDate}</div>)}
         <div className="popup-footer-container">
           <div className="btn-container" style={{ alignItems: 'center' }}>
-            <div>
-              <a href={microSoftURL} target="_blank">Microsoft Teams</a>
-            </div>
+            {microSoftURL && (
+              <div>
+                <a href={microSoftURL} target="_blank">Microsoft Teams</a>
+              </div>
+            )}
             <button
               className={addUserList.length === 0 ? "btn-blue disable" : "btn-blue"}
               onClick={handleSubmit}

@@ -2501,24 +2501,26 @@ function Rfelog({ ...props }) {
 
   const handleAddMemberToGroup = async(email) => {
     let newEmailsData = email.join(",");
+    let addedMemberList = Array.from(new Set(newEmailsData.split(','))).join(',');
     if (isGroupExist) {
       let response = await addMemberToGroupChat({
         chatId: groupChatId,
         chatTopic: selectedChatTopic,
-        emails: newEmailsData
+        emails: addedMemberList
       })
     }
     if (!isGroupExist) {
       const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
       // If a token does not exist: Return null.
-      let newEmails = newEmailsData + ',' + userProfile.emailAddress
+      let newEmails = addedMemberList + ',' + userProfile.emailAddress
+      let memberListGroup = Array.from(new Set(newEmails.split(','))).join(',');
       if (accessTokenDetails == null) {
-        const chatAuthentication = await groupChatAuthentication({UserEmail: newEmails});
+        const chatAuthentication = await groupChatAuthentication({UserEmail: memberListGroup});
         setIsRunning(true)
         newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
       } else {
         const response = await createGroupChat({
-          emails: newEmails,
+          emails: memberListGroup,
           chatTopic: selectedChatTopic
         })
       }
