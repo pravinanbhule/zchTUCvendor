@@ -2465,7 +2465,8 @@ function Rfelog({ ...props }) {
   const handleCreateGroupChat = async() => {
     const response = await createGroupChat({
       emails: userProfile.emailAddress,
-      chatTopic: selectedChatTopic
+      chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
+      entryNumber: selectedChatTopic
     })
     if (response) {
       if (isGroupExist) {
@@ -2505,8 +2506,9 @@ function Rfelog({ ...props }) {
     if (isGroupExist) {
       let response = await addMemberToGroupChat({
         chatId: groupChatId,
-        chatTopic: selectedChatTopic,
-        emails: addedMemberList
+        chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
+        emails: addedMemberList,
+        entryNumber: selectedChatTopic
       })
     }
     if (!isGroupExist) {
@@ -2521,11 +2523,13 @@ function Rfelog({ ...props }) {
       } else {
         const response = await createGroupChat({
           emails: memberListGroup,
-          chatTopic: selectedChatTopic
+          chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
+          entryNumber: selectedChatTopic
         })
       }
     }
-    handleCloseChat()
+    alert('Member(s) added into the Group chat')
+    handleCloseChat();
   }
 
   const handleCloseChat = () => {
