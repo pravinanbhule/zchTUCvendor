@@ -1170,6 +1170,14 @@ function AddEditForm(props) {
               }); 
             }
           }
+          if (item.fieldName === "LOBId" && IncountryFlag !== IncountryFlagConst.UKZM) {
+            setformfield({ 
+              ...formfield, 
+              LOBId: formIntialState?.LOBId ?  formIntialState.LOBId : '',
+              DurationofApproval: formIntialState?.DurationofApproval ?  formIntialState.DurationofApproval : '',
+              mappedLOBs: formIntialState?.mappedLOBs ?  formIntialState.mappedLOBs : '',
+            });
+          }
           if (item.fieldName === "RequestForEmpowermentReason") {
             tempobj = {
               ...tempobj,
@@ -3571,6 +3579,8 @@ function AddEditForm(props) {
         } else if (approverRole.isDualRole) {
           handleAlignmentForDualRole(IncountryFlagConst.INDONESIA)
         }
+      } else if (formfield?.CountryList?.length == 1 && formfield.CountryList[0].value === IncountryIds.UKZM) {
+        setIncountryFlag(IncountryFlagConst.UKZM);
       } else {
         if (approverRole.isDualRole) {
           handleAlignmentForDualRole("")
