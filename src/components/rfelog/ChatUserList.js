@@ -38,6 +38,11 @@ function ChatUserList(props) {
   const handleRemoveItem = (user) => {
     let res = addUserList.filter((item) => (item.emailAddress !== user.emailAddress))
     setAddUserList(res)
+    if (res.length === 0) {
+      listMembers.map((item, i) => {
+          document.getElementsByClassName('addbtn')[i].style.setProperty("display", "block")
+      })
+    }
     setListMember([...listMembers, user])
   }
 
@@ -102,6 +107,11 @@ function ChatUserList(props) {
                     <div style={{ fontSize: '14px' }}>
                       ({user?.associatedUserRole})
                     </div>
+                  </div>
+                  <div
+                    className="delete-icon"
+                    onClick={() => handleRemoveItem(user)}
+                  >
                   </div>
                 </div>
               })}

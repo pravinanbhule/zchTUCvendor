@@ -2433,52 +2433,11 @@ function Rfelog({ ...props }) {
   }, [selectedChatTopic])
 
   useEffect(() => {
-      let intervalId = setInterval(async() => {
-          if (isRunning) {
-              // console.log("function is Running", newWindowRef.current);
-              if (localStorage.getItem('code')) {
-                  setIsRunning(false);
-                  newWindowRef.current.close()
-                  let code = localStorage.getItem('code')
-                  const resonse = await generateTokenForGroupChat({authorizationCode: code});
-                  if (resonse) {
-                    setTokenGenerate(true)
-                  }
-              }
-          }
-      }, 1000);
-      return () => clearInterval(intervalId)
-  }, [isRunning])
-
-  useEffect(() => {
-    if (tokenGenerate === true) {
-        handleCreateGroupChat()
-    }
-  },[tokenGenerate])
-
-  useEffect(() => {
     if (groupChatId) {
       handleMemebersList()
     }
   }, [groupChatId])
   
-  const handleCreateGroupChat = async() => {
-    const response = await createGroupChat({
-      emails: userProfile.emailAddress,
-      chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
-      entryNumber: selectedChatTopic
-    })
-    if (response) {
-      if (isGroupExist) {
-        let requestParam = {
-          EntryNumber: selectedChatTopic
-        };
-        const chatData = await groupDetailsBaseOnEntryNumber(requestParam);
-        setGroupChatId(chatData.groupChatId)
-      }
-    }
-  } 
-
   const handleMemebersList = async() => {
     let details = await getGroupchatDetailsWithMembers({chatId: groupChatId})
     let logMemebers = await getinvolveuserlist({RFELogId: selectedRfE.RFELogId})
@@ -2500,6 +2459,53 @@ function Rfelog({ ...props }) {
     }
   }
 
+  const [newMemberList , setNewMemberList] = useState([])
+
+  useEffect(() => {
+    let intervalId = setInterval(async() => {
+        if (isRunning) {
+            // console.log("function is Running", newWindowRef.current);
+            if (localStorage.getItem('code')) {
+                setIsRunning(false);
+                newWindowRef.current.close()
+                let code = localStorage.getItem('code')
+                const resonse = await generateTokenForGroupChat({authorizationCode: code});
+                if (resonse) {
+                  setTokenGenerate(true)
+                }
+            }
+        }
+          }, 1000);
+          return () => clearInterval(intervalId)
+  }, [isRunning])
+
+  useEffect(() => {
+    if (tokenGenerate === true) {
+        handleCreateGroupChat()
+    }
+  },[tokenGenerate])
+
+
+  const handleCreateGroupChat = async() => {
+    const response = await createGroupChat({
+      emails: newMemberList,
+      chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
+      entryNumber: selectedChatTopic
+    })
+    if (response) {
+      if (isGroupExist) {
+        let requestParam = {
+          EntryNumber: selectedChatTopic
+        };
+        const chatData = await groupDetailsBaseOnEntryNumber(requestParam);
+        setGroupChatId(chatData.groupChatId)
+      } else {
+        alert('Member(s) added into the Group chat')
+        handleCloseChat();
+      }
+    }
+  } 
+
   const handleAddMemberToGroup = async(email) => {
     let newEmailsData = email.join(",");
     let addedMemberList = Array.from(new Set(newEmailsData.split(','))).join(',');
@@ -2510,6 +2516,10 @@ function Rfelog({ ...props }) {
         emails: addedMemberList,
         entryNumber: selectedChatTopic
       })
+      if (response) {
+        alert('Member(s) added into the Group chat')
+        handleCloseChat();
+      }
     }
     if (!isGroupExist) {
       const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
@@ -2517,7 +2527,8 @@ function Rfelog({ ...props }) {
       let newEmails = addedMemberList + ',' + userProfile.emailAddress
       let memberListGroup = Array.from(new Set(newEmails.split(','))).join(',');
       if (accessTokenDetails == null) {
-        const chatAuthentication = await groupChatAuthentication({UserEmail: memberListGroup});
+        setNewMemberList(memberListGroup)
+        const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
         setIsRunning(true)
         newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
       } else {
@@ -2526,10 +2537,12 @@ function Rfelog({ ...props }) {
           chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
           entryNumber: selectedChatTopic
         })
+        if (response) {
+          alert('Member(s) added into the Group chat')
+          handleCloseChat();
+        }
       }
     }
-    alert('Member(s) added into the Group chat')
-    handleCloseChat();
   }
 
   const handleCloseChat = () => {
