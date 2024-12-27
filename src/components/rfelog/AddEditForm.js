@@ -2834,7 +2834,10 @@ function AddEditForm(props) {
       if (!formfield.RFELogId) {
         formfield.folderID = response.tempId;
       }
-      let tempattachementfiles = [...formfield.RFEAttachmentList];
+      let tempattachementfiles = []
+      if (formfield?.RFEAttachmentList) {
+        tempattachementfiles = [...formfield.RFEAttachmentList];
+      }
       response.attachmentFiles.forEach((item) => {
         let isExits = false;
         for (let j = 0; j < tempattachementfiles.length; j++) {
