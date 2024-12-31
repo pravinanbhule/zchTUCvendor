@@ -492,7 +492,7 @@ export const formfieldsmapping = {
   DecisionDate: {
     componenttype: "FrmDatePicker",
     eventhandler: "handleDateSelectChange",
-    minDate: "",
+    minDate: "moment().toDate()",
     maxDate: "",
     colspan: 3,
     tooltipmsg: "tooltip.DecisionDate",

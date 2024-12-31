@@ -1170,7 +1170,7 @@ function AddEditForm(props) {
               }); 
             }
           }
-          if (item.fieldName === "LOBId" && IncountryFlag !== IncountryFlagConst.UKZM) {
+          if (!isEditMode && !isReadMode && item.fieldName === "LOBId" && IncountryFlag !== IncountryFlagConst.UKZM) {
             setformfield({ 
               ...formfield, 
               LOBId: formIntialState?.LOBId ?  formIntialState.LOBId : '',

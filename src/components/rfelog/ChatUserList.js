@@ -4,15 +4,15 @@ import './Chat.css'
 import moment from "moment";
 
 function ChatUserList(props) {
-  const { hideAddPopup, id, postItem, putItem, isEditMode, formIntialState, chatMembers, handleAddMemberToGroup, microSoftURL, groupDetails } =
+  const { hideAddPopup, id, postItem, putItem, isEditMode, formIntialState, chatMembers, handleAddMemberToGroup, microSoftURL, groupDetails, isGroupExist } =
     props;
 
   const [formfield, setformfield] = useState(formIntialState);
   const [issubmitted, setissubmitted] = useState(false);
   const [listMembers, setListMember] = useState(chatMembers)
   const [addUserList, setAddUserList] = useState([])
-  // const formattedDate = moment(groupDetails.lastUpdatedDateTime).format("MMMM Do YYYY, h:mm:ss A");
-  const formattedDate = moment('2021-04-21T17:13:44.033Z').format("MMMM Do YYYY, h:mm:ss A");
+  const formattedDate = moment(groupDetails?.lastUpdatedDateTime).format("MMMM Do YYYY, h:mm:ss A");
+  // const formattedDate = moment('2021-04-21T17:13:44.033Z').format("MMMM Do YYYY, h:mm:ss A");
 
   // const handleSubmit = (e) => {
   //   e.preventDefault();
@@ -28,14 +28,21 @@ function ChatUserList(props) {
   const handleAddItem = (user) => {
     let res = listMembers.filter((item) => (item.emailAddress !== user.emailAddress))
     setListMember(res)
-    res.map((item, i) => {
-      document.getElementsByClassName('addbtn')[i].style.setProperty("display", "none")
-    })
+    if (isGroupExist) {
+      res.map((item, i) => {
+        document.getElementsByClassName('addbtn')[i].style.setProperty("display", "none")
+      })
+    }
     setAddUserList([...addUserList, user])
   }
   const handleRemoveItem = (user) => {
     let res = addUserList.filter((item) => (item.emailAddress !== user.emailAddress))
     setAddUserList(res)
+    if (res.length === 0) {
+      listMembers.map((item, i) => {
+          document.getElementsByClassName('addbtn')[i].style.setProperty("display", "block")
+      })
+    }
     setListMember([...listMembers, user])
   }
 
@@ -46,7 +53,6 @@ function ChatUserList(props) {
     })
     handleAddMemberToGroup(emails)
   }
-
   return (
     <Popup {...props}>
       <div className="popup-box">
@@ -69,8 +75,8 @@ function ChatUserList(props) {
                       {user?.emailAddress}
                     </div>
                   )}
-                  <div style={{ fontSize: '14px', textDecoration: 'underline' }}>
-                    {user?.associatedUserRole}
+                  <div style={{ fontSize: '14px' }}>
+                    ({user?.associatedUserRole})
                   </div>
                 </div>
                 <div
@@ -98,22 +104,32 @@ function ChatUserList(props) {
                         {user?.emailAddress}
                       </div>
                     )}
-                    <div style={{ fontSize: '14px', textDecoration: 'underline' }}>
-                      {user?.associatedUserRole}
+                    <div style={{ fontSize: '14px' }}>
+                      ({user?.associatedUserRole})
                     </div>
+                  </div>
+                  <div
+                    className="delete-icon"
+                    onClick={() => handleRemoveItem(user)}
+                  >
                   </div>
                 </div>
               })}
             </div>
           </div>
         </div>
-        <div style={{ marginLeft: '24px' }}>Last update on teams: {formattedDate}</div>
+        {groupDetails?.lastUpdatedDateTime && (<div style={{ marginLeft: '24px' }}>Last update on teams: {formattedDate}</div>)}
         <div className="popup-footer-container">
           <div className="btn-container" style={{ alignItems: 'center' }}>
-            <div>
-              <a href={microSoftURL} target="_blank">Microsoft Teams</a>
-            </div>
-            <button className="btn-blue" onClick={handleSubmit}>
+            {microSoftURL && (
+              <div>
+                <a href={microSoftURL} target="_blank">Microsoft Teams</a>
+              </div>
+            )}
+            <button
+              className={addUserList.length === 0 ? "btn-blue disable" : "btn-blue"}
+              onClick={handleSubmit}
+            >
               {isEditMode ? "Apply" : "Submit"}
             </button>
             <div className="btn-blue" onClick={() => hideAddPopup()}>
