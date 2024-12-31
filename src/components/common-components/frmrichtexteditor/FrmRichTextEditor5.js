@@ -43,6 +43,7 @@ function FrmRichTextEditor5(props) {
     isToolTip,
     tooltipmsg,
     isRfEBtn,
+    chatlink,
     handleRfEBtnClick
   } = props;
   /*
@@ -90,25 +91,26 @@ function FrmRichTextEditor5(props) {
   };
   return (
     <div
-      className={`frm-field ${isRequired ? "mandatory" : ""} ${
-        !isReadMode && isdisabled ? "disabled" : ""
-      }`}
+      className={`frm-field ${isRequired ? "mandatory" : ""} ${!isReadMode && isdisabled ? "disabled" : ""
+        }`}
     >
       <label htmlFor={name} className={`${isRfEBtn ? 'ref-btn' : ''}`}>
-      <div
-            className={`label ${
-              isToolTip && "hastooltip"
+        <div
+          className={`label ${isToolTip && "hastooltip"
             }`}
-          >{title}</div>
-      {isToolTip ? (
-            <>
-              <div className="icon info-icon" data-tip={tooltipmsg}></div>
-              <ToolTip />
-            </>
-          ) : (
-            ""
-          )}
-      {isRfEBtn ? (
+        >{title}</div>
+        {isToolTip ? (
+          <>
+            <div className="icon info-icon" data-tip={tooltipmsg}></div>
+            <ToolTip />
+          </>
+        ) : (
+          ""
+        )}
+        {
+          chatlink ? (<div className="title-chatlink"><i>Click <a href={chatlink} target="_blank">here</a> to access the live conversation about this RfE</i></div>) : ""
+        }
+        {isRfEBtn ? (
           <div
             className="btn-blue"
             style={{ marginLeft: "10px" }}
@@ -134,8 +136,8 @@ function FrmRichTextEditor5(props) {
             onChange={setRichTextValue}
           />
           {isRequired &&
-          issubmitted &&
-          (!value || (value && !value.replace(/<\/?[^>]+(>|$)/g, ""))) ? (
+            issubmitted &&
+            (!value || (value && !value.replace(/<\/?[^>]+(>|$)/g, ""))) ? (
             <div className="validationError">{validationmsg}</div>
           ) : (
             ""
