@@ -1248,7 +1248,7 @@ function Rfelog({ ...props }) {
           conditionArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-      
+
       let acturisCodeArray = [];
       if (selectedViewData[0]?.acturisCode?.length && selectedViewData[0]?.acturisCode?.length !== 0 && typeof selectedViewData[0]?.acturisCode === 'string') {
         let selectedstatusArray = selectedViewData[0]?.acturisCode?.split(',')
@@ -1259,7 +1259,7 @@ function Rfelog({ ...props }) {
           acturisCodeArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-      
+
       let requiredAuthorityArray = [];
       if (selectedViewData[0]?.requiredAuthority?.length && selectedViewData[0]?.requiredAuthority?.length !== 0 && typeof selectedViewData[0]?.requiredAuthority === 'string') {
         let selectedstatusArray = selectedViewData[0]?.requiredAuthority?.split(',')
@@ -1270,7 +1270,7 @@ function Rfelog({ ...props }) {
           requiredAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-      
+
       let submitterAuthorityArray = [];
       if (selectedViewData[0]?.submitterAuthority?.length && selectedViewData[0]?.submitterAuthority?.length !== 0 && typeof selectedViewData[0]?.submitterAuthority === 'string') {
         let selectedstatusArray = selectedViewData[0]?.submitterAuthority?.split(',')
@@ -1281,7 +1281,7 @@ function Rfelog({ ...props }) {
           submitterAuthorityArray = handleSelectedItemArray(selectedstatusArray, statusData, 'lookupID', 'lookUpValue')
         }
       }
-     
+
       let zMSubLoBProductArray = [];
       if (selectedViewData[0]?.zmSubLoBProduct?.length && selectedViewData[0]?.zmSubLoBProduct?.length !== 0 && typeof selectedViewData[0]?.zmSubLoBProduct === 'string') {
         let selectedstatusArray = selectedViewData[0]?.zmSubLoBProduct?.split(',')
@@ -1479,13 +1479,13 @@ function Rfelog({ ...props }) {
         LookupType: "ActurisCode"
       }),
       getLookupByType({
-          LookupType: "RequiredAuthority"
+        LookupType: "RequiredAuthority"
       }),
       getLookupByType({
-          LookupType: "SubmitterAuthority"
-      }), 
-      getLookupByType({ 
-        LookupType: "ZMSubLoBProduct" 
+        LookupType: "SubmitterAuthority"
+      }),
+      getLookupByType({
+        LookupType: "ZMSubLoBProduct"
       }),
     ]);
 
@@ -1500,7 +1500,7 @@ function Rfelog({ ...props }) {
     let temprfeempourmentRequiredAuthority = lookupvalues[8];
     let temprfeempourmentSubmitterAuthority = lookupvalues[9];
     let temprfeempourmentZMSubLoBProduct = lookupvalues[10];
-    
+
     let tempopts = [];
     let statusWithdrawn = [];
     tempStatus.forEach((item) => {
@@ -1587,7 +1587,7 @@ function Rfelog({ ...props }) {
         if (item.lookUpType.includes("Spain")) {
           setOpts(tempopts, item, 'Spain')
         }
-        if (item.lookUpType.substr(item.lookUpType.length - 2 ) ===  "UK") {
+        if (item.lookUpType.substr(item.lookUpType.length - 2) === "UK") {
           setOpts(tempopts, item, 'UK')
         }
         if (item.lookUpType.includes("UKZM")) {
@@ -1632,45 +1632,45 @@ function Rfelog({ ...props }) {
     tempopts = [];
 
     temprfeempourmentActurisCode.forEach((item) => {
-        if (item.isActive) {
-            tempopts.push({
-                label: item.lookUpValue,
-                value: item.lookupID,
-            });
-        }
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
     });
     temprfeempourmentActurisCode = [...tempopts];
 
     tempopts = [];
     temprfeempourmentRequiredAuthority.forEach((item) => {
-        if (item.isActive) {
-            tempopts.push({
-                label: item.lookUpValue,
-                value: item.lookupID,
-            });
-        }
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
     });
     temprfeempourmentRequiredAuthority = [...tempopts];
 
     tempopts = [];
     temprfeempourmentSubmitterAuthority.forEach((item) => {
-        if (item.isActive) {
-            tempopts.push({
-                label: item.lookUpValue,
-                value: item.lookupID,
-            });
-        }
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
     });
     temprfeempourmentSubmitterAuthority = [...tempopts];
 
     tempopts = [];
     temprfeempourmentZMSubLoBProduct.forEach((item) => {
-        if (item.isActive) {
-            tempopts.push({
-                label: item.lookUpValue,
-                value: item.lookupID,
-            });
-        }
+      if (item.isActive) {
+        tempopts.push({
+          label: item.lookUpValue,
+          value: item.lookupID,
+        });
+      }
     });
     temprfeempourmentZMSubLoBProduct = [...tempopts];
 
@@ -1963,7 +1963,7 @@ function Rfelog({ ...props }) {
             country: item.countryList,
             cat: 'UKZM'
           })
-        } 
+        }
         else {
           tempopts.push({
             ...item,
@@ -2397,6 +2397,7 @@ function Rfelog({ ...props }) {
   const [selectedChatTopic, setSelectedChatTopic] = useState('');
   const [selectedRfE, setSelectedRfE] = useState({});
   const [chatMembers, setChatMembers] = useState([]);
+  const [chatAddedMembers, setChatAddedMembers] = useState([]);
   const [openChatPopup, setOpenChatPopup] = useState(false);
   const [groupChatId, setGroupChatId] = useState('')
   const [microSoftURL, setMicroSoftURL] = useState('')
@@ -2406,21 +2407,27 @@ function Rfelog({ ...props }) {
   const newWindowRef = useRef();
   // Check Existing Group Chat
   const handleChat = async (row) => {
-      localStorage.removeItem('code')      
-      setSelectedRfE(row)
-      setSelectedChatTopic(row.EntryNumber)
+    localStorage.removeItem('code')
+    setSelectedRfE(row)
+    setSelectedChatTopic(row.EntryNumber)
   }
 
-  useEffect(async() => {
+  useEffect(async () => {
     if (selectedChatTopic) {
       let requestParam = {
         EntryNumber: selectedChatTopic
       };
+      let logMemebers = await getinvolveuserlist({ RFELogId: selectedRfE.RFELogId })
+      const exists = logMemebers.some(obj => obj.emailAddress?.toLowerCase() === userProfile.emailAddress?.toLowerCase());
+      if (!exists) {
+        alert(alertMessage.rfelog.uninvoledChatUsermsg);
+        return;
+      }
       const response = await groupDetailsBaseOnEntryNumber(requestParam);
       // If the group chat does not exist: Returns null.
       if (response == null) {
         setIsGroupExist(false)
-        let logMemebers = await getinvolveuserlist({RFELogId: selectedRfE.RFELogId})
+        //let logMemebers = await getinvolveuserlist({ RFELogId: selectedRfE.RFELogId })
         setChatMembers(logMemebers)
         setOpenChatPopup(true)
       } else {
@@ -2437,21 +2444,24 @@ function Rfelog({ ...props }) {
       handleMemebersList()
     }
   }, [groupChatId])
-  
-  const handleMemebersList = async() => {
-    let details = await getGroupchatDetailsWithMembers({chatId: groupChatId})
-    let logMemebers = await getinvolveuserlist({RFELogId: selectedRfE.RFELogId})
+
+  const handleMemebersList = async () => {
+    let details = await getGroupchatDetailsWithMembers({ chatId: groupChatId })
+    let logMemebers = await getinvolveuserlist({ RFELogId: selectedRfE.RFELogId })
     setGroupDetails(details)
     setMicroSoftURL(details?.chatDetails.webUrl)
-    let groupAddedMembers = details?.chatDetails?.members
+    let groupAddedMembers = details?.chatDetails?.members;
+    debugger;
     if (logMemebers?.length && groupAddedMembers?.length) {
       const array1Emails = new Set(logMemebers?.map((item) => item.emailAddress));
       const emailsToRemove = new Set(
         groupAddedMembers.filter((item) => array1Emails.has(item.email)).map((item) => item.email)
       );
-  
+
       const filteredArray = logMemebers.filter((item) => !emailsToRemove.has(item.emailAddress));
       setChatMembers(filteredArray)
+      const filteredAddedMembers = logMemebers.filter((item) => emailsToRemove.has(item.emailAddress));
+      setChatAddedMembers(filteredAddedMembers)
       setOpenChatPopup(true)
     } else {
       setChatMembers(logMemebers)
@@ -2459,40 +2469,42 @@ function Rfelog({ ...props }) {
     }
   }
 
-  const [newMemberList , setNewMemberList] = useState([])
+  const [newMemberList, setNewMemberList] = useState([])
 
   useEffect(() => {
-    let intervalId = setInterval(async() => {
-        if (isRunning) {
-            // console.log("function is Running", newWindowRef.current);
-            if (localStorage.getItem('code')) {
-                setIsRunning(false);
-                newWindowRef.current.close()
-                let code = localStorage.getItem('code')
-                const resonse = await generateTokenForGroupChat({authorizationCode: code});
-                if (resonse) {
-                  setTokenGenerate(true)
-                }
-            }
+    let intervalId = setInterval(async () => {
+      if (isRunning) {
+        // console.log("function is Running", newWindowRef.current);
+        if (localStorage.getItem('code')) {
+          setIsRunning(false);
+          newWindowRef.current.close()
+          let code = localStorage.getItem('code')
+          const resonse = await generateTokenForGroupChat({ authorizationCode: code });
+          if (resonse) {
+            setTokenGenerate(true)
+          }
         }
-          }, 1000);
-          return () => clearInterval(intervalId)
+      }
+    }, 1000);
+    return () => clearInterval(intervalId)
   }, [isRunning])
 
   useEffect(() => {
     if (tokenGenerate === true) {
-        handleCreateGroupChat()
+      handleCreateGroupChat()
     }
-  },[tokenGenerate])
+  }, [tokenGenerate])
 
 
-  const handleCreateGroupChat = async() => {
+  const handleCreateGroupChat = async () => {
     const response = await createGroupChat({
       emails: newMemberList,
       chatTopic: selectedChatTopic + '-' + selectedRfE.AccountName,
       entryNumber: selectedChatTopic
     })
     if (response) {
+      let url = response.webUrl
+      window.open(url, "_blank", "noopener,noreferrer");
       if (isGroupExist) {
         let requestParam = {
           EntryNumber: selectedChatTopic
@@ -2504,9 +2516,9 @@ function Rfelog({ ...props }) {
         handleCloseChat();
       }
     }
-  } 
+  }
 
-  const handleAddMemberToGroup = async(email) => {
+  const handleAddMemberToGroup = async (email) => {
     let newEmailsData = email.join(",");
     let addedMemberList = Array.from(new Set(newEmailsData.split(','))).join(',');
     if (isGroupExist) {
@@ -2517,18 +2529,19 @@ function Rfelog({ ...props }) {
         entryNumber: selectedChatTopic
       })
       if (response) {
+        window.open(microSoftURL, "_blank", "noopener,noreferrer");
         alert('Member(s) added into the Group chat')
         handleCloseChat();
       }
     }
     if (!isGroupExist) {
-      const accessTokenDetails = await groupChatAccessTokenDetails({userEmailAddress: userProfile.emailAddress});
+      const accessTokenDetails = await groupChatAccessTokenDetails({ userEmailAddress: userProfile.emailAddress });
       // If a token does not exist: Return null.
       let newEmails = addedMemberList + ',' + userProfile.emailAddress
       let memberListGroup = Array.from(new Set(newEmails.split(','))).join(',');
       if (accessTokenDetails == null) {
         setNewMemberList(memberListGroup)
-        const chatAuthentication = await groupChatAuthentication({UserEmail: userProfile.emailAddress});
+        const chatAuthentication = await groupChatAuthentication({ UserEmail: userProfile.emailAddress });
         setIsRunning(true)
         newWindowRef.current = window.open(chatAuthentication, '_blank', 'width=400,height=300,top=100,left=100,resizable=no');
       } else {
@@ -2538,6 +2551,8 @@ function Rfelog({ ...props }) {
           entryNumber: selectedChatTopic
         })
         if (response) {
+          let url = response.webUrl
+          window.open(url, "_blank", "noopener,noreferrer");
           alert('Member(s) added into the Group chat')
           handleCloseChat();
         }
@@ -2549,6 +2564,7 @@ function Rfelog({ ...props }) {
     setTokenGenerate(false)
     setSelectedChatTopic(null)
     setChatMembers([])
+    setChatAddedMembers([])
     setGroupChatId(null)
     setMicroSoftURL(null)
     setGroupDetails(null)
@@ -3267,10 +3283,10 @@ function Rfelog({ ...props }) {
               <div
                 key={item.label}
                 className={`tab-btn ${sellogTabType === item.value
-                    ? "selected"
-                    : isLoadingStarted
-                      ? "disabled"
-                      : "normal"
+                  ? "selected"
+                  : isLoadingStarted
+                    ? "disabled"
+                    : "normal"
                   }`}
                 onClick={() => openlogTab(item.value)}
               >
@@ -3368,6 +3384,7 @@ function Rfelog({ ...props }) {
           hideAddPopup={handleCloseChat}
           id={selectedChatTopic}
           chatMembers={chatMembers}
+          chatAddedMembers={chatAddedMembers}
           handleAddMemberToGroup={handleAddMemberToGroup}
           microSoftURL={microSoftURL}
           groupDetails={groupDetails}

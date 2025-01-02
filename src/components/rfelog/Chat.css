@@ -4,11 +4,12 @@
     align-items: center;
     justify-content: space-between;
 }
-.user{
+
+.user {
     width: 265px;
 }
 
-.useremail-line{
+.useremail-line {
     font-size: 12px;
     text-decoration: underline;
     word-wrap: break-word;
@@ -27,33 +28,34 @@
 }
 
 .member-list {
-    height: 44%;
-    overflow: auto;
+    height: 210px;
+    overflow-y: auto;
 }
 
 .add-member-list {
+    /* margin-top: 10px;*/
     position: absolute;
     top: 50%;
 }
 
 .add-member-list {
-    width: 330px;
+    /*width: 330px;*/
 }
 
 .invited-chat-header {
     border-top: 1px solid #2167ad;
     border-bottom: 1px solid #2167ad;
-    font-size: 22px;
-    height: 50px;
+    font-size: 20px;
+    height: 35px;
     display: flex;
     align-items: center;
     width: 368px;
     margin-left: -20px;
-    padding: 28px;
+    padding: 20px;
 }
 
 .chat-list {
-    height: 348px;
+    height: 210px;
     overflow: auto;
 }
 

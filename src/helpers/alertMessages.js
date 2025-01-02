@@ -128,6 +128,8 @@ export const alertMessage = {
     orgalignmetmsg: "Please use the local RfE log from the list below.",
     invalidapprovermsg:
       "Please note that, the underwriter and 'Underwriter granting empowerment' can't be same person.",
+    uninvoledChatUsermsg:
+      "Only users involved in this RfE can create a conversation",
   },
   exemptionlog: {
     draft: "The draft of the Exemption is added.",

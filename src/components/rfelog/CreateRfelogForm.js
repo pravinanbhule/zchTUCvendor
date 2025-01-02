@@ -306,7 +306,7 @@ function CreateRfelogForm(props) {
 
         if (response) {
             if (redirectURL) {
-                if(allQuery) {
+                if (allQuery) {
                     window.location.href = redirectURL + allQuery + `&rfeid=${response}`
                 } else {
                     window.location.href = redirectURL + `?rfeid=${response}`
@@ -385,7 +385,6 @@ function CreateRfelogForm(props) {
     const handleEdit = async (e, hasqueryparam) => {
         let itemid = queryparam.id;
         let mode = queryparam.status !== "undefined" ? queryparam.status : "view";
-
         let response = await getById({
             rfeLogId: itemid,
         });
