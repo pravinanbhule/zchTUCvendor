@@ -140,6 +140,8 @@ function Rfelog({ ...props }) {
   const rfelogItalyActiveSharePointLink = SHAREPOINT_LINKS.RFEItalylogActive;
   const rfelogGermanyActiveSharePointLink =
     SHAREPOINT_LINKS.RFEGermanylogActive;
+  const rfelogUKZMActiveSharePointLink =
+    SHAREPOINT_LINKS.rfelogUKZMActiveSharePointLink;
   const InCountryViewOpts = [
     INCOUNTRY_FLAG_OPTS.Indonesia,
     INCOUNTRY_FLAG_OPTS.UK,
@@ -2237,7 +2239,6 @@ function Rfelog({ ...props }) {
       item.ConditionApplicableTo = "";
     }
     //item.RFELogEmailLink = window.location.href + "?id=" + item.rfeLogId;
-    debugger;
     let response = await postItem({
       ...item,
       ModifiedByID: userProfile.userId,
@@ -2385,6 +2386,11 @@ function Rfelog({ ...props }) {
       splink = rfelogGermanyActiveSharePointLink;
       link = `${splink}?ID=${id}`;
     }
+    if (itemid.indexOf("ACT_07") !== -1) {
+      id = itemid.split("ACT_07")[1];
+      splink = rfelogUKZMActiveSharePointLink;
+      link = `${splink}?ID=${id}`;
+    }
     if (itemid.indexOf("GI-") !== -1) {
       link = `https://apps.powerapps.com/play/e/6c477b0d-de3f-4698-96b5-1f55000794bf/a/fe1a79ec-1bb2-4529-b48f-f26191b77032?FormID=${itemid}`;
     }
@@ -2451,7 +2457,6 @@ function Rfelog({ ...props }) {
     setGroupDetails(details)
     setMicroSoftURL(details?.chatDetails.webUrl)
     let groupAddedMembers = details?.chatDetails?.members;
-    debugger;
     if (logMemebers?.length && groupAddedMembers?.length) {
       const array1Emails = new Set(logMemebers?.map((item) => item.emailAddress));
       const emailsToRemove = new Set(

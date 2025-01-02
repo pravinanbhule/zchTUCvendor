@@ -67,6 +67,13 @@ function FrmFileUpload(props) {
           document.getElementById("file").value = null;
           return;
         }
+        if (file.name.indexOf(",") > 0) {
+          alert(
+            `File upload failed: File names cannot contain the ',' (comma) character. Please rename your file and try again.`
+          );
+          document.getElementById("file").value = null;
+          return
+        }
       }
     }
     setselectedfile(_this.files);
@@ -103,9 +110,8 @@ function FrmFileUpload(props) {
   };
   return (
     <div
-      className={`frm-field fileupload ${isRequired ? "mandatory" : ""} ${
-        isdisabled && "disabled"
-      }`}
+      className={`frm-field fileupload ${isRequired ? "mandatory" : ""} ${isdisabled && "disabled"
+        }`}
     >
       <label htmlFor={name}>
         <div className="label">{title}</div>
@@ -136,9 +142,8 @@ function FrmFileUpload(props) {
               </div>
             </label>
             <div
-              className={`upload-btn btn-blue ${
-                filename ? "normal" : "disable"
-              }`}
+              className={`upload-btn btn-blue ${filename ? "normal" : "disable"
+                }`}
               onClick={onfileuploadhandler}
             >
               {selectedlanguage ? AppLocale[selectedlanguage].messages["button.upload"] : "Upload"}
