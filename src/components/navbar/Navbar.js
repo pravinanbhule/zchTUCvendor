@@ -278,7 +278,8 @@ function Navbar({ ...props }) {
         <Link to="/rfelogs">
           <div
             className={`menu-item ${
-              location.pathname === "/rfelogs" && "active"
+              location.pathname === "/rfelogs" && "active" || 
+              location.pathname === "/rfelogs/create-rfelog" && "active"
             }`}
           >
             RfE Logs

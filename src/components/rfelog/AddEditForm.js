@@ -1170,14 +1170,14 @@ function AddEditForm(props) {
               }); 
             }
           }
-          if (!isEditMode && !isReadMode && item.fieldName === "LOBId" && IncountryFlag !== IncountryFlagConst.UKZM) {
-            setformfield({ 
-              ...formfield, 
-              LOBId: formIntialState?.LOBId ?  formIntialState.LOBId : '',
-              DurationofApproval: formIntialState?.DurationofApproval ?  formIntialState.DurationofApproval : '',
-              mappedLOBs: formIntialState?.mappedLOBs ?  formIntialState.mappedLOBs : '',
-            });
-          }
+          // if (!isEditMode && !isReadMode && item.fieldName === "LOBId" && IncountryFlag !== IncountryFlagConst.UKZM) {
+          //   setformfield({ 
+          //     ...formfield, 
+          //     LOBId: formIntialState?.LOBId ?  formIntialState.LOBId : '',
+          //     DurationofApproval: formIntialState?.DurationofApproval ?  formIntialState.DurationofApproval : '',
+          //     mappedLOBs: formIntialState?.mappedLOBs ?  formIntialState.mappedLOBs : '',
+          //   });
+          // }
           if (item.fieldName === "RequestForEmpowermentReason") {
             tempobj = {
               ...tempobj,
